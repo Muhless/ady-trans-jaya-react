@@ -1,39 +1,45 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import logo from "/assets/images/logo.png";
 
 const Navbar = () => {
   return (
-    <nav className="bg-gray-800 text-white">
-      <div className="container mx-auto flex justify-between items-center p-4">
-        <h1 className="text-2xl font-bold">
-          <Link to="/">Ady Trans Jaya</Link>
-        </h1>
-        <ul className="flex space-x-6">
-          <li>
-            <Link
-              to="/"
-              className="hover:text-teal-400 transition duration-300"
-            >
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/about"
-              className="hover:text-teal-400 transition duration-300"
-            >
-              About
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/auth/login"
-              className="hover:text-red-400 transition duration-300"
-            >
-              Login
-            </Link>
-          </li>
-        </ul>
+    <nav className="bg-white text-black shadow-md">
+      <div className="container mx-auto flex justify-between items-center p-1">
+        <div>
+          <img src={logo} alt="logo" className="w-20" />
+        </div>
+        <div>
+          <ul className="flex space-x-6 font-jakarta text-gray-700">
+            <li>
+              <Link
+                to="/"
+                className="hover:text-orange-400 transition duration-300"
+              >
+                Solusi
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/about"
+                className="hover:text-orange-400 transition duration-300"
+              >
+                Klien
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/auth/login"
+                className="hover:text-orange-400 transition duration-300"
+              >
+                Blog
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <div className="text-primary border rounded-full border-primary px-7 py-2 cursor-pointer hover:bg-primary hover:text-white transition duration-300 font-semibold">
+          <h1>Hubungi kami</h1>
+        </div>
       </div>
     </nav>
   );

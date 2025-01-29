@@ -1,22 +1,20 @@
 import React from "react";
 import banner from "/assets/images/obi-pixel9propics-aZKJEvydrNM-unsplash.jpg";
-import Navbar from "../components/Navbar";
+import { Helmet } from "react-helmet-async";
+import Carousel from "../components/carousel/carousel";
 
 const HomePages = () => {
   return (
-    <div className="bg-black">
-      <Navbar />
-      <div className="relative">
-        <img
-          src={banner}
-          alt={banner}
-          className="w-full h-auto object-cover rounded-lg"
-        />
-      </div>
-      <div>
+    <>
+      <Helmet>
+        <title>Homepage</title>
+        <meta name="description" content="Ini adalah halaman utama" />
+      </Helmet>
+      <div className="container mx-auto">
         <h1>cihuy</h1>
+        <Carousel/>
       </div>
-    </div>
+    </>
   );
 };
 
