@@ -1,7 +1,7 @@
 import React from "react";
 import banner from "/assets/images/obi-pixel9propics-aZKJEvydrNM-unsplash.jpg";
 import { Helmet } from "react-helmet-async";
-import Carousel from "../components/carousel/carousel";
+import Carousel from "../components/carousel";
 
 const HomePages = () => {
   return (
