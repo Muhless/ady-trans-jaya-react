@@ -1,14 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "/assets/images/logo.png";
 
 const Navbar = () => {
   return (
     <nav className="bg-white text-black shadow-md sticky top-0 z-50">
       <div className="container mx-auto flex justify-between items-center p-1">
-        <div className="cursor-pointer">
-            <img src={logo} alt="logo" className="w-20" />
-        </div>
+     
         <div>
           <ul className="flex space-x-6 font-jakarta text-gray-700">
             <li>

@@ -12,7 +12,6 @@ const HomePages = () => {
       </Helmet>
       <div className="container mx-auto">
         <h1>cihuy</h1>
-        <Carousel/>
       </div>
     </>
   );

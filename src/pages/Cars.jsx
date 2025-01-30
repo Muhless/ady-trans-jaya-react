@@ -9,7 +9,8 @@ import {
 import "leaflet/dist/leaflet.css";
 import { Helmet } from "react-helmet-async";
 
-// Helper function for geocoding address to coordinates
+const AVERAGE_SPEED_KMH = 50;
+
 const geocodeAddress = async (address) => {
   try {
     const response = await fetch(
@@ -29,19 +30,39 @@ const geocodeAddress = async (address) => {
   }
 };
 
+const haversineDistance = (coord1, coord2) => {
+  const toRad = (angle) => (Math.PI / 180) * angle;
+  const R = 6371;
+  const dLat = toRad(coord2.lat - coord1.lat);
+  const dLng = toRad(coord2.lng - coord1.lng);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(coord1.lat)) *
+      Math.cos(toRad(coord2.lat)) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
+
 const CarPages = () => {
-  const [location, setLocation] = useState(null); // Removed default location
-  const [routes, setRoutes] = useState(() => {
-    const savedRoutes = localStorage.getItem("routes");
-    return savedRoutes ? JSON.parse(savedRoutes) : {};
-  });
-  const [selectedRoute, setSelectedRoute] = useState(null);
-  const [newRouteName, setNewRouteName] = useState("");
-  const [newRoutePoints, setNewRoutePoints] = useState([]);
-  const [startPoint, setStartPoint] = useState(null); // Start point will be set by button click
-  const [endPoint, setEndPoint] = useState(null); // Destination point will be set by button click
-  const [address, setAddress] = useState(""); // To store address input for start point
-  const [endAddress, setEndAddress] = useState(""); // To store address input for end point
+  const [location, setLocation] = useState(null);
+  const [startPoint, setStartPoint] = useState(null);
+  const [endPoint, setEndPoint] = useState(null);
+  const [address, setAddress] = useState("");
+  const [endAddress, setEndAddress] = useState("");
+  const [estimatedTime, setEstimatedTime] = useState(null);
+
+  useEffect(() => {
+    if (startPoint && endPoint) {
+      const distance = haversineDistance(startPoint, endPoint);
+      const timeInHours = distance / AVERAGE_SPEED_KMH;
+      const timeInMinutes = Math.round(timeInHours * 60);
+      setEstimatedTime(timeInMinutes);
+    } else {
+      setEstimatedTime(null);
+    }
+  }, [startPoint, endPoint]);
 
   useEffect(() => {
     const updateLocation = () => {
@@ -68,47 +89,22 @@ const CarPages = () => {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("routes", JSON.stringify(routes));
-  }, [routes]);
-
-  const handleAddPoint = () => {
-    setNewRoutePoints([...newRoutePoints, location]);
-  };
-
-  const handleSaveRoute = () => {
-    if (newRouteName && newRoutePoints.length > 0) {
-      setRoutes({ ...routes, [newRouteName]: newRoutePoints });
-      setNewRouteName("");
-      setNewRoutePoints([]);
-    }
-  };
-
-  const handleAddressChange = (e) => {
-    setAddress(e.target.value);
-  };
-
   const handleSetStartPoint = async () => {
     const coordinates = await geocodeAddress(address);
-    if (coordinates) {
-      setStartPoint(coordinates);
-    }
-  };
-
-  const handleEndAddressChange = (e) => {
-    setEndAddress(e.target.value);
+    if (coordinates) setStartPoint(coordinates);
   };
 
   const handleSetEndPoint = async () => {
     const coordinates = await geocodeAddress(endAddress);
-    if (coordinates) {
-      setEndPoint(coordinates);
-    }
+    if (coordinates) setEndPoint(coordinates);
   };
 
-  const handleMapClick = (e) => {
-    // Set the start point to the clicked location
-    setStartPoint(e.latlng);
+  const handleResetPoints = () => {
+    setStartPoint(null);
+    setEndPoint(null);
+    setAddress("");
+    setEndAddress("");
+    setEstimatedTime(null);
   };
 
   return (
@@ -116,81 +112,87 @@ const CarPages = () => {
       <Helmet>
         <title>Halaman Mobil - Tracking</title>
       </Helmet>
-      <div className="flex flex-row items-center justify-center mx-auto container">
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold">Titik Awal dan Tujuan</h3>
-          <div className="mt-2">
-            <h4 className="text-md font-semibold">Titik Awal (Alamat)</h4>
+      <div className="flex mt-6 container mx-auto items-center">
+        <div className="w-1/3 px-5">
+          <h3 className="text-3xl font-semibold font-jakarta">
+            Titik Awal dan Tujuan
+          </h3>
+          <div className="mt-2 justify-center">
+            <h4 className="text-md font-semibold">Titik Awal</h4>
             <input
               type="text"
               placeholder="Masukkan Alamat Awal"
               value={address}
-              onChange={handleAddressChange}
+              onChange={(e) => setAddress(e.target.value)}
               className="p-2 border rounded mt-2"
             />
             <button
-              onClick={handleSetStartPoint} // Add the click handler for setting the start point
-              className="ml-2 p-2 bg-blue-500 text-white rounded"
+              onClick={handleSetStartPoint}
+              className="ml-2 px-10 py-2 bg-blue-500 text-white rounded"
             >
               Set
             </button>
           </div>
           <div className="mt-4">
-            <h4 className="text-md font-semibold">Titik Tujuan (Alamat)</h4>
+            <h4 className="text-md font-semibold">Titik Tujuan</h4>
             <input
               type="text"
               placeholder="Masukkan Alamat Tujuan"
               value={endAddress}
-              onChange={handleEndAddressChange}
+              onChange={(e) => setEndAddress(e.target.value)}
               className="p-2 border rounded mt-2"
             />
             <button
-              onClick={handleSetEndPoint} // Add the click handler for setting the end point
-              className="ml-2 p-2 bg-green-500 text-white rounded"
+              onClick={handleSetEndPoint}
+              className="ml-2 px-10 py-2 bg-blue-500 text-white rounded"
             >
               Set
             </button>
           </div>
-          <div className="mt-5 bg-blue-500 items-center ">
-            <button>simpan</button>
+          {estimatedTime !== null && (
+            <p className="mt-4 text-md text-gray-500">
+              Perkiraan Waktu Tempuh: {estimatedTime} menit
+            </p>
+          )}
+          <div className="mt-5">
+            <button
+              onClick={handleResetPoints}
+              className="p-2 w-full bg-red-500 text-white rounded"
+            >
+              Reset
+            </button>
           </div>
         </div>
+        <div className="w-full h-full">
+          {location && (
+            <MapContainer
+              center={location}
+              zoom={13}
+              style={{ height: "600px", width: "100%" }}
+              className="mt-10"
+            >
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              {/* <TileLayer url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png" /> */}
 
-        {/* Map component */}
-        {location && ( // Only render the map if location is available
-          <MapContainer
-            center={location}
-            zoom={13}
-            style={{ height: "600px", width: "50%" }}
-            className="mt-10"
-            onClick={handleMapClick} // Listen for click events on the map
-          >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <Marker position={location}>
-              <Popup>Lokasi Saat Ini</Popup>
-            </Marker>
-            {selectedRoute &&
-              routes[selectedRoute] &&
-              routes[selectedRoute].length > 0 && (
-                <Polyline positions={routes[selectedRoute]} color="blue" />
+              <Marker position={location}>
+                <Popup>Lokasi Saat Ini</Popup>
+              </Marker>
+              {startPoint && (
+                <Marker position={startPoint}>
+                  <Popup>Titik Awal</Popup>
+                </Marker>
               )}
-            {startPoint && (
-              <Marker position={startPoint}>
-                <Popup>Titik Awal</Popup>
-              </Marker>
-            )}
-            {endPoint && (
-              <Marker position={endPoint}>
-                <Popup>Titik Tujuan</Popup>
-              </Marker>
-            )}
-
-            {/* Draw route line (Polyline) */}
-            {startPoint && endPoint && (
-              <Polyline positions={[startPoint, endPoint]} color="green" />
-            )}
-          </MapContainer>
-        )}
+              {endPoint && (
+                <Marker position={endPoint}>
+                  <Popup>Titik Tujuan</Popup>
+                </Marker>
+              )}
+              {startPoint && endPoint && (
+                <Polyline positions={[startPoint, endPoint]} color="green" />
+              )}
+            </MapContainer>
+          )}
+        </div>
       </div>
     </>
   );
