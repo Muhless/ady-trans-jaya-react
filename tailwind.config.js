@@ -8,6 +8,7 @@ export default {
       },
       colors: {
         primary: "#043B75",
+        cihuy: "#f8f4f0"
       },
     },
   },
