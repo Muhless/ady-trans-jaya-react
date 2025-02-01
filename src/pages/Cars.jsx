@@ -1,28 +1,40 @@
-import React, { useEffect, useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  Polyline,
-  useMap,
-} from "react-leaflet";
-import "leaflet/dist/leaflet.css";
+import React, { useEffect, useRef, useState } from "react";
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 import { Helmet } from "react-helmet-async";
 
-const AVERAGE_SPEED_KMH = 30;
-const ORS_API_KEY = "5b3ce3597851110001cf6248170db34a6957467ca86d2df46b4c1fe8";
+const MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
+mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
+
+const fetchAddressSuggestions = async (query, setSuggestions) => {
+  if (!query) {
+    setSuggestions([]);
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?autocomplete=true&access_token=${MAPBOX_ACCESS_TOKEN}`
+    );
+    const data = await response.json();
+    if (data.features) {
+      setSuggestions(data.features);
+    }
+  } catch (error) {
+    console.error("Error fetching address suggestions:", error);
+  }
+};
 
 const geocodeAddress = async (address) => {
   try {
     const response = await fetch(
-      `https://api.opencagedata.com/geocode/v1/json?q=${address}&key=998418d39b72428abc33fb5ef721563e`
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${MAPBOX_ACCESS_TOKEN}`
     );
     const data = await response.json();
-    if (data.results.length > 0) {
+    if (data.features.length > 0) {
       return {
-        lat: data.results[0].geometry.lat,
-        lng: data.results[0].geometry.lng,
+        lng: data.features[0].geometry.coordinates[0],
+        lat: data.features[0].geometry.coordinates[1],
       };
     }
     return null;
@@ -32,100 +44,110 @@ const geocodeAddress = async (address) => {
   }
 };
 
-const fetchRoute = async (start, end, setRoute) => {
-  try {
-    const response = await fetch("http://localhost:8080/getRoute", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        start_lat: start.lat,
-        start_lang: start.lang,
-        end_lat: end.lat,
-        end_lang: end.lang,
-      }),
-    });
-    const data = await response.json();
-    if (data.routes && data.routes.length > 0) {
-      const routeCoords = data.routes[0].geometry.coordinates.map(
-        ([lng, lat]) => ({ lat, lng })
-      );
-      setRoute(routeCoords);
-    }
-  } catch (error) {
-    console.error("Error fetching route:", error);
-  }
-};
-
-const MapViewUpdater = ({ position }) => {
-  const map = useMap();
-  useEffect(() => {
-    if (position) {
-      map.setView(position, 12);
-    }
-  }, [position, map]);
-  return null;
-};
-
 const CarPages = () => {
-  const [location, setLocation] = useState(null);
+  const mapContainerRef = useRef(null);
+  const mapRef = useRef(null);
+  const markerRef = useRef({ start: null, end: null });
+
   const [startPoint, setStartPoint] = useState(null);
   const [endPoint, setEndPoint] = useState(null);
   const [route, setRoute] = useState(null);
+  const [distance, setDistance] = useState(null);
+  const [duration, setDuration] = useState(null);
   const [address, setAddress] = useState("");
   const [endAddress, setEndAddress] = useState("");
-  const [estimatedTime, setEstimatedTime] = useState(null);
-  const [focusPoint, setFocusPoint] = useState(null);
+  const [startSuggestions, setStartSuggestions] = useState([]);
+  const [endSuggestions, setEndSuggestions] = useState([]);
 
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-        }
-      );
+    if (!mapRef.current) {
+      mapRef.current = new mapboxgl.Map({
+        container: mapContainerRef.current,
+        style: "mapbox://styles/mapbox/streets-v11",
+        center: [106.8456, -6.2088], // Jakarta sebagai default
+        zoom: 12,
+      });
     }
   }, []);
 
+  const fetchRoute = async () => {
+    if (!startPoint || !endPoint) return;
+
+    const response = await fetch(
+      `https://api.mapbox.com/directions/v5/mapbox/driving/${startPoint.lng},${startPoint.lat};${endPoint.lng},${endPoint.lat}?geometries=geojson&access_token=${MAPBOX_ACCESS_TOKEN}`
+    );
+    const data = await response.json();
+
+    if (data.routes.length > 0) {
+      const newRoute = data.routes[0].geometry;
+      setRoute(newRoute);
+      setDistance((data.routes[0].distance / 1000).toFixed(2)); // dalam km
+      setDuration(Math.ceil(data.routes[0].duration / 60)); // dalam menit
+
+      const map = mapRef.current;
+      if (map.getSource("route")) {
+        map.getSource("route").setData({
+          type: "Feature",
+          properties: {},
+          geometry: newRoute,
+        });
+      } else {
+        map.addSource("route", {
+          type: "geojson",
+          data: {
+            type: "Feature",
+            properties: {},
+            geometry: newRoute,
+          },
+        });
+
+        map.addLayer({
+          id: "route",
+          type: "line",
+          source: "route",
+          layout: { "line-join": "round", "line-cap": "round" },
+          paint: { "line-color": "#1E90FF", "line-width": 5 },
+        });
+      }
+    }
+  };
+
+  const handleSelectAddress = (place, setPoint, setAddress, setSuggestions, type) => {
+    const coordinates = {
+      lng: place.geometry.coordinates[0],
+      lat: place.geometry.coordinates[1],
+    };
+    setPoint(coordinates);
+    setAddress(place.place_name);
+    setSuggestions([]);
+
+    if (markerRef.current[type]) markerRef.current[type].remove();
+    markerRef.current[type] = new mapboxgl.Marker().setLngLat([coordinates.lng, coordinates.lat]).addTo(mapRef.current);
+    mapRef.current.flyTo({ center: [coordinates.lng, coordinates.lat], zoom: 14 });
+  };
+
   useEffect(() => {
     if (startPoint && endPoint) {
-      fetchRoute(startPoint, endPoint, setRoute);
-    } else {
-      setRoute(null);
+      fetchRoute();
     }
   }, [startPoint, endPoint]);
 
-  const handleSetStartPoint = async () => {
-    const coordinates = await geocodeAddress(address);
-    if (coordinates) {
-      setStartPoint(coordinates);
-      setFocusPoint(coordinates);
-    }
-  };
-
-  const handleSetEndPoint = async () => {
-    const coordinates = await geocodeAddress(endAddress);
-    if (coordinates) {
-      setEndPoint(coordinates);
-      setFocusPoint(coordinates);
-    }
-  };
-
-  const handleResetPoints = () => {
+  const handleReset = () => {
     setStartPoint(null);
     setEndPoint(null);
     setRoute(null);
+    setDistance(null);
+    setDuration(null);
     setAddress("");
     setEndAddress("");
-    setEstimatedTime(null);
-    setFocusPoint(null);
+
+    if (markerRef.current.start) markerRef.current.start.remove();
+    if (markerRef.current.end) markerRef.current.end.remove();
+
+    if (mapRef.current.getSource("route")) {
+      mapRef.current.removeLayer("route");
+      mapRef.current.removeSource("route");
+    }
   };
 
   return (
@@ -135,24 +157,27 @@ const CarPages = () => {
       </Helmet>
       <div className="flex mt-6 container mx-auto items-center">
         <div className="w-1/3 px-5">
-          <h3 className="text-3xl font-semibold font-jakarta">
-            Titik Awal dan Tujuan
-          </h3>
+          <h3 className="text-3xl font-semibold">Titik Awal dan Tujuan</h3>
           <div className="mt-2">
             <h4 className="text-md font-semibold">Titik Awal</h4>
             <input
               type="text"
               placeholder="Masukkan Alamat Awal"
               value={address}
-              onChange={(e) => setAddress(e.target.value)}
+              onChange={(e) => {
+                setAddress(e.target.value);
+                fetchAddressSuggestions(e.target.value, setStartSuggestions);
+              }}
               className="p-2 border rounded mt-2 w-full"
             />
-            <button
-              onClick={handleSetStartPoint}
-              className="mt-2 w-full py-2 bg-blue-500 text-white rounded"
-            >
-              Set Titik Awal
-            </button>
+            <ul className="bg-white border rounded w-full mt-1">
+              {startSuggestions.map((place) => (
+                <li key={place.id} className="p-2 hover:bg-gray-200 cursor-pointer"
+                  onClick={() => handleSelectAddress(place, setStartPoint, setAddress, setStartSuggestions, "start")}>
+                  {place.place_name}
+                </li>
+              ))}
+            </ul>
           </div>
           <div className="mt-4">
             <h4 className="text-md font-semibold">Titik Tujuan</h4>
@@ -160,53 +185,33 @@ const CarPages = () => {
               type="text"
               placeholder="Masukkan Alamat Tujuan"
               value={endAddress}
-              onChange={(e) => setEndAddress(e.target.value)}
+              onChange={(e) => {
+                setEndAddress(e.target.value);
+                fetchAddressSuggestions(e.target.value, setEndSuggestions);
+              }}
               className="p-2 border rounded mt-2 w-full"
             />
-            <button
-              onClick={handleSetEndPoint}
-              className="mt-2 w-full py-2 bg-blue-500 text-white rounded"
-            >
-              Set Titik Tujuan
-            </button>
+            <ul className="bg-white border rounded w-full mt-1">
+              {endSuggestions.map((place) => (
+                <li key={place.id} className="p-2 hover:bg-gray-200 cursor-pointer"
+                  onClick={() => handleSelectAddress(place, setEndPoint, setEndAddress, setEndSuggestions, "end")}>
+                  {place.place_name}
+                </li>
+              ))}
+            </ul>
           </div>
-          {estimatedTime !== null && (
-            <p className="mt-4 text-md text-gray-500">
-              Perkiraan Waktu Tempuh: {estimatedTime} menit
-            </p>
+          {distance && duration && (
+            <div className="mt-4">
+              <p className="text-lg">Jarak: {distance} km</p>
+              <p className="text-lg">Waktu Tempuh: {duration} menit</p>
+            </div>
           )}
-          <div className="mt-5">
-            <button
-              onClick={handleResetPoints}
-              className="p-2 w-full bg-red-500 text-white rounded"
-            >
-              Reset
-            </button>
-          </div>
+          <button onClick={handleReset} className="p-2 w-full bg-red-500 text-white rounded mt-4">
+            Reset
+          </button>
         </div>
         <div className="w-full h-full">
-          {location && (
-            <MapContainer
-              center={location}
-              zoom={13}
-              style={{ height: "600px", width: "100%" }}
-              className="mt-10"
-            >
-              <MapViewUpdater position={focusPoint || location} />
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              {startPoint && (
-                <Marker position={startPoint}>
-                  <Popup>Titik Awal</Popup>
-                </Marker>
-              )}
-              {endPoint && (
-                <Marker position={endPoint}>
-                  <Popup>Titik Tujuan</Popup>
-                </Marker>
-              )}
-              {route && <Polyline positions={route} color="blue" />}
-            </MapContainer>
-          )}
+          <div ref={mapContainerRef} style={{ height: "600px", width: "100%" }} />
         </div>
       </div>
     </>
