@@ -3,7 +3,8 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Helmet } from "react-helmet-async";
 
-const MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
+const MAPBOX_ACCESS_TOKEN =
+  "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 const fetchAddressSuggestions = async (query, setSuggestions) => {
@@ -14,7 +15,9 @@ const fetchAddressSuggestions = async (query, setSuggestions) => {
 
   try {
     const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?autocomplete=true&access_token=${MAPBOX_ACCESS_TOKEN}`
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+        query
+      )}.json?autocomplete=true&access_token=${MAPBOX_ACCESS_TOKEN}`
     );
     const data = await response.json();
     if (data.features) {
@@ -28,7 +31,9 @@ const fetchAddressSuggestions = async (query, setSuggestions) => {
 const geocodeAddress = async (address) => {
   try {
     const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${MAPBOX_ACCESS_TOKEN}`
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+        address
+      )}.json?access_token=${MAPBOX_ACCESS_TOKEN}`
     );
     const data = await response.json();
     if (data.features.length > 0) {
@@ -112,7 +117,13 @@ const CarPages = () => {
     }
   };
 
-  const handleSelectAddress = (place, setPoint, setAddress, setSuggestions, type) => {
+  const handleSelectAddress = (
+    place,
+    setPoint,
+    setAddress,
+    setSuggestions,
+    type
+  ) => {
     const coordinates = {
       lng: place.geometry.coordinates[0],
       lat: place.geometry.coordinates[1],
@@ -122,8 +133,13 @@ const CarPages = () => {
     setSuggestions([]);
 
     if (markerRef.current[type]) markerRef.current[type].remove();
-    markerRef.current[type] = new mapboxgl.Marker().setLngLat([coordinates.lng, coordinates.lat]).addTo(mapRef.current);
-    mapRef.current.flyTo({ center: [coordinates.lng, coordinates.lat], zoom: 14 });
+    markerRef.current[type] = new mapboxgl.Marker()
+      .setLngLat([coordinates.lng, coordinates.lat])
+      .addTo(mapRef.current);
+    mapRef.current.flyTo({
+      center: [coordinates.lng, coordinates.lat],
+      zoom: 14,
+    });
   };
 
   useEffect(() => {
@@ -155,63 +171,103 @@ const CarPages = () => {
       <Helmet>
         <title>Halaman Mobil - Tracking</title>
       </Helmet>
-      <div className="flex mt-6 container mx-auto items-center">
-        <div className="w-1/3 px-5">
-          <h3 className="text-3xl font-semibold">Titik Awal dan Tujuan</h3>
-          <div className="mt-2">
-            <h4 className="text-md font-semibold">Titik Awal</h4>
-            <input
-              type="text"
-              placeholder="Masukkan Alamat Awal"
-              value={address}
-              onChange={(e) => {
-                setAddress(e.target.value);
-                fetchAddressSuggestions(e.target.value, setStartSuggestions);
-              }}
-              className="p-2 border rounded mt-2 w-full"
-            />
-            <ul className="bg-white border rounded w-full mt-1">
-              {startSuggestions.map((place) => (
-                <li key={place.id} className="p-2 hover:bg-gray-200 cursor-pointer"
-                  onClick={() => handleSelectAddress(place, setStartPoint, setAddress, setStartSuggestions, "start")}>
-                  {place.place_name}
-                </li>
-              ))}
-            </ul>
+      <div className="flex container mx-auto items-center">
+        <div
+          ref={mapContainerRef}
+          style={{
+            height: "730px",
+            width: "100%",
+            borderRadius: "30px",
+            zIndex: "0",
+          }}
+        />
+        <div className="absolute z-10 left-1/2 bottom-16 shadow-lg bg-white p-5 rounded-2xl flex flex-col items-center">
+          {/* <h3 className="text-2xl font-semibold">Titik Awal dan Tujuan</h3> */}
+          <div className="flex flex-row gap-x-5 items-center">
+            <div className="mt-2 text-center">
+              <h4 className="text-md font-semibold">Titik Awal</h4>
+              <input
+                type="text"
+                placeholder="Masukkan Alamat Awal"
+                value={address}
+                onChange={(e) => {
+                  setAddress(e.target.value);
+                  fetchAddressSuggestions(e.target.value, setStartSuggestions);
+                }}
+                className="p-2 border rounded mt-2 w-full"
+              />
+              <ul className="bg-white border rounded w-full mt-1">
+                {startSuggestions.map((place) => (
+                  <li
+                    key={place.id}
+                    className="p-2 hover:bg-gray-200 cursor-pointer"
+                    onClick={() =>
+                      handleSelectAddress(
+                        place,
+                        setStartPoint,
+                        setAddress,
+                        setStartSuggestions,
+                        "start"
+                      )
+                    }
+                  >
+                    {place.place_name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="mt-12">cihuy</div>
+            <div className="mt-2 text-center">
+              <h4 className="text-md font-semibold">Titik Tujuan</h4>
+              <input
+                type="text"
+                placeholder="Masukkan Alamat Tujuan"
+                value={endAddress}
+                onChange={(e) => {
+                  setEndAddress(e.target.value);
+                  fetchAddressSuggestions(e.target.value, setEndSuggestions);
+                }}
+                className="p-2 border rounded mt-2 w-full"
+              />
+              <ul className="bg-white border rounded w-full mt-1">
+                {endSuggestions.map((place) => (
+                  <li
+                    key={place.id}
+                    className="p-2 hover:bg-gray-200 cursor-pointer"
+                    onClick={() =>
+                      handleSelectAddress(
+                        place,
+                        setEndPoint,
+                        setEndAddress,
+                        setEndSuggestions,
+                        "end"
+                      )
+                    }
+                  >
+                    {place.place_name}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <div className="mt-4">
-            <h4 className="text-md font-semibold">Titik Tujuan</h4>
-            <input
-              type="text"
-              placeholder="Masukkan Alamat Tujuan"
-              value={endAddress}
-              onChange={(e) => {
-                setEndAddress(e.target.value);
-                fetchAddressSuggestions(e.target.value, setEndSuggestions);
-              }}
-              className="p-2 border rounded mt-2 w-full"
-            />
-            <ul className="bg-white border rounded w-full mt-1">
-              {endSuggestions.map((place) => (
-                <li key={place.id} className="p-2 hover:bg-gray-200 cursor-pointer"
-                  onClick={() => handleSelectAddress(place, setEndPoint, setEndAddress, setEndSuggestions, "end")}>
-                  {place.place_name}
-                </li>
-              ))}
-            </ul>
-          </div>
+
           {distance && duration && (
-            <div className="mt-4">
-              <p className="text-lg">Jarak: {distance} km</p>
-              <p className="text-lg">Waktu Tempuh: {duration} menit</p>
+            <div className="mt-2 flex flex-row w-full justify-between">
+              <p className="">Jarak: {distance} km</p>
+              <p className="">Waktu Tempuh: {duration} menit</p>
             </div>
           )}
-          <button onClick={handleReset} className="p-2 w-full bg-red-500 text-white rounded mt-4">
-            Reset
-          </button>
-        </div>
-        <div className="w-full h-full">
-          <div ref={mapContainerRef} style={{ height: "600px", width: "100%" }} />
+          <div className="flex flex-row gap-4">
+            <button
+              onClick={handleReset}
+              className="p-2 w-full bg-red-500 text-white rounded mt-4"
+            >
+              Reset
+            </button>
+            <button className="py-2 px-36 w-full bg-blue-500 text-white rounded mt-4">
+              Simpan
+            </button>
+          </div>
         </div>
       </div>
     </>
