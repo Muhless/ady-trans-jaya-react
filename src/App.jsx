@@ -1,9 +1,10 @@
 import { HelmetProvider } from "react-helmet-async";
-import "./App.css";
 import HomePages from "./pages/Home";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import CarPages from "./pages/cars";
+import CarPages from "./pages/Car";
 import Layout from "./layouts";
+import DeliveryPages from "./pages/Services/Delivery";
+import RentPages from "./pages/Services/Rent";
 
 function App() {
   return (
@@ -11,7 +12,9 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Layout><HomePages /></Layout>} />
-          <Route path="/cars" element={<Layout><CarPages /></Layout>} />
+          <Route path="/service/rent" element={<Layout><RentPages /></Layout>} />
+          <Route path="/service/delivery" element={<Layout><DeliveryPages /></Layout>} />
+          <Route path="/manage/car" element={<Layout><CarPages /></Layout>} />
         </Routes>
       </Router>
     </HelmetProvider>
