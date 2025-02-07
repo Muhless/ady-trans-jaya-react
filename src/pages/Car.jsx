@@ -175,14 +175,13 @@ const CarPages = () => {
         <div
           ref={mapContainerRef}
           style={{
-            height: "730px",
+            height: "680px",
             width: "100%",
             borderRadius: "30px",
             zIndex: "0",
           }}
         />
         <div className="fixed z-10 left-1/2 bottom-16 shadow-lg bg-white p-5 rounded-2xl flex flex-col items-center">
-          {/* <h3 className="text-2xl font-semibold">Titik Awal dan Tujuan</h3> */}
           <div className="flex flex-row gap-x-5 items-center">
             <div className="mt-2 text-center">
               <h4 className="text-md font-semibold">Titik Awal</h4>
