@@ -49,15 +49,26 @@ function DeliveryPages() {
             {/* table */}
             <div className="col-span-3 mt-5">
               <h1 className="font-bold text-xl">Menunggu Persetujuan</h1>
-              <div className="bg-orange-400">
-                <table className="">
-                  <thead className="flex flex-row justify-between">
-                    <tr>No</tr>
-                    <tr>Nama</tr>
-                    <tr>Tanggal</tr>
-                    <tr>Mobil</tr>
-                    <tr>Durasi</tr>
+              <div className="bg-white text-black mt-5 rounded-lg">
+                <table className="w-full ">
+                  <thead>
+                    <tr>
+                      <th className="border px-5">cihuy</th>
+                      <th className="border px-5">cihuy</th>
+                      <th className="border px-5">cihuy</th>
+                      <th className="border px-5">cihuy</th>
+                      <th className="border px-5">cihuy</th>
+                    </tr>
                   </thead>
+                  <tbody>
+                    <tr>
+                      <td className="border px-5">cihuy</td>
+                      <td className="border px-5">cihuy</td>
+                      <td className="border px-5">cihuy</td>
+                      <td className="border px-5">cihuy</td>
+                      <td className="border px-5">cihuy</td>
+                    </tr>
+                  </tbody>
                 </table>
               </div>
             </div>
