@@ -49,7 +49,7 @@ const geocodeAddress = async (address) => {
   }
 };
 
-const CarPages = () => {
+const MapPages = () => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const markerRef = useRef({ start: null, end: null });
@@ -273,4 +273,4 @@ const CarPages = () => {
   );
 };
 
-export default CarPages;
+export default MapPages;

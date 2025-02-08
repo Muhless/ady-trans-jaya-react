@@ -53,11 +53,11 @@ function DeliveryPages() {
                 <table className="w-full ">
                   <thead>
                     <tr>
-                      <th className="border px-5">cihuy</th>
-                      <th className="border px-5">cihuy</th>
-                      <th className="border px-5">cihuy</th>
-                      <th className="border px-5">cihuy</th>
-                      <th className="border px-5">cihuy</th>
+                      <th className="border px-5">No</th>
+                      <th className="border px-5">Nama</th>
+                      <th className="border px-5">Plat Nomor</th>
+                      <th className="border px-5">Harga</th>
+                      <th className="border px-5">Status</th>
                     </tr>
                   </thead>
                   <tbody>
