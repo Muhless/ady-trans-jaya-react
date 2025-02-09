@@ -21,7 +21,7 @@ const Sidebar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="h-screen w-64 bg-primary text-gray-300 flex flex-col left-0 top-0 bottom-0">
+    <div className="h-screen w-64 bg-primary text-black flex flex-col left-0 top-0 bottom-0">
       <div className="cursor-pointer items-center flex justify-center flex-col">
         <img src={logo} alt="logo" className="w-20 mt-2" />
       </div>

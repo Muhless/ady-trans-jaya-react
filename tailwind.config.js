@@ -7,7 +7,7 @@ export default {
         jakarta: ["Plus Jakarta Sans", "sans-serif"]
       },
       colors: {
-        primary: "#242529",
+        primary: "",
         secondary: "#363740",
         third:"#a7abff"
       },
