@@ -11,7 +11,7 @@ const HomePages = () => {
       </Helmet>
       <div className="container mx-auto text-white">
           <div className="gap-7 h-80 grid grid-cols-3">
-            <div className="bg-third p-6 rounded-3xl flex flex-col">
+            <div className="bg-fourth p-6 rounded-3xl flex flex-col">
               <span className="text-2xl font-bold text-black">Selamat Datang, Admin</span>
               <img src="\assets\images\home.png" alt="icon" className="w-72 mx-auto"/>
             </div>

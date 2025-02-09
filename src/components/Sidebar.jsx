@@ -15,9 +15,8 @@ import {
 import logo from "/assets/images/logo.png";
 
 const Sidebar = () => {
-  const location = useLocation(); // Mendapatkan path saat ini
+  const location = useLocation();
 
-  // Fungsi untuk mengecek apakah link aktif
   const isActive = (path) => location.pathname === path;
 
   return (
@@ -36,7 +35,7 @@ const Sidebar = () => {
           <span className="text-sm">Halaman Awal</span>
         </Link>
         <hr />
-        <span className="text-white">Kelola</span>
+        <span className="text-gray-500">Kelola</span>
         <Link
           to="/manage/driver"
           className={`p-2 rounded flex items-center space-x-2 ${
@@ -65,7 +64,7 @@ const Sidebar = () => {
           <span className="text-sm">Kendaraan</span>
         </Link>
         <hr />
-        <span className="text-white">Layanan</span>
+        <span className="text-gray-500">Layanan</span>
         <Link
           to="/service/rent"
           className={`p-2 rounded flex items-center space-x-2 ${
@@ -84,7 +83,7 @@ const Sidebar = () => {
           <Truck size={17} />
           <span className="text-sm">Pengiriman</span>
         </Link>
-        <span className="text-white">Laporan</span>
+        <span className="text-gray-500">Laporan</span>
         <Link
           to="/reports/rental"
           className={`p-2 rounded flex items-center space-x-2 ${

@@ -1,7 +1,23 @@
-import React from "react";
+import { Ellipsis, Search, SearchCheck } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 
 function DeliveryPages() {
+  const [openDropdown, setOpenDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       <Helmet>
@@ -10,7 +26,7 @@ function DeliveryPages() {
       </Helmet>
       <div className="container mx-auto text-white">
         <div className="flex flex-row gap-3">
-          <div className="grid grid-cols-3 h-full basis-2/3">
+          <div className="grid grid-cols-3 h-full w-full">
             <div className="bg-third flex flex-row items-center justify-center p-1">
               <img
                 src="/assets/images/home.png"
@@ -46,37 +62,74 @@ function DeliveryPages() {
                 <span className="text-4xl">4</span>
               </div>
             </div>
-            {/* table */}
-            <div className="col-span-3 mt-5">
-              <h1 className="font-bold text-xl">Menunggu Persetujuan</h1>
-              <div className="bg-white text-black mt-5 rounded-lg">
-                <table className="w-full ">
-                  <thead>
-                    <tr>
-                      <th className="border px-5">No</th>
-                      <th className="border px-5">Nama</th>
-                      <th className="border px-5">Plat Nomor</th>
-                      <th className="border px-5">Harga</th>
-                      <th className="border px-5">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="border px-5">cihuy</td>
-                      <td className="border px-5">cihuy</td>
-                      <td className="border px-5">cihuy</td>
-                      <td className="border px-5">cihuy</td>
-                      <td className="border px-5">cihuy</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+          </div>
+        </div>
+        <div className="col-span-3 mt-5">
+          <div className="flex flex-row items-center justify-between">
+            <h1 className="text-black font-bold text-xl">
+              Menunggu Persetujuan
+            </h1>
+            <div className="relative ">
+              <span className="absolute inset-y-0 left-3 flex items-center text-gray-500">
+                <Search className="text-gray-400" />
+              </span>
+              <input
+                type="text"
+                className="pl-10 bg-primary text-gray-500 text-sm py-2 px-5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="cari data..."
+              />
             </div>
-            {/*  */}
           </div>
-          <div className="basis-1/3 bg-green-300 flex flex-col items-center">
-            <span>Cihuy</span>
-          </div>
+          <table className="w-full text-black mt-5 rounded-lg text-sm bg-primary">
+            <thead>
+              <tr>
+                <th className="px-5 border-y">No</th>
+                <th className="px-5 border-y">Nama</th>
+                <th className="px-5 border-y">Plat Nomor</th>
+                <th className="px-5 border-y">Harga</th>
+                <th className="px-5 border-y">Status</th>
+                <th className="px-5 border-y">Aksi</th>
+              </tr>
+            </thead>
+            <tbody className="text-center px-5 bg-white">
+              <tr>
+                <td className="border-y px-5 p-2">cihuy</td>
+                <td className="border-y px-5 p-2">cihuy</td>
+                <td className="border-y px-5 p-2">cihuy</td>
+                <td className="border-y px-5 p-2">cihuy</td>
+                <td className="border-y px-5 p-2">Menunggu Persetujuan</td>
+                <td className="border-y px-5 p-2 relative">
+                  <span
+                    className="text-center items-center flex justify-center"
+                    onClick={() => setOpenDropdown(!openDropdown)}
+                  >
+                    <Ellipsis className="cursor-pointer" />
+                  </span>
+                  {openDropdown && (
+                    <div
+                      ref={dropdownRef}
+                      className="absolute right-0 mt-2 w-36 bg-white shadow-lg rounded-md border z-10"
+                    >
+                      <ul className="text-sm text-gray-700">
+                        <li
+                          className="px-4 py-2 hover:bg-blue-400 hover:text-white cursor-pointer"
+                          onClick={() => alert("Edit")}
+                        >
+                          Setujui
+                        </li>
+                        <li
+                          className="px-4 py-2 hover:bg-red-400 hover:text-white cursor-pointer"
+                          onClick={() => alert("Delete")}
+                        >
+                          Tolak
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </>
