@@ -93,12 +93,14 @@ function DeliveryPages() {
             </thead>
             <tbody className="text-center px-5 bg-white">
               <tr>
-                <td className="border-y px-5 p-2">cihuy</td>
-                <td className="border-y px-5 p-2">cihuy</td>
-                <td className="border-y px-5 p-2">cihuy</td>
-                <td className="border-y px-5 p-2">cihuy</td>
-                <td className="border-y px-5 p-2">Menunggu Persetujuan</td>
-                <td className="border-y px-5 p-2 relative">
+                <td className="border-b-4 border-b-lime-200 px-5 p-2">1</td>
+                <td className="border-b-4 border-b-lime-200 px-5 p-2">cihuy</td>
+                <td className="border-b-4 border-b-lime-200 px-5 p-2">cihuy</td>
+                <td className="border-b-4 border-b-lime-200 px-5 p-2">cihuy</td>
+                <td className="border-b-4 border-b-lime-200 px-5 p-2">
+                  Menunggu Persetujuan
+                </td>
+                <td className="border-b-4 border-b-lime-200 px-5 p-2 relative">
                   <span
                     className="text-center items-center flex justify-center"
                     onClick={() => setOpenDropdown(!openDropdown)}
