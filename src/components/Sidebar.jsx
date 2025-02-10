@@ -20,7 +20,7 @@ const Sidebar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="h-screen w-64 bg-primary text-black flex flex-col left-0 top-0 bottom-0">
+    <div className="h-screen w-64 bg-primary text-black flex flex-col left-0 top-0 bottom-0 border-black">
       <div className="cursor-pointer items-center flex justify-center flex-col">
         <img src={logo} alt="logo" className="w-20 mt-2" />
       </div>
@@ -28,18 +28,22 @@ const Sidebar = () => {
         <Link
           to="/"
           className={`p-2 rounded flex items-center space-x-2 ${
-            isActive("/") ? "bg-secondary text-white" : "hover:bg-secondary hover:text-white"
+            isActive("/")
+              ? "bg-secondary text-white"
+              : "hover:bg-secondary hover:text-white"
           }`}
         >
           <Home size={17} />
           <span className="text-sm">Halaman Awal</span>
         </Link>
-        <hr />
+        <hr className="border-black" />
         <span className="text-gray-500">Kelola</span>
         <Link
           to="/manage/driver"
           className={`p-2 rounded flex items-center space-x-2 ${
-            isActive("/manage/driver") ? "bg-secondary text-white" : "hover:bg-secondary hover:text-white"
+            isActive("/manage/driver")
+              ? "bg-secondary text-white"
+              : "hover:bg-secondary hover:text-white"
           }`}
         >
           <User size={17} />
@@ -48,7 +52,9 @@ const Sidebar = () => {
         <Link
           to="/manage/customer"
           className={`p-2 rounded flex items-center space-x-2 ${
-            isActive("/manage/customer") ? "bg-secondary text-white" : "hover:bg-secondary hover:text-white"
+            isActive("/manage/customer")
+              ? "bg-secondary text-white"
+              : "hover:bg-secondary hover:text-white"
           }`}
         >
           <Users size={17} />
@@ -57,18 +63,22 @@ const Sidebar = () => {
         <Link
           to="/manage/car"
           className={`p-2 rounded flex items-center space-x-2 ${
-            isActive("/manage/car") ? "bg-secondary text-white" : "hover:bg-secondary hover:text-white"
+            isActive("/manage/car")
+              ? "bg-secondary text-white"
+              : "hover:bg-secondary hover:text-white"
           }`}
         >
           <CarFront size={17} />
           <span className="text-sm">Kendaraan</span>
         </Link>
-        <hr />
+        <hr className="border-black" />
         <span className="text-gray-500">Layanan</span>
         <Link
           to="/service/rent"
           className={`p-2 rounded flex items-center space-x-2 ${
-            isActive("/service/rent") ? "bg-secondary text-white" : "hover:bg-secondary hover:text-white"
+            isActive("/service/rent")
+              ? "bg-secondary text-white"
+              : "hover:bg-secondary hover:text-white"
           }`}
         >
           <Car size={17} />
@@ -77,7 +87,9 @@ const Sidebar = () => {
         <Link
           to="/service/delivery"
           className={`p-2 rounded flex items-center space-x-2 ${
-            isActive("/service/delivery") ? "bg-secondary text-white" : "hover:bg-secondary hover:text-white"
+            isActive("/service/delivery")
+              ? "bg-secondary text-white"
+              : "hover:bg-secondary hover:text-white"
           }`}
         >
           <Truck size={17} />
@@ -87,7 +99,9 @@ const Sidebar = () => {
         <Link
           to="/reports/rental"
           className={`p-2 rounded flex items-center space-x-2 ${
-            isActive("/reports/rental") ? "bg-secondary text-white" : "hover:bg-secondary hover:text-white"
+            isActive("/reports/rental")
+              ? "bg-secondary text-white"
+              : "hover:bg-secondary hover:text-white"
           }`}
         >
           <LucideNotebookText size={17} />
@@ -96,7 +110,9 @@ const Sidebar = () => {
         <Link
           to="/reports/delivery"
           className={`p-2 rounded flex items-center space-x-2 ${
-            isActive("/reports/delivery") ? "bg-secondary text-white" : "hover:bg-secondary hover:text-white"
+            isActive("/reports/delivery")
+              ? "bg-secondary text-white"
+              : "hover:bg-secondary hover:text-white"
           }`}
         >
           <NotepadTextIcon size={17} />
@@ -105,13 +121,15 @@ const Sidebar = () => {
         <Link
           to="/reports/finance"
           className={`p-2 rounded flex items-center space-x-2 ${
-            isActive("/reports/finance") ? "bg-secondary text-white" : "hover:bg-secondary hover:text-white"
+            isActive("/reports/finance")
+              ? "bg-secondary text-white"
+              : "hover:bg-secondary hover:text-white"
           }`}
         >
           <ChartSpline size={17} />
           <span className="text-sm">Keuangan</span>
         </Link>
-        <hr />
+        <hr className="border-black" />
         <button className="p-2 rounded hover:bg-red-600 hover:text-white flex items-center space-x-2">
           <LogOut size={17} />
           <span className="text-sm">Logout</span>
