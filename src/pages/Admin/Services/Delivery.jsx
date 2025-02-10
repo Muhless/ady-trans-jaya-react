@@ -24,7 +24,7 @@ function DeliveryPages() {
         <title>Pengiriman</title>
         <meta name="description" content="Ini adalah halaman utama" />
       </Helmet>
-      <div className="container mx-auto text-white">
+      <div className="container mx-auto">
         <div className="flex flex-row gap-3">
           <div className="grid grid-cols-3 h-full w-full">
             <div className="bg-third flex flex-row items-center justify-center p-1">
