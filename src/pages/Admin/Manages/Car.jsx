@@ -5,7 +5,7 @@ function CarPages() {
   return (
     <>
       <Helmet>
-        <title>Kelola Mobil</title>
+        <title>Halaman Daftar Mobil</title>
         <meta
           name="description"
           content="Ini adalah halaman kelola data mobil"

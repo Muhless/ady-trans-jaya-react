@@ -24,10 +24,10 @@ const Sidebar = () => {
       <div className="cursor-pointer items-center flex justify-center flex-col">
         <img src={logo} alt="logo" className="w-20 mt-2" />
       </div>
-      <nav className="flex flex-col space-y-4 p-4">
+      <nav className="flex flex-col space-y-2 p-4">
         <Link
           to="/"
-          className={`p-2 rounded flex items-center space-x-2 ${
+          className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/")
               ? "bg-secondary text-white"
               : "hover:bg-secondary hover:text-white"
@@ -40,7 +40,7 @@ const Sidebar = () => {
         <span className="text-gray-500">Kelola</span>
         <Link
           to="/manage/driver"
-          className={`p-2 rounded flex items-center space-x-2 ${
+          className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/manage/driver")
               ? "bg-secondary text-white"
               : "hover:bg-secondary hover:text-white"
@@ -51,7 +51,7 @@ const Sidebar = () => {
         </Link>
         <Link
           to="/manage/customer"
-          className={`p-2 rounded flex items-center space-x-2 ${
+          className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/manage/customer")
               ? "bg-secondary text-white"
               : "hover:bg-secondary hover:text-white"
@@ -62,7 +62,7 @@ const Sidebar = () => {
         </Link>
         <Link
           to="/manage/car"
-          className={`p-2 rounded flex items-center space-x-2 ${
+          className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/manage/car")
               ? "bg-secondary text-white"
               : "hover:bg-secondary hover:text-white"
@@ -75,7 +75,7 @@ const Sidebar = () => {
         <span className="text-gray-500">Layanan</span>
         <Link
           to="/service/rent"
-          className={`p-2 rounded flex items-center space-x-2 ${
+          className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/service/rent")
               ? "bg-secondary text-white"
               : "hover:bg-secondary hover:text-white"
@@ -86,7 +86,7 @@ const Sidebar = () => {
         </Link>
         <Link
           to="/service/delivery"
-          className={`p-2 rounded flex items-center space-x-2 ${
+          className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/service/delivery")
               ? "bg-secondary text-white"
               : "hover:bg-secondary hover:text-white"
@@ -98,7 +98,7 @@ const Sidebar = () => {
         <span className="text-gray-500">Laporan</span>
         <Link
           to="/reports/rental"
-          className={`p-2 rounded flex items-center space-x-2 ${
+          className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/reports/rental")
               ? "bg-secondary text-white"
               : "hover:bg-secondary hover:text-white"
@@ -109,7 +109,7 @@ const Sidebar = () => {
         </Link>
         <Link
           to="/reports/delivery"
-          className={`p-2 rounded flex items-center space-x-2 ${
+          className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/reports/delivery")
               ? "bg-secondary text-white"
               : "hover:bg-secondary hover:text-white"
@@ -120,7 +120,7 @@ const Sidebar = () => {
         </Link>
         <Link
           to="/reports/finance"
-          className={`p-2 rounded flex items-center space-x-2 ${
+          className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/reports/finance")
               ? "bg-secondary text-white"
               : "hover:bg-secondary hover:text-white"
@@ -130,7 +130,7 @@ const Sidebar = () => {
           <span className="text-sm">Keuangan</span>
         </Link>
         <hr className="border-black" />
-        <button className="p-2 rounded hover:bg-red-600 hover:text-white flex items-center space-x-2">
+        <button className="p-3 rounded hover:bg-red-600 hover:text-white flex items-center space-x-2">
           <LogOut size={17} />
           <span className="text-sm">Logout</span>
         </button>
