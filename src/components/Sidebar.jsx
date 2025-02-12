@@ -12,7 +12,6 @@ import {
   NotepadTextIcon,
   Car,
 } from "lucide-react";
-import logo from "/assets/images/logo.png";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -20,10 +19,7 @@ const Sidebar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="h-screen w-64 bg-primary text-black flex flex-col left-0 top-0 bottom-0 border-black">
-      <div className="cursor-pointer items-center flex justify-center flex-col">
-        <img src={logo} alt="logo" className="w-20 mt-2" />
-      </div>
+    <div className="h-screen fixed top-20 bg-white w-64 text-black flex flex-col left-0 bottom-0 border-black">
       <nav className="flex flex-col space-y-2 p-4">
         <Link
           to="/"
