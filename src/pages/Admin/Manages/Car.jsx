@@ -1,5 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
+import CarCard from "../../../components/CarCard";
 
 function CarPages() {
   return (
@@ -30,16 +31,15 @@ function CarPages() {
             />
           </div>
         </div>
-        <div className="bg-fifth rounded-lg p-5 flex flex-col justify-center size-52 mt-5 cursor-pointer hover:bg-third hover:ease-in-out">
-          <h1 className="font-bold capitalize tracking-wider">Honda Brio</h1>
-          <div className="flex flex-grow items-center justify-center w-full">
-            <img
-              src="\assets\images\cars\brio.png"
-              alt="car images"
-              className="h-32 w-auto object-contain"
-            />
+        <div className="flex flex-row gap-3 overflow-x-auto w-full">
+          <div className="flex flex-nowrap gap-3">
+          <CarCard />
+          <CarCard />
+          <CarCard />
+          <CarCard />
+          <CarCard />
+          <CarCard />
           </div>
-          <p className="text-end">Tersedia</p>
         </div>
       </div>
     </>

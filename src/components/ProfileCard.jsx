@@ -1,9 +1,13 @@
 import { Phone, MapPin, Clock, Info, Edit, Trash2 } from "lucide-react";
 
-export default function ProfileCard() {
+const ProfileCard = ({ onClick }) => {
   return (
-    <div className="bg-secondary text-white flex flex-row rounded-2xl p-4 shadow-lg relative">
-      {/* Tombol Edit dan Delete */}
+    <div
+      className="bg-gray-400 text-white flex flex-row rounded-2xl p-4 shadow-lg relative cursor-pointer 
+      hover:bg-secondary hover:scale-105 hover:shadow-lg hover:-translate-y-2 
+      transition-all duration-300 ease-in-out"
+      onClick={onClick}
+    >
       <div className="absolute top-2 right-2 flex space-x-2">
         <button className="p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-40 transition">
           <Edit className="w-5 h-5 text-white" />
@@ -12,15 +16,11 @@ export default function ProfileCard() {
           <Trash2 className="w-5 h-5 text-white" />
         </button>
       </div>
-
-      {/* Gambar Profil */}
       <img
-        src="/assets/images/profile/3.jpg"
+        src="/assets/images/profile/1.jpg"
         alt="Profile"
         className="w-36 h-44 rounded-2xl object-cover shadow-md"
       />
-
-      {/* Detail Profil */}
       <div className="py-4 px-6 flex flex-col justify-center">
         <h1 className="text-xl font-bold underline mb-2">Muhta Nuryadi</h1>
         <div className="flex items-center mb-1">
@@ -42,4 +42,6 @@ export default function ProfileCard() {
       </div>
     </div>
   );
-}
+};
+
+export default ProfileCard;
