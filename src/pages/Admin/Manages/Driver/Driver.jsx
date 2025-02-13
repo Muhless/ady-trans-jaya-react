@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import ProfileCard from "../../../components/ProfileCard";
+import ProfileCard from "../../../../components/ProfileCard";
 
 function DriverPages() {
   return (
