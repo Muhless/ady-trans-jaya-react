@@ -46,7 +46,7 @@ const handleDelete = () => {
 const ProfileCard = ({ onClick }) => {
   return (
     <div
-      className="bg-card text-text flex flex-row rounded-2xl p-4 shadow-lg relative cursor-pointer 
+      className="bg-card text-text text-sm flex flex-row rounded-2xl p-4 shadow-lg relative cursor-pointer 
       hover:bg-hover hover:scale-105 hover:shadow-lg hover:-translate-y-2 hover:text-background
       transition-all duration-300 ease-in-out"
       onClick={onClick}
@@ -56,7 +56,7 @@ const ProfileCard = ({ onClick }) => {
           className="p-2 bg-red-500 bg-opacity-50 rounded-full hover:bg-opacity-100 transition"
           onClick={handleDelete}
         >
-          <Trash2 className="w-5 h-5 text-white" />
+          <Trash2 className="w-4 h-4 text-white" />
         </button>
       </div>
       <img
@@ -67,19 +67,15 @@ const ProfileCard = ({ onClick }) => {
       <div className="py-4 px-6 flex flex-col justify-center">
         <h1 className="text-xl font-bold underline mb-2">Muhta Nuryadi</h1>
         <div className="flex items-center mb-1">
-          <Phone className="w-5 h-5 mr-2" />
+          <Phone className="w-4 h-4 mr-2" />
           <span>08871165551</span>
         </div>
         <div className="flex items-center mb-1">
-          <MapPin className="w-5 h-5 mr-2" />
+          <MapPin className="w-4 h-4 mr-2" />
           <span>Alamat</span>
         </div>
-        <div className="flex items-center mb-1 text-gray-300 cursor-pointer hover:underline hover:text-highlight">
-          <Clock className="w-5 h-5 mr-2" />
-          <span>Riwayat Perjalanan</span>
-        </div>
         <div className="flex items-center">
-          <Info className="w-5 h-5 mr-2" />
+          <Info className="w-4 h-4 mr-2" />
           <span>Aktif/Tidak Aktif</span>
         </div>
       </div>

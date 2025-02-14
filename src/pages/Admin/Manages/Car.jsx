@@ -39,6 +39,7 @@ function CarPages() {
           <CarCard />
           <CarCard />
           <CarCard />
+          <CarCard />
           </div>
         </div>
       </div>

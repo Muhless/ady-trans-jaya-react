@@ -8,6 +8,7 @@ import CarPages from "../pages/Admin/Manages/Car";
 import CustomerPages from "../pages/Admin/Manages/Customer";
 import HomePages from "../pages/Home";
 import DetailDriverPages from "../pages/Admin/Manages/Driver/DetailDriver";
+import AddDriverPages from "../pages/Admin/Manages/Driver/AddDriver";
 
 function AppRoutes() {
   return (
@@ -17,7 +18,9 @@ function AppRoutes() {
           <Route path="/" element={<HomePages />} />
           {/* driver */}
           <Route path="/manage/driver" element={<DriverPages />} />
+          <Route path="/manage/driver/add" element={<AddDriverPages />} />
           <Route path="/manage/driver/:id" element={<DetailDriverPages />} />
+          {/* customer */}
           <Route path="/manage/customer" element={<CustomerPages />} />
           <Route path="/manage/car" element={<CarPages />} />
           <Route path="/service/rent" element={<RentPages />} />
