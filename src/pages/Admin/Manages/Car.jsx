@@ -13,10 +13,10 @@ function CarPages() {
         />
       </Helmet>
       <div className="container mx-auto grid grid-rows-3 h-full">
-        <div className="grid grid-cols-3 bg-fifth rounded-lg row-span-2 p-10">
+        <div className="grid grid-cols-3 bg-fifth rounded-lg row-span-2 p-10 bg-primary">
           {/*  */}
           <div className="col-span-1 items-center text-center h-auto">
-            <h1 className="text-5xl font-bold">#Honda Brio</h1>
+            <h1 className="text-5xl font-bold text-white">#Honda Brio</h1>
             <div className="flex flex-col w-1/2 bg-white mt-4 text-center rounded-lg mx-auto">
               <h1>Spesifikasi</h1>
               <p>Plat Nomor</p>

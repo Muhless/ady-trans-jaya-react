@@ -1,18 +1,61 @@
-import { Phone, MapPin, Clock, Info, Edit, Trash2 } from "lucide-react";
+import { Phone, MapPin, Clock, Info, Trash2 } from "lucide-react";
+import Swal from "sweetalert2";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const handleDelete = () => {
+  Swal.fire({
+    title: "Yakin ingin menghapus?",
+    text: "Data driver akan dihapus secara permanen!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Ya, Hapus!",
+    cancelButtonText: "Batal",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: "Menghapus...",
+        text: "Harap tunggu",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      setTimeout(() => {
+        Swal.close();
+        Swal.fire("Terhapus!", "Data driver telah dihapus.", "success");
+
+        // Notifikasi tambahan dengan react-toastify
+        toast.success("Data driver berhasil dihapus!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          theme: "colored",
+        });
+      }, 1500);
+    }
+  });
+};
 
 const ProfileCard = ({ onClick }) => {
   return (
     <div
-      className="bg-gray-400 text-white flex flex-row rounded-2xl p-4 shadow-lg relative cursor-pointer 
-      hover:bg-secondary hover:scale-105 hover:shadow-lg hover:-translate-y-2 
+      className="bg-card text-text flex flex-row rounded-2xl p-4 shadow-lg relative cursor-pointer 
+      hover:bg-hover hover:scale-105 hover:shadow-lg hover:-translate-y-2 hover:text-background
       transition-all duration-300 ease-in-out"
       onClick={onClick}
     >
       <div className="absolute top-2 right-2 flex space-x-2">
-        <button className="p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-40 transition">
-          <Edit className="w-5 h-5 text-white" />
-        </button>
-        <button className="p-2 bg-red-500 bg-opacity-80 rounded-full hover:bg-opacity-100 transition">
+        <button
+          className="p-2 bg-red-500 bg-opacity-50 rounded-full hover:bg-opacity-100 transition"
+          onClick={handleDelete}
+        >
           <Trash2 className="w-5 h-5 text-white" />
         </button>
       </div>
@@ -31,7 +74,7 @@ const ProfileCard = ({ onClick }) => {
           <MapPin className="w-5 h-5 mr-2" />
           <span>Alamat</span>
         </div>
-        <div className="flex items-center mb-1 text-gray-300 cursor-pointer hover:underline hover:text-blue-400">
+        <div className="flex items-center mb-1 text-gray-300 cursor-pointer hover:underline hover:text-highlight">
           <Clock className="w-5 h-5 mr-2" />
           <span>Riwayat Perjalanan</span>
         </div>
@@ -40,6 +83,9 @@ const ProfileCard = ({ onClick }) => {
           <span>Aktif/Tidak Aktif</span>
         </div>
       </div>
+
+      {/* ToastContainer untuk menampilkan notifikasi */}
+      <ToastContainer />
     </div>
   );
 };

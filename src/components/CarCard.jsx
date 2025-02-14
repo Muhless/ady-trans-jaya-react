@@ -3,8 +3,8 @@ import React from "react";
 function CarCard() {
   return (
     <div
-      className="bg-fifth rounded-lg p-5 flex flex-col justify-center size-52 mt-5 cursor-pointer 
-      hover:bg-third hover:scale-105 hover:shadow-lg hover:-translate-y-2 
+      className="bg-card text-white rounded-lg p-5 flex flex-col justify-center size-52 mt-5 cursor-pointer 
+      hover:bg-hover hover:scale-105 hover:shadow-lg hover:-translate-y-2 
       transition-all duration-300 ease-in-out"
     >
       <h1 className="font-bold capitalize tracking-wider">Honda Brio</h1>

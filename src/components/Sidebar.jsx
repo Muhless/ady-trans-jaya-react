@@ -19,14 +19,14 @@ const Sidebar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="h-screen fixed top-20 bg-white w-64 text-black flex flex-col left-0 bottom-0 border-black">
+    <div className="h-screen border- fixed pt-20 bg-background w-64 text-text flex flex-col left-0 bottom-0 border-border">
       <nav className="flex flex-col space-y-2 p-4">
         <Link
           to="/"
           className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/")
-              ? "bg-secondary text-white"
-              : "hover:bg-secondary hover:text-white"
+              ? "bg-hover text-white"
+              : "hover:bg-hover hover:text-white"
           }`}
         >
           <Home size={17} />
@@ -38,8 +38,8 @@ const Sidebar = () => {
           to="/manage/driver"
           className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/manage/driver")
-              ? "bg-secondary text-white"
-              : "hover:bg-secondary hover:text-white"
+              ? "bg-hover text-white"
+              : "hover:bg-hover hover:text-white"
           }`}
         >
           <User size={17} />
@@ -49,8 +49,8 @@ const Sidebar = () => {
           to="/manage/customer"
           className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/manage/customer")
-              ? "bg-secondary text-white"
-              : "hover:bg-secondary hover:text-white"
+              ? "bg-hover text-white"
+              : "hover:bg-hover hover:text-white"
           }`}
         >
           <Users size={17} />
@@ -60,8 +60,8 @@ const Sidebar = () => {
           to="/manage/car"
           className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/manage/car")
-              ? "bg-secondary text-white"
-              : "hover:bg-secondary hover:text-white"
+              ? "bg-hover text-white"
+              : "hover:bg-hover hover:text-white"
           }`}
         >
           <CarFront size={17} />
@@ -73,8 +73,8 @@ const Sidebar = () => {
           to="/service/rent"
           className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/service/rent")
-              ? "bg-secondary text-white"
-              : "hover:bg-secondary hover:text-white"
+              ? "bg-hover text-white"
+              : "hover:bg-hover hover:text-white"
           }`}
         >
           <Car size={17} />
@@ -84,8 +84,8 @@ const Sidebar = () => {
           to="/service/delivery"
           className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/service/delivery")
-              ? "bg-secondary text-white"
-              : "hover:bg-secondary hover:text-white"
+              ? "bg-hover text-white"
+              : "hover:bg-hover hover:text-white"
           }`}
         >
           <Truck size={17} />
@@ -96,8 +96,8 @@ const Sidebar = () => {
           to="/reports/rental"
           className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/reports/rental")
-              ? "bg-secondary text-white"
-              : "hover:bg-secondary hover:text-white"
+              ? "bg-hover text-white"
+              : "hover:bg-hover hover:text-white"
           }`}
         >
           <LucideNotebookText size={17} />
@@ -107,8 +107,8 @@ const Sidebar = () => {
           to="/reports/delivery"
           className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/reports/delivery")
-              ? "bg-secondary text-white"
-              : "hover:bg-secondary hover:text-white"
+              ? "bg-hover text-white"
+              : "hover:bg-hover hover:text-white"
           }`}
         >
           <NotepadTextIcon size={17} />
@@ -118,8 +118,8 @@ const Sidebar = () => {
           to="/reports/finance"
           className={`p-3 rounded flex items-center space-x-2 ${
             isActive("/reports/finance")
-              ? "bg-secondary text-white"
-              : "hover:bg-secondary hover:text-white"
+              ? "bg-hover text-white"
+              : "hover:bg-hover hover:text-white"
           }`}
         >
           <ChartSpline size={17} />

@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import Sidebar from "./components/Sidebar";
+import Sidebar from "./components/sidebar";
 
 const Layout = () => {
   return (
@@ -9,7 +9,7 @@ const Layout = () => {
       <Navbar />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-6 bg-white overflow-auto ml-64">
+        <main className="flex-1 p-6 bg-background overflow-auto ml-64">
           <Outlet /> {/* Menampilkan halaman sesuai rute */}
         </main>
       </div>

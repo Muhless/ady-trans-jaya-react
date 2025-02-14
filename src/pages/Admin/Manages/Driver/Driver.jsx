@@ -9,7 +9,7 @@ function DriverPages() {
     navigate("/manage/driver/${driverId}");
   };
   return (
-    <>
+    <div className="h-screen">
       <Helmet>
         <title>Halaman Daftar Pengemudi</title>
         <meta
@@ -17,15 +17,14 @@ function DriverPages() {
           content="Ini adalah halaman kelola pengemudi"
         />
       </Helmet>
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-3 gap-5">
         {[1, 2, 3, 4].map((id) => (
           <ProfileCard key={id} onClick={() => handleCardClick(id)} />
         ))}
         <ProfileCard />
         <ProfileCard />
-        <ProfileCard />
       </div>
-    </>
+    </div>
   );
 }
 
