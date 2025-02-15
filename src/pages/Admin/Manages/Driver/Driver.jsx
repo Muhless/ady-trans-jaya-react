@@ -1,8 +1,8 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import ProfileCard from "../../../../components/ProfileCard";
 import { Link, useNavigate } from "react-router-dom";
-import AddDriverCard from "../../../../components/AddDriverCard";
+import ProfileCard from "../../../../components/Card/ProfileCard";
+import AddDriverCard from "../../../../components/Card/AddDriverCard";
 
 function DriverPages() {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ function DriverPages() {
       </Helmet>
       <div className="flex-1 ">
         <div className="grid grid-cols-3 gap-5">
-          <Link to={'/manage/driver/add'} >
+          <Link to={"/manage/driver/add"}>
             <AddDriverCard />
           </Link>
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((id) => (

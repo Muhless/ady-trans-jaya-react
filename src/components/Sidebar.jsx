@@ -46,12 +46,12 @@ const Sidebar = () => {
         ))}
       </nav>
 
-      <div className="p-4">
+      {/* <div className="p-4">
         <button className="w-full p-3 rounded hover:bg-red-600 hover:text-white flex items-center space-x-2">
           <LogOut size={17} />
           <span className="text-sm">Logout</span>
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

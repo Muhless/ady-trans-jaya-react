@@ -75,7 +75,7 @@ function DeliveryPages() {
               </span>
               <input
                 type="text"
-                className="pl-10 bg-primary text-gray-500 text-sm py-2 px-5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="pl-10 bg-card text-gray-500 text-sm py-2 px-5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="cari data..."
               />
             </div>
