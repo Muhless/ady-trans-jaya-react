@@ -9,7 +9,7 @@ const Layout = () => {
       <Navbar />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-6 bg-background h-full ml-64">
+        <main className="flex-1 p-6 bg-background ml-64">
           <Outlet /> {/* Menampilkan halaman sesuai rute */}
         </main>
       </div>

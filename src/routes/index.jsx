@@ -1,14 +1,14 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "../layouts";
-import DriverPages from "../pages/Admin/Manages/Driver/Driver";
 import DeliveryPages from "../pages/Admin/Services/Delivery";
-import RentPages from "../pages/Admin/Services/Rent";
+import RentPages from "../pages/Admin/Rent";
 import CarPages from "../pages/Admin/Manages/Car";
 import CustomerPages from "../pages/Admin/Manages/Customer";
 import HomePages from "../pages/Home";
-import DetailDriverPages from "../pages/Admin/Manages/Driver/DetailDriver";
-import AddDriverPages from "../pages/Admin/Manages/Driver/AddDriver";
+import AddDriverPages from "../pages/Admin/Driver/AddDriver";
+import DetailDriverPages from "../pages/Admin/Driver/DetailDriver";
+import DriverPages from "../pages/Admin/Driver/Driver";
 
 function AppRoutes() {
   return (

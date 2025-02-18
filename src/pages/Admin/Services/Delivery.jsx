@@ -1,6 +1,7 @@
 import { Ellipsis, Search, SearchCheck } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import DeliveryCard from "../../../components/Card/DeliveryCard";
 
 function DeliveryPages() {
   const [openDropdown, setOpenDropdown] = useState(false);
@@ -24,44 +25,12 @@ function DeliveryPages() {
         <title>Pengiriman</title>
         <meta name="description" content="Ini adalah halaman utama" />
       </Helmet>
-      <div className="container mx-auto">
+      <div className="bg-card rounded-xl p-5">
         <div className="flex flex-row gap-3">
-          <div className="grid grid-cols-3 h-full w-full">
-            <div className="bg-third flex flex-row items-center justify-center p-1">
-              <img
-                src="/assets/images/home.png"
-                alt="menunggu persetujuan"
-                className="size-20"
-              />
-              <div className="flex flex-col items-center">
-                <span>Menunggu</span>
-                <span>Persetujuan</span>
-                <span className="text-4xl">4</span>
-              </div>
-            </div>
-            <div className="bg-blue-400 flex flex-row items-center justify-center">
-              <img
-                src="/assets/images/home.png"
-                alt="menunggu persetujuan"
-                className="size-20"
-              />
-              <div className="flex flex-col items-center">
-                <span>Sedang</span>
-                <span>Berlangsung</span>
-                <span className="text-4xl">4</span>
-              </div>
-            </div>
-            <div className="bg-yellow-400 items-center flex flex-row justify-center">
-              <img
-                src="/assets/images/home.png"
-                alt="menunggu persetujuan"
-                className="size-20"
-              />
-              <div className="flex flex-col items-center">
-                <span>Selesai</span>
-                <span className="text-4xl">4</span>
-              </div>
-            </div>
+          <div className="grid grid-cols-3 h-full w-full gap-3">
+            <DeliveryCard />
+            <DeliveryCard />
+            <DeliveryCard />
           </div>
         </div>
         <div className="col-span-3 mt-5">
@@ -80,9 +49,9 @@ function DeliveryPages() {
               />
             </div>
           </div>
-          <table className="w-full text-black mt-5 rounded-lg text-sm bg-primary">
+          <table className="w-full mt-5 rounded-lg text-sm bg-primary">
             <thead>
-              <tr>
+              <tr className="text-card">
                 <th className="px-5 border-y">No</th>
                 <th className="px-5 border-y">Nama</th>
                 <th className="px-5 border-y">Plat Nomor</th>

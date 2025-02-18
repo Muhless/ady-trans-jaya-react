@@ -29,7 +29,7 @@ const Sidebar = () => {
 
   return (
     <div className="h-screen border-r fixed pt-20 bg-card w-64 text-text flex flex-col left-0 bottom-0 border-border">
-      <nav className="flex-1 flex flex-col space-y-2 p-4">
+      <nav className="flex-1 flex flex-col space-y-4 p-4">
         {menuItems.map(({ to, label, icon }) => (
           <Link
             key={to}
