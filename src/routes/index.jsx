@@ -3,12 +3,12 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "../layouts";
 import DeliveryPages from "../pages/Admin/Services/Delivery";
 import RentPages from "../pages/Admin/Rent";
-import CarPages from "../pages/Admin/Manages/Car";
-import CustomerPages from "../pages/Admin/Manages/Customer";
 import HomePages from "../pages/Home";
 import AddDriverPages from "../pages/Admin/Driver/AddDriver";
 import DetailDriverPages from "../pages/Admin/Driver/DetailDriver";
 import DriverPages from "../pages/Admin/Driver/Driver";
+import CarPages from "../pages/Admin/Car/Index";
+import CustomerPages from "../pages/Admin/Car/Customer";
 
 function AppRoutes() {
   return (
@@ -21,8 +21,8 @@ function AppRoutes() {
           <Route path="/manage/driver/add" element={<AddDriverPages />} />
           <Route path="/manage/driver/:id" element={<DetailDriverPages />} />
           {/* customer */}
-          <Route path="/manage/customer" element={<CustomerPages />} />
-          <Route path="/manage/car" element={<CarPages />} />
+          <Route path="/customer" element={<CustomerPages />} />
+          <Route path="/car" element={<CarPages />} />
           <Route path="/service/rent" element={<RentPages />} />
           <Route path="/service/delivery" element={<DeliveryPages />} />
         </Route>

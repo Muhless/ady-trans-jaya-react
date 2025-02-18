@@ -3,7 +3,7 @@ import React from "react";
 function CarCard() {
   return (
     <div
-      className="bg-card text-text hover:text-card rounded-lg p-5 flex flex-col justify-center mt-5 cursor-pointer 
+      className="bg-card shadow-lg text-text hover:text-card rounded-lg p-5 mb-5 flex flex-col justify-center cursor-pointer 
       hover:bg-hover hover:scale-105 hover:shadow-lg hover:-translate-y-2 
       transition-all duration-300 ease-in-out"
     >
@@ -15,7 +15,7 @@ function CarCard() {
           className="h-32 w-auto object-contain"
         />
       </div>
-      <p className="text-end">Tersedia</p>
+      <p className="text-end">2 Mobil</p>
     </div>
   );
 }

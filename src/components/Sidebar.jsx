@@ -17,9 +17,9 @@ const Sidebar = () => {
   const menuItems = useMemo(
     () => [
       { to: "/", label: "Halaman Awal", icon: <Home size={17} /> },
-      { to: "/manage/car", label: "Kendaraan", icon: <CarFront size={17} /> },
+      { to: "/car", label: "Kendaraan", icon: <CarFront size={17} /> },
       { to: "/manage/driver", label: "Pengemudi", icon: <User size={17} /> },
-      { to: "/manage/customer", label: "Pelanggan", icon: <Users size={17} /> },
+      { to: "/customer", label: "Pelanggan", icon: <Users size={17} /> },
       { to: "/service/rent", label: "Rental", icon: <Car size={17} /> },
       { to: "/service/delivery", label: "Pengiriman", icon: <Truck size={17} /> },
       { to: "/reports/finance", label: "Transaksi", icon: <ChartSpline size={17} /> },
