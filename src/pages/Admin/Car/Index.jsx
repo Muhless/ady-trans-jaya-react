@@ -21,19 +21,19 @@ function CarPages() {
           content="Ini adalah halaman kelola data mobil"
         />
       </Helmet>
-      <div className="bg-card rounded-xl p-5">
+      <div className="p-5 bg-card rounded-xl">
         Daftar Mobil
         <div className="flex justify-center gap-3">
           {carTypes.map((type, index) => (
             <div
               key={index}
-              className="bg-card text-text h-8 flex items-center rounded-xl justify-center w-44 cursor-pointer border border-black hover:bg-text hover:text-card  hover:transition-all ease-in-out hover:duration-300"
+              className="flex items-center justify-center h-8 ease-in-out border border-black cursor-pointer bg-card text-text rounded-xl w-44 hover:bg-text hover:text-card hover:transition-all hover:duration-300"
             >
               <h1>{type}</h1>
             </div>
           ))}
         </div>
-        <div className="flex justify-between mt-10">
+        <div className="grid grid-cols-2 gap-3 mt-10 ">
           <CarCard />
           <CarCard />
           <CarCard />

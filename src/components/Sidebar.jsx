@@ -21,15 +21,23 @@ const Sidebar = () => {
       { to: "/manage/driver", label: "Pengemudi", icon: <User size={17} /> },
       { to: "/customer", label: "Pelanggan", icon: <Users size={17} /> },
       { to: "/service/rent", label: "Rental", icon: <Car size={17} /> },
-      { to: "/service/delivery", label: "Pengiriman", icon: <Truck size={17} /> },
-      { to: "/reports/finance", label: "Transaksi", icon: <ChartSpline size={17} /> },
+      {
+        to: "/service/delivery",
+        label: "Pengiriman",
+        icon: <Truck size={17} />,
+      },
+      {
+        to: "/reports/finance",
+        label: "Transaksi",
+        icon: <ChartSpline size={17} />,
+      },
     ],
     []
   );
 
   return (
-    <div className="h-screen border-r fixed pt-20 bg-card w-64 text-text flex flex-col left-0 bottom-0 border-border">
-      <nav className="flex-1 flex flex-col space-y-4 p-4">
+    <div className="fixed bottom-0 left-0 flex flex-col w-64 h-screen pt-20 border-r bg-card text-text border-border">
+      <nav className="flex flex-col flex-1 p-4 space-y-4">
         {menuItems.map(({ to, label, icon }) => (
           <Link
             key={to}
@@ -47,7 +55,7 @@ const Sidebar = () => {
       </nav>
 
       {/* <div className="p-4">
-        <button className="w-full p-3 rounded hover:bg-red-600 hover:text-white flex items-center space-x-2">
+        <button className="flex items-center w-full p-3 space-x-2 rounded hover:bg-red-600 hover:text-white">
           <LogOut size={17} />
           <span className="text-sm">Logout</span>
         </button>

@@ -3,7 +3,8 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Helmet } from "react-helmet-async";
 
-const MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
+const MAPBOX_ACCESS_TOKEN =
+  "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 const MapContainer = ({ startPoint, endPoint, route, markerRef }) => {
@@ -35,7 +36,10 @@ const MapContainer = ({ startPoint, endPoint, route, markerRef }) => {
         .addTo(mapRef.current);
     }
     if (startPoint && endPoint) {
-      mapRef.current.flyTo({ center: [startPoint.lng, startPoint.lat], zoom: 14 });
+      mapRef.current.flyTo({
+        center: [startPoint.lng, startPoint.lat],
+        zoom: 14,
+      });
     }
   }, [startPoint, endPoint]);
 
@@ -67,5 +71,7 @@ const MapContainer = ({ startPoint, endPoint, route, markerRef }) => {
     }
   }, [route]);
 
-  return <div ref={mapContainerRef} style={{ height: "600px", width: "100%" }} />;
+  return (
+    <div ref={mapContainerRef} style={{ height: "600px", width: "100%" }} />
+  );
 };
