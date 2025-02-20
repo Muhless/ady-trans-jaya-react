@@ -1,23 +1,68 @@
+import { Edit, Trash2Icon } from "lucide-react";
 import React from "react";
+import Swal from "sweetalert2";
 
-function CarCard() {
+const handleDelete = () => {
+  Swal.fire({
+    title: "Yakin ingin menghapus?",
+    text: "Data driver akan dihapus secara permanen!",
+    icon: "warning",
+    showCancelButton: true,
+    cancelButtonColor: "#3085d6",
+    confirmButtonColor: "#d33",
+    cancelButtonText: "Batal",
+    confirmButtonText: "Ya, Hapus!",
+    customClass: {
+      cancelButton: "swal-cancel-left",
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: "Menghapus...",
+        text: "Harap tunggu",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      setTimeout(() => {
+        Swal.close();
+        Swal.fire("Terhapus!", "Data kendaraan telah dihapus.", "success");
+      }, 1500);
+    }
+  });
+};
+
+const CarCard = ({}) => {
   return (
-    <div
-      className="bg-card shadow-lg text-text hover:text-card rounded-lg p-5 mb-5 flex flex-col justify-center cursor-pointer 
-      hover:bg-hover hover:scale-105 hover:shadow-lg hover:-translate-y-2 
-      transition-all duration-300 ease-in-out"
-    >
-      <h1 className="font-bold capitalize tracking-wider">Honda Brio</h1>
-      <div className="flex flex-grow items-center justify-center w-full">
+    <div className="relative grid grid-cols-3 p-5 border rounded-lg shadow-lg cursor-pointer bg-card text-text">
+      <div className="absolute flex gap-1 cursor-pointer top-2 right-4">
+        <button className="p-2 text-white rounded-full opacity-50 bg-primary hover:opacity-100">
+          <Edit size={15} />
+        </button>
+        <button
+          className="p-2 text-white rounded-full opacity-50 bg-merah hover:opacity-100"
+          onClick={handleDelete}
+        >
+          <Trash2Icon size={15} />
+        </button>
+      </div>
+      <div className="flex items-center justify-center flex-grow w-full col-span-2">
         <img
-          src="/assets/images/cars/brio.png"
+          src="/assets/images/cars/truck.png"
           alt="car images"
-          className="h-32 w-auto object-contain"
+          className="object-contain w-auto h-48"
         />
       </div>
-      <p className="text-end">2 Mobil</p>
+      <div className="flex flex-col justify-center">
+        <h1 className="font-bold tracking-wider capitalize">Toyota Pickup</h1>
+        <p className="text-sm">Nomor Plat</p>
+        <p>Harga</p>
+        <p>Tersedia/Tidak Tersedia</p>
+      </div>
     </div>
   );
-}
+};
 
 export default CarCard;

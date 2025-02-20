@@ -1,7 +1,5 @@
-import { Phone, MapPin, Clock, Info, Trash2 } from "lucide-react";
+import { Phone, MapPin, Info, Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const handleDelete = () => {
   Swal.fire({
@@ -27,17 +25,6 @@ const handleDelete = () => {
       setTimeout(() => {
         Swal.close();
         Swal.fire("Terhapus!", "Data driver telah dihapus.", "success");
-
-        // Notifikasi tambahan dengan react-toastify
-        toast.success("Data driver berhasil dihapus!", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          theme: "colored",
-        });
       }, 1500);
     }
   });
@@ -46,14 +33,12 @@ const handleDelete = () => {
 const ProfileCard = ({ onClick }) => {
   return (
     <div
-      className="bg-card text-text text-sm flex flex-row rounded-2xl p-4 shadow-lg relative cursor-pointer 
-      hover:bg-hover hover:scale-105 hover:shadow-lg hover:-translate-y-2 hover:text-background
-      transition-all duration-300 ease-in-out"
+      className="relative flex flex-row p-4 text-sm transition-all duration-300 ease-in-out shadow-lg cursor-pointer bg-card text-text rounded-2xl hover:bg-hover hover:scale-105 hover:shadow-lg hover:-translate-y-2 hover:text-background"
       onClick={onClick}
     >
-      <div className="absolute top-2 right-2 flex space-x-2">
+      <div className="absolute flex space-x-2 top-2 right-2">
         <button
-          className="p-2 bg-red-500 bg-opacity-50 rounded-full hover:bg-opacity-100 transition"
+          className="p-2 transition bg-red-500 bg-opacity-50 rounded-full hover:bg-opacity-100"
           onClick={handleDelete}
         >
           <Trash2 className="w-4 h-4 text-white" />
@@ -62,10 +47,10 @@ const ProfileCard = ({ onClick }) => {
       <img
         src="/assets/images/profile/1.jpg"
         alt="Profile"
-        className="w-36 h-44 rounded-2xl object-cover shadow-md"
+        className="object-cover shadow-md w-36 h-44 rounded-2xl"
       />
-      <div className="py-4 px-6 flex flex-col justify-center">
-        <h1 className="text-xl font-bold underline mb-2">Muhta Nuryadi</h1>
+      <div className="flex flex-col justify-center px-6 py-4">
+        <h1 className="mb-2 text-xl font-bold underline">Muhta Nuryadi</h1>
         <div className="flex items-center mb-1">
           <Phone className="w-4 h-4 mr-2" />
           <span>08871165551</span>
