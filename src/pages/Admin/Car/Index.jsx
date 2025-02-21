@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import CarCard from "../../../components/Card/CarCard";
-import ListCarCard from "../../../components/Card/ListCarCard";
 
 const carTypes = [
   "Semua",
@@ -13,6 +12,8 @@ const carTypes = [
 ];
 
 function CarPages() {
+  const [selectedType, setSelectedType] = useState("Semua");
+
   return (
     <>
       <Helmet>
@@ -23,12 +24,17 @@ function CarPages() {
         />
       </Helmet>
       <div className="p-5 bg-card rounded-xl">
-        <h1 className="mb-5 text-xl font-bold">Daftar Mobil</h1>
+        <h1 className="mb-5 text-2xl font-bold">Daftar Kendaraan</h1>
         <div className="flex justify-center gap-2">
           {carTypes.map((type, index) => (
             <div
               key={index}
-              className="flex items-center justify-center w-40 h-8 ease-in-out border border-black cursor-pointer bg-card text-text rounded-xl hover:bg-text hover:text-card hover:transition-all hover:duration-300"
+              className={`flex items-center justify-center text-sm ease-in-out border border-black cursor-pointer w-36 h-7 rounded-xl transition-all duration-300 ${
+                selectedType === type
+                  ? "bg-text text-card"
+                  : "bg-card text-text hover:bg-text hover:text-card"
+              }`}
+              onClick={() => setSelectedType(type)}
             >
               <h1>{type}</h1>
             </div>

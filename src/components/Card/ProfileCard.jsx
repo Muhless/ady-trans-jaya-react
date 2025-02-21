@@ -64,9 +64,6 @@ const ProfileCard = ({ onClick }) => {
           <span>Aktif/Tidak Aktif</span>
         </div>
       </div>
-
-      {/* ToastContainer untuk menampilkan notifikasi */}
-      <ToastContainer />
     </div>
   );
 };
