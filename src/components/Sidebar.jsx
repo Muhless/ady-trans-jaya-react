@@ -36,7 +36,19 @@ const Sidebar = () => {
   );
 
   return (
-    <div className="fixed bottom-0 left-0 flex flex-col w-64 h-screen pt-20 border-r bg-card text-text border-border">
+    <div className="fixed bottom-0 left-0 flex flex-col w-64 h-screen pt-6 text-white border-r bg-sidebar border-border">
+      <div className="flex items-center justify-center mb-5">
+        <div className="p-1 bg-white rounded-lg shadow-md cursor-pointer">
+          <img
+            src="/assets/images/logo.png"
+            alt="Ady Trans Jaya"
+            className="w-12 h-auto"
+          />
+        </div>
+        <h1 className="ml-4 text-lg font-semibold text-white">
+          Ady Trans Jaya
+        </h1>
+      </div>
       <nav className="flex flex-col flex-1 p-4 space-y-4">
         {menuItems.map(({ to, label, icon }) => (
           <Link

@@ -5,11 +5,11 @@ import Sidebar from "./components/Sidebar";
 
 const Layout = () => {
   return (
-    <div>
-      <Navbar />
-      <div className="flex">
-        <Sidebar />
-        <main className="flex-1 p-6 ml-64 bg-background">
+    <div className="flex">
+      <Sidebar />
+      <div className="flex flex-col flex-1 ml-64">
+        <Navbar />
+        <main className="p-6 flex-1 bg-background min-h-screen">
           <Outlet />
         </main>
       </div>
