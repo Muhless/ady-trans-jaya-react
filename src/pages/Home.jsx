@@ -1,6 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import CardHome from "../components/Card/CardHome";
+import DashboardCard from "../components/dashboard/DashboardCard";
+import DashboardTable from "../components/dashboard/DashboardTable";
 
 const HomePages = () => {
   return (
@@ -12,42 +13,35 @@ const HomePages = () => {
       <div className="grid grid-cols-3 gap-3 ">
         <div className="col-span-2">
           <div className="p-5 bg-card rounded-xl">
-            <span className="text-xl font-bold text-background">
+            <span className="text-3xl font-bold text-background font-jakarta">
               Selamat Datang, Admin
             </span>
           </div>
+          {/* <h1 className="py-5 text-2xl">Dashboard</h1> */}
           <div className="grid grid-cols-3 mb-5 text-white gap-4 mt-5">
-            <CardHome
-              title="pengiriman"
+            <DashboardCard
+              title="Pengiriman"
               background="bg-card"
               description={"cihuy"}
             />
-            <CardHome
-              title={"delivery"}
+            <DashboardCard
+              title={"Transaksi"}
               background={"bg-white"}
               description={"cihuy lagi aja"}
               textColor={"text-card"}
             />
-            <CardHome
-              title={"delivery"}
+            <DashboardCard
+              title={"Pendapatan"}
               background={"bg-white"}
               description={"cihuy lagi aja"}
               textColor={"text-card"}
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <CardHome
-              title={"delivery"}
-              background={"bg-white"}
-              description={"cihuy lagi aja"}
-              textColor={"text-card"}
-            />
-            <CardHome
-              title={"delivery"}
-              background={"bg-white"}
-              description={"cihuy lagi aja"}
-              textColor={"text-card"}
-            />
+          <div className="grid grid-cols-2 gap-4 h-full">
+            <div className="border border-black bg-white p-5 rounded-xl">
+              <h1 className="text-xl font-bold mb-3">Pengiriman</h1>
+              <DashboardTable />
+            </div>
           </div>
         </div>
         <div className="border border-card rounded-xl p-5">
