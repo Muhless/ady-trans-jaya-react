@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import CarCard from "../../../components/Card/CarCard";
+import CarCard from "../../components/Card/CarCard";
 
 const carTypes = [
   "Semua",

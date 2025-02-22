@@ -1,8 +1,8 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
-import ProfileCard from "../../../components/Card/ProfileCard";
-import AddDriverCard from "../../../components/Card/AddDriverCard";
+import ProfileCard from "../../components/Card/ProfileCard";
+import AddDriverCard from "../../components/Card/AddDriverCard";
 
 function DriverPages() {
   const navigate = useNavigate();

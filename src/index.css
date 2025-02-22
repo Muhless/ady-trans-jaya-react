@@ -7,8 +7,8 @@
 @import "leaflet/dist/leaflet.css";
 
 * {
-  /* font-family: "plus jakarta sans", "sans-serif"; */
-  font-family: "poppins", "sans-serif";
+  font-family: "plus jakarta sans", "sans-serif";
+  /* font-family: "poppins", "sans-serif"; */
 }
 
 @tailwind base;

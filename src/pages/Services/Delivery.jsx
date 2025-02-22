@@ -1,7 +1,7 @@
 import { Ellipsis, Search, SearchCheck } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import DeliveryCard from "../../../components/Card/DeliveryCard";
+import DeliveryCard from "../../components/Card/DeliveryCard";
 
 function DeliveryPages() {
   const [openDropdown, setOpenDropdown] = useState(false);
