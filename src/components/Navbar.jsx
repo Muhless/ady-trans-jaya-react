@@ -1,17 +1,19 @@
-import { ChevronDown, EllipsisIcon } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import React from "react";
 
 const Navbar = () => {
   return (
-    <nav className="h-16 items-center flex p-6 bg-white shadow-md text-text gap-3 justify-end">
-      <h1 className="text-xl">Admin</h1>
-      <img
-        src="/assets/images/profile/1.jpg"
-        alt=""
-        className="size-11 rounded-full"
-      />
-      <ChevronDown/>
-    </nav>
+    <div className="border-b border-white">
+      <nav className="flex items-center justify-end gap-3 p-6 shadow-md bg-background h-14 text-text">
+        <h1 className="text-lg">Admin</h1>
+        <img
+          src="/assets/images/profile/1.jpg"
+          alt=""
+          className="rounded-full size-10"
+        />
+        <ChevronDown />
+      </nav>
+    </div>
   );
 };
 

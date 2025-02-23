@@ -3,9 +3,9 @@ import React from "react";
 
 const DashboardTable = () => {
   return (
-    <div className="p-5 bg-white rounded-xl">
+    <div className="p-5 bg-secondary rounded-lg mb-3 flex flex-col flex-1 text-white">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-medium">Driver</h1>
+        <h1 className="text-xl font-medium">Transaksi</h1>
           <ArrowUpRightFromSquareIcon size={20} className="text-blue-400 underline cursor-pointer hover:text-highlight"/>
       </div>
       <table className="w-full mt-3 table-fixed">

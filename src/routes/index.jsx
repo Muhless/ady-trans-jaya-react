@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "../layouts";
-import DeliveryPages from "../pages/Services/Delivery";
+import DeliveryPages from "../pages/delivery/Delivery";
 import RentPages from "../pages/Rent";
 import HomePages from "../pages/Home";
 import AddDriverPages from "../pages/Driver/AddDriver";

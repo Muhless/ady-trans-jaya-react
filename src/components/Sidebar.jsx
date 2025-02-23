@@ -28,7 +28,7 @@ const Sidebar = () => {
   );
 
   return (
-    <div className="fixed bottom-0 left-0 flex flex-col w-32 h-screen pt-3 text-text bg-sidebar border-border">
+    <div className="fixed bottom-0 left-0 flex flex-col w-32 h-screen pt-3 text-text bg-secondary">
       <div className="flex flex-col items-center justify-center mt-3 mb-3 cursor-pointer">
         <img
           src="/assets/images/logo.png"
@@ -36,15 +36,15 @@ const Sidebar = () => {
           className="w-24 h-auto"
         />
       </div>
-      <nav className="flex flex-col items-center flex-1 p-4 space-y-3">
+      <nav className="flex flex-col items-center flex-1 p-4 space-y-5">
         {menuItems.map(({ to, icon }) => (
           <Link
             key={to}
             to={to}
             className={`p-3 rounded-full flex items-center ${
               location.pathname === to
-                ? "bg-card text-white"
-                : "hover:bg-hover hover:text-text"
+                ? "bg-biru text-primary"
+                : "hover:bg-merah hover:text-primary"
             }`}
           >
             {icon}

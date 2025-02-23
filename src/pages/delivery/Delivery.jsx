@@ -1,7 +1,8 @@
-import { Ellipsis, Search, SearchCheck } from "lucide-react";
+import { Ellipsis } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import DeliveryCard from "../../components/Card/DeliveryCard";
+import SearchInput from "../../components/Search";
 
 function DeliveryPages() {
   const [openDropdown, setOpenDropdown] = useState(false);
@@ -38,16 +39,7 @@ function DeliveryPages() {
             <h1 className="text-black font-bold text-xl">
               Menunggu Persetujuan
             </h1>
-            <div className="relative ">
-              <span className="absolute inset-y-0 left-3 flex items-center text-gray-500">
-                <Search className="text-gray-400" />
-              </span>
-              <input
-                type="text"
-                className="pl-10 bg-card text-gray-500 text-sm py-2 px-5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="cari data..."
-              />
-            </div>
+            <SearchInput />
           </div>
           <table className="w-full mt-5 rounded-lg text-sm bg-primary">
             <thead>

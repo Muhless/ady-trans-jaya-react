@@ -33,7 +33,7 @@ const handleDelete = () => {
 const ProfileCard = ({ onClick }) => {
   return (
     <div
-      className="relative flex flex-row p-4 text-sm transition-all duration-300 ease-in-out shadow-lg cursor-pointer bg-card text-text rounded-2xl hover:bg-hover hover:scale-105 hover:shadow-lg hover:-translate-y-2 hover:text-background"
+      className="relative flex flex-row p-4 text-sm transition-all duration-300 ease-in-out shadow-lg cursor-pointer bg-secondary text-text rounded-2xl hover:bg-hover hover:scale-105 hover:shadow-lg hover:-translate-y-2 hover:text-background"
       onClick={onClick}
     >
       <div className="absolute flex space-x-2 top-2 right-2">

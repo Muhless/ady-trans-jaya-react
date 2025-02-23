@@ -36,7 +36,7 @@ const handleDelete = () => {
 
 const CarCard = ({}) => {
   return (
-    <div className="relative grid grid-cols-3 p-5 border rounded-lg shadow-lg cursor-pointer bg-card text-text">
+    <div className="relative grid grid-cols-3 p-5 rounded-lg cursor-pointer bg-secondary text-text">
       <div className="absolute flex gap-1 cursor-pointer top-2 right-4">
         <button className="p-2 text-white rounded-full opacity-50 bg-primary hover:opacity-100">
           <Edit size={15} />
