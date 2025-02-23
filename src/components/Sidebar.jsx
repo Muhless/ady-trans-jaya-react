@@ -28,15 +28,15 @@ const Sidebar = () => {
   );
 
   return (
-    <div className="fixed bottom-0 left-0 flex flex-col w-32  h-screen pt-3 text-text border-r bg-sidebar border-border">
-      <div className="flex flex-col items-center justify-center mb-3 cursor-pointer mt-3">
+    <div className="fixed bottom-0 left-0 flex flex-col w-32 h-screen pt-3 text-text bg-sidebar border-border">
+      <div className="flex flex-col items-center justify-center mt-3 mb-3 cursor-pointer">
         <img
           src="/assets/images/logo.png"
           alt="Ady Trans Jaya"
           className="w-24 h-auto"
         />
       </div>
-      <nav className="flex flex-col flex-1 p-4 space-y-3 items-center">
+      <nav className="flex flex-col items-center flex-1 p-4 space-y-3">
         {menuItems.map(({ to, icon }) => (
           <Link
             key={to}
