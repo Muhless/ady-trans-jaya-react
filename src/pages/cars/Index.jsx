@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import CarCard from "../../components/Card/CarCard";
+import CarCard from "../../components/card/CarCard";
 import SearchInput from "../../components/Search";
 import { Plus, PlusCircle } from "lucide-react";
 import CarAddModal from "../../components/car/CarAddModal";
@@ -32,7 +32,7 @@ function CarPages() {
         <div className="flex justify-between items-center">
           <div
             className="bg-biru text-primary h-9 flex items-center gap-2 px-4 rounded-lg cursor-pointer hover:bg-merah"
-            onClick={()=>setIsModalOpen(true)}
+            onClick={() => setIsModalOpen(true)}
           >
             <h1>Tambah Kendaraan</h1>
             <PlusCircle />
@@ -61,7 +61,11 @@ function CarPages() {
           <CarCard />
         </div>
       </div>
-      <CarAddModal isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)} carTypes={carTypes}/>
+      <CarAddModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        carTypes={carTypes}
+      />
     </>
   );
 }

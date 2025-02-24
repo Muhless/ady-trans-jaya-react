@@ -3,7 +3,6 @@ import { Helmet } from "react-helmet-async";
 import DashboardCard from "../components/dashboard/DashboardCard";
 import DashboardTable from "../components/dashboard/DashboardTable";
 import DashboardGrafik from "../components/dashboard/DashboardGrafik";
-import DashboardRight from "../components/dashboard/DashboardRight";
 
 const HomePages = () => {
   return (

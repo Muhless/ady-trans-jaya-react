@@ -33,23 +33,15 @@ const handleDelete = () => {
 const ProfileCard = ({ onClick }) => {
   return (
     <div
-      className="relative flex flex-row p-4 text-sm transition-all duration-300 ease-in-out shadow-lg cursor-pointer bg-secondary text-text rounded-2xl hover:bg-hover hover:scale-105 hover:shadow-lg hover:-translate-y-2 hover:text-background"
+      className="relative flex flex-row p-4 items-center transition-all duration-300 ease-in-out shadow-lg cursor-pointer bg-secondary text-text rounded-lg hover:bg-hover hover:scale-105 hover:shadow-lg hover:-translate-y-2 hover:text-background mb-5"
       onClick={onClick}
     >
-      <div className="absolute flex space-x-2 top-2 right-2">
-        <button
-          className="p-2 transition bg-red-500 bg-opacity-50 rounded-full hover:bg-opacity-100"
-          onClick={handleDelete}
-        >
-          <Trash2 className="w-4 h-4 text-white" />
-        </button>
-      </div>
       <img
         src="/assets/images/profile/1.jpg"
         alt="Profile"
-        className="object-cover shadow-md w-36 h-44 rounded-2xl"
+        className="object-cover shadow-md w-32 h-32 rounded-lg"
       />
-      <div className="flex flex-col justify-center px-6 py-4">
+      <div className="flex flex-col justify-center px-6">
         <h1 className="mb-2 text-xl font-bold underline">Muhta Nuryadi</h1>
         <div className="flex items-center mb-1">
           <Phone className="w-4 h-4 mr-2" />

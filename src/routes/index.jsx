@@ -4,12 +4,12 @@ import Layout from "../layouts";
 import DeliveryPages from "../pages/delivery/Delivery";
 import RentPages from "../pages/Rent";
 import HomePages from "../pages/Home";
-import AddDriverPages from "../pages/Driver/AddDriver";
-import DetailDriverPages from "../pages/Driver/DetailDriver";
-import DriverPages from "../pages/Driver/Driver";
-import CarPages from "../pages/Car/Index";
-import CustomerPages from "../pages/Car/Customer";
+import AddDriverPages from "../pages/driver/AddDriver";
+import DetailDriverPages from "../pages/driver/DetailDriver";
+import DriverPages from "../pages/driver/Index";
+import CarPages from "../pages/car/Index";
 import FinancePages from "../pages/finance/Index";
+import CustomerPages from "../pages/customer/Index";
 
 function AppRoutes() {
   return (

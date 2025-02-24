@@ -1,7 +1,7 @@
 import { Ellipsis } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import DeliveryCard from "../../components/Card/DeliveryCard";
+import DeliveryCard from "../../components/card/DeliveryCard";
 import SearchInput from "../../components/Search";
 
 function DeliveryPages() {

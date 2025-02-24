@@ -34,15 +34,23 @@ const handleDelete = () => {
   });
 };
 
-const CarCard = ({}) => {
+const AvailabilityStatus = ({ available }) => {
+  return (
+    <p className={available ? "text-green-500" : "text-red-500"}>
+      {available ? "Tersedia" : "Tidak Tersedia"}
+    </p>
+  );
+};
+
+const CarCard = ({ available }) => {
   return (
     <div className="relative grid grid-cols-3 p-5 rounded-lg cursor-pointer bg-secondary text-text">
       <div className="absolute flex gap-1 cursor-pointer top-2 right-4">
-        <button className="p-2 text-white rounded-full opacity-50 bg-primary hover:opacity-100">
+        <button className="p-2 text-primary rounded-full bg-biru hover:text-text">
           <Edit size={15} />
         </button>
         <button
-          className="p-2 text-white rounded-full opacity-50 bg-merah hover:opacity-100"
+          className="p-2 text-primary rounded-full bg-merah hover:text-text"
           onClick={handleDelete}
         >
           <Trash2Icon size={15} />
@@ -57,9 +65,10 @@ const CarCard = ({}) => {
       </div>
       <div className="flex flex-col justify-center">
         <h1 className="font-bold tracking-wider capitalize">Toyota Pickup</h1>
-        <p className="text-sm">Nomor Plat</p>
+        <p>Jenis Kendaraan</p>
+        <p>Nomor Polisi</p>
         <p>Harga</p>
-        <p>Tersedia/Tidak Tersedia</p>
+        <AvailabilityStatus available={available} />
       </div>
     </div>
   );

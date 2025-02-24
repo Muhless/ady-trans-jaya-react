@@ -1,4 +1,4 @@
-import { User2Icon, UserCircle } from "lucide-react";
+import { User2Icon } from "lucide-react";
 import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
 

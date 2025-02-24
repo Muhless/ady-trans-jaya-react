@@ -8,7 +8,7 @@ function CustomerPages() {
         <title>Halaman Daftar Pelanggan</title>
       </Helmet>
       <div className="rounded-lg bg-card">
-        <div className="col-span-1 h-screen p-5">
+        <div className="col-span-1 h-screen p-5 text-text">
           <h1 className="text-xl font-bold">Daftar Pelanggan</h1>
           <table className="w-full border mt-5">
             <thead>
