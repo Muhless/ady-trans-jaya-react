@@ -1,59 +1,40 @@
-import { Phone, MapPin, Info, Trash2 } from "lucide-react";
-import Swal from "sweetalert2";
+import { Phone, MapPin, Info, Trash2, HistoryIcon, Edit } from "lucide-react";
 
-const handleDelete = () => {
-  Swal.fire({
-    title: "Yakin ingin menghapus?",
-    text: "Data driver akan dihapus secara permanen!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Ya, Hapus!",
-    cancelButtonText: "Batal",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: "Menghapus...",
-        text: "Harap tunggu",
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
-
-      setTimeout(() => {
-        Swal.close();
-        Swal.fire("Terhapus!", "Data driver telah dihapus.", "success");
-      }, 1500);
-    }
-  });
-};
-
-const ProfileCard = ({ onClick }) => {
+const ProfileCard = () => {
   return (
-    <div
-      className="relative flex flex-row p-4 items-center transition-all duration-300 ease-in-out shadow-lg cursor-pointer bg-secondary text-text rounded-lg hover:bg-hover hover:scale-105 hover:shadow-lg hover:-translate-y-2 hover:text-background mb-5"
-      onClick={onClick}
-    >
-      <img
-        src="/assets/images/profile/1.jpg"
-        alt="Profile"
-        className="object-cover shadow-md w-32 h-32 rounded-lg"
-      />
-      <div className="flex flex-col justify-center px-6">
-        <h1 className="mb-2 text-xl font-bold underline">Muhta Nuryadi</h1>
-        <div className="flex items-center mb-1">
-          <Phone className="w-4 h-4 mr-2" />
-          <span>08871165551</span>
+    <div className="relative grid grid-cols-5 p-6 items-center transition-all duration-300 ease-in-out cursor-pointer bg-secondary text-text rounded-lg hover:bg-biru hover:text-primary hover:scale-105">
+      <div className="flex gap-5 items-center">
+        <img
+          src="/assets/images/profile/1.jpg"
+          alt="Profile"
+          className="object-cover shadow-md size-12 rounded-full"
+        />
+        <div>
+          <h1 className="text-xl font-bold">Muhta Nuryadi</h1>
+          <div className="flex items-center">
+            <Phone className="w-4 h-4 mr-1" />
+            <span>08871165551</span>
+          </div>
         </div>
-        <div className="flex items-center mb-1">
-          <MapPin className="w-4 h-4 mr-2" />
-          <span>Alamat</span>
+      </div>
+      <div className="flex items-center mb-1">
+        <MapPin className="w-4 h-4 mr-1" />
+        <span>Alamat</span>
+      </div>
+      <div className="flex items-center">
+        <Info className="w-4 h-4 mr-1" />
+        <span>Tersedia/Tidak Tersedia</span>
+      </div>
+      <div className="flex items-center justify-center hover:underline hover:text-text">
+        <HistoryIcon className="w-4 h-4 mr-1" />
+        <p>Riwayat</p>
+      </div>
+      <div className="flex items-center justify-center gap-4 text-primary">
+        <div className="p-2 bg-kuning rounded-full hover:text-text">
+          <Edit />
         </div>
-        <div className="flex items-center">
-          <Info className="w-4 h-4 mr-2" />
-          <span>Aktif/Tidak Aktif</span>
+        <div className="p-2 bg-merah rounded-full hover:text-text">
+          <Trash2 />
         </div>
       </div>
     </div>

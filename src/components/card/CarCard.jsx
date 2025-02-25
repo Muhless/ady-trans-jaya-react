@@ -46,7 +46,7 @@ const CarCard = ({ available }) => {
   return (
     <div className="relative grid grid-cols-3 p-5 rounded-lg cursor-pointer bg-secondary text-text">
       <div className="absolute flex gap-1 cursor-pointer top-2 right-4">
-        <button className="p-2 text-primary rounded-full bg-biru hover:text-text">
+        <button className="p-2 text-primary rounded-full bg-kuning hover:text-text">
           <Edit size={15} />
         </button>
         <button

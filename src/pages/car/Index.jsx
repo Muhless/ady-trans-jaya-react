@@ -33,7 +33,7 @@ function CarPages() {
           <AddButton
             onClick={() => {
               setIsModalOpen(true);
-            }}
+            }} name={"Kendaraan"}
           />
           <div className="flex justify-center gap-2">
             {carTypes.map((type, index) => (
@@ -59,6 +59,7 @@ function CarPages() {
           <CarCard />
         </div>
       </div>
+      {/* TODO: make root model */}
       <CarAddModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
