@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Home,
-  LogOut,
   Users,
   Truck,
   ChartSpline,
@@ -29,13 +28,15 @@ const Sidebar = () => {
 
   return (
     <div className="fixed bottom-0 left-0 flex flex-col w-32 h-screen pt-3 text-text bg-secondary">
-      <div className="flex flex-col items-center justify-center mt-3 mb-3 cursor-pointer">
-        <img
-          src="/assets/images/logo.png"
-          alt="Ady Trans Jaya"
-          className="w-24 h-auto"
-        />
-      </div>
+      <Link to={"/"}>
+        <div className="flex flex-col items-center justify-center mt-3 mb-3 cursor-pointer">
+          <img
+            src="/assets/images/logo.png"
+            alt="Ady Trans Jaya"
+            className="w-24 h-auto"
+          />
+        </div>
+      </Link>
       <nav className="flex flex-col items-center flex-1 p-4 space-y-5">
         {menuItems.map(({ to, icon }) => (
           <Link

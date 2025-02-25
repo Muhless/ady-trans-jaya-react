@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import CarCard from "../../components/card/CarCard";
 import SearchInput from "../../components/Search";
-import CarAddModal from "../../components/car/CarAddModal";
-import AddButton from "../../components/button/ButtonAdd";
+import CarAddModal from "../../components/Modal";
+import AddButton from "../../components/ButtonAdd";
 
 const carTypes = [
   "Semua",
@@ -33,7 +33,8 @@ function CarPages() {
           <AddButton
             onClick={() => {
               setIsModalOpen(true);
-            }} name={"Kendaraan"}
+            }}
+            name={"Kendaraan"}
           />
           <div className="flex justify-center gap-2">
             {carTypes.map((type, index) => (
@@ -50,7 +51,7 @@ function CarPages() {
               </div>
             ))}
           </div>
-          <SearchInput placeholder="cari kendaraan"/>
+          <SearchInput placeholder="cari kendaraan" />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <CarCard />
@@ -64,6 +65,10 @@ function CarPages() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         carTypes={carTypes}
+        label1={'Nama Kendaraan'}
+        label2={'Nomor Polisi Kendaraan'}
+        label3={'Jenis Kendaraan'}
+        label4={'Harga Sewa'}
       />
     </>
   );

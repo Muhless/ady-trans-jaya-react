@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ProfileCard from "../../components/card/ProfileCard";
-import AddButton from "../../components/button/ButtonAdd";
+import AddButton from "../../components/ButtonAdd";
 import SearchInput from "../../components/Search";
+import CarAddModal from "../../components/Modal";
 
 function DriverPages() {
   const navigate = useNavigate();
@@ -30,6 +31,15 @@ function DriverPages() {
           <ProfileCard key={id} onClick={() => handleCardClick(id)} />
         ))}
       </div>
+      <CarAddModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Pengemudi"
+        label1="Nama Pengemudi"
+        label2="Nomor Telepon"
+        label3="Alamat"
+        label4=""
+      />
     </>
   );
 }
