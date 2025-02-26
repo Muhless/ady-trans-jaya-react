@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import CarCard from "../../components/card/CarCard";
 import SearchInput from "../../components/Search";
-import CarAddModal from "../../components/Modal";
 import AddButton from "../../components/ButtonAdd";
+import Modal from "../../components/Modal";
 
 const carTypes = [
   "Semua",
@@ -60,15 +60,14 @@ function CarPages() {
           <CarCard />
         </div>
       </div>
-      {/* TODO: make root model */}
-      <CarAddModal
+      <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         carTypes={carTypes}
-        label1={'Nama Kendaraan'}
-        label2={'Nomor Polisi Kendaraan'}
-        label3={'Jenis Kendaraan'}
-        label4={'Harga Sewa'}
+        label1={"Nama Kendaraan"}
+        label2={"Nomor Polisi Kendaraan"}
+        label3={"Jenis Kendaraan"}
+        label4={"Harga Sewa"}
       />
     </>
   );

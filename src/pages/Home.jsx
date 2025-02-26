@@ -1,8 +1,8 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import DashboardCard from "../components/dashboard/DashboardCard";
-import DashboardTable from "../components/dashboard/DashboardTable";
 import DashboardGrafik from "../components/dashboard/DashboardGrafik";
+import Table from "../components/Table";
 
 const HomePages = () => {
   return (
@@ -17,7 +17,7 @@ const HomePages = () => {
       <div className="grid grid-cols-3 gap-3 max-h-full">
         <div className="col-span-2 flex flex-col h-full">
           <DashboardGrafik />
-          <DashboardTable />
+          <Table />
         </div>
         <div className="col-span-1">
           <DashboardCard

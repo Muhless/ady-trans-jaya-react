@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import React from "react";
 
-function CarAddModal({
+function Modal({
   isOpen,
   onClose,
   carTypes = [],
@@ -86,4 +86,4 @@ function CarAddModal({
   );
 }
 
-export default CarAddModal;
+export default Modal;
