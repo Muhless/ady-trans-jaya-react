@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import AddButton from "../../components/ButtonAdd";
-import CarAddModal from "../../components/Modal";
 import SearchInput from "../../components/Search";
 import Table from "../../components/Table";
+import Modal from "../../components/Modal";
 
 function CustomerPages() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -23,7 +23,16 @@ function CustomerPages() {
           <Table />
         </div>
       </div>
-      <CarAddModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        label1="Nama Pelanggan"
+        label2="Email"
+        type2="email"
+        label3="Nomor Telepon"
+        type3="number"
+        label4="Alamat"
+      />
     </>
   );
 }

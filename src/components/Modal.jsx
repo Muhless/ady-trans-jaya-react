@@ -8,9 +8,11 @@ function Modal({
   title = "data",
   label1 = "label1",
   label2 = "label2",
+  type2 = "text",
   label3 = "label3",
   type3 = "number",
   label4 = "label4",
+  type4 = "text",
   isSelect = true,
   onSubmit,
 }) {
@@ -41,7 +43,7 @@ function Modal({
             />
             <label className="block mb-2">{label2}</label>
             <input
-              type="text"
+              type={type2}
               className="w-full border rounded p-2 mb-4 focus:outline-blue-400"
               placeholder={`Masukkan ${label2.toLowerCase()}`}
             />
@@ -56,14 +58,14 @@ function Modal({
               </select>
             ) : (
               <input
-                type="text"
+                type={type3}
                 className="w-full border rounded p-2 mb-4 focus:outline-blue-400"
                 placeholder={`Masukkan ${label3.toLowerCase()}`}
               />
             )}
             <label className="block mb-2">{label4}</label>
             <input
-              type={type3}
+              type={type4}
               className="w-full border rounded p-2 mb-4 focus:outline-blue-400"
               placeholder={`Masukkan ${label4.toLowerCase()}`}
             />

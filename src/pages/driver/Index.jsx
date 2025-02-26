@@ -37,7 +37,9 @@ function DriverPages() {
         title="Pengemudi"
         label1="Nama Pengemudi"
         label2="Nomor Telepon"
+        type2="number"
         label3="Alamat"
+        type3="text"
         // TODO: aktif/nonaktif
         label4=""
       />
