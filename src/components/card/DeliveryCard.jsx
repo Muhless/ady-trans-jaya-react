@@ -1,8 +1,8 @@
 import React from "react";
 
-function DeliveryCard() {
+function DeliveryCard({className}) {
   return (
-    <div className="bg-merah flex flex-row items-center justify-center p-1">
+    <div className={`${className} flex flex-row items-center justify-center p-1`}>
       <img
         src="/assets/images/home.png"
         alt="menunggu persetujuan"

@@ -26,6 +26,28 @@ const matches = [
     phone: "089813131",
     address: "Jl. London No.27",
   },
+  {
+    id: "01",
+    name: "Manchester United",
+    email: "cihuy@gmail.com",
+    phone: "089813131",
+    address: "Jl. London No.27",
+  },
+  {
+    id: "02",
+    name: "LIverpoll",
+    email: "cihuy@gmail.com",
+    phone: "089813131",
+    address: "Jl. London No.27",
+  },
+  {
+    id: "03",
+    name: "Chelsea",
+    email: "cihuy@gmail.com",
+    phone: "089813131",
+    address: "Jl. London No.27",
+  },
+  
 ];
 
 const Table = () => {

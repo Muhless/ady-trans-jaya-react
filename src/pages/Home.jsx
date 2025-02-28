@@ -3,13 +3,12 @@ import { Helmet } from "react-helmet-async";
 import DashboardCard from "../components/dashboard/DashboardCard";
 import DashboardGrafik from "../components/dashboard/DashboardGrafik";
 import Table from "../components/Table";
+import Title from "../components/Title";
 
 const HomePages = () => {
   return (
     <>
-      <h1 className="text-4xl font-bold text-text py-5">
-        Selamat Datang, Admin
-      </h1>
+      <Title title={"Selamat Datang, Admin"} />
       <div className="grid grid-cols-3 gap-3 max-h-full">
         <div className="col-span-2 flex flex-col h-full">
           <DashboardGrafik />

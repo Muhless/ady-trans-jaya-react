@@ -4,6 +4,7 @@ import ProfileCard from "../../components/card/ProfileCard";
 import AddButton from "../../components/ButtonAdd";
 import SearchInput from "../../components/Search";
 import Modal from "../../components/Modal";
+import Title from "../../components/Title";
 
 function DriverPages() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function DriverPages() {
 
   return (
     <>
-      <h1 className="text-4xl text-text font-bold py-5">Pengemudi</h1>
+      <Title title={"Pengemudi"} />
       <div className="flex justify-between mb-5">
         <AddButton
           name={"Pengemudi"}

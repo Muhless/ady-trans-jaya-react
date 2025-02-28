@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Helmet } from "react-helmet-async";
 import CarCard from "../../components/card/CarCard";
 import SearchInput from "../../components/Search";
 import AddButton from "../../components/ButtonAdd";
@@ -20,7 +19,7 @@ function CarPages() {
 
   return (
     <>
-      <h1 className="text-text text-4xl font-bold py-5 ">Kendaraan</h1>
+    <title title="Kendaraan"/>
       <div className="bg-background rounded-xl">
         <div className="flex justify-between items-center mb-5">
           <AddButton

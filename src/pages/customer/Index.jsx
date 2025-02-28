@@ -3,12 +3,13 @@ import AddButton from "../../components/ButtonAdd";
 import SearchInput from "../../components/Search";
 import Table from "../../components/Table";
 import Modal from "../../components/Modal";
+import Title from "../../components/Title";
 
 function CustomerPages() {
   const [modalOpen, setModalOpen] = useState(false);
   return (
     <>
-      <h1 className="text-4xl font-bold text-text py-5">Pelanggan</h1>
+     <Title title={'Pelanggan'}/>
       <div className="flex justify-between mb-5">
         <AddButton
           name={"Pelanggan"}
