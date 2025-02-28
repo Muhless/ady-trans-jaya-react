@@ -20,13 +20,6 @@ function CarPages() {
 
   return (
     <>
-      <Helmet>
-        <title>Halaman Kendaraan</title>
-        <meta
-          name="description"
-          content="Ini adalah halaman kelola data mobil"
-        />
-      </Helmet>
       <h1 className="text-text text-4xl font-bold py-5 ">Kendaraan</h1>
       <div className="bg-background rounded-xl">
         <div className="flex justify-between items-center mb-5">

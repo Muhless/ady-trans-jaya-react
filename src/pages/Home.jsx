@@ -7,10 +7,6 @@ import Table from "../components/Table";
 const HomePages = () => {
   return (
     <>
-      <Helmet>
-        <title>Halaman Awal</title>
-        <meta name="description" content="Ini adalah halaman utama" />
-      </Helmet>
       <h1 className="text-4xl font-bold text-text py-5">
         Selamat Datang, Admin
       </h1>

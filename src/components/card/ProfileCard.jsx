@@ -1,4 +1,6 @@
 import { Phone, MapPin, Info, Trash2, HistoryIcon, Edit } from "lucide-react";
+import ButtonEdit from "../ButtonEdit";
+import ButtonDelete from "../ButtonDelete";
 
 const ProfileCard = () => {
   return (
@@ -26,12 +28,8 @@ const ProfileCard = () => {
         <p>Tersedia/Tidak Tersedia</p>
       </div>
       <div className="flex items-center justify-center gap-4 text-primary cursor-pointer">
-        <button className="p-2 bg-kuning rounded-full hover:text-text">
-          <Edit />
-        </button>
-        <div className="p-2 bg-merah rounded-full hover:text-text">
-          <Trash2 />
-        </div>
+        <ButtonEdit />
+        <ButtonDelete />
       </div>
     </div>
   );

@@ -15,15 +15,17 @@ function Modal({
   type4 = "text",
   isSelect = true,
   onSubmit,
+  mode = "add",
+  dataToEdit = null,
 }) {
   if (!isOpen) return null;
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+      <div className="z-50 fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
         <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
           <div className="flex justify-between">
-            <h1 className="font-medium text-lg">Tambah {title}</h1>
+            <h1 className="font-medium text-lg">{mode === 'edit' ? 'add' : 'Tambah Data'}</h1>
             <button onClick={onClose} className="text-text hover:text-merah">
               <X />
             </button>

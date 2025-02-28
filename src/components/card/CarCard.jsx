@@ -1,6 +1,8 @@
 import { Edit, Trash2Icon } from "lucide-react";
 import React from "react";
 import Swal from "sweetalert2";
+import ButtonEdit from "../ButtonEdit";
+import ButtonDelete from "../ButtonDelete";
 
 const handleDelete = () => {
   Swal.fire({
@@ -45,16 +47,9 @@ const AvailabilityStatus = ({ available }) => {
 const CarCard = ({ available }) => {
   return (
     <div className="relative grid grid-cols-3 p-5 rounded-lg cursor-pointer bg-secondary text-text">
-      <div className="absolute flex gap-1 cursor-pointer top-2 right-4">
-        <button className="p-2 text-primary rounded-full bg-kuning hover:text-text">
-          <Edit size={15} />
-        </button>
-        <button
-          className="p-2 text-primary rounded-full bg-merah hover:text-text"
-          onClick={handleDelete}
-        >
-          <Trash2Icon size={15} />
-        </button>
+      <div className="absolute items-center text-center flex gap-1 cursor-pointer top-2 right-4">
+        <ButtonEdit className={'size-4'}/>
+        <ButtonDelete className={'size-4'}/>
       </div>
       <div className="flex items-center justify-center flex-grow w-full col-span-2">
         <img
