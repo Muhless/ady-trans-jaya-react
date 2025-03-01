@@ -3,6 +3,7 @@ import CarCard from "../../components/card/CarCard";
 import SearchInput from "../../components/Search";
 import AddButton from "../../components/ButtonAdd";
 import Modal from "../../components/Modal";
+import Title from "../../components/Title";
 
 const carTypes = [
   "Semua",
@@ -19,7 +20,7 @@ function CarPages() {
 
   return (
     <>
-    <title title="Kendaraan"/>
+    <Title title="Kendaraan"/>
       <div className="bg-background rounded-xl">
         <div className="flex justify-between items-center mb-5">
           <AddButton

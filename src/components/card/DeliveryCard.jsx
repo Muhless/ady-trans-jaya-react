@@ -1,17 +1,17 @@
 import React from "react";
 
-function DeliveryCard({className}) {
+function DeliveryCard({className, title, subTitle}) {
   return (
-    <div className={`${className} flex flex-row items-center justify-center p-1`}>
-      <img
+    <div className={`${className} flex flex-row items-center justify-center p-1 rounded-lg`}>
+      {/* <img
         src="/assets/images/home.png"
         alt="menunggu persetujuan"
         className="size-20"
-      />
+      /> */}
       <div className="flex flex-col items-center">
-        <span>Menunggu</span>
-        <span>Persetujuan</span>
-        <span className="text-4xl">4</span>
+        <p>{title}</p>
+        <p>{subTitle}</p>
+        <p className="text-4xl">4</p>
       </div>
     </div>
   );
