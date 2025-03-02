@@ -24,7 +24,7 @@ function DriverPages() {
             setIsModalOpen(true);
           }}
         />
-        <SearchInput placeholder="cari pengemudi" />
+        <SearchInput placeholder="pengemudi" />
       </div>
       <div className="px-10">
         <Link to={"/driver/add"}></Link>

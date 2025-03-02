@@ -31,6 +31,24 @@ const matches = [
   },
 ];
 
+const onGoing = [
+  {
+    name: "ady",
+    route: "Balaraja-Cangkudu",
+    deadline: "18 oktober 2024 - 21 oktober 2024",
+  },
+  {
+    name: "ady",
+    route: "Balaraja-Cangkudu",
+    deadline: "18 oktober 2024 - 21 oktober 2024",
+  },
+  {
+    name: "ady",
+    route: "Balaraja-Cangkudu",
+    deadline: "18 oktober 2024 - 21 oktober 2024",
+  },
+];
+
 function DeliveryPages() {
   const navigate = useNavigate();
   const handleRowClick = () => {
@@ -60,21 +78,22 @@ function DeliveryPages() {
       <div className="grid grid-cols-3 my-5 gap-5">
         <div className="col-span-2">
           <div className="items-center justify-between mb-5">
-            <SubTitle SubTitle={"Pengiriman Sedang Berlangsung"} />
+            <SubTitle SubTitle={"Sedang Berlangsung"} />
             <div className="flex flex-row justify-between">
               <AddButton name={"Pengiriman"} />
-              <SearchInput />
+              <SearchInput placeholder={'pengiriman'}/>
             </div>
           </div>
-              <Table data={matches} onRowClick={handleRowClick} showActions={true}/>
+          <Table
+            data={matches}
+            onRowClick={handleRowClick}
+            showActions={true}
+          />
         </div>
         <div className="col-span-1">
           <div className="bg-secondary w-full h-full px-5">
-            <SubTitle SubTitle={"Pengiriman Menunggu Persetujuan"} />
-            <Table
-              data={matches}
-              onRowClick={handleRowClick}
-            />
+            <SubTitle SubTitle={"Menunggu Persetujuan"} />
+            <Table data={onGoing} onRowClick={handleRowClick} />
           </div>
         </div>
       </div>

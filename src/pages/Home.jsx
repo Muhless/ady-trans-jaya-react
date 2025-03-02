@@ -1,9 +1,18 @@
 import React from "react";
-import { Helmet } from "react-helmet-async";
 import DashboardCard from "../components/dashboard/DashboardCard";
 import DashboardGrafik from "../components/dashboard/DashboardGrafik";
 import Table from "../components/Table";
 import Title from "../components/Title";
+
+const delivery = [
+  { no: 1, name: "ady", phone: "08871165551", status: "delivery" },
+  { no: 2, name: "ady", phone: "08871165551", status: "delivery" },
+  { no: 3, name: "ady", phone: "08871165551", status: "delivery" },
+  { no: 1, name: "ady", phone: "08871165551", status: "delivery" },
+  { no: 2, name: "ady", phone: "08871165551", status: "delivery" },
+  { no: 3, name: "ady", phone: "08871165551", status: "delivery" },
+  { no: 1, name: "ady", phone: "08871165551", status: "delivery" },
+];
 
 const HomePages = () => {
   return (
@@ -12,7 +21,7 @@ const HomePages = () => {
       <div className="grid grid-cols-3 gap-3 max-h-full">
         <div className="col-span-2 flex flex-col h-full">
           <DashboardGrafik />
-          <Table />
+          <Table data={delivery} />
         </div>
         <div className="col-span-1">
           <DashboardCard

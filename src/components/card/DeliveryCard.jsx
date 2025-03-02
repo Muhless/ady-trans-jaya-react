@@ -9,8 +9,8 @@ function DeliveryCard({className, title, subTitle}) {
         className="size-20"
       /> */}
       <div className="flex flex-col items-center">
-        <p>{title}</p>
-        <p>{subTitle}</p>
+        <p className="font-semibold text-lg">{title}</p>
+        <p className="font-semibold text-lg">{subTitle}</p>
         <p className="text-4xl">4</p>
       </div>
     </div>

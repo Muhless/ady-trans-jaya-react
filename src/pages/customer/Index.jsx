@@ -4,12 +4,41 @@ import SearchInput from "../../components/Search";
 import Table from "../../components/Table";
 import Modal from "../../components/Modal";
 import Title from "../../components/Title";
+import { useNavigate } from "react-router-dom";
+
+const customer = [
+  {
+    no: 1,
+    name: "ady",
+    email: "ady@gmail.com",
+    phone: "08871165551",
+    address: "Jl. Balaraja Kab.Tangerang",
+  },
+  {
+    no: 1,
+    name: "ady",
+    email: "ady@gmail.com",
+    phone: "08871165551",
+    address: "Jl. Balaraja Kab.Tangerang",
+  },
+  {
+    no: 1,
+    name: "ady",
+    email: "ady@gmail.com",
+    phone: "08871165551",
+    address: "Jl. Balaraja Kab.Tangerang",
+  },
+];
 
 function CustomerPages() {
   const [modalOpen, setModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const handleRowClick = () => {
+    navigate(`/customer/${row.id}`);
+  };
   return (
     <>
-     <Title title={'Pelanggan'}/>
+      <Title title={"Pelanggan"} />
       <div className="flex justify-between mb-5">
         <AddButton
           name={"Pelanggan"}
@@ -17,13 +46,9 @@ function CustomerPages() {
             setModalOpen(true);
           }}
         />
-        <SearchInput />
+        <SearchInput placeholder="pelanggan"/>
       </div>
-      <div className="rounded-lg bg-card">
-        <div className="col-span-1 h-screen text-text">
-          <Table />
-        </div>
-      </div>
+          <Table data={customer} onRowClick={handleRowClick} showActions={true}/>
       <Modal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}

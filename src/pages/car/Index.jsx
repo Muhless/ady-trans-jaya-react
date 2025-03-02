@@ -44,7 +44,7 @@ function CarPages() {
               </div>
             ))}
           </div>
-          <SearchInput placeholder="cari kendaraan" />
+          <SearchInput placeholder="kendaraan" />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <CarCard />

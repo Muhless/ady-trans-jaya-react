@@ -1,7 +1,7 @@
 import { Search } from "lucide-react";
 import React from "react";
 
-const SearchInput = ({ placeholder = "cari " }) => {
+const SearchInput = ({ placeholder }) => {
   return (
     <div className="relative">
       <span className="absolute inset-y-0 left-3 flex items-center text-text">
@@ -10,7 +10,7 @@ const SearchInput = ({ placeholder = "cari " }) => {
       <input
         type="text"
         className="pl-10 text-text bg-secondary text-sm py-2 px-5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-biru"
-        placeholder={placeholder}
+        placeholder={`cari ${placeholder}`}
       />
     </div>
   );
