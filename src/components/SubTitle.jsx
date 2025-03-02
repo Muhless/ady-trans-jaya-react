@@ -1,7 +1,7 @@
 import React from "react";
 
-const SubTitle = ({ SubTitle }) => {
-  return <h1 className="text-text font-semibold text-xl mb-5">{SubTitle}</h1>;
+const SubTitle = ({ SubTitle, className }) => {
+  return <h1 className={`${className} text-text font-semibold text-xl`}>{SubTitle}</h1>;
 };
 
 export default SubTitle;

@@ -9,7 +9,7 @@ const SearchInput = ({ placeholder }) => {
       </span>
       <input
         type="text"
-        className="pl-10 text-text bg-secondary text-sm py-2 px-5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-biru"
+        className="pl-10 text-text bg-secondary text-sm py-2 px-5 border focus:border-primary rounded-xl focus:outline-none focus:ring-2 focus:ring-biru"
         placeholder={`cari ${placeholder}`}
       />
     </div>

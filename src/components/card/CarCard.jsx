@@ -48,8 +48,8 @@ const CarCard = ({ available }) => {
   return (
     <div className="z-40 relative grid grid-cols-3 p-5 rounded-lg cursor-pointer bg-secondary text-text">
       <div className="absolute items-center text-center flex gap-1 cursor-pointer top-2 right-4">
-        <ButtonEdit className={'size-4'}/>
-        <ButtonDelete className={'size-4'}/>
+        <ButtonEdit />
+        <ButtonDelete />
       </div>
       <div className="flex items-center justify-center flex-grow w-full col-span-2">
         <img

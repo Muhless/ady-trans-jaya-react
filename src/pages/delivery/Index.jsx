@@ -51,9 +51,13 @@ const onGoing = [
 
 function DeliveryPages() {
   const navigate = useNavigate();
-  const handleRowClick = () => {
+  const handleRowClick = (row) => {
     navigate(`/delivery/${row.id}`);
   };
+
+  const handleAddClick = () => {
+    navigate('/delivery/add')
+  }
 
   return (
     <>
@@ -78,9 +82,9 @@ function DeliveryPages() {
       <div className="grid grid-cols-3 my-5 gap-5">
         <div className="col-span-2">
           <div className="items-center justify-between mb-5">
-            <SubTitle SubTitle={"Sedang Berlangsung"} />
+            <SubTitle SubTitle={"Sedang Berlangsung"} className={'mb-5 mt-3'} />
             <div className="flex flex-row justify-between">
-              <AddButton name={"Pengiriman"} />
+              <AddButton name={"Pengiriman"} onClick={handleAddClick}/>
               <SearchInput placeholder={'pengiriman'}/>
             </div>
           </div>
@@ -91,8 +95,8 @@ function DeliveryPages() {
           />
         </div>
         <div className="col-span-1">
-          <div className="bg-secondary w-full h-full px-5">
-            <SubTitle SubTitle={"Menunggu Persetujuan"} />
+          <div className="bg-secondary w-full h-full">
+            <SubTitle SubTitle={"Menunggu Persetujuan"} className={'p-3'}/>
             <Table data={onGoing} onRowClick={handleRowClick} />
           </div>
         </div>

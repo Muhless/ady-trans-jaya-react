@@ -8,7 +8,7 @@ const ButtonEdit = ({ size, onClick }) => {
   return (
     <>
       <button
-        className="p-3 bg-kuning rounded-full text-primary hover:text-text"
+        className="p-2 bg-kuning rounded-full text-primary hover:text-text"
         onClick={(e) => {
           e.stopPropagation();
           onClick();

@@ -11,6 +11,7 @@ import FinancePages from "../pages/finance/Index";
 import CustomerPages from "../pages/customer/Index";
 import RentalPages from "../pages/rental/Index";
 import DetailDeliveryPages from "../pages/delivery/DetailDelivery";
+import AddDeliveryPages from "../pages/delivery/AddDeliveryPages";
 
 function AppRoutes() {
   return (
@@ -30,6 +31,7 @@ function AppRoutes() {
           <Route path="/rent" element={<RentalPages />} />
           {/* delivery */}
           <Route path="/delivery" element={<DeliveryPages />} />
+          <Route path="/delivery/add" element={<AddDeliveryPages />} />
           <Route path="/delivery/:id" element={<DetailDeliveryPages />} />
           {/* finance */}
           <Route path="/finance" element={<FinancePages />} />
