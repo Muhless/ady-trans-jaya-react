@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Layout from "../layouts";
 import DeliveryPages from "../pages/delivery/Index";
 import HomePages from "../pages/Home";
 import AddDriverPages from "../pages/driver/AddDriver";
@@ -12,6 +11,7 @@ import CustomerPages from "../pages/customer/Index";
 import RentalPages from "../pages/rental/Index";
 import DetailDeliveryPages from "../pages/delivery/DetailDelivery";
 import AddDeliveryPages from "../pages/delivery/AddDeliveryPages";
+import Layout from "../components/Template/layouts";
 
 function AppRoutes() {
   return (

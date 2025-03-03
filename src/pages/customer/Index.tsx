@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import AddButton from "../../components/ButtonAdd";
-import SearchInput from "../../components/Search";
-import Table from "../../components/Table";
-import Modal from "../../components/Modal";
-import Title from "../../components/Title";
+import SearchInput from "../../components/Atom/Search.tsx";
+import Table from "../../components/Molecule/Table.tsx";
+import Modal from "../../components/Molecule/Modal.tsx";
 import { useNavigate } from "react-router-dom";
+import Title from "../../components/Atom/Title.jsx";
+import AddButton from "../../components/Atom/ButtonAdd.tsx";
 
 const customer = [
   {
@@ -46,9 +46,9 @@ function CustomerPages() {
             setModalOpen(true);
           }}
         />
-        <SearchInput placeholder="pelanggan"/>
+        <SearchInput placeholder="pelanggan" />
       </div>
-          <Table data={customer} onRowClick={handleRowClick} showActions={true}/>
+      <Table data={customer} onRowClick={handleRowClick} showActions={true} />
       <Modal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}

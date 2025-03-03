@@ -1,8 +1,8 @@
 import React from "react";
 import DashboardCard from "../components/dashboard/DashboardCard";
 import DashboardGrafik from "../components/dashboard/DashboardGrafik";
-import Table from "../components/Table";
-import Title from "../components/Title";
+import Table from "../components/Molecule/Table.tsx";
+import Title from "../components/Atom/Title";
 
 const delivery = [
   { no: 1, name: "ady", phone: "08871165551", status: "delivery" },

@@ -1,8 +1,13 @@
 import { Edit } from "lucide-react";
 import React, { useState } from "react";
-import Modal from "./Modal";
+import Modal from "../Molecule/Modal";
 
-const ButtonEdit = ({ size, onClick }) => {
+type ButtonEditProps = {
+  size?: number;
+  onClick?: () => void;
+};
+
+const ButtonEdit: React.FC<ButtonEditProps> = ({ size, onClick }) => {
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
@@ -11,7 +16,8 @@ const ButtonEdit = ({ size, onClick }) => {
         className="p-2 bg-kuning rounded-full text-primary hover:text-text"
         onClick={(e) => {
           e.stopPropagation();
-          onClick();
+          setModalOpen(true);
+          if (onClick) onClick();
         }}
       >
         <Edit size={size} />

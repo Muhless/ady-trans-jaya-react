@@ -1,8 +1,16 @@
 import React from "react";
 
-function DeliveryCard({className, title, subTitle}) {
+type DeliveryCardProps = {
+  className: string;
+  title: string;
+  subTitle: string;
+};
+
+const DeliveryCard: React.FC<DeliveryCardProps> = ({ className, title, subTitle }) => {
   return (
-    <div className={`${className} flex flex-row items-center justify-center p-1 rounded-lg`}>
+    <div
+      className={`${className} flex flex-row items-center justify-center p-1 rounded-lg text-primary`}
+    >
       {/* <img
         src="/assets/images/home.png"
         alt="menunggu persetujuan"

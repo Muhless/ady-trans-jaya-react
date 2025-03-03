@@ -1,11 +1,11 @@
-import React from "react";
 import DeliveryCard from "../../components/card/DeliveryCard";
-import SearchInput from "../../components/Search";
-import Title from "../../components/Title";
-import Table from "../../components/Table";
-import AddButton from "../../components/ButtonAdd";
-import SubTitle from "../../components/SubTitle";
+import SearchInput from "../../components/Atom/Search";
+import SubTitle from "../../components/Atom/SubTitle";
 import { useNavigate } from "react-router-dom";
+import React from "react";
+import AddButton from "../../components/Atom/ButtonAdd";
+import Title from "../../components/Atom/Title";
+import Table from "../../components/Molecule/Table.tsx";
 
 const matches = [
   {
@@ -56,8 +56,8 @@ function DeliveryPages() {
   };
 
   const handleAddClick = () => {
-    navigate('/delivery/add')
-  }
+    navigate("/delivery/add");
+  };
 
   return (
     <>
@@ -82,10 +82,10 @@ function DeliveryPages() {
       <div className="grid grid-cols-3 my-5 gap-5">
         <div className="col-span-2">
           <div className="items-center justify-between mb-5">
-            <SubTitle SubTitle={"Sedang Berlangsung"} className={'mb-5 mt-3'} />
+            <SubTitle SubTitle={"Sedang Berlangsung"} className={"mb-5 mt-3"} />
             <div className="flex flex-row justify-between">
-              <AddButton name={"Pengiriman"} onClick={handleAddClick}/>
-              <SearchInput placeholder={'pengiriman'}/>
+              <AddButton name={"Pengiriman"} onClick={handleAddClick} />
+              <SearchInput placeholder={"pengiriman"} />
             </div>
           </div>
           <Table
@@ -96,7 +96,7 @@ function DeliveryPages() {
         </div>
         <div className="col-span-1">
           <div className="bg-secondary w-full h-full">
-            <SubTitle SubTitle={"Menunggu Persetujuan"} className={'p-3'}/>
+            <SubTitle SubTitle={"Menunggu Persetujuan"} className={"p-3"} />
             <Table data={onGoing} onRowClick={handleRowClick} />
           </div>
         </div>

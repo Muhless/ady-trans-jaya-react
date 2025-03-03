@@ -1,10 +1,16 @@
-import { Phone, MapPin, Info, Trash2, HistoryIcon, Edit } from "lucide-react";
-import ButtonEdit from "../ButtonEdit";
-import ButtonDelete from "../ButtonDelete";
+import { Phone, MapPin, Info } from "lucide-react";
+import React from "react";
+import ButtonEdit from "../Atom/ButtonEdit";
+import ButtonDelete from "../Atom/ButtonDelete";
 
-const ProfileCard = () => {
+type ProfileCardProps = {
+  id?: string | number;
+  onClick: (id: string | number) => void;
+};
+
+const ProfileCard: React.FC<ProfileCardProps> = (id, onClick) => {
   return (
-    <div className="relative grid grid-cols-4 p-5 items-center transition-all duration-300 ease-in-out cursor-pointer bg-secondary text-text rounded-lg hover:bg-biru hover:text-primary hover:scale-105 mb-3">
+    <div className="relative grid grid-cols-4 p-5 items-center transition-all duration-300 ease-in-out cursor-pointer bg-secondary text-text rounded-lg hover:bg-biru hover:text-primary hover:scale-105 mb-3" onClick={()=> id && onClick(id)}>
       <div className="flex gap-5 items-center">
         <img
           src="/assets/images/profile/1.jpg"

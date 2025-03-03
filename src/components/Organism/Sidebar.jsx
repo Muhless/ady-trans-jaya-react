@@ -1,4 +1,3 @@
-import React, { useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Home,
@@ -9,6 +8,7 @@ import {
   CarFront,
   Car,
 } from "lucide-react";
+import { useMemo } from "react";
 
 const Sidebar = () => {
   const location = useLocation();

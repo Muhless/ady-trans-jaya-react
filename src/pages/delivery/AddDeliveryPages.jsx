@@ -1,14 +1,15 @@
-import React from "react";
-import Title from "../../components/Title";
-import Label from "../../components/Label";
+import Title from "../../components/Atom/Title";
+import Form from "../../components/Molecule/Form";
 
 function AddDeliveryPages() {
   return (
     <>
       <Title title={"Tambah Pengiriman"} />
-      <div>
-          <Label label={'Nama'}/>
-      </div>
+      <form className="w-1/2">
+        <Form label={"Nama"} type="number" placeholder={'nama'}/>
+        <Form label={"Alamat"} />
+        <Form label={"cihuy"} type="number" />
+      </form>
     </>
   );
 }
