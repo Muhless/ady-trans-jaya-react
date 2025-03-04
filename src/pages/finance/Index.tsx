@@ -1,8 +1,11 @@
 import React from 'react'
+import Title from '../../components/Atom/Title'
 
 function FinancePages() {
   return (
-    <div>FinancePages</div>
+    <>
+    <Title title='Keuangan'/>
+    </>
   )
 }
 

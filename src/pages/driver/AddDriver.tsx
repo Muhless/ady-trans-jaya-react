@@ -1,6 +1,5 @@
 import { User2Icon } from "lucide-react";
 import React, { useState } from "react";
-import { Helmet } from "react-helmet-async";
 
 function AddDriverPages() {
   const [password, setPassword] = useState("");
@@ -17,9 +16,6 @@ function AddDriverPages() {
   };
   return (
     <>
-      <Helmet>
-        <title>Tambah Data Driver</title>
-      </Helmet>
       <div className="h-full">
         <div className="bg-card rounded-lg p-8">
           <h1 className="font-bold text-xl">Tambah Data Driver</h1>
@@ -62,7 +58,6 @@ function AddDriverPages() {
               <div className="flex flex-col gap-2 mt-5 col-span-1">
                 <h1>Alamat</h1>
                 <textarea
-                  type="text"
                   id="alamat"
                   placeholder=""
                   className="border text-gray-500 p-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
