@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Helmet } from "react-helmet-async";
-import CarCard from "../../components/card/CarCard";
-import SearchInput from "../../components/Search";
-import { Plus, PlusCircle } from "lucide-react";
-import CarAddModal from "../../components/car/CarAddModal";
+import { PlusCircle } from "lucide-react";
+import SearchInput from "../../components/Atom/Search";
+import CarCard from "../../components/Molecule/CarCard";
+import Modal from "../../components/Molecule/Modal";
+import Title from "../../components/Atom/Title";
 
 const carTypes = [
   "Semua",
@@ -20,14 +20,7 @@ function CarPages() {
 
   return (
     <>
-      <Helmet>
-        <title>Halaman Kendaraan</title>
-        <meta
-          name="description"
-          content="Ini adalah halaman kelola data mobil"
-        />
-      </Helmet>
-      <h1 className="text-text text-4xl font-bold py-5 ">Kendaraan</h1>
+      <Title title={"Kendaraan"} />
       <div className="bg-background rounded-xl">
         <div className="flex justify-between items-center">
           <div
@@ -61,7 +54,7 @@ function CarPages() {
           <CarCard />
         </div>
       </div>
-      <CarAddModal
+      <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         carTypes={carTypes}

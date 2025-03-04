@@ -5,7 +5,7 @@ import ButtonDelete from "../Atom/ButtonDelete";
 type TableProps = {
   data?: { id: string | number; [key: string]: any }[];
   onRowClick?: (row: any) => void;
-  showActions: boolean;
+  showActions?: boolean;
 };
 
 const Table: React.FC<TableProps> = ({

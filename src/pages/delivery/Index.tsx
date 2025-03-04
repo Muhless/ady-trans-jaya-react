@@ -1,4 +1,3 @@
-import DeliveryCard from "../../components/card/DeliveryCard";
 import SearchInput from "../../components/Atom/Search";
 import SubTitle from "../../components/Atom/SubTitle";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +5,7 @@ import React from "react";
 import AddButton from "../../components/Atom/ButtonAdd";
 import Title from "../../components/Atom/Title";
 import Table from "../../components/Molecule/Table.tsx";
+import DeliveryCard from "../../components/Molecule/DeliveryCard.tsx";
 
 const matches = [
   {
@@ -33,16 +33,19 @@ const matches = [
 
 const onGoing = [
   {
+    id:'1',
     name: "ady",
     route: "Balaraja-Cangkudu",
     deadline: "18 oktober 2024 - 21 oktober 2024",
   },
   {
+    id:'2',
     name: "ady",
     route: "Balaraja-Cangkudu",
     deadline: "18 oktober 2024 - 21 oktober 2024",
   },
   {
+    id:'3',
     name: "ady",
     route: "Balaraja-Cangkudu",
     deadline: "18 oktober 2024 - 21 oktober 2024",

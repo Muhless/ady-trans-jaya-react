@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import ProfileCard from "../../components/card/ProfileCard";
+import ProfileCard from "../../components/Molecule/ProfileCard";
 import SearchInput from "../../components/Atom/Search";
 import Modal from "../../components/Molecule/Modal";
 import Title from "../../components/Atom/Title";

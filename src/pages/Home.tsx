@@ -1,17 +1,17 @@
 import React from "react";
-import DashboardCard from "../components/dashboard/DashboardCard";
-import DashboardGrafik from "../components/dashboard/DashboardGrafik";
+import DashboardGrafik from "../components/Atom/Graphics.tsx";
 import Table from "../components/Molecule/Table.tsx";
 import Title from "../components/Atom/Title";
+import Card from "../components/Molecule/Card.tsx";
 
 const delivery = [
-  { no: 1, name: "ady", phone: "08871165551", status: "delivery" },
-  { no: 2, name: "ady", phone: "08871165551", status: "delivery" },
-  { no: 3, name: "ady", phone: "08871165551", status: "delivery" },
-  { no: 1, name: "ady", phone: "08871165551", status: "delivery" },
-  { no: 2, name: "ady", phone: "08871165551", status: "delivery" },
-  { no: 3, name: "ady", phone: "08871165551", status: "delivery" },
-  { no: 1, name: "ady", phone: "08871165551", status: "delivery" },
+  { id: 1, name: "ady", phone: "08871165551", status: "delivery" },
+  { id: 2, name: "ady", phone: "08871165551", status: "delivery" },
+  { id: 3, name: "ady", phone: "08871165551", status: "delivery" },
+  { id: 1, name: "ady", phone: "08871165551", status: "delivery" },
+  { id: 2, name: "ady", phone: "08871165551", status: "delivery" },
+  { id: 3, name: "ady", phone: "08871165551", status: "delivery" },
+  { id: 1, name: "ady", phone: "08871165551", status: "delivery" },
 ];
 
 const HomePages = () => {
@@ -24,19 +24,19 @@ const HomePages = () => {
           <Table data={delivery} />
         </div>
         <div className="col-span-1">
-          <DashboardCard
+          <Card
             title="Pengiriman"
-            background="bg-merah"
+            classname="bg-merah"
             description={"cihuy"}
           />
-          <DashboardCard
+          <Card
             title={"Transaksi"}
-            background={"bg-kuning"}
+            classname={"bg-kuning"}
             description={"cihuy lagi aja"}
           />
-          <DashboardCard
+          <Card
             title={"Pendapatan"}
-            background={"bg-biru"}
+            classname={"bg-biru"}
             description={"5"}
           />
         </div>

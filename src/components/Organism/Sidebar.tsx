@@ -9,6 +9,7 @@ import {
   Car,
 } from "lucide-react";
 import { useMemo } from "react";
+import React from "react";
 
 const Sidebar = () => {
   const location = useLocation();

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import CarCard from "../../components/card/CarCard";
 import SearchInput from "../../components/Atom/Search";
 import Modal from "../../components/Molecule/Modal";
 import Title from "../../components/Atom/Title";
 import AddButton from "../../components/Atom/ButtonAdd";
+import CarCard from "../../components/Molecule/CarCard";
 
 const carTypes = [
   "Semua",
