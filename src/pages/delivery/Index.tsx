@@ -33,19 +33,19 @@ const matches = [
 
 const onGoing = [
   {
-    id:'1',
+    id: "1",
     name: "ady",
     route: "Balaraja-Cangkudu",
     deadline: "18 oktober 2024 - 21 oktober 2024",
   },
   {
-    id:'2',
+    id: "2",
     name: "ady",
     route: "Balaraja-Cangkudu",
     deadline: "18 oktober 2024 - 21 oktober 2024",
   },
   {
-    id:'3',
+    id: "3",
     name: "ady",
     route: "Balaraja-Cangkudu",
     deadline: "18 oktober 2024 - 21 oktober 2024",
@@ -66,26 +66,14 @@ function DeliveryPages() {
     <>
       <Title title={"Pengiriman"} />
       <div className="grid grid-cols-3 gap-3">
-        <DeliveryCard
-          className={"bg-merah"}
-          title={"Menunggu"}
-          subTitle={"Persetujuan"}
-        />
-        <DeliveryCard
-          className={"bg-kuning"}
-          title={"Sedang"}
-          subTitle={"Berlangsung"}
-        />
-        <DeliveryCard
-          className={"bg-biru"}
-          title={"Sudah"}
-          subTitle={"Disetujui"}
-        />
+        <DeliveryCard className={"bg-merah"} text={"Menunggu Persetujuan"} />
+        <DeliveryCard className={"bg-kuning"} text={"Sedang Berlangsung"} />
+        <DeliveryCard className={"bg-biru"} text={"Sudah Disetujui"} />
       </div>
       <div className="grid grid-cols-3 my-5 gap-5">
         <div className="col-span-2">
           <div className="items-center justify-between mb-5">
-            <SubTitle SubTitle={"Sedang Berlangsung"} className={"mb-5 mt-3"} />
+            <SubTitle subTitle={"Sedang Berlangsung"} className={"mb-5"} />
             <div className="flex flex-row justify-between">
               <AddButton name={"Pengiriman"} onClick={handleAddClick} />
               <SearchInput placeholder={"pengiriman"} />
@@ -98,8 +86,8 @@ function DeliveryPages() {
           />
         </div>
         <div className="col-span-1">
-          <div className="bg-secondary w-full h-full">
-            <SubTitle SubTitle={"Menunggu Persetujuan"} className={"p-3"} />
+          <div className="">
+            <SubTitle subTitle={"Menunggu Persetujuan"} className={"mb-5"} />
             <Table data={onGoing} onRowClick={handleRowClick} />
           </div>
         </div>

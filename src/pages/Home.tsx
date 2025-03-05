@@ -7,8 +7,8 @@ import SubTitle from "../components/Atom/SubTitle.tsx";
 
 const delivery = [
   { id: 1, name: "ady", phone: "08871165551", status: "delivery" },
-  { id: 2, name: "ady", phone: "08871165551", status: "delivery" },
-  { id: 3, name: "ady", phone: "08871165551", status: "delivery" },
+  { id: 2, name: "ady", phone: "08871165551", status: "on delivery" },
+  { id: 3, name: "ady", phone: "08871165551", status: "cancel" },
   { id: 4, name: "ady", phone: "08871165551", status: "delivery" },
   { id: 5, name: "ady", phone: "08871165551", status: "delivery" },
   { id: 6, name: "ady", phone: "08871165551", status: "delivery" },
