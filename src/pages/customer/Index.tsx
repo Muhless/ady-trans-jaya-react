@@ -6,23 +6,30 @@ import { useNavigate } from "react-router-dom";
 import Title from "../../components/Atom/Title.jsx";
 import AddButton from "../../components/Atom/ButtonAdd.tsx";
 
+const modalInput = [
+  { name: "name", label: "Nama", type: "text" },
+  { name: "email", label: "Email", type: "email" },
+  { name: "phone", label: "Nomor HP", type: "number" },
+  { name: "address", label: "Alamat", type: "text" },
+];
+
 const customer = [
   {
-    no: 1,
+    id: 1,
     name: "ady",
     email: "ady@gmail.com",
     phone: "08871165551",
     address: "Jl. Balaraja Kab.Tangerang",
   },
   {
-    no: 1,
+    id: 1,
     name: "ady",
     email: "ady@gmail.com",
     phone: "08871165551",
     address: "Jl. Balaraja Kab.Tangerang",
   },
   {
-    no: 1,
+    id: 1,
     name: "ady",
     email: "ady@gmail.com",
     phone: "08871165551",
@@ -34,7 +41,7 @@ function CustomerPages() {
   const [modalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
   const handleRowClick = () => {
-    navigate(`/customer/${row.id}`);
+    navigate(`/customer/id`);
   };
   return (
     <>
@@ -49,16 +56,7 @@ function CustomerPages() {
         <SearchInput placeholder="pelanggan" />
       </div>
       <Table data={customer} onRowClick={handleRowClick} showActions={true} />
-      <Modal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        label1="Nama Pelanggan"
-        label2="Email"
-        type2="email"
-        label3="Nomor Telepon"
-        type3="number"
-        label4="Alamat"
-      />
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} fields={modalInput} />
     </>
   );
 }

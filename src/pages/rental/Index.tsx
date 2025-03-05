@@ -1,16 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import SearchInput from "../../components/Atom/Search";
 import Title from "../../components/Atom/Title";
 import AddButton from "../../components/Atom/ButtonAdd";
+import Modal from "../../components/Molecule/Modal";
+
+const modalInput = [
+  { name: "name", label: "Nama", type: "text" },
+  { name: "email", label: "Email", type: "email" },
+  { name: "phone", label: "Nomor HP", type: "number" },
+  { name: "address", label: "Alamat", type: "text" },
+];
 
 function RentalPages() {
+  const [modalOpen, setModalOpen] = useState(false);
   return (
     <>
       <Title title={"Rental"} />
       <div className="flex justify-between">
-        <AddButton name={"Rental"} />
+        <AddButton name={"Rental"} onClick={() => setModalOpen(true)} />
         <SearchInput placeholder="rental" />
       </div>
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        fields={modalInput}
+      />
     </>
   );
 }

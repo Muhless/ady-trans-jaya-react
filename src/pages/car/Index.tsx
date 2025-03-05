@@ -14,6 +14,13 @@ const carTypes = [
   "Wingbox",
 ];
 
+const modalInput = [
+  { name: "name", label: "Nama", type: "text" },
+  { name: "email", label: "Email", type: "email" },
+  { name: "type", label: "Tipe", type: "select", options: carTypes },
+  { name: "address", label: "Alamat", type: "text" },
+];
+
 function CarPages() {
   const [selectedType, setSelectedType] = useState("Semua");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -56,11 +63,7 @@ function CarPages() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        carTypes={carTypes}
-        label1={"Nama Kendaraan"}
-        label2={"Nomor Polisi Kendaraan"}
-        label3={"Jenis Kendaraan"}
-        label4={"Harga Sewa"}
+        fields={modalInput}
       />
     </>
   );

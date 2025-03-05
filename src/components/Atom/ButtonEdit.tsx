@@ -22,11 +22,6 @@ const ButtonEdit: React.FC<ButtonEditProps> = ({ size, onClick }) => {
       >
         <Edit size={size} />
       </button>
-      <Modal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        mode="edit"
-      />
     </>
   );
 };

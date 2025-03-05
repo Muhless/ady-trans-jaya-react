@@ -20,7 +20,7 @@ const Table: React.FC<TableProps> = ({
           <tr
             key={row.id}
             onClick={() => onRowClick?.(row)}
-            className="hover:bg-biru hover:text-primary ease-in-out transition-all duration-300 border-b"
+            className="hover:bg-biru hover:text-primary ease-in-out transition-all duration-300"
           >
             {Object.keys(row).map((key) => (
               <td key={key} className="p-4 border-0 ">

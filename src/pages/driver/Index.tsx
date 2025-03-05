@@ -6,6 +6,13 @@ import Modal from "../../components/Molecule/Modal";
 import Title from "../../components/Atom/Title";
 import AddButton from "../../components/Atom/ButtonAdd";
 
+const modalInput = [
+  { name: "name", label: "Nama", type: "text" },
+  { name: "email", label: "Email", type: "email" },
+  { name: "phone", label: "Nomor HP", type: "number" },
+  { name: "address", label: "Alamat", type: "text" },
+];
+
 function DriverPages() {
   const navigate = useNavigate();
   const handleCardClick = (driverId) => {
@@ -35,14 +42,7 @@ function DriverPages() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Pengemudi"
-        label1="Nama Pengemudi"
-        label2="Nomor Telepon"
-        type2="number"
-        label3="Alamat"
-        type3="text"
-        // TODO: aktif/nonaktif
-        label4=""
+        fields={modalInput}
       />
     </>
   );
