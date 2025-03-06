@@ -1,18 +1,17 @@
-import React from "react";
+import React, { Children } from "react";
 
 type CardProps = {
   title?: string;
-  description?: string;
   classname?: string;
+  children?: React.ReactNode;
+  onClick?: () => void;
 };
 
-const Card: React.FC<CardProps> = ({ title, description, classname }) => {
+const Card: React.FC<CardProps> = ({ title, classname, children, onClick }) => {
   return (
-    <div
-      className={`${classname} text-primary rounded-lg p-4 h-56 mb-3`}
-    >
-      <h1 className="text-xl font-medium">{title}</h1>
-      <p className="text-4xl text-center">{description}</p>
+    <div className={`${classname} text-primary rounded-lg p-4 mb-3`}>
+      {title && <h1 className="text-lg font-medium mb-3">{title}</h1>}
+      {children}
     </div>
   );
 };

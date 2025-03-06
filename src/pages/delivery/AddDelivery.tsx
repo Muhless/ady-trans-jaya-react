@@ -9,31 +9,32 @@ function AddDeliveryPages() {
     <>
       <Title title={"Tambah Pengiriman"} />
       <div>
-        <form className="w-full">
-          <Form
-            label={"Customer"}
-            options={[
-              { value: "jakarta", label: "Jakarta" },
-              { value: "bandung", label: "Bandung" },
-              { value: "surabaya", label: "Surabaya" },
-            ]}
-          />
-          <Form label={"Muatan"} />
-          <Form label={"Jumlah"} type="number" />
-          <Form label={"Titik Pengiriman"} type="number" />
-          <Form label={"Tanggal Pengiriman"} />
-          <Form label={"Tenggat Pengiriman"} />
-          <Form
-            label={"Driver"}
-            options={[
-              { value: "agus", label: "agus" },
-              { value: "gunawan", label: "gunawan" },
-              { value: "ino", label: "ino" },
-            ]}
-          />
-          <Form label={"Kendaraan"} type="number" />
-          <Form label={"Total"} type="number" />
-        </form>
+        <Form
+          fields={[
+            {
+              label: "Customer",
+              placeholder:'Pilih customer',
+              options: [
+                { value: "jakarta", label: "Jakarta" },
+                { value: "bandung", label: "Bandung" },
+                { value: "surabaya", label: "Surabaya" },
+              ],
+            },
+            { label: "Muatan", type: "number" },
+            { label: "Jumlah", type: "number" },
+            { label: "Titik Pengiriman", type: "text" },
+            { label: "Tanggal Pengiriman" },
+            { label: "Tenggat Pengiriman" },
+            {
+              label: "Driver",
+              options: [
+                { value: "ady", label: "ady" },
+                { value: "cihuy", label: "cihuy" },
+                { value: "jaya", label: "jaya" },
+              ],
+            },
+          ]}
+        />
       </div>
     </>
   );

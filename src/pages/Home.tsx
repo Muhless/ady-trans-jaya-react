@@ -20,20 +20,17 @@ const HomePages = () => {
       <Title title={"Selamat Datang, Admin"} />
       <div className="grid grid-cols-3 gap-3 max-h-full">
         <div className="col-span-2 flex flex-col">
-          <DashboardGrafik />
-          <div className="bg-secondary p-3 rounded-lg">
-            <SubTitle subTitle={"Pengiriman"} className="mb-3" />
-            <Table data={delivery} />
+          <Card title="Grafik" classname="text-text bg-secondary"></Card>
+          <div className="bg-white p-3 rounded-lg">
+            <Card title="Pengiriman" classname="text-primary">
+              <Table data={delivery} />
+            </Card>
           </div>
         </div>
         <div className="col-span-1">
-          <Card title="Pengiriman" classname="bg-merah" description={"cihuy"} />
-          <Card
-            title={"Transaksi"}
-            classname={"bg-kuning"}
-            description={"cihuy lagi aja"}
-          />
-          <Card title={"Pendapatan"} classname={"bg-biru"} description={"5"} />
+          <Card title="Pengiriman" classname="bg-merah"></Card>
+          <Card title="Pengiriman" classname="bg-biru"></Card>
+          <Card title="Pengiriman" classname="bg-kuning"></Card>
         </div>
       </div>
     </>
