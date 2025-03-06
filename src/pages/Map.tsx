@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { ResetButtonComponent } from "../components/Atom/ResetButton";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
-// Tipe untuk data dari Mapbox API
 interface Place {
   id: string;
   place_name: string;
@@ -47,8 +47,13 @@ const MapPages: React.FC = () => {
     end: mapboxgl.Marker | null;
   }>({ start: null, end: null });
 
-  const [startPoint, setStartPoint] = useState<{ lng: number; lat: number } | null>(null);
-  const [endPoint, setEndPoint] = useState<{ lng: number; lat: number } | null>(null);
+  const [startPoint, setStartPoint] = useState<{
+    lng: number;
+    lat: number;
+  } | null>(null);
+  const [endPoint, setEndPoint] = useState<{ lng: number; lat: number } | null>(
+    null
+  );
   const [route, setRoute] = useState<GeoJSON.LineString | null>(null);
   const [distance, setDistance] = useState<number | null>(null);
   const [duration, setDuration] = useState<number | null>(null);
@@ -62,7 +67,7 @@ const MapPages: React.FC = () => {
       mapRef.current = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: "mapbox://styles/mapbox/streets-v11",
-        center: [106.8456, -6.2088], // Jakarta sebagai default
+        center: [106.8456, -6.2088],
         zoom: 12,
       });
     }
@@ -116,7 +121,9 @@ const MapPages: React.FC = () => {
 
   const handleSelectAddress = (
     place: Place,
-    setPoint: React.Dispatch<React.SetStateAction<{ lng: number; lat: number } | null>>,
+    setPoint: React.Dispatch<
+      React.SetStateAction<{ lng: number; lat: number } | null>
+    >,
     setAddress: React.Dispatch<React.SetStateAction<string>>,
     setSuggestions: React.Dispatch<React.SetStateAction<Place[]>>,
     type: "start" | "end"
@@ -192,17 +199,20 @@ const MapPages: React.FC = () => {
                 key={place.id}
                 className="p-2 hover:bg-gray-200 cursor-pointer"
                 onClick={() =>
-                  handleSelectAddress(place, setStartPoint, setAddress, setStartSuggestions, "start")
+                  handleSelectAddress(
+                    place,
+                    setStartPoint,
+                    setAddress,
+                    setStartSuggestions,
+                    "start"
+                  )
                 }
               >
                 {place.place_name}
               </li>
             ))}
           </ul>
-
-          <button onClick={clearMap} className="p-2 w-full bg-red-500 text-white rounded mt-4">
-            Reset
-          </button>
+          <ResetButtonComponent clearMap={clearMap} />
         </div>
       </div>
     </>

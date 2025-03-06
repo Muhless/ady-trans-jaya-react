@@ -1,15 +1,17 @@
 import React from "react";
-import { useForm } from "react-hook-form";
 
-const MyForm = ({ defaultValues, onSubmit }) => {
-  const { register, handleSubmit } = useForm({ defaultValues });
-
+export const SelectComponent = ({ label, options, onChange }) => {
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input {...register("name", { required: true })} placeholder="Nama" />
-      <button type="submit">Simpan</button>
-    </form>
+    <select
+      className="bg-secondary p-2 rounded-lg"
+      onChange={(e) => onChange(e.target.value)}
+    >
+      <option value="">Pilih {label}</option>
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
   );
 };
-
-export default MyForm;

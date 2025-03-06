@@ -45,15 +45,15 @@ function CustomerPages() {
   };
   return (
     <>
-      <Title title={"Pelanggan"} />
+      <Title title={"Customer"} />
       <div className="flex justify-between mb-5">
         <AddButton
-          name={"Pelanggan"}
+          name={"Customer"}
           onClick={() => {
             setModalOpen(true);
           }}
         />
-        <SearchInput placeholder="pelanggan" />
+        <SearchInput placeholder="customer" />
       </div>
       <Table data={customer} onRowClick={handleRowClick} showActions={true} />
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} fields={modalInput} />
