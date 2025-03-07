@@ -5,6 +5,7 @@ import SearchInput from "../../components/Atom/Search";
 import Modal from "../../components/Molecule/Modal";
 import Title from "../../components/Atom/Title";
 import AddButton from "../../components/Atom/ButtonAdd";
+import { Pagination } from "@mui/material";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },
@@ -20,6 +21,17 @@ function DriverPages() {
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const driversPerPage = 5;
+  const drivers = Array.from({ length: 20 }, (_, i) => i + 1);
+  const pageCount = Math.ceil(drivers.length / driversPerPage);
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+  };
+
+  const offset = currentPage * driversPerPage;
+  const currentDrivers = drivers.slice(offset, offset + driversPerPage);
 
   return (
     <>
@@ -34,10 +46,17 @@ function DriverPages() {
         <SearchInput placeholder="pengemudi" />
       </div>
       <div className="px-10">
-        <Link to={"/driver/add"}></Link>
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((id) => (
+        {currentDrivers.map((id) => (
           <ProfileCard key={id} onClick={() => handleCardClick(id)} />
         ))}
+      </div>
+      <div className="flex justify-center mt-5 text-text">
+        <Pagination
+          count={pageCount}
+          page={currentPage}
+          onChange={handlePageChange}
+          color="primary"
+        />
       </div>
       <Modal
         isOpen={isModalOpen}
