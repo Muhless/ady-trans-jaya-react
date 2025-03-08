@@ -5,6 +5,7 @@ import Modal from "../../components/Molecule/Modal.tsx";
 import { useNavigate } from "react-router-dom";
 import Title from "../../components/Atom/Title.jsx";
 import AddButton from "../../components/Atom/ButtonAdd.tsx";
+import ButtonComponent from "../../components/Atom/Button.tsx";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },
@@ -47,11 +48,10 @@ function CustomerPages() {
     <>
       <Title title={"Customer"} />
       <div className="flex justify-between mb-5">
-        <AddButton
-          name={"Customer"}
-          onClick={() => {
-            setModalOpen(true);
-          }}
+      <ButtonComponent
+          label="Tambah Customer"
+          variant="add"
+          onClick={() => setModalOpen(true)}
         />
         <SearchInput placeholder="customer" />
       </div>

@@ -3,6 +3,7 @@ import SearchInput from "../../components/Atom/Search";
 import Title from "../../components/Atom/Title";
 import AddButton from "../../components/Atom/ButtonAdd";
 import Modal from "../../components/Molecule/Modal";
+import ButtonComponent from "../../components/Atom/Button";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },
@@ -17,7 +18,11 @@ function RentalPages() {
     <>
       <Title title={"Rental"} />
       <div className="flex justify-between">
-        <AddButton name={"Rental"} onClick={() => setModalOpen(true)} />
+      <ButtonComponent
+          label="Tambah Rental"
+          variant="add"
+          onClick={() => setModalOpen(true)}
+        />
         <SearchInput placeholder="rental" />
       </div>
       <Modal

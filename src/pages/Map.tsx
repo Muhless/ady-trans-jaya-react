@@ -176,7 +176,7 @@ const MapPages: React.FC = () => {
         <div
           ref={mapContainerRef}
           style={{
-            height: "680px",
+            height: "500px",
             width: "100%",
             borderRadius: "30px",
             zIndex: "0",

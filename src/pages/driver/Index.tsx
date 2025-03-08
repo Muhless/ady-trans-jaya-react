@@ -6,6 +6,7 @@ import Modal from "../../components/Molecule/Modal";
 import Title from "../../components/Atom/Title";
 import AddButton from "../../components/Atom/ButtonAdd";
 import ReactPaginate from "react-paginate";
+import ButtonComponent from "../../components/Atom/Button";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },
@@ -35,15 +36,10 @@ function DriverPages() {
 
   return (
     <>
-      <Title title={"Pengemudi"} />
+      <Title title={"Driver"} />
       <div className="flex justify-between mb-5">
-        <AddButton
-          name={"Pengemudi"}
-          onClick={() => {
-            setIsModalOpen(true);
-          }}
-        />
-        <SearchInput placeholder="pengemudi" />
+        <ButtonComponent label="Tambah Driver" variant="add" onClick={() => setIsModalOpen(true)} />
+        <SearchInput placeholder="driver" />
       </div>
       <div className="px-10">
         {currentDrivers.map((id) => (
@@ -52,19 +48,19 @@ function DriverPages() {
       </div>
       <div className="flex justify-center mt-5 text-text">
         <ReactPaginate
-        previousLabel={"Kembali"}
-        nextLabel={"Berikutnya"}
-        breakLabel={"..."}
-        pageCount={pageCount}
-        marginPagesDisplayed={2}
-        pageRangeDisplayed={3}
-        onPageChange={handlePageChange}
-        containerClassName={"pagination flex gap-2"}
-        activeClassName="text-blue-500 font-bold"
-        pageClassName="border px-3 py-1 rounded-lg cursor-pointer text-center"
-        previousClassName="border px-3 py-1 rounded-lg cursor-pointer"
-        nextClassName="border px-3 py-1 rounded-lg cursor-pointer"
-        breakClassName="border px-3 py-1 rounded-lg cursor-pointer"
+          previousLabel={"Kembali"}
+          nextLabel={"Berikutnya"}
+          breakLabel={"..."}
+          pageCount={pageCount}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={3}
+          onPageChange={handlePageChange}
+          containerClassName={"pagination flex gap-2"}
+          activeClassName="text-blue-500 font-bold"
+          pageClassName="border px-3 py-1 rounded-lg cursor-pointer text-center"
+          previousClassName="border px-3 py-1 rounded-lg cursor-pointer"
+          nextClassName="border px-3 py-1 rounded-lg cursor-pointer"
+          breakClassName="border px-3 py-1 rounded-lg cursor-pointer"
         />
       </div>
       <Modal

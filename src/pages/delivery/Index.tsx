@@ -6,6 +6,7 @@ import AddButton from "../../components/Atom/ButtonAdd";
 import Title from "../../components/Atom/Title";
 import Table from "../../components/Molecule/Table.tsx";
 import DeliveryCard from "../../components/Molecule/DeliveryCard.tsx";
+import ButtonComponent from "../../components/Atom/Button.tsx";
 
 const matches = [
   {
@@ -79,7 +80,11 @@ function DeliveryPages() {
           <div className="items-center justify-between mb-5">
             <SubTitle subTitle={"Sedang Berlangsung"} className={"mb-5"} />
             <div className="flex flex-row justify-between">
-              <AddButton name={"Pengiriman"} onClick={handleAddClick} />
+              <ButtonComponent
+                label="Tambah Pengiriman"
+                variant="add"
+                onClick={handleAddClick}
+              />
               <SearchInput placeholder={"pengiriman"} />
             </div>
           </div>

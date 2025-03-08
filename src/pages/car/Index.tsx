@@ -5,6 +5,7 @@ import Title from "../../components/Atom/Title";
 import AddButton from "../../components/Atom/ButtonAdd";
 import CarCard from "../../components/Molecule/CarCard";
 import { CarTypeComponent } from "../../components/Atom/CarType";
+import ButtonComponent from "../../components/Atom/Button";
 
 const carTypes = ["Semua", "Pick Up", "CDE", "CDD", "Fuso", "Wingbox"];
 
@@ -21,23 +22,20 @@ function CarPages() {
   return (
     <>
       <Title title="Kendaraan" />
-      <div className="bg-background rounded-xl">
-        <div className="flex justify-between items-center mb-5">
-          <AddButton
-            onClick={() => {
-              setIsModalOpen(true);
-            }}
-            name={"Kendaraan"}
-          />
-          <CarTypeComponent carTypes={carTypes} />
-          <SearchInput placeholder="kendaraan" />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <CarCard />
-          <CarCard />
-          <CarCard />
-          <CarCard />
-        </div>
+      <div className="flex justify-between items-center mb-5">
+        <ButtonComponent
+          label="Tambah Kendaraan"
+          variant="add"
+          onClick={() => setIsModalOpen(true)}
+        />
+        <CarTypeComponent carTypes={carTypes} />
+        <SearchInput placeholder="kendaraan" />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <CarCard />
+        <CarCard />
+        <CarCard />
+        <CarCard />
       </div>
       <Modal
         isOpen={isModalOpen}

@@ -4,23 +4,25 @@ import React from "react";
 type ButtonComponentProps = {
   label?: string;
   onClick?: () => void;
-  variant?: "default" | "add" | "edit" | "delete" | "save" |"back";
+  variant?: "default" | "add" | "edit" | "delete" | "save" | "back";
   icon?: React.ReactNode;
+  classname?: string;
 };
 
 const ButtonComponent: React.FC<ButtonComponentProps> = ({
   label,
   onClick,
   variant = "default",
+  classname
 }) => {
   const baseStyle =
-    "w-40 py-2 rounded-lg text-primary font-medium focus:outline-none flex justify-center items-center gap-2";
+    "w-48 py-1 rounded-lg text-primary font-medium focus:outline-none flex justify-center items-center gap-2 text-sm";
   const variants = {
     default: "bg-gray-400 hover:bg-gray-500",
-    add: "bg-biru hover:bg-blue-500",
+    add: "bg-biru hover:bg-sky-500",
     edit: "bg-kuning hover:bg-yellow-500",
     delete: "bg-merah hover:bg-red-500",
-    save: "bg-biru hover:bg-blue-500",
+    save: "bg-biru hover:bg-sky-600",
     back: "bg-gray-400 hover:bg-gray-500",
   };
 
@@ -32,9 +34,9 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
     back: <Undo2 size={18} />,
   };
   return (
-    <button className={`${baseStyle} ${variants[variant]}`} onClick={onClick}>
+    <button className={`${baseStyle} ${variants[variant]} ${classname}`} onClick={onClick}>
+      {label && <p>{label}</p>}
       {icons[variant] && <span>{icons[variant]}</span>}
-      {label}
     </button>
   );
 };
