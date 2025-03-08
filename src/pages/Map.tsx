@@ -212,7 +212,7 @@ const MapPages: React.FC = () => {
               </li>
             ))}
           </ul>
-          <ResetButtonComponent clearMap={clearMap} />
+          {/* <ResetButtonComponent clearMap={clearMap} /> */}
         </div>
       </div>
     </>

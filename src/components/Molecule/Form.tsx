@@ -1,9 +1,12 @@
 import React from "react";
+import ButtonDelete from "../Atom/ButtonDelete";
+import ButtonComponent from "../Atom/Button";
+import { MapPin, Save } from "lucide-react";
 
 type Field = {
   label: string;
   type?: "text" | "password" | "email" | "number";
-  placeholder: string;
+  placeholder?: string;
   options?: { value: string; label: string }[];
   // onChange?: (value: string) => void;
 };
@@ -14,9 +17,9 @@ type FormProps = {
 
 const Form: React.FC<FormProps> = ({ fields }) => {
   return (
-    <form onSubmit={undefined} className="flex flex-col w-full space-y-1 mb-5">
+    <form onSubmit={undefined} className="flex flex-col w-1/2 space-y-5">
       {fields.map((field, index) => (
-        <div key={index} className="flex flex-col space-y-1">
+        <div key={index} className="flex flex-col space-y-2">
           <label>{field.label}</label>
           {field.options ? (
             <select
@@ -42,6 +45,10 @@ const Form: React.FC<FormProps> = ({ fields }) => {
           )}
         </div>
       ))}
+      <div className="flex flex-row justify-end gap-2">
+        <ButtonComponent variant="back" label="Kembali" />
+        <ButtonComponent variant="save" label="Simpan" />
+      </div>
     </form>
   );
 };

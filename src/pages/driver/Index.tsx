@@ -5,7 +5,7 @@ import SearchInput from "../../components/Atom/Search";
 import Modal from "../../components/Molecule/Modal";
 import Title from "../../components/Atom/Title";
 import AddButton from "../../components/Atom/ButtonAdd";
-import { Pagination } from "@mui/material";
+import ReactPaginate from "react-paginate";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },
@@ -26,8 +26,8 @@ function DriverPages() {
   const drivers = Array.from({ length: 20 }, (_, i) => i + 1);
   const pageCount = Math.ceil(drivers.length / driversPerPage);
 
-  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setCurrentPage(value);
+  const handlePageChange = (selected) => {
+    setCurrentPage(selected);
   };
 
   const offset = currentPage * driversPerPage;
@@ -51,11 +51,20 @@ function DriverPages() {
         ))}
       </div>
       <div className="flex justify-center mt-5 text-text">
-        <Pagination
-          count={pageCount}
-          page={currentPage}
-          onChange={handlePageChange}
-          color="primary"
+        <ReactPaginate
+        previousLabel={"Kembali"}
+        nextLabel={"Berikutnya"}
+        breakLabel={"..."}
+        pageCount={pageCount}
+        marginPagesDisplayed={2}
+        pageRangeDisplayed={3}
+        onPageChange={handlePageChange}
+        containerClassName={"pagination flex gap-2"}
+        activeClassName="text-blue-500 font-bold"
+        pageClassName="border px-3 py-1 rounded-lg cursor-pointer text-center"
+        previousClassName="border px-3 py-1 rounded-lg cursor-pointer"
+        nextClassName="border px-3 py-1 rounded-lg cursor-pointer"
+        breakClassName="border px-3 py-1 rounded-lg cursor-pointer"
         />
       </div>
       <Modal
