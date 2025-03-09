@@ -33,6 +33,7 @@ function AddDeliveryPages() {
                   type: "text",
                   placeholder: "Tentukan awal pengiriman",
                   value: address,
+                  
                 },
                 {
                   label: "Titik Tujuan Pengiriman",

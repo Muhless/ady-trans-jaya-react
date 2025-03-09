@@ -7,7 +7,6 @@ type Field = {
   placeholder?: string;
   options?: { value: string; label: string }[];
   value?: string;
-  // onChange?: (value: string) => void;
 };
 
 type FormProps = {
