@@ -7,6 +7,9 @@ type Field = {
   placeholder?: string;
   options?: { value: string; label: string }[];
   value?: string;
+  onChange?: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => void;
 };
 
 type FormProps = {
@@ -56,7 +59,12 @@ const Form: React.FC<FormProps> = ({ fields, onChange }) => {
               className="bg-secondary p-2 focus:outline-none focus:ring-2 focus:ring-biru w-64"
               placeholder={field.placeholder}
               value={formValues[field.label] || ""}
-              onChange={(e) => handleChange(field.label, e.target.value)}
+              onChange={(e) => {
+                handleChange(field.label, e.target.value);
+                if (field.onChange) {
+                  field.onChange(e);
+                }
+              }}
             />
           )}
         </div>
