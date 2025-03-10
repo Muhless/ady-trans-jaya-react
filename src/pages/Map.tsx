@@ -92,7 +92,9 @@ const MapPages: React.FC<MapPagesProps> = ({
           );
           const data: GeocodeResponse = await response.json();
           const placeName =
-            data.features.length > 0 ? data.features[0].place_name : "Lokasi tidak ditemukan";
+            data.features.length > 0
+              ? data.features[0].place_name
+              : "Lokasi tidak ditemukan";
           if (isSelectingStart.current) {
             setStartPoint({ lng, lat });
             setAddress(placeName);
@@ -147,15 +149,6 @@ const MapPages: React.FC<MapPagesProps> = ({
     setPoint(coordinates);
     setAddress(place.place_name);
     setSuggestions([]);
-
-    // if (markerRef.current[type]) markerRef.current[type]!.remove();
-    // markerRef.current[type] = new mapboxgl.Marker()
-    //   .setLngLat([coordinates.lng, coordinates.lat])
-    //   .addTo(mapRef.current!);
-    // mapRef.current!.flyTo({
-    //   center: [coordinates.lng, coordinates.lat],
-    //   zoom: 14,
-    // });
   };
 
   return <div ref={mapContainerRef} className="h-[500px] w-full rounded-lg" />;
