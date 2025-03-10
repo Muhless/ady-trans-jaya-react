@@ -21,6 +21,12 @@ interface MapPagesProps {
   setEndPoint: React.Dispatch<
     React.SetStateAction<{ lng: number; lat: number } | null>
   >;
+  startPoint: { lng: number; lat: number } | null;
+  endPoint: { lng: number; lat: number } | null;
+}
+
+interface GeocodeResponse {
+  features: { place_name: string }[];
 }
 
 const MAPBOX_ACCESS_TOKEN =
@@ -58,27 +64,72 @@ const MapPages: React.FC<MapPagesProps> = ({
   setEndAddress,
   setStartPoint,
   setEndPoint,
+  startPoint,
+  endPoint,
 }) => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
-  const markerRef = useRef<{
-    start: mapboxgl.Marker | null;
-    end: mapboxgl.Marker | null;
-  }>({ start: null, end: null });
-
-  const [startSuggestions, setStartSuggestions] = useState<Place[]>([]);
-  const [endSuggestions, setEndSuggestions] = useState<Place[]>([]);
+  const startMarkerRef = useRef<mapboxgl.Marker | null>(null);
+  const endMarkerRef = useRef<mapboxgl.Marker | null>(null);
+  const isSelectingStart = useRef<boolean>(true);
 
   useEffect(() => {
     if (!mapRef.current && mapContainerRef.current) {
       mapRef.current = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: "mapbox://styles/mapbox/streets-v11",
-        center: [106.8456, -6.2088],
+        center: [106.8456, -6.2088], // default
         zoom: 12,
+      });
+
+      mapRef.current.on("click", async (e) => {
+        const lng = e.lngLat.lng;
+        const lat = e.lngLat.lat;
+
+        try {
+          const response = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${MAPBOX_ACCESS_TOKEN}`
+          );
+          const data: GeocodeResponse = await response.json();
+          const placeName =
+            data.features.length > 0 ? data.features[0].place_name : "Lokasi tidak ditemukan";
+          if (isSelectingStart.current) {
+            setStartPoint({ lng, lat });
+            setAddress(placeName);
+          } else {
+            setEndPoint({ lng, lat });
+            setEndAddress(placeName);
+          }
+          isSelectingStart.current = !isSelectingStart.current;
+        } catch (error) {
+          console.error("Gagal mendapatkan alamat dari koordinat:", error);
+        }
       });
     }
   }, []);
+
+  useEffect(() => {
+    if (mapRef.current && startPoint) {
+      if (!startMarkerRef.current) {
+        startMarkerRef.current = new mapboxgl.Marker({ color: "sky-blue" })
+          .setLngLat([startPoint.lng, startPoint.lat])
+          .addTo(mapRef.current);
+      } else {
+        startMarkerRef.current.setLngLat([startPoint.lng, startPoint.lat]);
+      }
+    }
+  }, [startPoint]);
+  useEffect(() => {
+    if (mapRef.current && endPoint) {
+      if (!endMarkerRef.current) {
+        endMarkerRef.current = new mapboxgl.Marker({ color: "red" })
+          .setLngLat([endPoint.lng, endPoint.lat])
+          .addTo(mapRef.current);
+      } else {
+        endMarkerRef.current.setLngLat([endPoint.lng, endPoint.lat]);
+      }
+    }
+  }, [endPoint]);
 
   const handleSelectAddress = (
     place: Place,
@@ -97,52 +148,17 @@ const MapPages: React.FC<MapPagesProps> = ({
     setAddress(place.place_name);
     setSuggestions([]);
 
-    if (markerRef.current[type]) markerRef.current[type]!.remove();
-    markerRef.current[type] = new mapboxgl.Marker()
-      .setLngLat([coordinates.lng, coordinates.lat])
-      .addTo(mapRef.current!);
-    mapRef.current!.flyTo({
-      center: [coordinates.lng, coordinates.lat],
-      zoom: 14,
-    });
+    // if (markerRef.current[type]) markerRef.current[type]!.remove();
+    // markerRef.current[type] = new mapboxgl.Marker()
+    //   .setLngLat([coordinates.lng, coordinates.lat])
+    //   .addTo(mapRef.current!);
+    // mapRef.current!.flyTo({
+    //   center: [coordinates.lng, coordinates.lat],
+    //   zoom: 14,
+    // });
   };
 
-  return (
-    <div className="relative">
-      <div ref={mapContainerRef} className="h-[500px] w-full rounded-lg" />
-      <div className="absolute left-1/2 bottom-16 transform -translate-x-1/2 bg-white p-5 rounded-xl shadow-lg">
-        <input
-          type="text"
-          placeholder="Masukkan Alamat Awal"
-          value={address}
-          onChange={(e) => {
-            setAddress(e.target.value);
-            fetchAddressSuggestions(e.target.value, setStartSuggestions);
-          }}
-          className="p-2 border rounded w-full"
-        />
-        <ul className="bg-white border rounded w-full mt-1">
-          {startSuggestions.map((place) => (
-            <li
-              key={place.id}
-              className="p-2 hover:bg-gray-200 cursor-pointer"
-              onClick={() =>
-                handleSelectAddress(
-                  place,
-                  setStartPoint,
-                  setAddress,
-                  setStartSuggestions,
-                  "start"
-                )
-              }
-            >
-              {place.place_name}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
+  return <div ref={mapContainerRef} className="h-[500px] w-full rounded-lg" />;
 };
 
 export default MapPages;

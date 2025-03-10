@@ -91,9 +91,9 @@ function AddDeliveryPages() {
                 },
                 { label: "Muatan", type: "text", placeholder: "Jenis muatan" },
                 {
-                  label: "Jumlah",
-                  type: "number",
-                  placeholder: "Jumlah muatan",
+                  label: "Berat",
+                  type: "text",
+                  placeholder: "Berat muatan",
                 },
                 {
                   label: "Titik Awal Pengiriman",
@@ -146,10 +146,9 @@ function AddDeliveryPages() {
               ]}
             />
           </div>
-          {/* FIX */}
           {/* Sugesti Titik Awal */}
           {startSuggestions.length > 0 && (
-            <ul className="bg-white border rounded w-full mt-1">
+            <ul className="bg-secondary border rounded w-full mt-1 text-sm">
               {startSuggestions.map((place) => (
                 <li
                   key={place.id}
@@ -171,7 +170,7 @@ function AddDeliveryPages() {
 
           {/* Sugesti Titik Tujuan */}
           {endSuggestions.length > 0 && (
-            <ul className="bg-white border rounded w-full mt-1">
+            <ul className="bg-secondary text-sm border rounded w-full mt-1">
               {endSuggestions.map((place) => (
                 <li
                   key={place.id}
@@ -204,6 +203,8 @@ function AddDeliveryPages() {
             setEndAddress={setEndAddress}
             setStartPoint={setStartPoint}
             setEndPoint={setEndPoint}
+            startPoint={startPoint}
+            endPoint={endPoint}
           />
         </div>
       </div>
