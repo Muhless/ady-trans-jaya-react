@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import Title from "../../components/Atom/Title";
 import Form from "../../components/Molecule/Form";
 import ButtonComponent from "../../components/Atom/Button";
-import MapPages from "../Map";
+import MapPages from "../../components/Organism/Map";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import handleSelectAddress from '../../components/Organism/Map'
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -55,24 +56,6 @@ function AddDeliveryPages() {
     null
   );
 
-  const handleSelectAddress = (
-    place: Place,
-    setPoint: React.Dispatch<
-      React.SetStateAction<{ lng: number; lat: number } | null>
-    >,
-    setAddress: React.Dispatch<React.SetStateAction<string>>,
-    setSuggestions: React.Dispatch<React.SetStateAction<Place[]>>
-  ) => {
-    const coordinates = {
-      lng: place.geometry.coordinates[0],
-      lat: place.geometry.coordinates[1],
-    };
-
-    setPoint(coordinates);
-    setAddress(place.place_name);
-    setSuggestions([]);
-  };
-
   return (
     <>
       <Title title={"Tambah Pengiriman"} />
@@ -96,7 +79,7 @@ function AddDeliveryPages() {
                   placeholder: "Berat muatan",
                 },
                 {
-                  label: "Titik Awal Pengiriman",
+                  label: "Awal Pengiriman",
                   type: "text",
                   placeholder: "Tentukan awal pengiriman",
                   value: address,
@@ -109,7 +92,7 @@ function AddDeliveryPages() {
                   },
                 },
                 {
-                  label: "Titik Tujuan Pengiriman",
+                  label: "Tujuan Pengiriman",
                   type: "text",
                   placeholder: "Tentukan tujuan pengiriman",
                   value: endAddress,
@@ -118,10 +101,11 @@ function AddDeliveryPages() {
                     fetchAddressSuggestions(e.target.value, setEndSuggestions);
                   },
                 },
-
                 {
                   label: "Tanggal Pengiriman",
                   type: "date",
+                  // value: deliveryDate ? deliveryDate.split("/").reverse().join("-") : "",
+                  // onChange: handleDateChange,
                 },
                 {
                   label: "Tenggat Pengiriman",
@@ -158,7 +142,8 @@ function AddDeliveryPages() {
                       place,
                       setStartPoint,
                       setAddress,
-                      setStartSuggestions
+                      setStartSuggestions,
+                      "start"
                     )
                   }
                 >

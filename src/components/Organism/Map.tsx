@@ -149,6 +149,14 @@ const MapPages: React.FC<MapPagesProps> = ({
     setPoint(coordinates);
     setAddress(place.place_name);
     setSuggestions([]);
+
+    if (mapRef.current) {
+      mapRef.current.flyTo({
+        center: [coordinates.lng, coordinates.lat],
+        zoom: 14,
+        essential:true
+      });
+    }
   };
 
   return <div ref={mapContainerRef} className="h-[500px] w-full rounded-lg" />;
