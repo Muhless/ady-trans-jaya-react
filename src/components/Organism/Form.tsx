@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import ButtonComponent from "../Atom/Button";
 
 type Field = {
   label: string;
   type?: "text" | "password" | "email" | "number" | "date";
   placeholder?: string;
   options?: { value: string; label: string }[];
-  value?: string;
+  disabled?:boolean,
   onChange?: (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;
@@ -14,6 +13,7 @@ type Field = {
 
 type FormProps = {
   fields: Field[];
+  disabled?: boolean;
   onChange?: (label: string, value: string) => void;
 };
 
@@ -59,6 +59,7 @@ const Form: React.FC<FormProps> = ({ fields, onChange }) => {
               className="bg-secondary p-2 focus:outline-none focus:ring-2 focus:ring-biru w-64"
               placeholder={field.placeholder}
               value={formValues[field.label] || ""}
+              disabled={field.disabled}
               onChange={(e) => {
                 handleChange(field.label, e.target.value);
                 if (field.onChange) {

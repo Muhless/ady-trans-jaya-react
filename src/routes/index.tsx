@@ -12,7 +12,7 @@ import RentalPages from "../pages/rental/Index";
 import DetailDeliveryPages from "../pages/delivery/DetailDelivery";
 import Layout from "../components/Template/layouts";
 import AddDeliveryPages from "../pages/delivery/AddDelivery";
-import MapPages from "../pages/Map";
+import MapPages from "../components/Organism/Map";
 
 function AppRoutes() {
   return (
