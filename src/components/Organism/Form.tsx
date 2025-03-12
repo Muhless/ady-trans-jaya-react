@@ -1,77 +1,64 @@
 import React, { useState } from "react";
+import { InputComponent } from "../Atom/Input";
+import SelectComponent from "../Atom/Select";
+import ButtonComponent from "../Atom/Button";
 
-type Field = {
-  label: string;
-  type?: "text" | "password" | "email" | "number" | "date";
-  placeholder?: string;
-  options?: { value: string; label: string }[];
-  disabled?:boolean,
-  onChange?: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => void;
-};
+const FormComponent = () => {
+  const [formData, setFormData] = useState({
+    customer: "",
+    muatan: "",
+    jenisMuatan: "",
+  });
 
-type FormProps = {
-  fields: Field[];
-  disabled?: boolean;
-  onChange?: (label: string, value: string) => void;
-};
-
-const Form: React.FC<FormProps> = ({ fields, onChange }) => {
-  const [formValues, setFormValues] = useState<Record<string, string>>({});
-  const handleChange = (label: string, value: string) => {
-    setFormValues((prev) => ({ ...prev, [label]: value }));
-    if (onChange) {
-      onChange(label, value);
-    }
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form Data:", formData);
+  };
+
   return (
-    <form onSubmit={undefined} className="flex flex-col space-y-4">
-      {fields.map((field, index) => (
-        <div
-          key={index}
-          className="flex flex-row space-x-4 items-center justify-between text-sm"
-        >
-          <label>{field.label}</label>
-          {field.type === "date" ? (
-            <input
-              type="date"
-              className="bg-secondary p-2 focus:outline-none focus:ring-2 focus:ring-biru w-64"
-              value={formValues[field.label] || ""}
-              onChange={(e) => handleChange(field.label, e.target.value)}
-            />
-          ) : field.options ? (
-            <select
-              className="bg-secondary p-2 w-64 focus:outline-none focus:ring-2 focus:ring-biru"
-              value={formValues[field.label] || ""}
-              onChange={(e) => handleChange(field.label, e.target.value)}
-            >
-              <option value="">Pilih {field.label}</option>
-              {field.options.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <input
-              type={field.type}
-              className="bg-secondary p-2 focus:outline-none focus:ring-2 focus:ring-biru w-64"
-              placeholder={field.placeholder}
-              value={formValues[field.label] || ""}
-              disabled={field.disabled}
-              onChange={(e) => {
-                handleChange(field.label, e.target.value);
-                if (field.onChange) {
-                  field.onChange(e);
-                }
-              }}
-            />
-          )}
+    <div className="flex justify-center">
+      <form onSubmit={handleSubmit} className="space-y-3 border p-5 rounded-lg">
+        <SelectComponent
+          label="Customer"
+          name="customer"
+          value={formData.customer}
+          onChange={handleChange}
+          options={[
+            { value: "cihuy", label: "cihuy" },
+            { value: "cihuy1", label: "cihuy1" },
+            { value: "cihuy2", label: "cihuy2" },
+            { value: "cihuy3", label: "cihuy3" },
+          ]}
+        />
+        <InputComponent
+          label="Muatan"
+          type="text"
+          name="muatan"
+          value={formData.muatan}
+          onChange={handleChange}
+        />
+        <InputComponent
+          label="Jenis Muatan"
+          type="number"
+          name="jenisMuatan"
+          value={formData.jenisMuatan}
+          onChange={handleChange}
+        />
+        <div className="flex flex-row p-2 justify-center gap-5">
+          <ButtonComponent variant="back" label="Kembali" className="py-2" />
+          <ButtonComponent variant="save" label="Simpan" className="py-2" />
         </div>
-      ))}
-    </form>
+      </form>
+    </div>
   );
 };
 
-export default Form;
+export default FormComponent;

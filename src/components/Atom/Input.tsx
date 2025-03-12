@@ -1,22 +1,31 @@
 import React from "react";
 
 type InputComponentProps = {
-  type?: "text" | "number" | "email" | "passord";
-  onChange: (value: string) => void;
+  label?: string;
+  type?: "text" | "number" | "email" | "password";
+  name?: string;
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 export const InputComponent: React.FC<InputComponentProps> = ({
+  label,
   type = "text",
+  name,
+  value,
   onChange,
 }) => {
   return (
-    <>
+    <div className="flex flex-row items-center gap-5 p-2 justify-between">
+      <label>{label}</label>
       <input
         type={type}
-        className="bg-secondary p-2 rounded-lg"
-        placeholder={`Masukkan ${type}`}
-        onChange={(e) => onChange(e.target.value)}
+        name={name}
+        value={value}
+        className="bg-secondary p-2 rounded-lg w-64 text-sm"
+        placeholder={`Masukkan ${label?.toLowerCase()}`}
+        onChange={onChange}
       />
-    </>
+    </div>
   );
 };

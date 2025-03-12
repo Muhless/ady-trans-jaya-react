@@ -6,14 +6,14 @@ type ButtonComponentProps = {
   onClick?: () => void;
   variant?: "default" | "add" | "edit" | "delete" | "save" | "back";
   icon?: React.ReactNode;
-  classname?: string;
+  className?: string;
 };
 
 const ButtonComponent: React.FC<ButtonComponentProps> = ({
   label,
   onClick,
   variant = "default",
-  classname
+  className
 }) => {
   const baseStyle =
     "w-48 py-1 rounded-lg text-primary font-medium focus:outline-none flex justify-center items-center gap-2 text-sm";
@@ -34,7 +34,7 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
     back: <Undo2 size={18} />,
   };
   return (
-    <button className={`${baseStyle} ${variants[variant]} ${classname}`} onClick={onClick}>
+    <button className={`${baseStyle} ${variants[variant]} ${className}`} onClick={onClick}>
       {label && <p>{label}</p>}
       {icons[variant] && <span>{icons[variant]}</span>}
     </button>
