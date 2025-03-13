@@ -21,11 +21,9 @@ const HomePages = () => {
       <div className="grid grid-cols-3 gap-3 max-h-full">
         <div className="col-span-2 flex flex-col">
           <Card title="Grafik" classname="text-text bg-secondary"></Card>
-          <div className="bg-white p-3 rounded-lg">
-            <Card title="Pengiriman" classname="text-primary">
+            <Card title="Pengiriman" classname="bg-secondary text-text">
               <Table data={delivery} />
             </Card>
-          </div>
         </div>
         <div className="col-span-1">
           <Card title="Pengiriman" classname="bg-merah"></Card>

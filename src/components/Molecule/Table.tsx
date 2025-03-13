@@ -27,12 +27,12 @@ const Table: React.FC<TableProps> = ({
             className="hover:bg-biru hover:text-primary ease-in-out transition-all duration-300"
           >
             {Object.keys(row).map((key) => (
-              <td key={key} className="p-4 border">
+              <td key={key} className="p-4">
                 {row[key]}
               </td>
             ))}
             {showActions && (
-              <td className="border">
+              <td>
                 <div className="flex justify-center gap-2">
                   <ButtonEdit size={15} />
                   <ButtonDelete size={15} />

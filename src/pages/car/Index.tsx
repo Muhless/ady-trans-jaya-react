@@ -26,6 +26,7 @@ function CarPages() {
         <ButtonComponent
           label="Tambah Kendaraan"
           variant="add"
+          className="w-48"
           onClick={() => setIsModalOpen(true)}
         />
         <CarTypeComponent carTypes={carTypes} />

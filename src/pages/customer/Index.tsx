@@ -48,15 +48,20 @@ function CustomerPages() {
     <>
       <Title title={"Customer"} />
       <div className="flex justify-between mb-5">
-      <ButtonComponent
+        <ButtonComponent
           label="Tambah Customer"
           variant="add"
+          className="w-48"
           onClick={() => setModalOpen(true)}
         />
         <SearchInput placeholder="customer" />
       </div>
       <Table data={customer} onRowClick={handleRowClick} showActions={true} />
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} fields={modalInput} />
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        fields={modalInput}
+      />
     </>
   );
 }

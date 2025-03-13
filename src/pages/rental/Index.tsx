@@ -18,9 +18,10 @@ function RentalPages() {
     <>
       <Title title={"Rental"} />
       <div className="flex justify-between">
-      <ButtonComponent
+        <ButtonComponent
           label="Tambah Rental"
           variant="add"
+          className="w-48"
           onClick={() => setModalOpen(true)}
         />
         <SearchInput placeholder="rental" />

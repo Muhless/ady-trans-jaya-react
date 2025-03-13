@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import ButtonComponent from "../../components/Atom/Button";
+import SubTitle from "../../components/Atom/SubTitle";
+import { InputComponent } from "../../components/Atom/Input";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -39,7 +42,7 @@ const fetchAddressSuggestions = async (
   }
 };
 
-const MapPages: React.FC = () => {
+const AddMapPages: React.FC = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<{
@@ -47,8 +50,13 @@ const MapPages: React.FC = () => {
     end: mapboxgl.Marker | null;
   }>({ start: null, end: null });
 
-  const [startPoint, setStartPoint] = useState<{ lng: number; lat: number } | null>(null);
-  const [endPoint, setEndPoint] = useState<{ lng: number; lat: number } | null>(null);
+  const [startPoint, setStartPoint] = useState<{
+    lng: number;
+    lat: number;
+  } | null>(null);
+  const [endPoint, setEndPoint] = useState<{ lng: number; lat: number } | null>(
+    null
+  );
   const [route, setRoute] = useState<GeoJSON.LineString | null>(null);
   const [distance, setDistance] = useState<number | null>(null);
   const [duration, setDuration] = useState<number | null>(null);
@@ -62,7 +70,7 @@ const MapPages: React.FC = () => {
       mapRef.current = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: "mapbox://styles/mapbox/streets-v11",
-        center: [106.8456, -6.2088], // Jakarta sebagai default
+        center: [106.8456, -6.2088],
         zoom: 12,
       });
     }
@@ -80,8 +88,8 @@ const MapPages: React.FC = () => {
       if (data.routes.length > 0) {
         const newRoute: GeoJSON.LineString = data.routes[0].geometry;
         setRoute(newRoute);
-        setDistance(parseFloat((data.routes[0].distance / 1000).toFixed(2))); // dalam km
-        setDuration(Math.ceil(data.routes[0].duration / 60)); // dalam menit
+        setDistance(parseFloat((data.routes[0].distance / 1000).toFixed(2)));
+        setDuration(Math.ceil(data.routes[0].duration / 60));
 
         const map = mapRef.current!;
         if (map.getSource("route")) {
@@ -116,7 +124,9 @@ const MapPages: React.FC = () => {
 
   const handleSelectAddress = (
     place: Place,
-    setPoint: React.Dispatch<React.SetStateAction<{ lng: number; lat: number } | null>>,
+    setPoint: React.Dispatch<
+      React.SetStateAction<{ lng: number; lat: number } | null>
+    >,
     setAddress: React.Dispatch<React.SetStateAction<string>>,
     setSuggestions: React.Dispatch<React.SetStateAction<Place[]>>,
     type: "start" | "end"
@@ -164,49 +174,82 @@ const MapPages: React.FC = () => {
   };
 
   return (
-    <>
-      <div className="flex container mx-auto items-center">
-        <div
-          ref={mapContainerRef}
-          style={{
-            height: "680px",
-            width: "100%",
-            borderRadius: "30px",
-            zIndex: "0",
+    <div className="grid grid-cols-3 gap-5">
+      <div className="border p-5 rounded-lg flex flex-col items-center space-y-1">
+        <SubTitle subTitle="Tentukan Rute Pengiriman" className="mb-5" />
+        {/* TODO: Move input to FormAddMap */}
+        <InputComponent
+          label="Keberangkatan"
+          value={address}
+          onChange={(e) => {
+            setAddress(e.target.value);
+            fetchAddressSuggestions(e.target.value, setStartSuggestions);
           }}
         />
-        <div className="fixed z-10 left-1/2 bottom-16 shadow-lg bg-white p-5 rounded-2xl flex flex-col items-center">
-          <input
-            type="text"
-            placeholder="Masukkan Alamat Awal"
-            value={address}
-            onChange={(e) => {
-              setAddress(e.target.value);
-              fetchAddressSuggestions(e.target.value, setStartSuggestions);
-            }}
-            className="p-2 border rounded mt-2 w-full"
-          />
-          <ul className="bg-white border rounded w-full mt-1">
-            {startSuggestions.map((place) => (
-              <li
-                key={place.id}
-                className="p-2 hover:bg-gray-200 cursor-pointer"
-                onClick={() =>
-                  handleSelectAddress(place, setStartPoint, setAddress, setStartSuggestions, "start")
-                }
-              >
-                {place.place_name}
-              </li>
-            ))}
-          </ul>
-
-          <button onClick={clearMap} className="p-2 w-full bg-red-500 text-white rounded mt-4">
-            Reset
-          </button>
-        </div>
+        <ul className="bg-secondary text-sm rounded w-full">
+          {startSuggestions.map((place) => (
+            <li
+              key={place.id}
+              className="p-2 hover:bg-gray-600 cursor-pointer"
+              onClick={() =>
+                handleSelectAddress(
+                  place,
+                  setStartPoint,
+                  setAddress,
+                  setStartSuggestions,
+                  "start"
+                )
+              }
+            >
+              {place.place_name}
+            </li>
+          ))}
+        </ul>
+        <InputComponent
+          label="Tujuan Pengiriman"
+          value={endAddress}
+          onChange={(e) => {
+            setEndAddress(e.target.value);
+            fetchAddressSuggestions(e.target.value, setEndSuggestions);
+          }}
+        />
+        <ul className="bg-secondary text-sm rounded w-full">
+          {endSuggestions.map((place) => (
+            <li
+              key={place.id}
+              className="p-2 hover:bg-gray-600 cursor-pointer"
+              onClick={() =>
+                handleSelectAddress(
+                  place,
+                  setEndPoint,
+                  setEndAddress,
+                  setEndSuggestions,
+                  "end"
+                )
+              }
+            >
+              {place.place_name}
+            </li>
+          ))}
+        </ul>
+        <ButtonComponent
+          label="Ulangi"
+          variant="undo"
+          className="w-full h-10"
+        />
       </div>
-    </>
+      <div
+        className="col-span-2"
+        ref={mapContainerRef}
+        style={{
+          height: "680px",
+          width: "100%",
+          borderRadius: "30px",
+          zIndex: "0",
+        }}
+      />
+    </div>
   );
 };
 
-export default MapPages;
+export default AddMapPages;

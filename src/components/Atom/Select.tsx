@@ -24,7 +24,7 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
         className="w-64 bg-secondary p-2 text-sm rounded-lg"
         onChange={onChange}
       >
-        <option value="">Pilih Customer</option>
+        <option value="" className="text-gray-600">Pilih {label}</option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}

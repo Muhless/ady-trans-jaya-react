@@ -38,7 +38,12 @@ function DriverPages() {
     <>
       <Title title={"Driver"} />
       <div className="flex justify-between mb-5">
-        <ButtonComponent label="Tambah Driver" variant="add" onClick={() => setIsModalOpen(true)} />
+        <ButtonComponent
+          label="Tambah Driver"
+          variant="add"
+          className="w-48"
+          onClick={() => setIsModalOpen(true)}
+        />
         <SearchInput placeholder="driver" />
       </div>
       <div className="px-10">

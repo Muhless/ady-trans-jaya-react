@@ -83,6 +83,7 @@ function DeliveryPages() {
               <ButtonComponent
                 label="Tambah Pengiriman"
                 variant="add"
+                className="w-48"
                 onClick={handleAddClick}
               />
               <SearchInput placeholder={"pengiriman"} />
