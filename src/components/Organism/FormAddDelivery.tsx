@@ -5,7 +5,7 @@ import ButtonComponent from "../Atom/Button";
 import SubTitle from "../Atom/SubTitle";
 import { Navigate, useNavigate } from "react-router-dom";
 
-const FormComponent = () => {
+const FormAddDelivery = () => {
   const [formData, setFormData] = useState({
     customer: "",
     muatan: "",
@@ -134,4 +134,4 @@ const FormComponent = () => {
   );
 };
 
-export default FormComponent;
+export default FormAddDelivery;
