@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, BrowserRouter } from "react-router-dom";
 import DeliveryPages from "../pages/delivery/Index";
 import HomePages from "../pages/Home";
 import AddDriverPages from "../pages/driver/AddDriver";
@@ -16,7 +16,7 @@ import MapPages from "../pages/delivery/AddMap";
 
 function AppRoutes() {
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<HomePages />} />
@@ -39,7 +39,7 @@ function AppRoutes() {
           <Route path="/finance" element={<FinancePages />} />
         </Route>
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 }
 

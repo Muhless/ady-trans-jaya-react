@@ -13,7 +13,6 @@ import React from "react";
 
 const Sidebar = () => {
   const location = useLocation();
-
   const menuItems = useMemo(
     () => [
       { to: "/", icon: <Home size={25} /> },

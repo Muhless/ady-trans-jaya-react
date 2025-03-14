@@ -1,6 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useState } from "react";
 import { InputComponent } from "../Atom/Input";
 import mapboxgl from "mapbox-gl";
+import ButtonComponent from "../Atom/Button";
+import { useNavigate } from "react-router-dom";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -65,12 +67,13 @@ const FormAddMap = forwardRef<HTMLDivElement>((_, ref) => {
     if (
       !mapRef.current &&
       ref &&
-      (ref as React.RefObject<HTMLDivElement>).current
+      (ref as React.RefObject<HTMLDivElement>)?.current instanceof HTMLElement
     ) {
       mapRef.current = new mapboxgl.Map({
-        container: (ref as React.RefObject<HTMLDivElement>).current!,
-                style: "mapbox://styles/mapbox/streets-v11",
-//         style: "mapbox://styles/mapbox/dark-v11",
+        container: (ref as React.RefObject<HTMLDivElement>)
+          .current as HTMLDivElement,
+        style: "mapbox://styles/mapbox/streets-v11",
+        //         style: "mapbox://styles/mapbox/dark-v11",
         center: [106.8456, -6.2088],
         zoom: 12,
       });
@@ -190,7 +193,7 @@ const FormAddMap = forwardRef<HTMLDivElement>((_, ref) => {
       mapRef.current.removeSource("route");
     }
   };
-
+  const navigate = useNavigate();
   return (
     <form action="">
       <div className="w-full relative">
@@ -250,6 +253,16 @@ const FormAddMap = forwardRef<HTMLDivElement>((_, ref) => {
             </li>
           ))}
         </ul>
+      </div>
+      <div className="flex justify-center gap-3 w-full p-2">
+        {/* <ButtonComponent
+          label="Kembali"
+          variant="back"
+          className="py-2 w-1/3"
+          onClick={() => navigate(-1)} 
+        /> */}
+        <ButtonComponent label="Ulangi" variant="undo" className="py-2 w-1/2" />
+        <ButtonComponent label="Simpan" variant="save" className="py-2 w-1/2" />
       </div>
     </form>
   );

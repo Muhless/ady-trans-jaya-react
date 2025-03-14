@@ -116,17 +116,17 @@ const FormAddDelivery = () => {
           <ButtonComponent
             variant="back"
             label="Kembali"
-            className="py-2 w-1/3 text-center"
+            className="py-2 w-1/3"
           />
           <ButtonComponent
             variant="undo"
             label="Ulangi"
-            className="py-2 w-1/3 text-center"
+            className="py-2 w-1/3"
           />
           <ButtonComponent
             variant="save"
             label="Simpan"
-            className="py-2 w-1/3 text-center"
+            className="py-2 w-1/3"
           />
         </div>
       </form>

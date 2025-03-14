@@ -1,10 +1,27 @@
-import { Edit, LucideRepeat2, MapPinPlus, Plus, Save, Trash2, Undo2 } from "lucide-react";
+import {
+  Edit,
+  LucideRepeat2,
+  MapPinPlus,
+  Plus,
+  Save,
+  Trash2,
+  Undo2,
+} from "lucide-react";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 type ButtonComponentProps = {
   label?: string;
   onClick?: () => void;
-  variant?: "default" | "add" | "edit" | "delete" | "save" | "back" | "map" | 'undo';
+  variant?:
+    | "default"
+    | "add"
+    | "edit"
+    | "delete"
+    | "save"
+    | "back"
+    | "map"
+    | "undo";
   icon?: React.ReactNode;
   className?: string;
 };
@@ -13,7 +30,7 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
   label,
   onClick,
   variant = "default",
-  className
+  className,
 }) => {
   const baseStyle =
     "py-1 transition rounded-lg text-primary font-medium focus:outline-none flex justify-center items-center gap-2 text-sm";
@@ -34,11 +51,23 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
     delete: <Trash2 size={18} />,
     save: <Save size={18} />,
     back: <Undo2 size={18} />,
-    map:<MapPinPlus size={18}/>,
-    undo:<LucideRepeat2 size={18}/>
+    map: <MapPinPlus size={18} />,
+    undo: <LucideRepeat2 size={18} />,
+  };
+
+  const navigate = useNavigate();
+  const handleClick = () => {
+    if (variant === "back") {
+      navigate(-1);
+    } else {
+      onClick && onClick();
+    }
   };
   return (
-    <button className={`${baseStyle} ${variants[variant]} ${className}`} onClick={onClick}>
+    <button
+      className={`${baseStyle} ${variants[variant]} ${className}`}
+      onClick={handleClick}
+    >
       {label && <p>{label}</p>}
       {icons[variant] && <span>{icons[variant]}</span>}
     </button>
