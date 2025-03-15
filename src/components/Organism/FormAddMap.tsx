@@ -2,13 +2,11 @@ import React, { forwardRef, useEffect, useRef, useState } from "react";
 import { InputComponent } from "../Atom/Input";
 import mapboxgl from "mapbox-gl";
 import ButtonComponent from "../Atom/Button";
-import { useNavigate } from "react-router-dom";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
-// Tipe untuk data dari Mapbox API
 interface Place {
   id: string;
   place_name: string;
@@ -57,7 +55,7 @@ const FormAddMap = forwardRef<HTMLDivElement>((_, ref) => {
   );
   const [route, setRoute] = useState<GeoJSON.LineString | null>(null);
   const [distance, setDistance] = useState<number | null>(null);
-  const [duration, setDuration] = useState<number | null>(null);
+  const [duration, setDuration] = useState<number | string | null>(null);
   const [address, setAddress] = useState<string>("");
   const [endAddress, setEndAddress] = useState<string>("");
   const [startSuggestions, setStartSuggestions] = useState<Place[]>([]);
@@ -82,7 +80,6 @@ const FormAddMap = forwardRef<HTMLDivElement>((_, ref) => {
 
   const fetchRoute = async () => {
     if (!startPoint || !endPoint) return;
-
     try {
       const response = await fetch(
         `https://api.mapbox.com/directions/v5/mapbox/driving/${startPoint.lng},${startPoint.lat};${endPoint.lng},${endPoint.lat}?geometries=geojson&access_token=${MAPBOX_ACCESS_TOKEN}`
@@ -91,9 +88,23 @@ const FormAddMap = forwardRef<HTMLDivElement>((_, ref) => {
 
       if (data.routes.length > 0) {
         const newRoute: GeoJSON.LineString = data.routes[0].geometry;
+        const distanceInKm = parseFloat(
+          (data.routes[0].distance / 1000).toFixed(2)
+        );
+
+        // const estimatedHours = distanceInKm / 40;
+        // const estimatedMinutes = Math.ceil(estimatedHours * 60)
+        const durationInMinutes = Math.ceil(data.routes[0].duration / 60);
+        const hours = Math.floor(durationInMinutes / 60);
+        const minutes = durationInMinutes % 60;
+        const formattedDuration = hours > 0 ? `${hours} jam ${minutes} menit` : `${minutes} menit`
+
         setRoute(newRoute);
-        setDistance(parseFloat((data.routes[0].distance / 1000).toFixed(2)));
-        setDuration(Math.ceil(data.routes[0].duration / 60));
+        setDistance(distanceInKm);
+        setDuration(formattedDuration);
+
+        console.log(`Jarak: ${distanceInKm} km`);
+        console.log(`Waktu tempuh: ${formattedDuration}`);
 
         const map = mapRef.current!;
         if (map.getSource("route")) {
@@ -193,9 +204,14 @@ const FormAddMap = forwardRef<HTMLDivElement>((_, ref) => {
       mapRef.current.removeSource("route");
     }
   };
-  const navigate = useNavigate();
+
   return (
-    <form action="">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        console.log("Form Submitted");
+      }}
+    >
       <div className="w-full relative">
         <InputComponent
           label="Keberangkatan"
@@ -205,7 +221,7 @@ const FormAddMap = forwardRef<HTMLDivElement>((_, ref) => {
             fetchAddressSuggestions(e.target.value, setStartSuggestions);
           }}
         />
-        <ul className="absolute top-full left-0 bg-secondary text-sm rounded w-full mt-1 z-10">
+        <ul className="absolute top-full left-0 bg-primary text-sm rounded w-full mt-1 z-10">
           {startSuggestions.map((place) => (
             <li
               key={place.id}
@@ -234,7 +250,7 @@ const FormAddMap = forwardRef<HTMLDivElement>((_, ref) => {
             fetchAddressSuggestions(e.target.value, setEndSuggestions);
           }}
         />
-        <ul className="absolute top-full left-0 bg-secondary text-sm rounded w-full mt-1 z-10">
+        <ul className="absolute top-full left-0 bg-primary text-sm rounded w-full mt-1 z-10">
           {endSuggestions.map((place) => (
             <li
               key={place.id}
@@ -254,15 +270,35 @@ const FormAddMap = forwardRef<HTMLDivElement>((_, ref) => {
           ))}
         </ul>
       </div>
-      <div className="flex justify-center gap-3 w-full p-2">
-        {/* <ButtonComponent
+      <div className="p-2">
+        {distance !== null && duration !== null && (
+          <div className="bg-primary p-2 rounded-lg text-sm space-y-2">
+            <p>
+              Jarak: <strong>{distance} Km</strong>
+            </p>
+            <p>
+              Perkiraan waktu: <strong>{duration}</strong>
+            </p>
+          </div>
+        )}
+      </div>
+      <div className="flex justify-center gap-2 w-full p-2">
+        <ButtonComponent
           label="Kembali"
           variant="back"
           className="py-2 w-1/3"
-          onClick={() => navigate(-1)} 
-        /> */}
-        <ButtonComponent label="Ulangi" variant="undo" className="py-2 w-1/2" />
-        <ButtonComponent label="Simpan" variant="save" className="py-2 w-1/2" />
+        />
+        <ButtonComponent
+          label="Ulangi"
+          variant="undo"
+          className="py-2 w-1/3"
+          onClick={(e) => {
+            e.preventDefault();
+            clearMap();
+          }}
+          type="button"
+        />
+        <ButtonComponent label="Simpan" variant="save" className="py-2 w-1/3" />
       </div>
     </form>
   );

@@ -25,7 +25,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
         type={type}
         name={name}
         value={value}
-        className="bg-secondary p-2 rounded-lg w-64"
+        className="bg-primary p-2 rounded-lg w-64"
         placeholder={`Masukkan ${label?.toLowerCase()}`}
         onChange={onChange}
       />

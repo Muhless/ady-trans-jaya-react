@@ -32,7 +32,7 @@ const FormAddDelivery = () => {
 
   return (
     <div className="flex justify-center">
-      <form onSubmit={handleSubmit} className=" border p-5 rounded-lg text-sm">
+      <form onSubmit={handleSubmit} className="border p-5 rounded-lg text-sm bg-secondary">
         <SubTitle
           subTitle="Form Tambah Pengiriman"
           className="text-center mb-5"

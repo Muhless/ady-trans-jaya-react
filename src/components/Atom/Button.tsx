@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 type ButtonComponentProps = {
   label?: string;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   variant?:
     | "default"
     | "add"
@@ -24,6 +24,7 @@ type ButtonComponentProps = {
     | "undo";
   icon?: React.ReactNode;
   className?: string;
+  type?: "button" | "submit" | "reset";
 };
 
 const ButtonComponent: React.FC<ButtonComponentProps> = ({
@@ -31,6 +32,7 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
   onClick,
   variant = "default",
   className,
+  type = "button",
 }) => {
   const baseStyle =
     "py-1 transition rounded-lg text-primary font-medium focus:outline-none flex justify-center items-center gap-2 text-sm";
@@ -56,17 +58,18 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
   };
 
   const navigate = useNavigate();
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     if (variant === "back") {
       navigate(-1);
     } else {
-      onClick && onClick();
+      onClick && onClick(e);
     }
   };
   return (
     <button
       className={`${baseStyle} ${variants[variant]} ${className}`}
-      onClick={handleClick}
+      onClick={handleClick} type={type}
     >
       {label && <p>{label}</p>}
       {icons[variant] && <span>{icons[variant]}</span>}
