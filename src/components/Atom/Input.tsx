@@ -4,6 +4,7 @@ type InputComponentProps = {
   label?: string;
   type?: "text" | "number" | "email" | "password" | "date";
   name?: string;
+  placeholder?: string;
   value?: string;
   disabled?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -13,6 +14,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   label,
   type = "text",
   name,
+  placeholder="",
   value,
   disabled,
   onChange,
@@ -25,8 +27,8 @@ export const InputComponent: React.FC<InputComponentProps> = ({
         type={type}
         name={name}
         value={value}
-        className="bg-primary p-2 rounded-lg w-64"
-        placeholder={`Masukkan ${label?.toLowerCase()}`}
+        className="bg-primary p-2 rounded-lg w-60"
+        placeholder={placeholder.toLowerCase()}
         onChange={onChange}
       />
     </div>

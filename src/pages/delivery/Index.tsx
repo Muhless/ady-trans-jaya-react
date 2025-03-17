@@ -63,9 +63,6 @@ function DeliveryPages() {
     navigate("/delivery/add");
   };
 
-  const handleAddMap = () => {
-    navigate("/delivery/map");
-  };
 
   return (
     <>

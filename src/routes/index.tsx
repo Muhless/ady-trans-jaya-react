@@ -11,8 +11,7 @@ import CustomerPages from "../pages/customer/Index";
 import RentalPages from "../pages/rental/Index";
 import DetailDeliveryPages from "../pages/delivery/DetailDelivery";
 import Layout from "../components/Template/layouts";
-import AddDeliveryPages from "../pages/delivery/AddDelivery";
-import MapPages from "../pages/delivery/AddMap";
+import AddMapPages from "../pages/delivery/AddMap";
 
 function AppRoutes() {
   return (
@@ -32,8 +31,7 @@ function AppRoutes() {
           <Route path="/rent" element={<RentalPages />} />
           {/* delivery */}
           <Route path="/delivery" element={<DeliveryPages />} />
-          <Route path="/delivery/add" element={<AddDeliveryPages />} />
-          <Route path="/delivery/add/map" element={<MapPages />} />
+          <Route path="/delivery/add" element={<AddMapPages />} />
           <Route path="/delivery/:id" element={<DetailDeliveryPages />} />
           {/* finance */}
           <Route path="/finance" element={<FinancePages />} />
