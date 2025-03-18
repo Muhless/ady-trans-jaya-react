@@ -1,6 +1,6 @@
 import { Edit } from "lucide-react";
 import React, { useState } from "react";
-import Modal from "../Molecule/Modal";
+import Modal from "../molecule/Modal";
 
 type ButtonEditProps = {
   size?: number;

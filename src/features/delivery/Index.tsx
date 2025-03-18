@@ -1,12 +1,12 @@
-import SearchInput from "../../components/Atom/Search";
-import SubTitle from "../../components/Atom/SubTitle";
+import SearchInput from "../../components/atom/Search.tsx";
+import SubTitle from "../../components/atom/SubTitle.tsx";
 import { useNavigate } from "react-router-dom";
 import React from "react";
-import AddButton from "../../components/Atom/ButtonAdd";
-import Title from "../../components/Atom/Title";
-import Table from "../../components/Molecule/Table.tsx";
-import DeliveryCard from "../../components/Molecule/DeliveryCard.tsx";
-import ButtonComponent from "../../components/Atom/Button.tsx";
+import AddButton from "../../components/atom/ButtonAdd.tsx";
+import Title from "../../components/atom/Title.tsx";
+import Table from "../../components/molecule/Table.tsx";
+import DeliveryCard from "../../components/molecule/DeliveryCard.tsx";
+import ButtonComponent from "../../components/atom/Button.tsx";
 
 const matches = [
   {
@@ -62,7 +62,6 @@ function DeliveryPages() {
   const handleAddClick = () => {
     navigate("/delivery/add");
   };
-
 
   return (
     <>

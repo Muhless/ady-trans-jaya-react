@@ -1,9 +1,7 @@
 import React from "react";
-import DashboardGrafik from "../components/Atom/Graphics.tsx";
-import Table from "../components/Molecule/Table.tsx";
-import Title from "../components/Atom/Title";
-import Card from "../components/Molecule/Card.tsx";
-import SubTitle from "../components/Atom/SubTitle.tsx";
+import Table from "../components/molecule/Table.tsx";
+import Title from "../components/atom/Title.tsx";
+import Card from "../components/molecule/Card.tsx";
 
 const delivery = [
   { id: 1, name: "ady", phone: "08871165551", status: "delivery" },
@@ -21,9 +19,9 @@ const HomePages = () => {
       <div className="grid grid-cols-3 gap-3 max-h-full">
         <div className="col-span-2 flex flex-col">
           <Card title="Grafik" classname="text-text bg-secondary"></Card>
-            <Card title="Pengiriman" classname="bg-secondary text-text">
-              <Table data={delivery} />
-            </Card>
+          <Card title="Pengiriman" classname="bg-secondary text-text">
+            <Table data={delivery} />
+          </Card>
         </div>
         <div className="col-span-1">
           <Card title="Pengiriman" classname="bg-merah"></Card>

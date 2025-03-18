@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import SearchInput from "../../components/Atom/Search";
-import Modal from "../../components/Molecule/Modal";
-import Title from "../../components/Atom/Title";
-import AddButton from "../../components/Atom/ButtonAdd";
-import CarCard from "../../components/Molecule/CarCard";
-import { CarTypeComponent } from "../../components/Atom/CarType";
-import ButtonComponent from "../../components/Atom/Button";
+import SearchInput from "../../components/atom/Search";
+import Modal from "../../components/molecule/Modal";
+import Title from "../../components/atom/Title";
+import AddButton from "../../components/atom/ButtonAdd";
+import CarCard from "../../components/molecule/CarCard";
+import { CarTypeComponent } from "../../components/atom/CarType";
+import ButtonComponent from "../../components/atom/Button";
 
 const carTypes = ["Semua", "Pick Up", "CDE", "CDD", "Fuso", "Wingbox"];
 

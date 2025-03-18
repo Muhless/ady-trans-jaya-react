@@ -1,21 +1,20 @@
 import React, { useRef } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
-import FormAddMap from "../../components/Organism/FormAddDelivery";
+import FormAddMap from "../../components/organism/FormAddDelivery";
 
 const AddMapPages: React.FC = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
   return (
-    <div className="grid grid-cols-3 gap-5 h-screen">
-      <div className="col-span-1 h-screen overflow-auto">
+    <div className="grid grid-cols-3 gap-5">
+      <div className="col-span-1">
         <FormAddMap ref={mapContainerRef} />
       </div>
       <div className="col-span-2">
         <div
-          className="fixed"
           ref={mapContainerRef}
           style={{
-            height: "710px",
+            height: "650px",
             width: "100%",
             borderRadius: "10px",
             zIndex: "0",

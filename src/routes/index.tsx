@@ -1,17 +1,17 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, BrowserRouter } from "react-router-dom";
-import DeliveryPages from "../pages/delivery/Index";
-import HomePages from "../pages/Home";
-import AddDriverPages from "../pages/driver/AddDriver";
-import DetailDriverPages from "../pages/driver/DetailDriver";
-import DriverPages from "../pages/driver/Index";
-import CarPages from "../pages/car/Index";
-import FinancePages from "../pages/finance/Index";
-import CustomerPages from "../pages/customer/Index";
-import RentalPages from "../pages/rental/Index";
-import DetailDeliveryPages from "../pages/delivery/DetailDelivery";
-import Layout from "../components/Template/layouts";
-import AddMapPages from "../pages/delivery/AddMap";
+import DeliveryPages from "../features/delivery/Index";
+import HomePages from "../pages/Dashboard";
+import AddDriverPages from "../features/driver/AddDriver";
+import DetailDriverPages from "../features/driver/DetailDriver";
+import DriverPages from "../features/driver/Index";
+import CarPages from "../features/car/Index";
+import FinancePages from "../features/finance/Index";
+import CustomerPages from "../features/customer/Index";
+import RentalPages from "../features/rental/Index";
+import DetailDeliveryPages from "../features/delivery/DetailDelivery";
+import Layout from "../components/layouts/MainLayout";
+import AddMapPages from "../features/delivery/AddDelivery";
 
 function AppRoutes() {
   return (

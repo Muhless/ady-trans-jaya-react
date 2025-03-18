@@ -1,11 +1,10 @@
 import React, { forwardRef, useEffect, useRef, useState } from "react";
-import { InputComponent } from "../Atom/Input";
+import { InputComponent } from "../atom/Input";
 import mapboxgl from "mapbox-gl";
-import ButtonComponent from "../Atom/Button";
-import SubTitle from "../Atom/SubTitle";
-import SelectComponent from "../Atom/Select";
-import DateInput from "../Atom/Date";
-import DateInputComponent from "../Atom/Date";
+import ButtonComponent from "../atom/Button";
+import SubTitle from "../atom/SubTitle";
+import SelectComponent from "../atom/Select";
+import DateInputComponent from "../atom/Date";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -192,6 +191,18 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     }
   }, [startPoint, endPoint]);
 
+  useEffect(() => {
+    if (startPoint && endPoint && mapRef.current) {
+      const bounds = new mapboxgl.LngLatBounds();
+      bounds.extend([startPoint.lng, startPoint.lat]);
+      bounds.extend([endPoint.lng, endPoint.lat]);
+
+      if (mapRef.current.isStyleLoaded()) {
+        mapRef.current.fitBounds(bounds, { padding: 200, maxZoom: 14 });
+      }
+    }
+  }, [startPoint, endPoint]);
+
   const clearMap = () => {
     setStartPoint(null);
     setEndPoint(null);
@@ -280,14 +291,14 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           { value: "CDC", label: "CDC" },
         ]}
       />
-      <div className="flex flex-row items-center w-full p-2">
+      {/* <div className="flex flex-row items-center w-full p-2">
         <h1 className="text-lg font-semibold">Rute Pengiriman</h1>
         <ButtonComponent
           variant="undo"
           className="ml-auto rounded-full p-8 flex items-center justify-end"
           onClick={clearMap}
         />
-      </div>
+      </div> */}
       <div className="w-full relative">
         <InputComponent
           label="Keberangkatan"
@@ -346,16 +357,16 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           ))}
         </ul>
       </div>
-        {distance !== null && duration !== null && (
-          <div className="bg-primary p-2 rounded-lg text-sm space-y-2">
-            <p>
-              Jarak: <strong>{distance} Km</strong>
-            </p>
-            <p>
-              Perkiraan waktu: <strong>{duration}</strong>
-            </p>
-          </div>
-        )}
+      {distance !== null && duration !== null && (
+        <div className="bg-primary p-2 rounded-lg text-sm space-y-2">
+          <p>
+            Jarak: <strong>{distance} Km</strong>
+          </p>
+          <p>
+            Perkiraan waktu: <strong>{duration}</strong>
+          </p>
+        </div>
+      )}
       <DateInputComponent label="Tanggal Pengiriman" />
       <DateInputComponent label="Batas Pengiriman" />
 
@@ -365,7 +376,13 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           label="Kembali"
           className="py-2 w-1/3"
         />
-        <ButtonComponent variant="undo" label="Ulangi" className="py-2 w-1/3" />
+        <ButtonComponent
+          variant="undo"
+          label="Ulangi"
+          className="py-2 w-1/3"
+          // TODO: buat agar menghapus semua input
+          onClick={clearMap}
+        />
         <ButtonComponent variant="save" label="Simpan" className="py-2 w-1/3" />
       </div>
     </form>

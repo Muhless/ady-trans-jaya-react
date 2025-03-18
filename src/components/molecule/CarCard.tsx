@@ -1,7 +1,7 @@
 import React from "react";
 import Swal from "sweetalert2";
-import ButtonDelete from "../Atom/ButtonDelete";
-import ButtonEdit from "../Atom/ButtonEdit";
+import ButtonDelete from "../atom/ButtonDelete";
+import ButtonEdit from "../atom/ButtonEdit";
 
 type AvailabilityStatusProps = {
   available?: string;

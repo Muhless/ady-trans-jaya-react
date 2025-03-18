@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import SearchInput from "../../components/Atom/Search.tsx";
-import Table from "../../components/Molecule/Table.tsx";
-import Modal from "../../components/Molecule/Modal.tsx";
+import SearchInput from "../../components/atom/Search.tsx";
+import Table from "../../components/molecule/Table.tsx";
+import Modal from "../../components/molecule/Modal.tsx";
 import { useNavigate } from "react-router-dom";
-import Title from "../../components/Atom/Title.jsx";
-import AddButton from "../../components/Atom/ButtonAdd.tsx";
-import ButtonComponent from "../../components/Atom/Button.tsx";
+import Title from "../../components/atom/Title.js";
+import AddButton from "../../components/atom/ButtonAdd.tsx";
+import ButtonComponent from "../../components/atom/Button.tsx";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },

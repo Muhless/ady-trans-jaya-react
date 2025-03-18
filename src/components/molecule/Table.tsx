@@ -1,6 +1,6 @@
 import React from "react";
-import ButtonEdit from "../Atom/ButtonEdit";
-import ButtonDelete from "../Atom/ButtonDelete";
+import ButtonEdit from "../atom/ButtonEdit";
+import ButtonDelete from "../atom/ButtonDelete";
 
 type TableProps = {
   data?: { id: string | number; [key: string]: any }[];
