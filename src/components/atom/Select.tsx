@@ -21,7 +21,7 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
       <select
         name={name}
         value={value}
-        className="w-60 bg-primary p-2 text-sm rounded-lg cursor-pointer"
+        className="w-60 bg-primary p-2 text-sm cursor-pointer"
         onChange={onChange}
       >
         <option value="" className="text-gray-600">

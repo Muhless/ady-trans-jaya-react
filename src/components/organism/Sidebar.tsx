@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home,
   Users,
@@ -7,9 +7,11 @@ import {
   User,
   CarFront,
   Car,
+  LogOut,
 } from "lucide-react";
 import { useMemo } from "react";
 import React from "react";
+import UserIconComponent from "../atom/UserIcon";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -26,18 +28,23 @@ const Sidebar = () => {
     []
   );
 
+  const navigate = useNavigate();
+
+  const handleOnclick = () => {
+    navigate("/");
+  };
+
   return (
     <div className="fixed bottom-0 left-0 flex flex-col w-20 h-screen pt-3 text-text bg-secondary">
-      <Link to={"/"}>
-        <div className="flex flex-col items-center justify-center mt-3 mb-3 cursor-pointer">
-          <img
-            src="/assets/images/logo.png"
-            alt="Ady Trans Jaya"
-            className="w-16 h-auto"
-          />
-        </div>
-      </Link>
-      <nav className="flex flex-col items-center flex-1 p-4 space-y-5 justify-center">
+      <div className="flex flex-col items-center justify-center mt-3 mb-3 cursor-pointer">
+        <img
+          src="/assets/images/logo.png"
+          alt="Ady Trans Jaya"
+          className="w-16 h-auto"
+          onClick={handleOnclick}
+        />
+      </div>
+      <nav className="flex flex-col items-center justify-center flex-1 p-4 space-y-5">
         {menuItems.map(({ to, icon }) => (
           <Link
             key={to}
@@ -52,6 +59,12 @@ const Sidebar = () => {
           </Link>
         ))}
       </nav>
+      <div className="flex flex-col items-center justify-center space-y-4 cursor-pointer mb-7">
+        <UserIconComponent />
+        <div className="p-2 rotate-180 rounded-full hover:bg-red-500">
+          <LogOut size={25} />
+        </div>
+      </div>
     </div>
   );
 };

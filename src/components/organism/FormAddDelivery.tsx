@@ -270,7 +270,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       />
       <InputComponent
         label="Jumlah Muatan"
-        type="number"
+        type="text"
         name="jumlahMuatan"
         value={formData.jumlahMuatan}
         onChange={handleChange}
@@ -291,14 +291,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           { value: "CDC", label: "CDC" },
         ]}
       />
-      {/* <div className="flex flex-row items-center w-full p-2">
-        <h1 className="text-lg font-semibold">Rute Pengiriman</h1>
-        <ButtonComponent
-          variant="undo"
-          className="ml-auto rounded-full p-8 flex items-center justify-end"
-          onClick={clearMap}
-        />
-      </div> */}
       <div className="w-full relative">
         <InputComponent
           label="Keberangkatan"
@@ -369,6 +361,8 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       )}
       <DateInputComponent label="Tanggal Pengiriman" />
       <DateInputComponent label="Batas Pengiriman" />
+      {/* TODO: Toral didapat dari harga sewa mobil x jarak */}
+      <InputComponent label="Total" disabled={true}/>
 
       <div className="flex justify-center gap-5 w-full p-2">
         <ButtonComponent

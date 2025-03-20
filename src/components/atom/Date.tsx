@@ -16,7 +16,7 @@ const DateInputComponent: React.FC<DateInputComponentProps> = ({ label }) => {
         selected={selectedDate}
         onChange={(date) => setSelectedDate(date)}
         dateFormat="dd/MM/yyyy"
-        className="bg-primary p-2 rounded-lg w-60 text-center"
+        className="bg-primary p-2 w-60 text-center"
         placeholderText="dd/mm/yyyy"
         //         calendarClassName="absolute z-50"
         //         popperPlacement="bottom-start"
