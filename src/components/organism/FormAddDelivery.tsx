@@ -31,7 +31,7 @@ const fetchAddressSuggestions = async (
     const response = await fetch(
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
         query
-      )}.json?autocomplete=true&access_token=${MAPBOX_ACCESS_TOKEN}`
+      )}.json?autocomplete=true&bbox=104.5,-8.5,114.5,-5.5&access_token=${MAPBOX_ACCESS_TOKEN}`
     );
     const data = await response.json();
     if (data.features) {
@@ -63,6 +63,9 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const [endAddress, setEndAddress] = useState<string>("");
   const [startSuggestions, setStartSuggestions] = useState<Place[]>([]);
   const [endSuggestions, setEndSuggestions] = useState<Place[]>([]);
+  const jawaBounds: [number, number, number, number] = [
+    104.5, -8.5, 114.5, -5.5,
+  ];
 
   useEffect(() => {
     if (
@@ -75,9 +78,15 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           .current as HTMLDivElement,
         style: "mapbox://styles/mapbox/streets-v11",
         // style: "mapbox://styles/mapbox/dark-v11",
-        center: [106.8456, -6.2088],
-        zoom: 12,
+        center: [106.6297, -6.1781], // Tangerang
+        // maxBounds: jawaBounds,
+        maxBounds: [
+          [94.972, -11.0076],
+          [141.019, 6.077],
+        ],
       });
+      mapRef.current.scrollZoom.enable();
+      mapRef.current.doubleClickZoom.enable();
     }
   }, [ref]);
 
@@ -85,7 +94,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     if (!startPoint || !endPoint) return;
     try {
       const response = await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/driving/${startPoint.lng},${startPoint.lat};${endPoint.lng},${endPoint.lat}?geometries=geojson&access_token=${MAPBOX_ACCESS_TOKEN}`
+        `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${startPoint.lng},${startPoint.lat};${endPoint.lng},${endPoint.lat}?geometries=geojson&overview=full&access_token=${MAPBOX_ACCESS_TOKEN}`
       );
       const data = await response.json();
 
@@ -161,15 +170,21 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     if (markerRef.current[type]) markerRef.current[type]!.remove();
     const markerColor = type === "start" ? "#0ebdf6" : "#ffa7a7";
     const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-      `<div style="background-color: ${markerColor};
-      color:#000;
-      padding: 6px 10px;
-      border-radius: 5px;
-      font-size:12px;
-      font-weigh:bold;
-      text-align:center;
-      box-shadow: 0px 2px 6px rgba(0,0,0,0.2);">
-          ${type === "start" ? "keberangkatan" : "tujuan"}</div>`
+      `<div style="
+          background-color: ${markerColor};
+          color: white;
+          padding: 8px 12px;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: bold;
+          text-align: center;
+          box-shadow: 0px 4px 8px rgba(0,0,0,0.3);
+          border: 2px solid white;
+          letter-spacing: 0.5px;
+          min-width: 100px;
+      ">
+          ${type === "start" ? "🚀 Keberangkatan" : "📍 Tujuan"}
+      </div>`
     );
 
     markerRef.current[type] = new mapboxgl.Marker()
@@ -243,11 +258,11 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="border p-5 rounded-lg text-sm bg-secondary"
+      className="p-5 text-sm border rounded-lg bg-secondary"
     >
       <SubTitle
         subTitle="Form Tambah Pengiriman"
-        className="text-center mb-5"
+        className="mb-5 text-center"
       />
       <SelectComponent
         label="Customer"
@@ -291,7 +306,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           { value: "CDC", label: "CDC" },
         ]}
       />
-      <div className="w-full relative">
+      <div className="relative w-full">
         <InputComponent
           label="Keberangkatan"
           value={address}
@@ -300,11 +315,11 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
             fetchAddressSuggestions(e.target.value, setStartSuggestions);
           }}
         />
-        <ul className="absolute top-full left-0 bg-primary text-sm rounded w-full mt-1 z-10">
+        <ul className="absolute left-0 z-10 w-full mt-1 text-sm rounded top-full bg-primary">
           {startSuggestions.map((place) => (
             <li
               key={place.id}
-              className="p-2 hover:bg-gray-600 cursor-pointer"
+              className="p-2 cursor-pointer hover:bg-gray-600"
               onClick={() =>
                 handleSelectAddress(
                   place,
@@ -320,7 +335,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           ))}
         </ul>
       </div>
-      <div className="w-full relative">
+      <div className="relative w-full">
         <InputComponent
           label="Tujuan Pengiriman"
           value={endAddress}
@@ -329,11 +344,11 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
             fetchAddressSuggestions(e.target.value, setEndSuggestions);
           }}
         />
-        <ul className="absolute top-full left-0 bg-primary text-sm rounded w-full mt-1 z-10">
+        <ul className="absolute left-0 z-10 w-full mt-1 text-sm rounded top-full bg-primary">
           {endSuggestions.map((place) => (
             <li
               key={place.id}
-              className="p-2 hover:bg-gray-600 cursor-pointer"
+              className="p-2 cursor-pointer hover:bg-gray-600"
               onClick={() =>
                 handleSelectAddress(
                   place,
@@ -350,7 +365,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         </ul>
       </div>
       {distance !== null && duration !== null && (
-        <div className="bg-primary p-2 rounded-lg text-sm space-y-2">
+        <div className="p-2 space-y-2 text-sm rounded-lg bg-primary">
           <p>
             Jarak: <strong>{distance} Km</strong>
           </p>
@@ -362,22 +377,22 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       <DateInputComponent label="Tanggal Pengiriman" />
       <DateInputComponent label="Batas Pengiriman" />
       {/* TODO: Toral didapat dari harga sewa mobil x jarak */}
-      <InputComponent label="Total" disabled={true}/>
+      <InputComponent label="Total" disabled={true} />
 
-      <div className="flex justify-center gap-5 w-full p-2">
+      <div className="flex justify-center w-full gap-5 p-2">
         <ButtonComponent
           variant="back"
           label="Kembali"
-          className="py-2 w-1/3"
+          className="w-1/3 py-2"
         />
         <ButtonComponent
           variant="undo"
           label="Ulangi"
-          className="py-2 w-1/3"
+          className="w-1/3 py-2"
           // TODO: buat agar menghapus semua input
           onClick={clearMap}
         />
-        <ButtonComponent variant="save" label="Simpan" className="py-2 w-1/3" />
+        <ButtonComponent variant="save" label="Simpan" className="w-1/3 py-2" />
       </div>
     </form>
   );

@@ -52,6 +52,7 @@ function DriverPages() {
         ))}
       </div>
       <div className="flex justify-center mt-5 text-text">
+        {/* TODO: fix paginate */}
         <ReactPaginate
           previousLabel={"Kembali"}
           nextLabel={"Berikutnya"}

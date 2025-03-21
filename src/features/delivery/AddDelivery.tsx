@@ -17,7 +17,7 @@ const AddMapPages: React.FC = () => {
             height: "650px",
             width: "100%",
             borderRadius: "10px",
-            zIndex: "0",
+            zIndex: "9999",
           }}
         />
       </div>

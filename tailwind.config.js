@@ -15,6 +15,7 @@ export default {
         merah: "#ffa7a7",
         biru: "#0ebdf6",
         kuning: "#f7d15e",
+        darkmode:'#59168b'
       },
     },
   },
