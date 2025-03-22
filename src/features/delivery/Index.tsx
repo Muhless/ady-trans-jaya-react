@@ -1,12 +1,11 @@
 import SearchInput from "../../components/atom/Search.tsx";
 import SubTitle from "../../components/atom/SubTitle.tsx";
 import { useNavigate } from "react-router-dom";
-import React from "react";
-import AddButton from "../../components/atom/ButtonAdd.tsx";
+import React, { useRef } from "react";
 import Title from "../../components/atom/Title.tsx";
 import Table from "../../components/molecule/Table.tsx";
-import DeliveryCard from "../../components/molecule/DeliveryCard.tsx";
 import ButtonComponent from "../../components/atom/Button.tsx";
+import Card from "../../components/molecule/Card.tsx";
 
 const matches = [
   {
@@ -55,6 +54,9 @@ const onGoing = [
 
 function DeliveryPages() {
   const navigate = useNavigate();
+  const tableRefOngoing = useRef(null);
+  const tableRefWaiting = useRef(null);
+
   const handleRowClick = (row) => {
     navigate(`/delivery/${row.id}`);
   };
@@ -63,40 +65,60 @@ function DeliveryPages() {
     navigate("/delivery/add");
   };
 
+  const handleCardClick = (ref) => {
+    if (ref.current) {
+      ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
     <>
       <Title title={"Pengiriman"} />
-      <div className="grid grid-cols-3 gap-3">
-        <DeliveryCard className={"bg-merah"} text={"Menunggu Persetujuan"} />
-        <DeliveryCard className={"bg-kuning"} text={"Sedang Berlangsung"} />
-        <DeliveryCard className={"bg-biru"} text={"Sudah Disetujui"} />
+      <div className="grid grid-cols-3 gap-3 mb-10">
+        <Card
+          className={"bg-merah h-40"}
+          title={"Menunggu Persetujuan"}
+          onClick={() => handleCardClick(tableRefWaiting)}
+        />
+        <Card
+          className={"bg-kuning"}
+          title={"Sedang Berlangsung"}
+          onClick={() => handleCardClick(tableRefOngoing)}
+        />
+        <Card className={"bg-biru"} title={"Sudah Disetujui"} />
       </div>
-      <div className="grid grid-cols-3 my-5 gap-5">
-        <div className="col-span-2">
-          <div className="items-center justify-between mb-5">
-            <SubTitle subTitle={"Sedang Berlangsung"} className={"mb-5"} />
-            <div className="flex flex-row justify-between">
-              <ButtonComponent
-                label="Tambah Pengiriman"
-                variant="add"
-                className="w-48"
-                onClick={handleAddClick}
-              />
-              <SearchInput placeholder={"pengiriman"} />
-            </div>
-          </div>
-          <Table
-            data={matches}
-            onRowClick={handleRowClick}
-            showActions={true}
+      <div className="mb-20">
+        <SubTitle subTitle={"Sedang Berlangsung"} className="mb-3" />
+        <div
+          className="flex flex-row justify-between mb-3"
+          ref={tableRefOngoing}
+        >
+          <ButtonComponent
+            label="Tambah Pengiriman"
+            variant="add"
+            className="w-48"
+            onClick={handleAddClick}
           />
+          <SearchInput placeholder={"pengiriman"} />
         </div>
-        <div className="col-span-1">
-          <div className="">
-            <SubTitle subTitle={"Menunggu Persetujuan"} className={"mb-5"} />
-            <Table data={onGoing} onRowClick={handleRowClick} />
-          </div>
+        <Table data={matches} onRowClick={handleRowClick} showActions={true} className="bg-merah"/>
+      </div>
+      <div className="mb-20">
+        <div
+          ref={tableRefWaiting}
+          className="flex flex-row justify-between mb-3"
+        >
+          <SubTitle subTitle={"Menunggu Persetujuan"} />
+          <SearchInput placeholder="Pengiriman" />
         </div>
+        <Table data={onGoing} onRowClick={handleRowClick} className="bg-kuning"/>
+      </div>
+      <div className="">
+        <div className="flex justify-between mb-3">
+          <SubTitle subTitle="Selesai" />
+          <SearchInput />
+        </div>
+        <Table data={matches} onRowClick={handleRowClick} className="bg-biru"/>
       </div>
     </>
   );

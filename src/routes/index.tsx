@@ -17,6 +17,7 @@ import RentalPages from "../features/rental/Index";
 import DetailDeliveryPages from "../features/delivery/DetailDelivery";
 import Layout from "../components/layouts/MainLayout";
 import AddMapPages from "../features/delivery/AddDelivery";
+import ProfilePages from "../pages/Profile";
 
 function AppRoutes() {
   return (
@@ -24,6 +25,7 @@ function AppRoutes() {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<HomePages />} />
+          <Route path="/profile" element={<ProfilePages />} />
           {/* car */}
           <Route path="/car" element={<CarPages />} />
           {/* driver */}

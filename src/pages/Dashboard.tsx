@@ -16,17 +16,17 @@ const HomePages = () => {
   return (
     <>
       <Title title={"Selamat Datang, Admin"} />
-      <div className="grid grid-cols-3 gap-3 max-h-full">
-        <div className="col-span-2 flex flex-col">
-          <Card title="Grafik" classname="text-text bg-secondary"></Card>
-          <Card title="Pengiriman" classname="bg-secondary text-text">
+      <div className="grid max-h-full grid-cols-3 gap-3">
+        <div className="flex flex-col col-span-2">
+          <Card title="Grafik" className="text-text bg-secondary"></Card>
+          <Card title="Pengiriman" className="bg-secondary text-text">
             <Table data={delivery} />
           </Card>
         </div>
         <div className="col-span-1">
-          <Card title="Pengiriman" classname="bg-merah"></Card>
-          <Card title="Pengiriman" classname="bg-biru"></Card>
-          <Card title="Pengiriman" classname="bg-kuning"></Card>
+          <Card title="Pengiriman" className="bg-merah"></Card>
+          <Card title="Pengiriman" className="bg-biru"></Card>
+          <Card title="Pengiriman" className="bg-kuning"></Card>
         </div>
       </div>
     </>

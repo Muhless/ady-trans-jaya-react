@@ -1,9 +1,17 @@
 import React from "react";
 
-const UserIconComponent = () => {
+type UserIconComponentProps = {
+  onClick?: () => void;
+};
+
+const UserIconComponent: React.FC<UserIconComponentProps> = ({ onClick }) => {
   return (
-    <div>
-      <img src="/assets/images/profile/1.jpg" alt="" className="box-content rounded-full size-9" />
+    <div onClick={onClick}>
+      <img
+        src="/assets/images/profile/1.jpg"
+        alt=""
+        className="box-content rounded-full size-9"
+      />
     </div>
   );
 };

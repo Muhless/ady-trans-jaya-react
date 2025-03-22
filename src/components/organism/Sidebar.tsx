@@ -35,6 +35,10 @@ const Sidebar = () => {
     navigate("/");
   };
 
+  const userProfile = () => {
+    navigate("/profile");
+  };
+
   return (
     <div className="fixed bottom-0 left-0 flex flex-col w-20 h-screen pt-3 text-text bg-secondary">
       <div className="flex flex-col items-center justify-center mt-3 space-y-2 cursor-pointer">
@@ -44,7 +48,9 @@ const Sidebar = () => {
           className="w-16 h-auto"
           onClick={handleOnclick}
         />
-        <UserIconComponent />
+        <div className="p-2 bg-white rounded-full text-darkmode">
+          <Moon />
+        </div>
       </div>
       <nav className="flex flex-col items-center justify-center flex-1 p-4 space-y-2">
         {menuItems.map(({ to, icon }) => (
@@ -62,9 +68,8 @@ const Sidebar = () => {
         ))}
       </nav>
       <div className="flex flex-col items-center justify-center space-y-4 cursor-pointer mb-7">
-        <div className="p-2 bg-white rounded-full text-darkmode">
-          <Moon />
-        </div>
+        <UserIconComponent onClick={userProfile} />
+
         <div className="p-2 rotate-180 rounded-full hover:bg-red-500">
           <LogOut size={25} />
         </div>
