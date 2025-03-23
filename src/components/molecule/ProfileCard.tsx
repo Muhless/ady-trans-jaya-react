@@ -1,7 +1,6 @@
 import { Phone, MapPin, Info } from "lucide-react";
 import React from "react";
-import ButtonEdit from "../atom/ButtonEdit";
-import ButtonDelete from "../atom/ButtonDelete";
+import ButtonComponent from "../atom/Button";
 
 type ProfileCardProps = {
   id?: string | number;
@@ -11,14 +10,14 @@ type ProfileCardProps = {
 const ProfileCard: React.FC<ProfileCardProps> = (id, onClick) => {
   return (
     <div
-      className="relative grid grid-cols-4 p-4 items-center transition-all duration-300 ease-in-out cursor-pointer bg-secondary text-sm rounded-lg hover:bg-biru hover:text-primary hover:scale-105 mb-3"
+      className="relative grid items-center grid-cols-4 p-4 mb-3 text-sm transition-all duration-300 ease-in-out rounded-lg cursor-pointer bg-secondary hover:bg-biru hover:text-primary hover:scale-105"
       onClick={() => id && onClick(id)}
     >
-      <div className="flex gap-5 items-center">
+      <div className="flex items-center gap-5">
         <img
           src="/assets/images/profile/1.jpg"
           alt="Profile"
-          className="object-cover shadow-md size-12 rounded-full"
+          className="object-cover rounded-full shadow-md size-12"
         />
         <div>
           <h1 className="text-xl font-bold">Muhta Nuryadi</h1>
@@ -37,8 +36,8 @@ const ProfileCard: React.FC<ProfileCardProps> = (id, onClick) => {
         <p>Tersedia/Tidak Tersedia</p>
       </div>
       <div className="flex items-center justify-center gap-2">
-        <ButtonEdit size={18} />
-        <ButtonDelete size={18} />
+        <ButtonComponent variant="edit"/>
+        <ButtonComponent variant="delete" />
       </div>
     </div>
   );

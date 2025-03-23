@@ -5,6 +5,7 @@ import ButtonComponent from "../atom/Button";
 import SubTitle from "../atom/SubTitle";
 import SelectComponent from "../atom/Select";
 import DateInputComponent from "../atom/Date";
+import useNavigationHooks from "../../hooks/useNavigation";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -66,6 +67,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const jawaBounds: [number, number, number, number] = [
     104.5, -8.5, 114.5, -5.5,
   ];
+  const { goToDeliveryGroup } = useNavigationHooks();
 
   useEffect(() => {
     if (
@@ -380,19 +382,13 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       <InputComponent label="Total" disabled={true} />
 
       <div className="flex justify-center w-full gap-5 p-2">
+        <ButtonComponent variant="back" label="Kembali" />
+        <ButtonComponent variant="undo" label="Ulangi" onClick={clearMap} />
         <ButtonComponent
-          variant="back"
-          label="Kembali"
-          className="w-1/3 py-2"
+          variant="save"
+          label="Simpan"
+          onClick={goToDeliveryGroup}
         />
-        <ButtonComponent
-          variant="undo"
-          label="Ulangi"
-          className="w-1/3 py-2"
-          // TODO: buat agar menghapus semua input
-          onClick={clearMap}
-        />
-        <ButtonComponent variant="save" label="Simpan" className="w-1/3 py-2" />
       </div>
     </form>
   );

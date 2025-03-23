@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
-import FormAddMap from "../../components/organism/FormAddDelivery";
+import FormAddMap from "../../components/organism/FormDelivery";
 
-const AddMapPages: React.FC = () => {
+const AddDeliveryPages: React.FC = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
   return (
@@ -25,4 +25,4 @@ const AddMapPages: React.FC = () => {
   );
 };
 
-export default AddMapPages;
+export default AddDeliveryPages;

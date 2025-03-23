@@ -1,7 +1,5 @@
 import React from "react";
-import Swal from "sweetalert2";
-import ButtonDelete from "../atom/ButtonDelete";
-import ButtonEdit from "../atom/ButtonEdit";
+import ButtonComponent from "../atom/Button";
 
 type AvailabilityStatusProps = {
   available?: string;
@@ -19,10 +17,10 @@ const CarCard: React.FC<AvailabilityStatusProps> = ({
   available = "Tersedia",
 }) => {
   return (
-    <div className="z-40 relative grid grid-cols-3 rounded-lg bg-secondary text-text p-4">
-      <div className="absolute items-center text-center flex gap-1 cursor-pointer top-2 right-2">
-        <ButtonEdit size={15} />
-        <ButtonDelete size={15} />
+    <div className="relative z-40 grid grid-cols-3 p-4 rounded-lg bg-secondary text-text">
+      <div className="absolute flex items-center gap-1 text-center cursor-pointer top-2 right-2">
+        <ButtonComponent variant="edit" />
+        <ButtonComponent variant="delete" />
       </div>
       <div className="flex items-center justify-center flex-grow w-full col-span-2">
         <img

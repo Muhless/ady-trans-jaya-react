@@ -4,7 +4,6 @@ import ProfileCard from "../../components/molecule/ProfileCard";
 import SearchInput from "../../components/atom/Search";
 import Modal from "../../components/molecule/Modal";
 import Title from "../../components/atom/Title";
-import AddButton from "../../components/atom/ButtonAdd";
 import ReactPaginate from "react-paginate";
 import ButtonComponent from "../../components/atom/Button";
 

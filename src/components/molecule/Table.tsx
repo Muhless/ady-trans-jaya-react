@@ -1,6 +1,5 @@
 import React from "react";
-import ButtonEdit from "../atom/ButtonEdit";
-import ButtonDelete from "../atom/ButtonDelete";
+import ButtonComponent from "../atom/Button";
 
 type TableProps = {
   data?: { id: string | number; [key: string]: any }[];
@@ -43,8 +42,8 @@ const Table: React.FC<TableProps> = ({
             {showActions && (
               <td>
                 <div className="flex justify-center gap-2">
-                  <ButtonEdit size={15} />
-                  <ButtonDelete size={15} />
+                  <ButtonComponent variant="edit" />
+                  <ButtonComponent variant="delete" />
                 </div>
               </td>
             )}
