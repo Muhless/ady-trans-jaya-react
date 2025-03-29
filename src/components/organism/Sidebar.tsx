@@ -60,8 +60,7 @@ const Sidebar = () => {
         ))}
       </nav>
       <div className="flex flex-col items-center justify-center space-y-4 cursor-pointer mb-7">
-        <UserIconComponent onClick={goToUserProfile} />
-
+        <UserIconComponent onClick={goToUserProfile} className="size-10 rounded-full"/>
         <div className="p-2 rotate-180 rounded-full hover:bg-red-500">
           <LogOut size={25} />
         </div>

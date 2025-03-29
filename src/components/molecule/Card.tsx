@@ -10,7 +10,7 @@ type CardProps = {
 const Card: React.FC<CardProps> = ({ title, className, children, onClick }) => {
   return (
     <div
-      className={`${className} rounded-lg p-4 ${
+      className={`${className} rounded-lg ${
         onClick ? "cursor-pointer hover:shadow-lg transition-all" : ""
       }`}
       onClick={onClick}

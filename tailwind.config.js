@@ -7,6 +7,7 @@ export default {
         jakarta: ["Plus Jakarta Sans", "sans-serif"],
         poppins: ["poppins", "sans serif"],
         mona: ["Mona Sans", "Helvetica Neue", "Helvetica, Arial", "sans-serif"],
+        geist: ["Geist Mono", "monospace"],
       },
       colors: {
         primary: "#161819",
@@ -15,7 +16,7 @@ export default {
         merah: "#ffa7a7",
         biru: "#0ebdf6",
         kuning: "#f7d15e",
-        darkmode:'#59168b'
+        darkmode: "#59168b",
       },
     },
   },

@@ -45,28 +45,10 @@ function DriverPages() {
         />
         <SearchInput placeholder="driver" />
       </div>
-      <div className="px-10">
+      <div className="grid grid-cols-4 gap-4">
         {currentDrivers.map((id) => (
           <ProfileCard key={id} onClick={() => handleCardClick(id)} />
         ))}
-      </div>
-      <div className="flex justify-center mt-5 text-text">
-        {/* TODO: fix paginate */}
-        <ReactPaginate
-          previousLabel={"Kembali"}
-          nextLabel={"Berikutnya"}
-          breakLabel={"..."}
-          pageCount={pageCount}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={3}
-          onPageChange={handlePageChange}
-          containerClassName={"pagination flex gap-2"}
-          activeClassName="text-blue-500 font-bold"
-          pageClassName="border px-3 py-1 rounded-lg cursor-pointer text-center"
-          previousClassName="border px-3 py-1 rounded-lg cursor-pointer"
-          nextClassName="border px-3 py-1 rounded-lg cursor-pointer"
-          breakClassName="border px-3 py-1 rounded-lg cursor-pointer"
-        />
       </div>
       <Modal
         isOpen={isModalOpen}
