@@ -4,38 +4,34 @@ import ButtonComponent from "../atom/Button";
 import Card from "./Card";
 import SubTitle from "../atom/SubTitle";
 import UserIconComponent from "../atom/UserIcon";
+import useNavigationHooks from "../../hooks/useNavigation";
 
 type ProfileCardProps = {
   id?: string | number;
   onClick: (id: string | number) => void;
 };
 
-const ProfileCard: React.FC<ProfileCardProps> = (id, onClick) => {
+const ProfileCard: React.FC<ProfileCardProps> = () => {
+  const { goToDriverDetails } = useNavigationHooks();
   return (
-    <Card className="bg-white">
-      <div className="bg-red-500 rounded-t-lg h-8"></div>
-      <div className="grid grid-cols-3 p-2">
-        <div className="col-span-1">
+    <Card
+      className="bg-secondary cursor-pointer hover:bg-biru hover:transition-all hover:duration-300"
+      onClick={goToDriverDetails(123)}
+    >
+      <div className="grid grid-cols-3 p-4">
+        <div className="col-span-1 flex items-center">
           <UserIconComponent
-            className="box-content size-32"
-            src="assets/images/profile/3.jpg"
+            className="size-24 rounded-full object-cover"
+            src="assets/images/profile/1.jpg"
           />
         </div>
-        <div className="col-span-2 flex flex-col text-primary px-5 text-sm">
-          <div className="space-y-2">
-            <div className="flex items-center gap-3">
-              <User2Icon size={20} />
-              <p>Nama</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Phone size={20} />
-              <p>No Telepon</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <MapPin size={20} />
-              <p>Alamat</p>
-            </div>
-          </div>
+        <div className="col-span-2 flex flex-col px-3 text-sm py-2">
+          <p className="font-bold text-base">Muhta Nuryadi</p>
+          <p className="text-gray-300">08871165551</p>
+          <p className="text-gray-400">
+            Kp. Cangkudu Rt.06 Rw.01. Kab.Tangerang
+          </p>
+          <p className="underline">Tersedia/Tidak</p>
         </div>
       </div>
     </Card>

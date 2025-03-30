@@ -6,6 +6,13 @@ const useNavigationHooks = () => {
     goToHome: () => navigate("/"),
     goToUserProfile: () => navigate("/profile"),
     goToDeliveryGroup: () => navigate("/delivery/add/group"),
+    goToDriverDetails: (id: string | number) => () => {
+      if (id) {
+        navigate(`/driver/${id}`);
+      } else {
+        console.warn("ID tidak tersedia");
+      }
+    },
   };
 };
 
