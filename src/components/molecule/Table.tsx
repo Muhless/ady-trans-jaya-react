@@ -16,7 +16,7 @@ const Table: React.FC<TableProps> = ({
 }) => {
   const headers = data.length > 0 ? Object.keys(data[0]) : [];
   return (
-    <table className="w-full text-sm border-collapse border-none rounded-lg table-auto cursor-pointer bg-secondary">
+    <table className="w-full border-black text-sm border-collapse rounded-lg table-auto cursor-pointer bg-secondary">
       <thead>
         <tr className={`text-left ${className}`}>
           {headers.map((key) => (

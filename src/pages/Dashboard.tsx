@@ -15,18 +15,23 @@ const delivery = [
 const HomePages = () => {
   return (
     <>
-      <Title title={"Selamat Datang, Admin"} />
+      <Title  title={"Selamat Datang, Admin"} />
+      <div className="grid grid-cols-3 mb-3 gap-3">
+        <div className="flex col-span-2 gap-3">
+          <Card title="Pengiriman" className="bg-merah w-1/3"></Card>
+          <Card title="Pengiriman" className="bg-biru w-1/3"></Card>
+          <Card title="Pengiriman" className="bg-kuning w-1/3"></Card>
+        </div>
+        <div>
+          <Card title="Pengiriman" className="bg-kuning"></Card>
+        </div>
+      </div>
       <div className="grid max-h-full grid-cols-3 gap-3">
         <div className="flex flex-col col-span-2">
           <Card title="Grafik" className="text-text bg-secondary"></Card>
-          <Card title="Pengiriman" className="bg-secondary text-text">
+          {/* <Card title="Pengiriman" className="bg-secondary text-text">
             <Table data={delivery} />
-          </Card>
-        </div>
-        <div className="col-span-1">
-          <Card title="Pengiriman" className="bg-merah"></Card>
-          <Card title="Pengiriman" className="bg-biru"></Card>
-          <Card title="Pengiriman" className="bg-kuning"></Card>
+          </Card> */}
         </div>
       </div>
     </>

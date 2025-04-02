@@ -1,6 +1,7 @@
-import { X } from "lucide-react";
+import { Save, X } from "lucide-react";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import ButtonComponent from "../atom/Button";
 
 type FieldConfig = {
   name: string;
@@ -41,17 +42,19 @@ function Modal({
   if (!isOpen) return null;
 
   return (
-    <div className="z-50 fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center text-primary">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
-        <div className="flex justify-between">
-          <h1 className="font-medium text-lg">
+    <div className="z-50 fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center text-text">
+      <div className="bg-primary p-6 rounded-md shadow-lg w-1/3">
+        <div className="relative flex justify-center">
+          <h1 className="font-bold underline text-lg font-compforta">
             {mode === "edit" ? "Edit Data" : "Tambah Data"}
           </h1>
-          <button onClick={onClose} className="text-text hover:text-merah">
+          <button
+            onClick={onClose}
+            className="absolute right-0 hover:text-merah "
+          >
             <X />
           </button>
         </div>
-
         <form
           className="mt-4"
           onSubmit={handleSubmit((data) => {
@@ -85,16 +88,8 @@ function Modal({
           ))}
 
           <div className="flex justify-end gap-2">
-            <button
-              onClick={onClose}
-              type="button"
-              className="bg-merah w-28 h-10 rounded-lg"
-            >
-              Batal
-            </button>
-            <button type="submit" className="bg-biru w-28 h-10 rounded-lg">
-              Simpan
-            </button>
+            <ButtonComponent label="Ulangi" variant="undo" />
+            <ButtonComponent label="Simpan" variant="save" />
           </div>
         </form>
       </div>

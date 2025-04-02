@@ -76,7 +76,7 @@ function DeliveryPages() {
       <Title title={"Pengiriman"} />
       <div className="grid grid-cols-3 gap-3 mb-10">
         <Card
-          className={"bg-merah h-40"}
+          className={"bg-merah"}
           title={"Menunggu Persetujuan"}
           onClick={() => handleCardClick(tableRefWaiting)}
         />
@@ -85,7 +85,6 @@ function DeliveryPages() {
           title={"Sedang Berlangsung"}
           onClick={() => handleCardClick(tableRefOngoing)}
         />
-        <Card className={"bg-biru"} title={"Sudah Disetujui"} />
       </div>
       <div className="mb-20">
         <SubTitle subTitle={"Sedang Berlangsung"} className="mb-3" />
@@ -101,7 +100,12 @@ function DeliveryPages() {
           />
           <SearchInput placeholder={"pengiriman"} />
         </div>
-        <Table data={matches} onRowClick={handleRowClick} showActions={true} className="bg-merah"/>
+        <Table
+          data={matches}
+          onRowClick={handleRowClick}
+          showActions={true}
+          className="bg-merah"
+        />
       </div>
       <div className="mb-20">
         <div
@@ -111,14 +115,18 @@ function DeliveryPages() {
           <SubTitle subTitle={"Menunggu Persetujuan"} />
           <SearchInput placeholder="Pengiriman" />
         </div>
-        <Table data={onGoing} onRowClick={handleRowClick} className="bg-kuning"/>
+        <Table
+          data={onGoing}
+          onRowClick={handleRowClick}
+          className="bg-kuning"
+        />
       </div>
       <div className="">
         <div className="flex justify-between mb-3">
           <SubTitle subTitle="Selesai" />
           <SearchInput />
         </div>
-        <Table data={matches} onRowClick={handleRowClick} className="bg-biru"/>
+        <Table data={matches} onRowClick={handleRowClick} className="bg-biru" />
       </div>
     </>
   );

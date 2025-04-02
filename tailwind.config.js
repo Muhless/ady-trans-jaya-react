@@ -8,13 +8,12 @@ export default {
         poppins: ["poppins", "sans serif"],
         mona: ["Mona Sans", "Helvetica Neue", "Helvetica, Arial", "sans-serif"],
         geist: ["Geist Mono", "monospace"],
+        IBM_flex: ["IBM Plex Mono", "monospace"],
+        compforta:["Comfortaa, sans-serif"]
       },
       colors: {
-        // primary: "#161819",
-        // secondary: "#242529",
-        // text: "#e5e5e9",
         primary: "#ffffff",
-        secondary: "#e5e5e9",
+        secondary: "#f2f7f5",
         text: "#242529",
         merah: "#ffa7a7",
         biru: "#0ebdf6",

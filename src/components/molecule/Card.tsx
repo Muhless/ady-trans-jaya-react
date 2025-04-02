@@ -1,4 +1,4 @@
-import React, { Children } from "react";
+import React from "react";
 
 type CardProps = {
   title?: string;
@@ -7,11 +7,18 @@ type CardProps = {
   onClick?: () => void;
 };
 
-const Card: React.FC<CardProps> = ({ title, className, children, onClick }) => {
+const Card: React.FC<CardProps> = ({
+  title,
+  className = "",
+  children,
+  onClick,
+}) => {
   return (
     <div
-      className={`${className} rounded-lg ${
-        onClick ? "cursor-pointer hover:shadow-lg transition-all" : ""
+      className={`${className} relative border rounded-md border-black p-3 ${
+        onClick
+          ? "cursor-pointer hover:shadow-lg transition-all focus-visible:ring-2 focus-visible:ring-black"
+          : ""
       }`}
       onClick={onClick}
       role={onClick ? "button" : undefined}

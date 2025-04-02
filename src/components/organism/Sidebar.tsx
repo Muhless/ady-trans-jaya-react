@@ -20,29 +20,26 @@ const Sidebar = () => {
   const location = useLocation();
   const menuItems = useMemo(
     () => [
-      { to: "/", icon: <Home size={25} /> },
-      { to: "/car", icon: <CarFront size={25} /> },
-      { to: "/driver", icon: <User size={25} /> },
-      { to: "/customer", icon: <Users size={25} /> },
-      { to: "/rent", icon: <Car size={25} /> },
-      { to: "/delivery", icon: <Truck size={25} /> },
-      { to: "/finance", icon: <ChartSpline size={25} /> },
+      { to: "/", icon: <Home size={30} /> },
+      { to: "/car", icon: <CarFront size={30} /> },
+      { to: "/driver", icon: <User size={30} /> },
+      { to: "/customer", icon: <Users size={30} /> },
+      { to: "/rent", icon: <Car size={30} /> },
+      { to: "/delivery", icon: <Truck size={30} /> },
+      { to: "/finance", icon: <ChartSpline size={30} /> },
     ],
     []
   );
 
   return (
-    <div className="fixed bottom-0 left-0 flex flex-col w-20 h-screen pt-3 text-text bg-secondary">
-      <div className="flex flex-col items-center justify-center mt-3 space-y-2 cursor-pointer">
+    <div className="fixed bottom-0 left-0 flex flex-col w-32 h-screen pt-3 text-text bg-secondary">
+      <div className="flex flex-col items-center justify-center cursor-pointer">
         <img
           src="/assets/images/logo.png"
           alt="Ady Trans Jaya"
-          className="w-16 h-auto"
+          className="w-28 h-auto"
           onClick={goToHome}
         />
-        <div className="p-2 bg-white rounded-full text-darkmode">
-          <Moon />
-        </div>
       </div>
       <nav className="flex flex-col items-center justify-center flex-1 p-4 space-y-2">
         {menuItems.map(({ to, icon }) => (
@@ -60,7 +57,10 @@ const Sidebar = () => {
         ))}
       </nav>
       <div className="flex flex-col items-center justify-center space-y-4 cursor-pointer mb-7">
-        <UserIconComponent onClick={goToUserProfile} className="size-10 rounded-full"/>
+        <UserIconComponent
+          onClick={goToUserProfile}
+          className="size-10 rounded-full"
+        />
         <div className="p-2 rotate-180 rounded-full hover:bg-red-500">
           <LogOut size={25} />
         </div>
