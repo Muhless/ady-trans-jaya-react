@@ -10,17 +10,17 @@ type TableProps = {
 
 const Table: React.FC<TableProps> = ({
   data = [],
-  className = "bg-gray-500 ",
+  className = "bg-gray-500",
   onRowClick,
   showActions = false,
 }) => {
   const headers = data.length > 0 ? Object.keys(data[0]) : [];
   return (
-    <table className="w-full border-black text-sm border-collapse rounded-lg table-auto cursor-pointer bg-secondary">
+    <table className="w-full border text-sm cursor-pointer">
       <thead>
-        <tr className={`text-left ${className}`}>
+        <tr className={`text-center bg-kuning border-collapse ${className}`}>
           {headers.map((key) => (
-            <th className="p-4">{key.toUpperCase()}</th>
+            <th className="p-3">{key}</th>
           ))}
           {showActions && (
             <th className={`p-4 text-center ${className}`}>Aksi</th>
@@ -32,10 +32,10 @@ const Table: React.FC<TableProps> = ({
           <tr
             key={row.id}
             onClick={() => onRowClick?.(row)}
-            className="transition-all duration-300 ease-in-out border-b hover:bg-biru hover:text-primary"
+            className="transition-all duration-300 border border-black hover:bg-sky-500 hover:text-primary"
           >
             {Object.keys(row).map((key) => (
-              <td key={key} className="p-4">
+              <td key={key} className="p-3">
                 {row[key]}
               </td>
             ))}
