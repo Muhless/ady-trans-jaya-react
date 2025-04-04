@@ -20,13 +20,13 @@ const Sidebar = () => {
   const location = useLocation();
   const menuItems = useMemo(
     () => [
-      { to: "/", icon: <Home size={30} /> },
-      { to: "/car", icon: <CarFront size={30} /> },
-      { to: "/driver", icon: <User size={30} /> },
-      { to: "/customer", icon: <Users size={30} /> },
-      { to: "/rent", icon: <Car size={30} /> },
-      { to: "/delivery", icon: <Truck size={30} /> },
-      { to: "/finance", icon: <ChartSpline size={30} /> },
+      { to: "/", icon: <Home size={25} /> },
+      { to: "/car", icon: <CarFront size={25} /> },
+      { to: "/driver", icon: <User size={25} /> },
+      { to: "/customer", icon: <Users size={25} /> },
+      { to: "/rent", icon: <Car size={25} /> },
+      { to: "/delivery", icon: <Truck size={25} /> },
+      { to: "/finance", icon: <ChartSpline size={25} /> },
     ],
     []
   );
@@ -41,15 +41,15 @@ const Sidebar = () => {
           onClick={goToHome}
         />
       </div>
-      <nav className="flex flex-col items-center justify-center flex-1 p-4 space-y-2">
+      <nav className="flex flex-col items-center justify-center flex-1 p-4 space-y-4">
         {menuItems.map(({ to, icon }) => (
           <Link
             key={to}
             to={to}
-            className={`p-2 rounded-full flex items-center ${
+            className={`p-2 bg-primary rounded-full flex items-center ${
               location.pathname === to
-                ? "bg-biru text-text"
-                : "hover:bg-merah hover:text-text"
+                ? "bg-text text-primary"
+                : "hover:bg-gray-400 hover:text-primary"
             }`}
           >
             {icon}
@@ -61,7 +61,7 @@ const Sidebar = () => {
           onClick={goToUserProfile}
           className="size-10 rounded-full"
         />
-        <div className="p-2 rotate-180 rounded-full hover:bg-red-500">
+        <div className="p-2 rotate-180 bg-primary rounded-full hover:bg-red-500 hover:text-primary">
           <LogOut size={25} />
         </div>
       </div>
