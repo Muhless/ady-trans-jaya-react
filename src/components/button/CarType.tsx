@@ -8,10 +8,10 @@ export const CarTypeComponent = ({ carTypes }) => {
       {carTypes.map((type, index) => (
         <div
           key={index}
-          className={`flex items-center justify-center ease-in-out cursor-pointer w-32 text-sm p-1 rounded-lg transition-all duration-300 ${
+          className={`flex items-center justify-center ease-in-out cursor-pointer w-32 text-sm p-2 transition-all duration-300 ${
             selectedType === type
-              ? "bg-kuning text-primary"
-              : "bg-text text-primary hover:bg-merah hover:text-primary"
+              ? "bg-kuning "
+              : "bg-text text-primary hover:bg-merah hover:text-text"
           }`}
           onClick={() => setSelectedType(type)}
         >

@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import SubTitle from "../../components/atom/SubTitle";
-import UserIconComponent from "../../components/atom/UserIcon";
+import SubTitle from "../../components/SubTitle";
+import UserIconComponent from "../../components/UserIcon";
 
 function DetailDriverPages() {
   const { id } = useParams();

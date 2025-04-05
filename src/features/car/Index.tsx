@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import SearchInput from "../../components/atom/Search";
-import Modal from "../../components/molecule/Modal";
-import Title from "../../components/atom/Title";
-import AddButton from "../../components/atom/ButtonAdd";
-import CarCard from "../../components/molecule/CarCard";
-import { CarTypeComponent } from "../../components/atom/CarType";
-import ButtonComponent from "../../components/atom/Button";
+import SearchInput from "../../components/input/Search";
+import Modal from "../../components/Modal";
+import Title from "../../components/Title";
+import CarCard from "../../components/card/CarCard";
+import { CarTypeComponent } from "../../components/button/CarType";
+import ButtonComponent from "../../components/button/Index";
 
 const carTypes = ["Semua", "Pick Up", "CDE", "CDD", "Fuso", "Wingbox"];
 
@@ -32,7 +31,10 @@ function CarPages() {
         <CarTypeComponent carTypes={carTypes} />
         <SearchInput placeholder="kendaraan" />
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="space-y-3">
+        <CarCard />
+        <CarCard />
+        <CarCard />
         <CarCard />
         <CarCard />
         <CarCard />

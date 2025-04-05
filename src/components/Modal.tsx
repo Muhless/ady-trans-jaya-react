@@ -1,7 +1,7 @@
 import { Save, X } from "lucide-react";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import ButtonComponent from "../atom/Button";
+import ButtonComponent from "./button/Index";
 
 type FieldConfig = {
   name: string;

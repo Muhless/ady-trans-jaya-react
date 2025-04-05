@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useMemo } from "react";
 import React from "react";
-import UserIconComponent from "../atom/UserIcon";
+import UserIconComponent from "../UserIcon";
 import useNavigationHooks from "../../hooks/useNavigation";
 
 const Sidebar = () => {

@@ -1,11 +1,11 @@
-import SearchInput from "../../components/atom/Search.tsx";
-import SubTitle from "../../components/atom/SubTitle.tsx";
+import SearchInput from "../../components/input/Search.tsx";
+import SubTitle from "../../components/SubTitle.tsx";
 import { useNavigate } from "react-router-dom";
 import React, { useRef } from "react";
-import Title from "../../components/atom/Title.tsx";
-import Table from "../../components/molecule/Table.tsx";
-import ButtonComponent from "../../components/atom/Button.tsx";
-import Card from "../../components/molecule/Card.tsx";
+import Title from "../../components/Title.tsx";
+import Table from "../../components/table/Table.tsx";
+import ButtonComponent from "../../components/button/Index.tsx";
+import Card from "../../components/card/index.tsx";
 
 const matches = [
   {
@@ -29,28 +29,30 @@ const matches = [
     phone: "089813131",
     address: "Jl. London No.27",
   },
-];
-
-const onGoing = [
   {
     id: "1",
     name: "ady",
     route: "Balaraja-Cangkudu",
     deadline: "18 oktober 2024 - 21 oktober 2024",
+    address: "Jl. London No.27",
   },
   {
     id: "2",
     name: "ady",
     route: "Balaraja-Cangkudu",
     deadline: "18 oktober 2024 - 21 oktober 2024",
+    address: "Jl. London No.27",
   },
   {
     id: "3",
     name: "ady",
     route: "Balaraja-Cangkudu",
     deadline: "18 oktober 2024 - 21 oktober 2024",
+    address: "Jl. London No.27",
   },
 ];
+
+const onGoing = [];
 
 function DeliveryPages() {
   const navigate = useNavigate();
@@ -87,7 +89,6 @@ function DeliveryPages() {
         />
       </div>
       <div className="mb-20">
-        <SubTitle subTitle={"Sedang Berlangsung"} className="mb-3" />
         <div
           className="flex flex-row justify-between mb-3"
           ref={tableRefOngoing}
@@ -106,27 +107,6 @@ function DeliveryPages() {
           showActions={true}
           className="bg-merah"
         />
-      </div>
-      <div className="mb-20">
-        <div
-          ref={tableRefWaiting}
-          className="flex flex-row justify-between mb-3"
-        >
-          <SubTitle subTitle={"Menunggu Persetujuan"} />
-          <SearchInput placeholder="Pengiriman" />
-        </div>
-        <Table
-          data={onGoing}
-          onRowClick={handleRowClick}
-          className="bg-kuning"
-        />
-      </div>
-      <div className="">
-        <div className="flex justify-between mb-3">
-          <SubTitle subTitle="Selesai" />
-          <SearchInput />
-        </div>
-        <Table data={matches} onRowClick={handleRowClick} className="bg-biru" />
       </div>
     </>
   );

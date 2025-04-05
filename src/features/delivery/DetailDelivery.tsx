@@ -1,5 +1,5 @@
 import React from "react";
-import Title from "../../components/atom/Title";
+import Title from "../../components/Title";
 
 function DetailDeliveryPages() {
   return (

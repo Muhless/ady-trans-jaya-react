@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
-import FormAddMap from "../../components/organism/FormDelivery";
+import FormAddMap from "../../components/maps/FormDelivery";
 
 const AddDeliveryPages: React.FC = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);

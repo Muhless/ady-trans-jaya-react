@@ -1,10 +1,10 @@
 import { Phone, MapPin, Info, Subtitles, User2Icon } from "lucide-react";
 import React from "react";
-import ButtonComponent from "../atom/Button";
-import Card from "./Card";
-import SubTitle from "../atom/SubTitle";
-import UserIconComponent from "../atom/UserIcon";
+import ButtonComponent from "../button/Index";
+import SubTitle from "../SubTitle";
+import UserIconComponent from "../UserIcon";
 import useNavigationHooks from "../../hooks/useNavigation";
+import Card from ".";
 
 type ProfileCardProps = {
   id?: string | number;

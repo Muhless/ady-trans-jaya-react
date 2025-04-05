@@ -1,10 +1,10 @@
 import React, { forwardRef, useEffect, useRef, useState } from "react";
-import { InputComponent } from "../atom/Input";
+import { InputComponent } from "../input/Input";
 import mapboxgl from "mapbox-gl";
-import ButtonComponent from "../atom/Button";
-import SubTitle from "../atom/SubTitle";
-import SelectComponent from "../atom/Select";
-import DateInputComponent from "../atom/Date";
+import ButtonComponent from "../button/Index";
+import SubTitle from "../SubTitle";
+import SelectComponent from "../input/Select";
+import DateInputComponent from "../input/Date";
 import useNavigationHooks from "../../hooks/useNavigation";
 
 const MAPBOX_ACCESS_TOKEN =

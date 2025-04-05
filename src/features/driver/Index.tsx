@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import ProfileCard from "../../components/molecule/ProfileCard";
-import SearchInput from "../../components/atom/Search";
-import Modal from "../../components/molecule/Modal";
-import Title from "../../components/atom/Title";
+import ProfileCard from "../../components/card/ProfileCard";
+import SearchInput from "../../components/input/Search";
+import Modal from "../../components/Modal";
+import Title from "../../components/Title";
 import ReactPaginate from "react-paginate";
-import ButtonComponent from "../../components/atom/Button";
+import ButtonComponent from "../../components/button/Index";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },

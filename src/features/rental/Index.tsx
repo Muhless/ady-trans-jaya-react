@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import SearchInput from "../../components/atom/Search";
-import Title from "../../components/atom/Title";
-import AddButton from "../../components/atom/ButtonAdd";
-import Modal from "../../components/molecule/Modal";
-import ButtonComponent from "../../components/atom/Button";
+import SearchInput from "../../components/input/Search";
+import Title from "../../components/Title";
+import Modal from "../../components/Modal";
+import ButtonComponent from "../../components/button/Index";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },

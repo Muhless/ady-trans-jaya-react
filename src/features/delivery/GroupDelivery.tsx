@@ -1,7 +1,7 @@
 import React from "react";
-import Card from "../../components/molecule/Card";
-import ButtonComponent from "../../components/atom/Button";
-import FormGroupDeliveryComponent from "../../components/organism/FormGroupDelivery";
+import ButtonComponent from "../../components/button/Index";
+import FormGroupDeliveryComponent from "../../components/maps/FormGroupDelivery";
+import Card from "../../components/card";
 
 function GroupDeliveryPages() {
   return (

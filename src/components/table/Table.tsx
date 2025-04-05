@@ -1,5 +1,5 @@
 import React from "react";
-import ButtonComponent from "../atom/Button";
+import ButtonComponent from "../button/Index";
 
 type TableProps = {
   data?: { id: string | number; [key: string]: any }[];
