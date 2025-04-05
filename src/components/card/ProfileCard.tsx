@@ -15,7 +15,7 @@ const ProfileCard: React.FC<ProfileCardProps> = () => {
   const { goToDriverDetails } = useNavigationHooks();
   return (
     <Card
-      className="bg-secondary cursor-pointer hover:bg-biru hover:transition-all hover:duration-300"
+      className="bg-secondary hover:bg-biru hover:transition-all hover:duration-300"
       onClick={goToDriverDetails(123)}
     >
       <div className="grid grid-cols-3 p-4">
@@ -26,11 +26,9 @@ const ProfileCard: React.FC<ProfileCardProps> = () => {
           />
         </div>
         <div className="col-span-2 flex flex-col px-3 text-sm py-2">
-          <p className="font-bold text-base">Muhta Nuryadi</p>
-          <p className="text-gray-300">08871165551</p>
-          <p className="text-gray-400">
-            Kp. Cangkudu Rt.06 Rw.01. Kab.Tangerang
-          </p>
+          <h1 className="text-lg underline font-bold">Muhta Nuryadi</h1>
+          <h2>08871165551</h2>
+          <h3>Kp. Cangkudu Rt.06 Rw.01. Kab.Tangerang</h3>
           <p className="underline">Tersedia/Tidak</p>
         </div>
       </div>

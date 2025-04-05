@@ -45,7 +45,7 @@ function DriverPages() {
         />
         <SearchInput placeholder="driver" />
       </div>
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-3 gap-3">
         {currentDrivers.map((id) => (
           <ProfileCard key={id} onClick={() => handleCardClick(id)} />
         ))}
