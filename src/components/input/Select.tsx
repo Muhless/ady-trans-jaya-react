@@ -16,17 +16,15 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
   onChange,
 }) => {
   return (
-    <div className="flex flex-row items-center gap-5 p-2 justify-between">
+    <div className="flex items-center gap-5 p-2 justify-between">
       {label && <label>{label}</label>}
       <select
         name={name}
         value={value}
-        className="w-60 bg-primary p-2 text-sm cursor-pointer"
+        className="w-60 bg-primary p-2 cursor-pointer border border-black"
         onChange={onChange}
       >
-        <option value="" className="text-gray-600">
-          Pilih {label}
-        </option>
+        <option value="">Pilih {label}</option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}

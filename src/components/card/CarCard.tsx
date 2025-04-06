@@ -19,10 +19,10 @@ const CarCard: React.FC<AvailabilityStatusProps> = ({
 }) => {
   return (
     <Card>
-      {/* <div className="absolute flex items-center gap-1 text-center cursor-pointer top-2 right-2">
+      <div className="absolute flex items-center gap-1 text-center cursor-pointer top-2 right-2">
         <ButtonComponent variant="edit" />
         <ButtonComponent variant="delete" />
-      </div> */}
+      </div>
       <div className="flex items-center justify-evenly flex-grow w-full col-span-2">
         <div className="flex flex-col justify-center items-center">
           <h1 className="font-bold tracking-wider capitalize text-4xl font-jakarta">

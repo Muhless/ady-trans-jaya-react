@@ -6,66 +6,57 @@ import Title from "../../components/Title.tsx";
 import Table from "../../components/table/Table.tsx";
 import ButtonComponent from "../../components/button/Index.tsx";
 import Card from "../../components/card/index.tsx";
+import useNavigationHooks from "../../hooks/useNavigation.ts";
 
 const matches = [
   {
     id: "01",
-    name: "Manchester United",
+    customer: "Manchester United",
     email: "cihuy@gmail.com",
     phone: "089813131",
     address: "Jl. London No.27",
   },
   {
     id: "02",
-    name: "Liverpool",
+    customer: "Liverpool",
     email: "cihuy@gmail.com",
     phone: "089813131",
     address: "Jl. London No.27",
   },
   {
     id: "03",
-    name: "Chelsea",
+    customer: "Chelsea",
     email: "cihuy@gmail.com",
     phone: "089813131",
     address: "Jl. London No.27",
   },
   {
     id: "1",
-    name: "ady",
+    customer: "ady",
     route: "Balaraja-Cangkudu",
     deadline: "18 oktober 2024 - 21 oktober 2024",
     address: "Jl. London No.27",
   },
   {
     id: "2",
-    name: "ady",
+    customer: "ady",
     route: "Balaraja-Cangkudu",
     deadline: "18 oktober 2024 - 21 oktober 2024",
     address: "Jl. London No.27",
   },
   {
     id: "3",
-    name: "ady",
+    customer: "ady",
     route: "Balaraja-Cangkudu",
     deadline: "18 oktober 2024 - 21 oktober 2024",
     address: "Jl. London No.27",
   },
 ];
 
-const onGoing = [];
-
 function DeliveryPages() {
-  const navigate = useNavigate();
+  const { goToAddDelivery, goToDetailDelivery } = useNavigationHooks();
   const tableRefOngoing = useRef(null);
   const tableRefWaiting = useRef(null);
-
-  const handleRowClick = (row) => {
-    navigate(`/delivery/${row.id}`);
-  };
-
-  const handleAddClick = () => {
-    navigate("/delivery/add");
-  };
 
   const handleCardClick = (ref) => {
     if (ref.current) {
@@ -89,21 +80,18 @@ function DeliveryPages() {
         />
       </div>
       <div className="mb-20">
-        <div
-          className="flex flex-row justify-between mb-3"
-          ref={tableRefOngoing}
-        >
+        <div className="flex flex-row justify-between mb-3">
           <ButtonComponent
             label="Tambah Pengiriman"
             variant="add"
             className="w-48"
-            onClick={handleAddClick}
+            onClick={goToAddDelivery}
           />
           <SearchInput placeholder={"pengiriman"} />
         </div>
         <Table
           data={matches}
-          onRowClick={handleRowClick}
+          onRowClick={goToDetailDelivery}
           showActions={true}
           className="bg-merah"
         />

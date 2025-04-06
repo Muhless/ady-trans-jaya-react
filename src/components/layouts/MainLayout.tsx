@@ -8,10 +8,13 @@ const Layout = () => {
       <Sidebar />
       <div className="flex flex-col flex-1 ml-32">
         {/* <Navbar /> */}
-        {/* <main className="p-6 flex-1 bg-background min-h-[calc(100vh-4rem)]"> */}
-        <main className="p-6 flex-1 bg-primary text-text">
-          <Outlet />
-        </main>
+        {/* <main className="p-6 flex-1 bg-background  */}
+        <main className="flex-1 bg-secondary text-text overflow-auto h-screen p-6">
+  <div className="bg-primary px-10 py-4 rounded-xl min-h-full">
+    <Outlet />
+  </div>
+</main>
+
       </div>
     </div>
   );

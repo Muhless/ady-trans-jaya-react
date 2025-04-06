@@ -32,7 +32,7 @@ const Sidebar = () => {
   );
 
   return (
-    <div className="fixed bottom-0 left-0 flex flex-col w-32 h-screen pt-3 text-text bg-secondary">
+    <div className="fixed bottom-0 left-0 flex flex-col w-32 h-screen pt-3 text-text bg-primary">
       <div className="flex flex-col items-center justify-center cursor-pointer">
         <img
           src="/assets/images/logo.png"

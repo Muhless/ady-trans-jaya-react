@@ -43,7 +43,7 @@ const fetchAddressSuggestions = async (
   }
 };
 
-const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
+const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<{
     start: mapboxgl.Marker | null;
@@ -260,11 +260,11 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-5 text-sm border rounded-lg bg-secondary"
+      className="p-2 text-sm border border-black rounded-md bg-secondary"
     >
       <SubTitle
         subTitle="Form Tambah Pengiriman"
-        className="mb-5 text-center"
+        className="py-3 text-center"
       />
       <SelectComponent
         label="Customer"
@@ -286,7 +286,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         onChange={handleChange}
       />
       <InputComponent
-        label="Jumlah Muatan"
+        label="Jumlah"
         type="text"
         name="jumlahMuatan"
         value={formData.jumlahMuatan}
@@ -311,6 +311,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       <div className="relative w-full">
         <InputComponent
           label="Keberangkatan"
+          type="textarea"
           value={address}
           onChange={(e) => {
             setAddress(e.target.value);
@@ -321,7 +322,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           {startSuggestions.map((place) => (
             <li
               key={place.id}
-              className="p-2 cursor-pointer hover:bg-gray-600"
+              className="p-2 cursor-pointer hover:bg-biru hover:text-primary border border-black"
               onClick={() =>
                 handleSelectAddress(
                   place,
@@ -339,7 +340,8 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       </div>
       <div className="relative w-full">
         <InputComponent
-          label="Tujuan Pengiriman"
+          label="Tujuan"
+          type="textarea"
           value={endAddress}
           onChange={(e) => {
             setEndAddress(e.target.value);
@@ -350,7 +352,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           {endSuggestions.map((place) => (
             <li
               key={place.id}
-              className="p-2 cursor-pointer hover:bg-gray-600"
+              className="p-2 cursor-pointer hover:bg-biru hover:text-primary border border-black"
               onClick={() =>
                 handleSelectAddress(
                   place,
@@ -367,7 +369,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         </ul>
       </div>
       {distance !== null && duration !== null && (
-        <div className="p-2 space-y-2 text-sm rounded-lg bg-primary">
+        <div className="p-2 space-y-2 border border-black bg-primary m-2">
           <p>
             Jarak: <strong>{distance} Km</strong>
           </p>
@@ -394,4 +396,4 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   );
 });
 
-export default AddDeliveryForm;
+export default FormAddDelivery;

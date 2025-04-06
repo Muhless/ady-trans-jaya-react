@@ -5,6 +5,14 @@ const useNavigationHooks = () => {
   return {
     goToHome: () => navigate("/"),
     goToUserProfile: () => navigate("/profile"),
+    goToDetailDelivery: (id: string | number) => () => {
+      if (id) {
+        navigate(`/delivery/${id}`);
+      } else {
+        console.warn("ID tidak ditemukan");
+      }
+    },
+    goToAddDelivery: () => navigate("/delivery/add"),
     goToDeliveryGroup: () => navigate("/delivery/add/group"),
     goToDriverDetails: (id: string | number) => () => {
       if (id) {

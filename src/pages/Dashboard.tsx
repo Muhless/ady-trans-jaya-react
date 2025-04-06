@@ -16,12 +16,11 @@ const delivery = [
   { id: 4, nama: "ady", noTelepon: "08871165551", status: "delivery" },
   { id: 5, nama: "ady", noTelepon: "08871165551", status: "delivery" },
   { id: 1, nama: "ady", noTelepon: "08871165551", status: "delivery" },
-  { id: 1, nama: "ady", noTelepon: "08871165551", status: "delivery" },
 ];
 
 const HomePages = () => {
   return (
-    <div className="">
+    <div>
       <Title title={"Selamat Datang, Admin"} />
       <div className="grid grid-cols-3 gap-3">
         <div className="col-span-2">
@@ -39,7 +38,7 @@ const HomePages = () => {
             </Card>
           </div>
           <div className="grid grid-cols-2 gap-x-3">
-            <div className="h-44">
+            <div className="h-32">
               <a
                 href="https://ady-transjaya.vercel.app/"
                 target="_blank"
@@ -49,7 +48,7 @@ const HomePages = () => {
                 <img
                   src="assets/images/web3.png"
                   alt="web landing page"
-                  className="rounded-md w-full h-44"
+                  className="rounded-md w-full h-32"
                 />
               </a>
             </div>
