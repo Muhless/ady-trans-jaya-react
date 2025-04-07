@@ -55,29 +55,14 @@ const matches = [
 
 function DeliveryPages() {
   const { goToAddDelivery, goToDetailDelivery } = useNavigationHooks();
-  const tableRefOngoing = useRef(null);
-  const tableRefWaiting = useRef(null);
-
-  const handleCardClick = (ref) => {
-    if (ref.current) {
-      ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
 
   return (
     <>
       <Title title={"Pengiriman"} />
       <div className="grid grid-cols-3 gap-3 mb-10">
-        <Card
-          className={"bg-merah"}
-          title={"Menunggu Persetujuan"}
-          onClick={() => handleCardClick(tableRefWaiting)}
-        />
-        <Card
-          className={"bg-kuning"}
-          title={"Sedang Berlangsung"}
-          onClick={() => handleCardClick(tableRefOngoing)}
-        />
+        <Card className={"bg-kuning"} title={"Menunggu Persetujuan"} />
+        <Card className={"bg-biru"} title={"Sedang Berlangsung"} />
+        <Card className={"bg-merah"} title={"Dibatalkan"} />
       </div>
       <div className="mb-20">
         <div className="flex flex-row justify-between mb-3">

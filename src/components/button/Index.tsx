@@ -35,13 +35,13 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
   type = "button",
 }) => {
   const baseStyle =
-    "transition rounded-md font-medium focus:outline-none flex justify-center items-center gap-2 text-sm p-2";
+    "transition border border-black focus:outline-none flex justify-center items-center gap-2 text-sm p-2";
   const variants = {
     default: "bg-gray-400 hover:bg-gray-500",
     add: "bg-biru hover:bg-sky-500 ",
     edit: "bg-kuning hover:bg-yellow-500",
     delete: "bg-merah hover:bg-red-400",
-    save: "bg-biru hover:bg-sky-600",
+    save: "bg-biru hover:bg-sky-500",
     back: "bg-gray-400 hover:bg-gray-500",
     map: "bg-blue-500 hover:bg-blue-600",
     undo: "bg-merah hover:bg-red-400",

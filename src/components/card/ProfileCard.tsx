@@ -15,7 +15,7 @@ const ProfileCard: React.FC<ProfileCardProps> = () => {
   const { goToDriverDetails } = useNavigationHooks();
   return (
     <Card
-      className="bg-secondary hover:bg-biru hover:transition-all hover:duration-300"
+      className="bg-primary hover:bg-secondary transition-all hover:duration-300"
       onClick={goToDriverDetails(123)}
     >
       <div className="grid grid-cols-3 p-4">

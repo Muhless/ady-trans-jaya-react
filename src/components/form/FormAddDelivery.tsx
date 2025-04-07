@@ -67,7 +67,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
   const jawaBounds: [number, number, number, number] = [
     104.5, -8.5, 114.5, -5.5,
   ];
-  const { goToDeliveryGroup } = useNavigationHooks();
+  const { goToAddDelivery } = useNavigationHooks();
 
   useEffect(() => {
     if (
@@ -260,25 +260,15 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-2 text-sm border border-black rounded-md bg-secondary"
+      className="px-3 py-2 text-sm border-2 border-black bg-secondary space-y-2"
     >
       <SubTitle
         subTitle="Form Tambah Pengiriman"
-        className="py-3 text-center"
+        className="py-2 text-center"
       />
-      <SelectComponent
-        label="Customer"
-        name="customer"
-        value={formData.customer}
-        onChange={handleChange}
-        options={[
-          { value: "cihuy", label: "cihuy" },
-          { value: "cihuy1", label: "cihuy1" },
-          { value: "cihuy2", label: "cihuy2" },
-          { value: "cihuy3", label: "cihuy3" },
-        ]}
-      />
+
       <InputComponent
+        className="w-60"
         label="Muatan"
         type="text"
         name="muatan"
@@ -286,6 +276,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
         onChange={handleChange}
       />
       <InputComponent
+        className="w-60"
         label="Jumlah"
         type="text"
         name="jumlahMuatan"
@@ -294,6 +285,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
       />
       <SelectComponent
         label="Driver"
+        className="w-60"
         options={[
           { value: "Tyo", label: "Tyo" },
           { value: "Febri", label: "Febri" },
@@ -302,6 +294,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
       />
       <SelectComponent
         label="Kendaraan"
+        className="w-60"
         options={[
           { value: "Toyota Pickup", label: "Toyota Pickup" },
           { value: "Fuso Box", label: "Fuso Box" },
@@ -310,6 +303,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
       />
       <div className="relative w-full">
         <InputComponent
+          className="w-60"
           label="Keberangkatan"
           type="textarea"
           value={address}
@@ -340,6 +334,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
       </div>
       <div className="relative w-full">
         <InputComponent
+          className="w-60"
           label="Tujuan"
           type="textarea"
           value={endAddress}
@@ -369,7 +364,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
         </ul>
       </div>
       {distance !== null && duration !== null && (
-        <div className="p-2 space-y-2 border border-black bg-primary m-2">
+        <div className="p-2 space-y-2 border border-black bg-primary ">
           <p>
             Jarak: <strong>{distance} Km</strong>
           </p>
@@ -378,18 +373,24 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
           </p>
         </div>
       )}
-      <DateInputComponent label="Tanggal Pengiriman" />
-      <DateInputComponent label="Batas Pengiriman" />
+      <DateInputComponent label="Tanggal Pengiriman" className="w-60"/>
+      <DateInputComponent label="Batas Pengiriman" className="w-60"/>
       {/* TODO: Toral didapat dari harga sewa mobil x jarak */}
-      <InputComponent label="Total" disabled={true} />
+      <InputComponent className="w-60" label="Total" disabled={true} />
 
-      <div className="flex justify-center w-full gap-5 p-2">
-        <ButtonComponent variant="back" label="Kembali" />
-        <ButtonComponent variant="undo" label="Ulangi" onClick={clearMap} />
+      <div className="flex justify-center w-full gap-3 p-2">
+        <ButtonComponent variant="back" label="Kembali" className="w-full" />
+        <ButtonComponent
+          variant="undo"
+          label="Ulangi"
+          onClick={clearMap}
+          className="w-full"
+        />
         <ButtonComponent
           variant="save"
           label="Simpan"
-          onClick={goToDeliveryGroup}
+          className="w-full"
+          onClick={goToAddDelivery}
         />
       </div>
     </form>

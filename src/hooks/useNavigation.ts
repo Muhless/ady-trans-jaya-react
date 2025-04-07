@@ -12,8 +12,9 @@ const useNavigationHooks = () => {
         console.warn("ID tidak ditemukan");
       }
     },
+    goToDeliveryPages: () => navigate("/delivery"),
     goToAddDelivery: () => navigate("/delivery/add"),
-    goToDeliveryGroup: () => navigate("/delivery/add/group"),
+    goToAddDeliveryForm: () => navigate("/delivery/add/form"),
     goToDriverDetails: (id: string | number) => () => {
       if (id) {
         navigate(`/driver/${id}`);
