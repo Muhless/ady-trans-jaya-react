@@ -3,14 +3,12 @@ import ButtonComponent from "../button/Index";
 
 type TableProps = {
   data?: { id: string | number; [key: string]: any }[];
-  className?: string;
   onRowClick?: (row: any) => void;
   showActions?: boolean;
 };
 
 const Table: React.FC<TableProps> = ({
   data = [],
-  className = "bg-kuning",
   onRowClick,
   showActions = false,
 }) => {
@@ -20,7 +18,7 @@ const Table: React.FC<TableProps> = ({
     <div className="overflow-auto  border border-black shadow-md">
       <table className="w-full text-sm text-left border-collapse">
         <thead>
-          <tr className={`text-center ${className} border-b border-black`}>
+          <tr className="text-center bg-gray-300 border-b border-black">
             {headers.map((key, index) => (
               <th
                 key={index}

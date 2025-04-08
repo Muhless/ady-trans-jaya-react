@@ -19,13 +19,17 @@ import Layout from "../components/layouts/MainLayout";
 import ProfilePages from "../pages/Profile";
 import AddDeliveryPages from "../features/delivery/AddDelivery";
 import AddDeliveryFormPages from "../features/delivery/AddDeliveryForm";
+import LoginPages from "../pages/Login";
 
 function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/auth/login" element={<LoginPages />} />
         <Route element={<Layout />}>
+          {/* pages */}
           <Route path="/" element={<HomePages />} />
+          {/* Profile */}
           <Route path="/profile" element={<ProfilePages />} />
           {/* car */}
           <Route path="/car" element={<CarPages />} />

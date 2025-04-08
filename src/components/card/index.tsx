@@ -15,7 +15,7 @@ const Card: React.FC<CardProps> = ({
 }) => {
   return (
     <div
-      className={`${className} relative border-2 border-black p-3${
+      className={`${className} relative border border-black p-3${
         onClick
           ? "cursor-pointer hover:shadow-lg transition-all focus-visible:ring-2 focus-visible:ring-black"
           : ""

@@ -78,7 +78,6 @@ function DeliveryPages() {
           data={matches}
           onRowClick={goToDetailDelivery}
           showActions={true}
-          className="bg-merah"
         />
       </div>
     </>

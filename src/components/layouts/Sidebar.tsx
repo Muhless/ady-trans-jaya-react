@@ -62,7 +62,7 @@ const Sidebar = () => {
           className="size-10 rounded-full"
         />
         <div className="p-2 rotate-180 bg-primary rounded-full hover:bg-red-500 hover:text-primary">
-          <LogOut size={25} />
+          <LogOut size={25}/>
         </div>
       </div>
     </div>

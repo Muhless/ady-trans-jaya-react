@@ -64,9 +64,9 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
   const [endAddress, setEndAddress] = useState<string>("");
   const [startSuggestions, setStartSuggestions] = useState<Place[]>([]);
   const [endSuggestions, setEndSuggestions] = useState<Place[]>([]);
-  const jawaBounds: [number, number, number, number] = [
-    104.5, -8.5, 114.5, -5.5,
-  ];
+  // const jawaBounds: [number, number, number, number] = [
+  //   104.5, -8.5, 114.5, -5.5,
+  // ];
   const { goToAddDelivery } = useNavigationHooks();
 
   useEffect(() => {
@@ -365,16 +365,22 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
       </div>
       {distance !== null && duration !== null && (
         <div className="p-2 space-y-2 border border-black bg-primary ">
-          <p>
-            Jarak: <strong>{distance} Km</strong>
-          </p>
-          <p>
-            Perkiraan waktu: <strong>{duration}</strong>
-          </p>
+          <div className="flex justify-between">
+            <p>Jarak</p>
+            <p className="w-56">
+              : <strong>{distance} Km</strong>
+            </p>
+          </div>
+          <div className="flex justify-between">
+            <p>Perkiraan waktu</p>
+            <p className="w-56">
+              : <strong>{duration}</strong>
+            </p>
+          </div>
         </div>
       )}
-      <DateInputComponent label="Tanggal Pengiriman" className="w-60"/>
-      <DateInputComponent label="Batas Pengiriman" className="w-60"/>
+      <DateInputComponent label="Tanggal Pengiriman" className="w-60" />
+      <DateInputComponent label="Batas Pengiriman" className="w-60" />
       {/* TODO: Toral didapat dari harga sewa mobil x jarak */}
       <InputComponent className="w-60" label="Total" disabled={true} />
 
