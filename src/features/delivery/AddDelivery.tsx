@@ -1,7 +1,7 @@
 import React from "react";
-import FormGroupDeliveryComponent from "../../components/form/FormDelivery";
 import Card from "../../components/card";
 import SubTitle from "../../components/SubTitle";
+import FormDelivery from "../../components/form/FormDelivery";
 
 function AddDeliveryPages() {
   return (
@@ -9,7 +9,7 @@ function AddDeliveryPages() {
       <Card className="flex flex-col w-1/2 border bg-secondary">
         <SubTitle subTitle="Pengajuan Pengiriman" className="flex justify-center py-5 text-3xl"/>
         <div className="flex flex-col space-y-4 px-6">
-          <FormGroupDeliveryComponent />
+          <FormDelivery />
         </div>
       </Card>
     </div>

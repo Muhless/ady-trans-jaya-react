@@ -9,7 +9,8 @@ export default {
         mona: ["Mona Sans", "Helvetica Neue", "Helvetica, Arial", "sans-serif"],
         geist: ["Geist Mono", "monospace"],
         IBM_flex: ["IBM Plex Mono", "monospace"],
-        compforta:["Comfortaa, sans-serif"]
+        compforta: ["Comfortaa, sans-serif"],
+        inter: ["Inter", "sans-serif"],
       },
       colors: {
         primary: "#ffffff",

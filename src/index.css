@@ -11,5 +11,5 @@
 @tailwind utilities;
 
 body {
-  @apply font-IBM_flex;
+  @apply font-inter;
 }

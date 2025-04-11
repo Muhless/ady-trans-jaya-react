@@ -32,12 +32,12 @@ const Sidebar = () => {
   );
 
   return (
-    <div className="fixed bottom-0 left-0 flex flex-col w-32 h-screen pt-3 text-text bg-primary">
+    <div className="fixed bottom-0 left-0 flex flex-col w-20 h-screen pt-3 text-text bg-primary">
       <div className="flex flex-col items-center justify-center cursor-pointer">
         <img
           src="/assets/images/logo.png"
           alt="Ady Trans Jaya"
-          className="w-28 h-auto"
+          className="w-20 h-auto"
           onClick={goToHome}
         />
       </div>
@@ -59,7 +59,7 @@ const Sidebar = () => {
       <div className="flex flex-col items-center justify-center space-y-4 cursor-pointer mb-7">
         <UserIconComponent
           onClick={goToUserProfile}
-          className="size-10 rounded-full"
+          className="size-9 rounded-full"
         />
         <div className="p-2 rotate-180 bg-primary rounded-full hover:bg-red-500 hover:text-primary">
           <LogOut size={25}/>

@@ -24,7 +24,7 @@ const FormDelivery = () => {
 
   return (
     <form action="" className="space-y-8">
-      <InputComponent label="No Resi" className="w-96" disabled={true} />
+      <InputComponent label="Surat Jalan" className="w-96" disabled={true} />
       <SelectComponent
         label="Customer"
         name="customer"
