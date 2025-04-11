@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import ButtonComponent from "../button/Index";
 import Card from "../card";
-import { Plus } from "lucide-react";
 import useNavigationHooks from "../../hooks/useNavigation";
 import SelectComponent from "../input/Select";
 import { InputComponent } from "../input/Input";
@@ -99,11 +98,7 @@ const FormDelivery = () => {
         ]}
       />
       <DateInputComponent label="Batas Pembayaran" className="w-96" />
-      <InputComponent
-        label="Status"
-        disabled={true}
-        className="w-96"
-      />
+      <InputComponent label="Status" disabled={true} className="w-96" />
       <div className="flex py-5 gap-4">
         <ButtonComponent label="Kembali" variant="back" className="w-full" />
         <ButtonComponent label="Ulangi" variant="undo" className="w-full" />

@@ -11,5 +11,5 @@
 @tailwind utilities;
 
 body {
-  @apply font-inter;
+  @apply font-jakarta;
 }

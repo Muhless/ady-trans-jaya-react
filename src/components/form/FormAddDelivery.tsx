@@ -6,6 +6,7 @@ import SubTitle from "../SubTitle";
 import SelectComponent from "../input/Select";
 import DateInputComponent from "../input/Date";
 import useNavigationHooks from "../../hooks/useNavigation";
+import Card from "../card";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -258,148 +259,150 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="px-3 py-2 text-sm border-2 border-black bg-secondary space-y-2"
-    >
-      <SubTitle
-        subTitle="Form Tambah Pengiriman"
-        className="py-2 text-center"
-      />
+    <Card className="bg-secondary">
+      <form
+        onSubmit={handleSubmit}
+        className="px-3 py-2 space-y-2"
+      >
+        <SubTitle
+          subTitle="Form Tambah Pengiriman"
+          className="py-2 text-center"
+        />
 
-      <InputComponent
-        className="w-60"
-        label="Muatan"
-        type="text"
-        name="muatan"
-        value={formData.muatan}
-        onChange={handleChange}
-      />
-      <InputComponent
-        className="w-60"
-        label="Jumlah"
-        type="text"
-        name="jumlahMuatan"
-        value={formData.jumlahMuatan}
-        onChange={handleChange}
-      />
-      <SelectComponent
-        label="Driver"
-        className="w-60"
-        options={[
-          { value: "Tyo", label: "Tyo" },
-          { value: "Febri", label: "Febri" },
-          { value: "Farizky", label: "Farizky" },
-        ]}
-      />
-      <SelectComponent
-        label="Kendaraan"
-        className="w-60"
-        options={[
-          { value: "Toyota Pickup", label: "Toyota Pickup" },
-          { value: "Fuso Box", label: "Fuso Box" },
-          { value: "CDC", label: "CDC" },
-        ]}
-      />
-      <div className="relative w-full">
         <InputComponent
           className="w-60"
-          label="Keberangkatan"
-          type="textarea"
-          value={address}
-          onChange={(e) => {
-            setAddress(e.target.value);
-            fetchAddressSuggestions(e.target.value, setStartSuggestions);
-          }}
+          label="Muatan"
+          type="text"
+          name="muatan"
+          value={formData.muatan}
+          onChange={handleChange}
         />
-        <ul className="absolute left-0 z-10 w-full mt-1 text-sm rounded top-full bg-primary">
-          {startSuggestions.map((place) => (
-            <li
-              key={place.id}
-              className="p-2 cursor-pointer hover:bg-biru hover:text-primary border border-black"
-              onClick={() =>
-                handleSelectAddress(
-                  place,
-                  setStartPoint,
-                  setAddress,
-                  setStartSuggestions,
-                  "start"
-                )
-              }
-            >
-              {place.place_name}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="relative w-full">
         <InputComponent
           className="w-60"
-          label="Tujuan"
-          type="textarea"
-          value={endAddress}
-          onChange={(e) => {
-            setEndAddress(e.target.value);
-            fetchAddressSuggestions(e.target.value, setEndSuggestions);
-          }}
+          label="Jumlah"
+          type="text"
+          name="jumlahMuatan"
+          value={formData.jumlahMuatan}
+          onChange={handleChange}
         />
-        <ul className="absolute left-0 z-10 w-full mt-1 text-sm rounded top-full bg-primary">
-          {endSuggestions.map((place) => (
-            <li
-              key={place.id}
-              className="p-2 cursor-pointer hover:bg-biru hover:text-primary border border-black"
-              onClick={() =>
-                handleSelectAddress(
-                  place,
-                  setEndPoint,
-                  setEndAddress,
-                  setEndSuggestions,
-                  "end"
-                )
-              }
-            >
-              {place.place_name}
-            </li>
-          ))}
-        </ul>
-      </div>
-      {distance !== null && duration !== null && (
-        <div className="p-2 space-y-2 border border-black bg-primary ">
-          <div className="flex justify-between">
-            <p>Jarak</p>
-            <p className="w-56">
-              : <strong>{distance} Km</strong>
-            </p>
-          </div>
-          <div className="flex justify-between">
-            <p>Perkiraan waktu</p>
-            <p className="w-56">
-              : <strong>{duration}</strong>
-            </p>
-          </div>
+        <SelectComponent
+          label="Driver"
+          className="w-60"
+          options={[
+            { value: "Tyo", label: "Tyo" },
+            { value: "Febri", label: "Febri" },
+            { value: "Farizky", label: "Farizky" },
+          ]}
+        />
+        <SelectComponent
+          label="Kendaraan"
+          className="w-60"
+          options={[
+            { value: "Toyota Pickup", label: "Toyota Pickup" },
+            { value: "Fuso Box", label: "Fuso Box" },
+            { value: "CDC", label: "CDC" },
+          ]}
+        />
+        <div className="relative w-full">
+          <InputComponent
+            className="w-60"
+            label="Keberangkatan"
+            type="textarea"
+            value={address}
+            onChange={(e) => {
+              setAddress(e.target.value);
+              fetchAddressSuggestions(e.target.value, setStartSuggestions);
+            }}
+          />
+          <ul className="absolute left-0 z-10 w-full mt-1 text-sm rounded top-full bg-primary">
+            {startSuggestions.map((place) => (
+              <li
+                key={place.id}
+                className="p-2 cursor-pointer hover:bg-biru hover:text-primary border border-black"
+                onClick={() =>
+                  handleSelectAddress(
+                    place,
+                    setStartPoint,
+                    setAddress,
+                    setStartSuggestions,
+                    "start"
+                  )
+                }
+              >
+                {place.place_name}
+              </li>
+            ))}
+          </ul>
         </div>
-      )}
-      <DateInputComponent label="Tanggal Pengiriman" className="w-60" />
-      <DateInputComponent label="Batas Pengiriman" className="w-60" />
-      {/* TODO: Toral didapat dari harga sewa mobil x jarak */}
-      <InputComponent className="w-60" label="Total" disabled={true} />
+        <div className="relative w-full">
+          <InputComponent
+            className="w-60"
+            label="Tujuan"
+            type="textarea"
+            value={endAddress}
+            onChange={(e) => {
+              setEndAddress(e.target.value);
+              fetchAddressSuggestions(e.target.value, setEndSuggestions);
+            }}
+          />
+          <ul className="absolute left-0 z-10 w-full mt-1 text-sm rounded top-full bg-primary">
+            {endSuggestions.map((place) => (
+              <li
+                key={place.id}
+                className="p-2 cursor-pointer hover:bg-biru hover:text-primary border border-black"
+                onClick={() =>
+                  handleSelectAddress(
+                    place,
+                    setEndPoint,
+                    setEndAddress,
+                    setEndSuggestions,
+                    "end"
+                  )
+                }
+              >
+                {place.place_name}
+              </li>
+            ))}
+          </ul>
+        </div>
+        {distance !== null && duration !== null && (
+          <div className="p-2 space-y-2 border border-black bg-primary ">
+            <div className="flex justify-between">
+              <p>Jarak</p>
+              <p className="w-56">
+                : <strong>{distance} Km</strong>
+              </p>
+            </div>
+            <div className="flex justify-between">
+              <p>Perkiraan waktu</p>
+              <p className="w-56">
+                : <strong>{duration}</strong>
+              </p>
+            </div>
+          </div>
+        )}
+        <DateInputComponent label="Tanggal Pengiriman" className="w-60" />
+        <DateInputComponent label="Batas Pengiriman" className="w-60" />
+        {/* TODO: Toral didapat dari harga sewa mobil x jarak */}
+        <InputComponent className="w-60" label="Total" disabled={true} />
 
-      <div className="flex justify-center w-full gap-3 p-2">
-        <ButtonComponent variant="back" label="Kembali" className="w-full" />
-        <ButtonComponent
-          variant="undo"
-          label="Ulangi"
-          onClick={clearMap}
-          className="w-full"
-        />
-        <ButtonComponent
-          variant="save"
-          label="Simpan"
-          className="w-full"
-          onClick={goToAddDelivery}
-        />
-      </div>
-    </form>
+        <div className="flex justify-center w-full gap-3 p-2">
+          <ButtonComponent variant="back" label="Kembali" className="w-full" />
+          <ButtonComponent
+            variant="undo"
+            label="Ulangi"
+            onClick={clearMap}
+            className="w-full"
+          />
+          <ButtonComponent
+            variant="save"
+            label="Simpan"
+            className="w-full"
+            onClick={goToAddDelivery}
+          />
+        </div>
+      </form>
+    </Card>
   );
 });
 

@@ -15,6 +15,7 @@ export default {
       colors: {
         primary: "#ffffff",
         secondary: "#f2f7f5",
+        third: "#e9eaec",
         text: "#242529",
         merah: "#ffa7a7",
         biru: "#0ebdf6",

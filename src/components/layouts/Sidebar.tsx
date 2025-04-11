@@ -16,7 +16,7 @@ import UserIconComponent from "../UserIcon";
 import useNavigationHooks from "../../hooks/useNavigation";
 
 const Sidebar = () => {
-  const { goToHome, goToUserProfile } = useNavigationHooks();
+  const { goToHome, goToDriverPages } = useNavigationHooks();
   const location = useLocation();
   const menuItems = useMemo(
     () => [
@@ -32,7 +32,7 @@ const Sidebar = () => {
   );
 
   return (
-    <div className="fixed bottom-0 left-0 flex flex-col w-20 h-screen pt-3 text-text bg-primary">
+    <div className="fixed bottom-0 left-0 flex flex-col w-20 h-screen pt-3 bg-primary">
       <div className="flex flex-col items-center justify-center cursor-pointer">
         <img
           src="/assets/images/logo.png"
@@ -58,7 +58,7 @@ const Sidebar = () => {
       </nav>
       <div className="flex flex-col items-center justify-center space-y-4 cursor-pointer mb-7">
         <UserIconComponent
-          onClick={goToUserProfile}
+          onClick={goToDriverPages}
           className="size-9 rounded-full"
         />
         <div className="p-2 rotate-180 bg-primary rounded-full hover:bg-red-500 hover:text-primary">

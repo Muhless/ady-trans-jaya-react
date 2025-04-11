@@ -44,13 +44,6 @@ const matches = [
     deadline: "18 oktober 2024 - 21 oktober 2024",
     address: "Jl. London No.27",
   },
-  {
-    id: "3",
-    customer: "ady",
-    route: "Balaraja-Cangkudu",
-    deadline: "18 oktober 2024 - 21 oktober 2024",
-    address: "Jl. London No.27",
-  },
 ];
 
 function DeliveryPages() {
