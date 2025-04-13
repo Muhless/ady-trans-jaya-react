@@ -13,7 +13,7 @@ const SearchInput: React.FC<SearchProps> = ({ placeholder = "cari data" }) => {
       </span>
       <input
         type="text"
-        className="px-5 py-2 pl-10 text-sm bg-secondary focus:border-primary focus:outline-none focus:ring-2 focus:ring-biru peer"
+        className="px-5 py-2 pl-10 text-sm bg-secondary focus:border-background focus:outline-none focus:ring-2 focus:ring-biru peer"
         placeholder={`cari ${placeholder}`}
       />
     </div>

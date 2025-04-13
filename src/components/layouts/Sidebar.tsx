@@ -32,7 +32,7 @@ const Sidebar = () => {
   );
 
   return (
-    <div className="fixed bottom-0 left-0 flex flex-col w-20 h-screen pt-3 bg-primary">
+    <div className="fixed bottom-0 left-0 flex flex-col w-20 h-screen pt-3 bg-background">
       <div className="flex flex-col items-center justify-center cursor-pointer">
         <img
           src="/assets/images/logo.png"
@@ -46,10 +46,10 @@ const Sidebar = () => {
           <Link
             key={to}
             to={to}
-            className={`p-2 bg-primary rounded-full flex items-center ${
+            className={`p-2 bg-background rounded-full flex items-center ${
               location.pathname === to
-                ? "bg-text text-primary"
-                : "hover:bg-gray-400 hover:text-primary"
+                ? "bg-text text-background"
+                : "hover:bg-gray-400 hover:text-background"
             }`}
           >
             {icon}
@@ -61,8 +61,8 @@ const Sidebar = () => {
           onClick={goToDriverPages}
           className="size-9 rounded-full"
         />
-        <div className="p-2 rotate-180 bg-primary rounded-full hover:bg-red-500 hover:text-primary">
-          <LogOut size={25}/>
+        <div className="p-2 rotate-180 bg-background rounded-full hover:bg-red-500 hover:text-background">
+          <LogOut size={25} />
         </div>
       </div>
     </div>

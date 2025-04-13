@@ -10,7 +10,7 @@ const Layout = () => {
         {/* <Navbar /> */}
         {/* <main className="p-6 flex-1 bg-background  */}
         <main className="flex-1 bg-secondary text-text overflow-auto h-screen p-6">
-          <div className="bg-primary px-10 py-4 rounded-xl min-h-full">
+          <div className="bg-background px-10 py-4 rounded-xl min-h-full">
             <Outlet />
           </div>
         </main>

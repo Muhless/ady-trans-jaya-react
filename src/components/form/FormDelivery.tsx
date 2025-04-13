@@ -53,7 +53,7 @@ const FormDelivery = () => {
 
       <div className="flex justify-between">
         <h1>Pengiriman</h1>
-        <Card className="bg-primary w-96 space-y-1">
+        <Card className="bg-background w-96 space-y-1">
           {/* TODO: Looping this shit */}
           <div className="flex justify-between items-center border border-black p-2 transition duration-300 hover:bg-biru cursor-pointer">
             <h1>Pengiriman 1</h1>

@@ -80,7 +80,7 @@ function AddDriverPages() {
                 <button className="border-2 p-1 text-card rounded-lg w-36 h-10 hover:text-card bg-merah hover:bg-red-600">
                   Hapus
                 </button>
-                <button className="border-2 p-1 text-card rounded-lg w-36 h-10 bg-primary hover:bg-hover">
+                <button className="border-2 p-1 text-card rounded-lg w-36 h-10 bg-background hover:bg-hover">
                   Simpan
                 </button>
               </div>
@@ -88,7 +88,7 @@ function AddDriverPages() {
             <div className="flex flex-col gap-2 mt-5 col-span-1 items-center">
               <div className="flex flex-col items-center border p-5 gap-3">
                 <User2Icon className="size-40 border-4 border-black rounded-full" />
-                <button className="border-2 p-1 text-card rounded-lg w-36 bg-primary hover:bg-hover">
+                <button className="border-2 p-1 text-card rounded-lg w-36 bg-background hover:bg-hover">
                   Upload
                 </button>
               </div>

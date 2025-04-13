@@ -11,7 +11,7 @@ export const CarTypeComponent = ({ carTypes }) => {
           className={`flex items-center justify-center ease-in-out cursor-pointer w-32 text-sm p-2 transition-all duration-300 ${
             selectedType === type
               ? "bg-kuning "
-              : "bg-text text-primary hover:bg-merah hover:text-text"
+              : "bg-text text-background hover:bg-merah hover:text-text"
           }`}
           onClick={() => setSelectedType(type)}
         >

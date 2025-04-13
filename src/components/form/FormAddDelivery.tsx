@@ -260,10 +260,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
 
   return (
     <Card className="bg-secondary">
-      <form
-        onSubmit={handleSubmit}
-        className="px-3 py-2 space-y-2"
-      >
+      <form onSubmit={handleSubmit} className="px-3 py-2 space-y-2">
         <SubTitle
           subTitle="Form Tambah Pengiriman"
           className="py-2 text-center"
@@ -314,11 +311,11 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
               fetchAddressSuggestions(e.target.value, setStartSuggestions);
             }}
           />
-          <ul className="absolute left-0 z-10 w-full mt-1 text-sm rounded top-full bg-primary">
+          <ul className="absolute left-0 z-10 w-full mt-1 text-sm rounded top-full bg-background">
             {startSuggestions.map((place) => (
               <li
                 key={place.id}
-                className="p-2 cursor-pointer hover:bg-biru hover:text-primary border border-black"
+                className="p-2 cursor-pointer hover:bg-biru hover:text-background border border-black"
                 onClick={() =>
                   handleSelectAddress(
                     place,
@@ -345,11 +342,11 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
               fetchAddressSuggestions(e.target.value, setEndSuggestions);
             }}
           />
-          <ul className="absolute left-0 z-10 w-full mt-1 text-sm rounded top-full bg-primary">
+          <ul className="absolute left-0 z-10 w-full mt-1 text-sm rounded top-full bg-background">
             {endSuggestions.map((place) => (
               <li
                 key={place.id}
-                className="p-2 cursor-pointer hover:bg-biru hover:text-primary border border-black"
+                className="p-2 cursor-pointer hover:bg-biru hover:text-background border border-black"
                 onClick={() =>
                   handleSelectAddress(
                     place,
@@ -366,7 +363,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
           </ul>
         </div>
         {distance !== null && duration !== null && (
-          <div className="p-2 space-y-2 border border-black bg-primary ">
+          <div className="p-2 space-y-2 border border-black bg-background ">
             <div className="flex justify-between">
               <p>Jarak</p>
               <p className="w-56">

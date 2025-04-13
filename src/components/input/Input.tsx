@@ -24,7 +24,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   onChange,
 }) => {
   const inputClass = `p-2 border border-black ${
-    disabled ? "bg-gray-300" : "bg-primary"
+    disabled ? "bg-gray-300" : "bg-background"
   } ${className}`;
   return (
     <div className="flex items-center gap-5 justify-between">
