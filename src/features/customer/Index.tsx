@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import SearchInput from "../../components/input/Search.tsx";
 import Table from "../../components/table/Table.tsx";
-import Modal from "../../components/Modal.tsx";
 import { useNavigate } from "react-router-dom";
 import Title from "../../components/Title.js";
 import ButtonComponent from "../../components/button/Index.tsx";
+import Modal from "../../components/Modal.tsx";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },
   { name: "email", label: "Email", type: "email" },
   { name: "phone", label: "Nomor HP", type: "number" },
-  { name: "address", label: "Alamat", type: "text" },
+  { name: "address", label: "Alamat", type: "textarea" },
 ];
 
 const customer = [
@@ -57,6 +57,7 @@ function CustomerPages() {
       </div>
       <Table data={customer} onRowClick={handleRowClick} showActions={true} />
       <Modal
+        title="Customer"
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         fields={modalInput}

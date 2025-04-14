@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import SearchInput from "../../components/input/Search";
 import Title from "../../components/Title";
-import Modal from "../../components/Modal";
 import ButtonComponent from "../../components/button/Index";
+import Modal from "../../components/Modal";
 
-const modalInput = [
+const modalInput: FieldConfig[] = [
   { name: "name", label: "Nama", type: "text" },
   { name: "email", label: "Email", type: "email" },
   { name: "phone", label: "Nomor HP", type: "number" },
@@ -26,6 +26,7 @@ function RentalPages() {
         <SearchInput placeholder="rental" />
       </div>
       <Modal
+        title="Rental"
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         fields={modalInput}

@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ProfileCard from "../../components/card/ProfileCard";
 import SearchInput from "../../components/input/Search";
-import Modal from "../../components/Modal";
 import Title from "../../components/Title";
 import ReactPaginate from "react-paginate";
 import ButtonComponent from "../../components/button/Index";
+import Modal from "../../components/Modal";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },
-  { name: "email", label: "Email", type: "email" },
-  { name: "phone", label: "Nomor HP", type: "number" },
-  { name: "address", label: "Alamat", type: "text" },
+  { name: "phone", label: "Nomor Telepon", type: "number" },
+  { name: "address", label: "Alamat", type: "textarea" },
+  { name: "photo", label: "Foto", type: "file" },
 ];
 
 function DriverPages() {
@@ -51,6 +51,7 @@ function DriverPages() {
         ))}
       </div>
       <Modal
+        title="Driver"
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         fields={modalInput}

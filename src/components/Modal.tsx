@@ -1,4 +1,4 @@
-import { Save, X } from "lucide-react";
+import { X } from "lucide-react";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import ButtonComponent from "./button/Index";
@@ -6,11 +6,12 @@ import ButtonComponent from "./button/Index";
 type FieldConfig = {
   name: string;
   label: string;
-  type: string;
+  type: "text" | "number" | "select" | "date" | "file" | "email" | "textarea";
   options?: string[];
 };
 
 type ModalProps = {
+  title: string;
   isOpen: boolean;
   onClose: () => void;
   onSubmit?: (data: Record<string, any>) => void;
@@ -20,6 +21,7 @@ type ModalProps = {
 };
 
 function Modal({
+  title,
   isOpen,
   onClose,
   onSubmit,
@@ -46,7 +48,7 @@ function Modal({
       <div className="bg-background p-6 rounded-md shadow-lg w-1/3">
         <div className="relative flex justify-center">
           <h1 className="font-bold underline text-lg font-compforta">
-            {mode === "edit" ? "Edit Data" : "Tambah Data"}
+            {mode === "edit" ? `Edit Data ${title}` : `Tambah Data ${title}`}
           </h1>
           <button
             onClick={onClose}
@@ -76,6 +78,13 @@ function Modal({
                     </option>
                   ))}
                 </select>
+              ) : type === "textarea" ? (
+                <textarea
+                  {...register(name)}
+                  className="w-full border rounded p-2 focus:outline-blue-400"
+                  rows={4}
+                  placeholder={`Masukkan ${label.toLocaleLowerCase()}`}
+                />
               ) : (
                 <input
                   type={type}
