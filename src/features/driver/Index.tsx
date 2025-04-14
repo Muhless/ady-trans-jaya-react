@@ -1,9 +1,7 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import ProfileCard from "../../components/card/ProfileCard";
 import SearchInput from "../../components/input/Search";
 import Title from "../../components/Title";
-import ReactPaginate from "react-paginate";
 import ButtonComponent from "../../components/button/Index";
 import Modal from "../../components/Modal";
 
@@ -15,23 +13,46 @@ const modalInput = [
 ];
 
 function DriverPages() {
-  const navigate = useNavigate();
-  const handleCardClick = (driverId) => {
-    navigate(`/driver/${driverId}`);
-  };
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const driversPerPage = 5;
-  const drivers = Array.from({ length: 20 }, (_, i) => i + 1);
-  const pageCount = Math.ceil(drivers.length / driversPerPage);
+  const [drivers, setDrivers] = useState([]);
 
-  const handlePageChange = (selected) => {
-    setCurrentPage(selected);
+  const fetchDrivers = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/api/driver");
+      const json = await response.json();
+
+      const data = Array.isArray(json.message) ? json.message : [];
+      setDrivers(data);
+    } catch (err) {
+      console.error("Gagal mengambil data driver:", err);
+      setDrivers([]);
+    }
   };
 
-  const offset = currentPage * driversPerPage;
-  const currentDrivers = drivers.slice(offset, offset + driversPerPage);
+  useEffect(() => {
+    fetchDrivers();
+  }, []);
+
+  const handleSubmit = async (data: Record<string, any>) => {
+    try {
+      const response = await fetch("http://localhost:8080/api/driver", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        throw new Error("Gagal menyimpan data");
+      }
+      const result = await response.json();
+      console.log("Data berhasil disimpan", result);
+      setIsModalOpen(false);
+      fetchDrivers();
+    } catch (error) {
+      console.error("Terjadi kesalahan", error);
+    }
+  };
 
   return (
     <>
@@ -46,15 +67,26 @@ function DriverPages() {
         <SearchInput placeholder="driver" />
       </div>
       <div className="grid grid-cols-3 gap-3">
-        {currentDrivers.map((id) => (
-          <ProfileCard key={id} onClick={() => handleCardClick(id)} />
-        ))}
+        {Array.isArray(drivers) && drivers.length > 0 ? (
+          (drivers || []).map((driver: any) => (
+            <ProfileCard
+              key={driver.id}
+              name={driver.name}
+              phone={driver.phone}
+              address={driver.address}
+            />
+          ))
+        ) : (
+          <div>Tidak ada data</div>
+        )}
       </div>
       <Modal
         title="Driver"
+        mode="add"
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         fields={modalInput}
+        onSubmit={handleSubmit}
       />
     </>
   );

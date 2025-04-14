@@ -7,11 +7,19 @@ import useNavigationHooks from "../../hooks/useNavigation";
 import Card from ".";
 
 type ProfileCardProps = {
-  id?: string | number;
-  onClick: (id: string | number) => void;
+  name: string;
+  phone: string;
+  address: string;
+  photo?: string;
+  onClick?: (id: string | number) => void;
 };
 
-const ProfileCard: React.FC<ProfileCardProps> = () => {
+const ProfileCard: React.FC<ProfileCardProps> = ({
+  name,
+  phone,
+  address,
+  photo,
+}) => {
   const { goToDriverDetails } = useNavigationHooks();
   return (
     <Card
@@ -26,9 +34,9 @@ const ProfileCard: React.FC<ProfileCardProps> = () => {
           />
         </div>
         <div className="col-span-2 flex flex-col px-3 text-sm py-2">
-          <h1 className="text-lg underline font-bold">Muhta Nuryadi</h1>
-          <h2>08871165551</h2>
-          <h3>Kp. Cangkudu Rt.06 Rw.01. Kab.Tangerang</h3>
+          <h1 className="text-lg underline font-bold">{name}</h1>
+          <p>{phone}</p>
+          <p>{address}</p>
           <p className="underline">Tersedia/Tidak</p>
         </div>
       </div>

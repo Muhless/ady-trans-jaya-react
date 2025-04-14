@@ -6,7 +6,7 @@ import ButtonComponent from "./button/Index";
 type FieldConfig = {
   name: string;
   label: string;
-  type: "text" | "number" | "select" | "date" | "file" | "email" | "textarea";
+  type: string;
   options?: string[];
 };
 
