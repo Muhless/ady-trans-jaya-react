@@ -9,7 +9,7 @@ type CardProps = {
 
 const Card: React.FC<CardProps> = ({
   title,
-  className = "bg-white",
+  className = "bg-secondary",
   children,
   onClick,
 }) => {

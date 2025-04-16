@@ -5,7 +5,7 @@ const useNavigationHooks = () => {
   return {
     goToHome: () => navigate("/"),
     goToCarPages: () => navigate("/car"),
-    goToDriverPages: () => navigate("/profile"),
+    goToDriverPages: () => navigate("/driver"),
     goToCustomerPages: () => navigate("/customer"),
     goToDetailDelivery: (id: string | number) => () => {
       if (id) {

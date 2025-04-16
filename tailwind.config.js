@@ -13,8 +13,8 @@ export default {
         inter: ["Inter", "sans-serif"],
       },
       colors: {
-        background: "#ffffff",
-        secondary: "#f2f7f5",
+        background: "#f2f7f5",
+        secondary: "#ffffff",
         third: "#e9eaec",
         primary: "#1E88E5",
         hover: "#1565C0",

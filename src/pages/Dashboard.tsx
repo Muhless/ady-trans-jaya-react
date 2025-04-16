@@ -2,10 +2,11 @@ import React from "react";
 import Table from "../components/table/Table.tsx";
 import Title from "../components/Title.tsx";
 import Card from "../components/card/index.tsx";
-import { ArrowRightSquare } from "lucide-react";
+import { ArrowRightSquare, Car, Truck, User, Users } from "lucide-react";
 import useNavigationHooks from "../hooks/useNavigation.ts";
 import DeliveryCard from "../components/card/DeliveryCard.tsx";
 import ChartComponent from "../components/Chart.tsx";
+import SummaryCard from "../components/card/SummaryCard.tsx";
 
 const delivery = [
   { id: 1, nama: "ady", noTelepon: "08871165551", status: "delivery" },
@@ -15,56 +16,58 @@ const delivery = [
 ];
 
 const HomePages = () => {
-  const { goToCarPages, goToDriverPages, goToCustomerPages } =
-    useNavigationHooks();
+  const {
+    goToCarPages,
+    goToDriverPages,
+    goToCustomerPages,
+    goToDeliveryPages,
+  } = useNavigationHooks();
   return (
     <div>
       <Title title={"Selamat Datang, Admin"} />
-
-      <div className="grid grid-cols-3 gap-5 mb-5">
+      <div className="grid grid-cols-4 gap-3 mb-5">
+        <SummaryCard
+          title="Kendaraan"
+          value={13}
+          icon={<Car size={40} />}
+          onClick={goToCarPages}
+        />
+        <SummaryCard
+          title="Pengemudi"
+          value={8}
+          icon={<User size={40} />}
+          onClick={goToDriverPages}
+        />
+        <SummaryCard
+          title="Pelanggan"
+          value={10}
+          icon={<Users size={40} />}
+          onClick={goToCustomerPages}
+        />
+        <SummaryCard
+          title="Pengiriman"
+          value={5}
+          icon={<Truck size={40} />}
+          onClick={goToDeliveryPages}
+        />
+      </div>
+      <div className="grid grid-cols-3 gap-3">
         <div className="col-span-2">
-          <Card className="h-80">
-            <ChartComponent />
+          <Card
+            title="Grafik Pengiriman"
+            className="h-80 rounded-xl bg-secondary p-3"
+          >
+            <div className="h-60">
+              <ChartComponent />
+            </div>
           </Card>
         </div>
         <Card
           title="Pengiriman Menunggu Persetujuan"
-          className="bg-secondary text-text h-80"
+          className="bg-secondary text-text h-80 p-3 rounded-xl"
         >
           <Table data={delivery} />
         </Card>
-      </div>
-      <div className="grid grid-cols-5 gap-5">
-        <div className="col-span-2 space-y-5">
-          <Card
-            className="bg-third h-20 flex items-center justify-between px-10 cursor-pointer hover:bg-slate-400 hover:text-background"
-            onClick={goToCarPages}
-          >
-            <h2 className="text-6xl font-bold">7</h2>
-            <h3 className="text-xl">Kendaraan</h3>
-            <ArrowRightSquare size={35} />
-          </Card>
-          <Card
-            className="bg-third h-20 flex items-center justify-between px-10 cursor-pointer hover:bg-slate-400 hover:text-background"
-            onClick={goToDriverPages}
-          >
-            <h2 className="text-6xl font-bold">7</h2>
-            <h3 className="text-xl">Driver</h3>
-            <ArrowRightSquare size={35} />
-          </Card>
-          <Card
-            className="bg-third h-20 flex items-center justify-between px-10 cursor-pointer hover:bg-slate-400 hover:text-background"
-            onClick={goToCustomerPages}
-          >
-            <h2 className="text-6xl font-bold">7</h2>
-            <h3 className="text-xl">Customer</h3>
-            <ArrowRightSquare size={35} />
-          </Card>
-        </div>
-
-        <div className="col-span-3">
-          <DeliveryCard />
-        </div>
       </div>
     </div>
   );

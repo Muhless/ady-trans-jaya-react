@@ -10,9 +10,8 @@ import {
   PointElement,
   LineElement,
   ArcElement,
-  plugins,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 
 ChartJS.register(
   CategoryScale,
@@ -46,15 +45,14 @@ const options = {
     },
     title: {
       display: true,
-      Text: "Grafik Pengiriman",
     },
   },
 };
 
 const ChartComponent = () => {
   return (
-    <div className="h-full w-full">
-      <Bar data={data} options={options} />
+    <div className="h-full w-full relative">
+      <Line data={data} options={options} />
     </div>
   );
 };

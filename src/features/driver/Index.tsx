@@ -4,6 +4,7 @@ import SearchInput from "../../components/input/Search";
 import Title from "../../components/Title";
 import ButtonComponent from "../../components/button/Index";
 import Modal from "../../components/Modal";
+import Card from "../../components/card";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },
@@ -77,7 +78,9 @@ function DriverPages() {
             />
           ))
         ) : (
-          <div>Tidak ada data</div>
+          <Card className="col-start-2 flex justify-center h-32 items-center underline">
+            <h1>Tidak ada data</h1>
+          </Card>
         )}
       </div>
       <Modal
