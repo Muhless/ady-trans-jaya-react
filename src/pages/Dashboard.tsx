@@ -25,7 +25,7 @@ const HomePages = () => {
   return (
     <div>
       <Title title={"Selamat Datang, Admin"} />
-      <div className="grid grid-cols-4 gap-3 mb-5">
+      <div className="grid grid-cols-4 gap-3 mb-3">
         <SummaryCard
           title="Kendaraan"
           value={13}
@@ -50,6 +50,10 @@ const HomePages = () => {
           icon={<Truck size={40} />}
           onClick={goToDeliveryPages}
         />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <Card className="rounded-xl bg-secondary mb-3 h-40"></Card>
+        <Card className="rounded-xl bg-secondary mb-3 h-40"></Card>
       </div>
       <div className="grid grid-cols-3 gap-3">
         <div className="col-span-2">
