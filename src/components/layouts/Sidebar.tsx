@@ -32,7 +32,7 @@ const Sidebar = () => {
   );
 
   return (
-    <div className="fixed bottom-0 left-0 flex flex-col w-20 h-screen pt-3 bg-background">
+    <div className="fixed bottom-0 left-0 flex flex-col w-20 h-screen pt-3 bg-sidebar">
       <div className="flex flex-col items-center justify-center cursor-pointer">
         <img
           src="/assets/images/logo.png"
@@ -46,10 +46,10 @@ const Sidebar = () => {
           <Link
             key={to}
             to={to}
-            className={`p-2 bg-background rounded-full flex items-center ${
+            className={`p-2 rounded-full flex items-center text-gray-300 ${
               location.pathname === to
-                ? "bg-text text-background"
-                : "hover:bg-gray-400 hover:text-background"
+                ? "bg-hover text-white"
+                : "hover:bg-hover hover:text-white"
             }`}
           >
             {icon}

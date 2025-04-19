@@ -30,7 +30,7 @@ const data = {
   datasets: [
     {
       label: "Pengiriman",
-      data: [120, 150, 120, 130],
+      data: [3, 5, 1, 7],
       backgroundColor: "#1E88E5",
     },
   ],
@@ -50,11 +50,7 @@ const options = {
 };
 
 const ChartComponent = () => {
-  return (
-    <div className="h-full w-full relative">
-      <Line data={data} options={options} />
-    </div>
-  );
+  return <Line data={data} options={options} />;
 };
 
 export default ChartComponent;

@@ -4,10 +4,7 @@ import UserIconComponent from "../UserIcon";
 
 const DeliveryCard = () => {
   return (
-    <Card
-      title="Pengiriman Sedang Berlangsung"
-      className="h-full bg-secondary p-3"
-    >
+    <Card className="h-full bg-secondary p-3">
       <Card className="flex bg-background justify-around items-center text-sm cursor-pointer hover:bg-third">
         <UserIconComponent className="size-8 rounded-full" />
         <h1>Nama</h1>

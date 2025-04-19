@@ -2,28 +2,38 @@ import React from "react";
 import Card from ".";
 
 type SummaryCardProps = {
-  title: string;
+  title?: string;
+  className?:string;
   value?: number;
-  icon?: React.ReactNode;
-  onClick: () => void;
+  valueSubDesc?: string;
+  textClassName?: string;
+  desc?: string;
+  subDesc?: string;
+  onClick?: () => void;
 };
 
 const SummaryCard: React.FC<SummaryCardProps> = ({
   title,
   value,
+  valueSubDesc,
+  textClassName,
   onClick,
-  icon,
+  desc,
+  subDesc,
 }) => {
   return (
     <Card
-      className="bg-secondary h-28 flex items-center justify-between px-10 cursor-pointer rounded-xl"
+      className="cursor-pointer rounded-xl flex flex-col items-center justify-center space-y-1 py-5"
       onClick={onClick}
     >
-      <div>
-        <p className="text-sm text-gray-500">{title}</p>
-        <p className="text-3xl font-bold">{value}</p>
+      <p className="text-black text-left w-full px-5">{title}</p>
+      <div className="flex flex-col items-center">
+        <p className={`text-7xl font-bold ${textClassName}`}>{value}</p>
+        <p className={`${textClassName}`}>{desc}</p>
       </div>
-      <div className="text-blue-500">{icon}</div>
+      <p className="text-sm text-gray-500">
+        {subDesc} <span>{valueSubDesc}</span>
+      </p>
     </Card>
   );
 };

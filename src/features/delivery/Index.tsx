@@ -1,12 +1,12 @@
 import SearchInput from "../../components/input/Search.tsx";
 import SubTitle from "../../components/SubTitle.tsx";
 import { useNavigate } from "react-router-dom";
-import React, { useRef } from "react";
+import React from "react";
 import Title from "../../components/Title.tsx";
 import Table from "../../components/table/Table.tsx";
 import ButtonComponent from "../../components/button/Index.tsx";
-import Card from "../../components/card/index.tsx";
 import useNavigationHooks from "../../hooks/useNavigation.ts";
+import SummaryCard from "../../components/card/SummaryCard.tsx";
 
 const matches = [
   {
@@ -52,10 +52,27 @@ function DeliveryPages() {
   return (
     <>
       <Title title={"Pengiriman"} />
-      <div className="grid grid-cols-3 gap-3 mb-10">
-        <Card className={"bg-kuning"} title={"Menunggu Persetujuan"} />
-        <Card className={"bg-biru"} title={"Sedang Berlangsung"} />
-        <Card className={"bg-merah"} title={"Dibatalkan"} />
+      <div className="grid grid-cols-4 gap-3 mb-10">
+        <SummaryCard
+          value={13}
+          textClassName="text-[#3884f2]"
+          desc="Kendaraan Tersedia"
+        />
+        <SummaryCard
+          value={8}
+          textClassName="text-[#ee453e]"
+          desc="Pengemudi Tersedia"
+        />
+        <SummaryCard
+          value={10}
+          textClassName="text-[#e9a60b]"
+          desc="Pelanggan Setia"
+        />
+        <SummaryCard
+          textClassName="text-[#2ebf62]"
+          value={5}
+          desc="Pengiriman Berlangsung"
+        />
       </div>
       <div className="mb-20">
         <div className="flex flex-row justify-between mb-3">
