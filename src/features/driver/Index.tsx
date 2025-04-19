@@ -13,6 +13,27 @@ const modalInput = [
   { name: "photo", label: "Foto", type: "file" },
 ];
 
+const drivers = [
+  {
+    id: 1,
+    name: "Ahmad Yani",
+    phone: "08123456789",
+    address: "Jl. Merdeka No. 1, Jakarta",
+  },
+  {
+    id: 2,
+    name: "Siti Aisyah",
+    phone: "08567891234",
+    address: "Jl. Sudirman No. 23, Bandung",
+  },
+  {
+    id: 3,
+    name: "Budi Hartono",
+    phone: "08234567890",
+    address: "Jl. Ahmad Dahlan No. 8, Surabaya",
+  },
+];
+
 function DriverPages() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [drivers, setDrivers] = useState([]);
@@ -78,9 +99,25 @@ function DriverPages() {
             />
           ))
         ) : (
-          <Card className="col-start-2 flex justify-center h-32 items-center underline">
-            <h1>Tidak ada data</h1>
-          </Card>
+          <div className="gap-5 flex col-span-3">
+            <Card>
+              <ProfileCard
+                key="dummy"
+                name="Armi Barnowati"
+                phone="08123456789"
+                address="Jl. Contoh No. 123, Jakarta"
+                photo="assets/images/profile/armi.png"
+              />
+            </Card>
+            <Card>
+              <ProfileCard
+                key="dummy"
+                name="Mamang Kosim"
+                phone="08123456789"
+                address="Jl. Contoh No. 123, Jakarta"
+              />
+            </Card>
+          </div>
         )}
       </div>
       <Modal

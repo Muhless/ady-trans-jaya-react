@@ -4,9 +4,9 @@ import ChartComponent from "../Chart";
 
 const GraphCard = () => {
   return (
-    <div className="h-60">
+    <Card className="h-96 w-full mb-5 p-5">
       <ChartComponent />
-    </div>
+    </Card>
   );
 };
 

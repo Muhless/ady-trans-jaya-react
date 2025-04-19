@@ -5,6 +5,7 @@ function FinancePages() {
   return (
     <>
       <Title title="Keuangan" />
+      <div className="flex justify-center">Kapan-kapan dikerjain</div>
     </>
   );
 }

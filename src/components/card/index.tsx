@@ -1,12 +1,14 @@
 import React from "react";
 
 type CardProps = {
+  title?: string;
   className?: string;
   children?: React.ReactNode;
   onClick?: () => void;
 };
 
 const Card: React.FC<CardProps> = ({
+  title,
   className = "bg-secondary",
   children,
   onClick,
@@ -22,6 +24,7 @@ const Card: React.FC<CardProps> = ({
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
+      {title && <p className="font-compforta py-3 text-black">{title}</p>}
       {children}
     </div>
   );

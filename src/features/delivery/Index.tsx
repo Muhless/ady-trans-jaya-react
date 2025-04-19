@@ -3,10 +3,11 @@ import SubTitle from "../../components/SubTitle.tsx";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 import Title from "../../components/Title.tsx";
-import Table from "../../components/table/Table.tsx";
 import ButtonComponent from "../../components/button/Index.tsx";
 import useNavigationHooks from "../../hooks/useNavigation.ts";
 import SummaryCard from "../../components/card/SummaryCard.tsx";
+import TableComponent from "../../components/table/index.tsx";
+import Card from "../../components/card/index.tsx";
 
 const matches = [
   {
@@ -84,11 +85,13 @@ function DeliveryPages() {
           />
           <SearchInput placeholder={"pengiriman"} />
         </div>
-        <Table
-          data={matches}
-          onRowClick={goToDetailDelivery}
-          showActions={true}
-        />
+        <Card>
+          <TableComponent
+            data={matches}
+            onRowClick={goToDetailDelivery}
+            showActions={true}
+          />
+        </Card>
       </div>
     </>
   );

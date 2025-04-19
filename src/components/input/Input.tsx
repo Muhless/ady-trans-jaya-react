@@ -23,7 +23,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   disabled,
   onChange,
 }) => {
-  const inputClass = `p-2 border border-black ${
+  const inputClass = `p-2 rounded-md ${
     disabled ? "bg-gray-300" : "bg-background"
   } ${className}`;
   return (

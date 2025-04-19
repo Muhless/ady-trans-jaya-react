@@ -1,4 +1,4 @@
-import { Phone, MapPin, Info, Subtitles, User2Icon } from "lucide-react";
+import { Phone, MapPin, Info, Subtitles, User2Icon, Heart } from "lucide-react";
 import React from "react";
 import ButtonComponent from "../button/Index";
 import SubTitle from "../SubTitle";
@@ -30,14 +30,17 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         <div className="col-span-1 flex items-center">
           <UserIconComponent
             className="size-24 rounded-full object-cover"
-            src="assets/images/profile/1.jpg"
+            src={photo || "assets/images/profile/1.jpg"}
           />
         </div>
         <div className="col-span-2 flex flex-col px-3 text-sm py-2">
           <h1 className="text-lg underline font-bold">{name}</h1>
-          <p>{phone}</p>
-          <p>{address}</p>
-          <p className="underline">Tersedia/Tidak</p>
+          {/* <p>{phone}</p>
+          <p>{address}</p> */}
+          <div className="flex gap-3 text-pink-700 items-center mt-5 justify-center">
+            <p>Menikah</p>
+            <Heart />
+          </div>
         </div>
       </div>
     </Card>

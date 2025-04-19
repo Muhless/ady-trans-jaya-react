@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import SearchInput from "../../components/input/Search.tsx";
-import Table from "../../components/table/Table.tsx";
 import { useNavigate } from "react-router-dom";
 import Title from "../../components/Title.js";
 import ButtonComponent from "../../components/button/Index.tsx";
 import Modal from "../../components/Modal.tsx";
+import TableComponent from "../../components/table/index.tsx";
+import Card from "../../components/card/index.tsx";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },
@@ -55,7 +56,13 @@ function CustomerPages() {
         />
         <SearchInput placeholder="customer" />
       </div>
-      <Table data={customer} onRowClick={handleRowClick} showActions={true} />
+      <Card>
+        <TableComponent
+          data={customer}
+          onRowClick={handleRowClick}
+          showActions={true}
+        />
+      </Card>
       <Modal
         title="Customer"
         isOpen={modalOpen}

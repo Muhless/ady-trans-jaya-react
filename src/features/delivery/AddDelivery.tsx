@@ -6,7 +6,7 @@ import FormDelivery from "../../components/form/FormDelivery";
 function AddDeliveryPages() {
   return (
     <div className="flex justify-center">
-      <Card className="flex flex-col w-1/2 border bg-secondary">
+      <Card className="flex flex-col w-1/2">
         <SubTitle subTitle="Pengajuan Pengiriman" className="flex justify-center py-5 text-3xl"/>
         <div className="flex flex-col space-y-4 px-6">
           <FormDelivery />

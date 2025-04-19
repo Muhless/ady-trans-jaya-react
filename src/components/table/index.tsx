@@ -7,7 +7,7 @@ type TableProps = {
   showActions?: boolean;
 };
 
-const Table: React.FC<TableProps> = ({
+const TableComponent: React.FC<TableProps> = ({
   data = [],
   onRowClick,
   showActions = false,
@@ -15,21 +15,16 @@ const Table: React.FC<TableProps> = ({
   const headers = data.length > 0 ? Object.keys(data[0]) : [];
 
   return (
-    <div className="overflow-auto  border border-black shadow-md">
+    <div className="overflow-auto rounded-xl">
       <table className="w-full text-sm text-left border-collapse">
         <thead>
-          <tr className="text-center bg-gray-300 border-b border-black">
+          <tr className="text-center border-b">
             {headers.map((key, index) => (
-              <th
-                key={index}
-                className="p-3 font-semibold border-r border-black last:border-r-0"
-              >
-                {key}
+              <th key={index} className="p-3 text-base font-semibold">
+                {key.charAt(0).toUpperCase() + key.slice(1)}
               </th>
             ))}
-            {showActions && (
-              <th className="p-3 font-semibold border-l border-black">Aksi</th>
-            )}
+            {showActions && <th className="p-3 text-base font-semibold ">Aksi</th>}
           </tr>
         </thead>
         <tbody>
@@ -37,20 +32,18 @@ const Table: React.FC<TableProps> = ({
             <tr
               key={row.id}
               onClick={() => onRowClick?.(row)}
-              className={`transition-all duration-200 hover:bg-sky-100 cursor-pointer ${
-                rowIndex % 2 === 0 ? "bg-white" : "bg-gray-100"
-              }`}
+              className="transition-all duration-200 hover:bg-sky-100 cursor-pointer text-center"
+              // className={`transition-all duration-200 hover:bg-sky-100 cursor-pointer text-center ${
+              //   rowIndex % 2 === 0 ? "bg-white" : "bg-gray-100"
+              // }`}
             >
               {Object.keys(row).map((key, colIndex) => (
-                <td
-                  key={colIndex}
-                  className="p-3 border-t border-black border-r last:border-r-0"
-                >
+                <td key={colIndex} className="p-3 border-b">
                   {row[key]}
                 </td>
               ))}
               {showActions && (
-                <td className="p-3 border-t border-black text-center">
+                <td className="p-3 text-center border-b">
                   <div className="flex justify-center gap-2">
                     <ButtonComponent variant="edit" />
                     <ButtonComponent variant="delete" />
@@ -65,4 +58,4 @@ const Table: React.FC<TableProps> = ({
   );
 };
 
-export default Table;
+export default TableComponent;

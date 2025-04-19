@@ -1,21 +1,12 @@
 import React from "react";
-import Table from "../components/table/Table.tsx";
 import Title from "../components/Title.tsx";
 import Card from "../components/card/index.tsx";
-import { ArrowRightSquare, Car, Truck, User, Users } from "lucide-react";
 import useNavigationHooks from "../hooks/useNavigation.ts";
-import DeliveryCard from "../components/card/DeliveryCard.tsx";
-import ChartComponent from "../components/Chart.tsx";
 import SummaryCard from "../components/card/SummaryCard.tsx";
 import GraphCard from "../components/card/GraphCard.tsx";
-import DeliveryDetailCard from "../components/card/DeliveryDetailCard.tsx";
-
-const delivery = [
-  { id: 1, nama: "ady", noTelepon: "08871165551", status: "delivery" },
-  { id: 2, nama: "ady", noTelepon: "08871165551", status: "on delivery" },
-  { id: 3, nama: "ady", noTelepon: "08871165551", status: "cancel" },
-  { id: 4, nama: "ady", noTelepon: "08871165551", status: "delivery" },
-];
+import TableComponent from "../components/table/index.tsx";
+import WaitingDeliveryCard from "../components/card/WaitingDeliveryCard.tsx";
+import PendingDeliveryTable from "../components/table/PendingDeliveryTable.tsx";
 
 const HomePages = () => {
   const {
@@ -27,7 +18,7 @@ const HomePages = () => {
   return (
     <div>
       <div
-        className="w-full rounded-xl p-6 mb-5 bg-cover bg-no-repeat relative h-32"
+        className="w-full rounded-xl p-6 mb-5 bg-cover bg-no-repeat relative h-28"
         style={{
           backgroundImage: "url('assets/images/pexels-jplenio-1103970.jpg')",
         }}
@@ -75,12 +66,11 @@ const HomePages = () => {
           onClick={goToDeliveryPages}
         />
       </div>
-      <Card className="grid grid-cols-2 gap-5 mb-5">
+      <div className="grid grid-cols-2 gap-3">
         <GraphCard />
-      </Card>
-      <Card className="p-10">
-        <Table data={delivery} showActions={true} />
-      </Card>
+        <WaitingDeliveryCard />
+      </div>
+      <PendingDeliveryTable />
     </div>
   );
 };

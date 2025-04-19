@@ -20,7 +20,7 @@ const DateInputComponent: React.FC<DateInputComponentProps> = ({
         selected={selectedDate}
         onChange={(date) => setSelectedDate(date)}
         dateFormat="dd/MM/yyyy"
-        className={`bg-background p-2 text-center border border-black ${className}`}
+        className={`bg-background p-2 text-center rounded-md ${className}`}
         placeholderText="dd/mm/yyyy"
         portalId="root"
       />

@@ -4,7 +4,7 @@ import Title from "../../components/Title";
 import ButtonComponent from "../../components/button/Index";
 import Modal from "../../components/Modal";
 
-const modalInput: FieldConfig[] = [
+const modalInput = [
   { name: "name", label: "Nama", type: "text" },
   { name: "email", label: "Email", type: "email" },
   { name: "phone", label: "Nomor HP", type: "number" },
@@ -31,6 +31,9 @@ function RentalPages() {
         onClose={() => setModalOpen(false)}
         fields={modalInput}
       />
+      <div className="flex justify-center">
+        Kapan-kapan dikerjain
+      </div>
     </>
   );
 }

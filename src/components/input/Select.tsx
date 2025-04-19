@@ -23,7 +23,7 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
       <select
         name={name}
         value={value}
-        className={`bg-background p-2 cursor-pointer border border-black ${className}`}
+        className={`bg-background p-2 cursor-pointer rounded-md ${className}`}
         onChange={onChange}
       >
         <option value="">Pilih {label}</option>

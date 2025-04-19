@@ -35,7 +35,10 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
   type = "button",
 }) => {
   const baseStyle =
-    "transition border border-black border-b-4 border-r-4 focus:outline-none flex justify-center items-center gap-2 text-sm p-2";
+    "transition focus:outline-none flex justify-center items-center gap-2 text-sm p-2";
+
+  const roundedStyle =
+    variant === "edit" || variant === "delete" ? "rounded-full" : "rounded-md";
   const variants = {
     default: "bg-gray-400 hover:bg-gray-500",
     add: "bg-biru hover:bg-sky-500 ",
@@ -68,8 +71,9 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
   };
   return (
     <button
-      className={`${baseStyle} ${variants[variant]} ${className}`}
-      onClick={handleClick} type={type}
+      className={`${baseStyle} ${roundedStyle} ${variants[variant]} ${className}`}
+      onClick={handleClick}
+      type={type}
     >
       {label && <p>{label}</p>}
       {icons[variant] && <span>{icons[variant]}</span>}
