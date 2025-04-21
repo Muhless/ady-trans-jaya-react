@@ -37,7 +37,7 @@ const Sidebar = () => {
         <img
           src="/assets/images/logo.png"
           alt="Ady Trans Jaya"
-          className="w-14 h-auto bg-white rounded-md"
+          className="w-14 h-auto"
           onClick={goToHome}
         />
       </div>

@@ -4,45 +4,24 @@ import SearchInput from "../../components/input/Search";
 import Title from "../../components/Title";
 import ButtonComponent from "../../components/button/Index";
 import Modal from "../../components/Modal";
-import Card from "../../components/card";
+import useNavigationHooks from "../../hooks/useNavigation";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },
   { name: "phone", label: "Nomor Telepon", type: "number" },
   { name: "address", label: "Alamat", type: "textarea" },
-  { name: "photo", label: "Foto", type: "file" },
-];
-
-const drivers = [
-  {
-    id: 1,
-    name: "Ahmad Yani",
-    phone: "08123456789",
-    address: "Jl. Merdeka No. 1, Jakarta",
-  },
-  {
-    id: 2,
-    name: "Siti Aisyah",
-    phone: "08567891234",
-    address: "Jl. Sudirman No. 23, Bandung",
-  },
-  {
-    id: 3,
-    name: "Budi Hartono",
-    phone: "08234567890",
-    address: "Jl. Ahmad Dahlan No. 8, Surabaya",
-  },
 ];
 
 function DriverPages() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [drivers, setDrivers] = useState([]);
+  const [drivers, setDrivers] = useState<any[]>([]);
+  const [error, setError] = useState("");
+  const { goToDriverDetails } = useNavigationHooks();
 
   const fetchDrivers = async () => {
     try {
       const response = await fetch("http://localhost:8080/api/driver");
       const json = await response.json();
-
       const data = Array.isArray(json.message) ? json.message : [];
       setDrivers(data);
     } catch (err) {
@@ -56,6 +35,21 @@ function DriverPages() {
   }, []);
 
   const handleSubmit = async (data: Record<string, any>) => {
+    if (!data.status) {
+      data.status = "tersedia";
+    }
+
+    if (!data.phone) {
+      alert("Nomor telepon tidak boleh kosong");
+      return;
+    }
+
+    // const phoneRegex = /^[0-9]{10,15}$/;
+    // if (!phoneRegex.test(data.phone)) {
+    //   alert("Nomor telepon tidak valid");
+    //   return;
+    // }
+
     try {
       const response = await fetch("http://localhost:8080/api/driver", {
         method: "POST",
@@ -64,20 +58,25 @@ function DriverPages() {
         },
         body: JSON.stringify(data),
       });
+
       if (!response.ok) {
-        throw new Error("Gagal menyimpan data");
+        const result = await response.json();
+        throw new Error(result.error || "Gagal menyimpan data");
       }
+
       const result = await response.json();
       console.log("Data berhasil disimpan", result);
       setIsModalOpen(false);
+      setError("");
       fetchDrivers();
     } catch (error) {
       console.error("Terjadi kesalahan", error);
+      setError("Gagal menyimpan data, coba lagi.");
     }
   };
 
   return (
-    <>
+    <div>
       <Title title={"Driver"} />
       <div className="flex justify-between mb-5">
         <ButtonComponent
@@ -89,37 +88,24 @@ function DriverPages() {
         <SearchInput placeholder="driver" />
       </div>
       <div className="grid grid-cols-3 gap-3">
-        {Array.isArray(drivers) && drivers.length > 0 ? (
-          (drivers || []).map((driver: any) => (
+        {drivers.length > 0 ? (
+          drivers.map((driver) => (
             <ProfileCard
               key={driver.id}
               name={driver.name}
               phone={driver.phone}
               address={driver.address}
+              status={driver.status}
+              onClick={goToDriverDetails(driver.id)}
             />
           ))
         ) : (
-          <div className="gap-5 flex col-span-3">
-            <Card>
-              <ProfileCard
-                key="dummy"
-                name="Armi Barnowati"
-                phone="08123456789"
-                address="Jl. Contoh No. 123, Jakarta"
-                photo="assets/images/profile/armi.png"
-              />
-            </Card>
-            <Card>
-              <ProfileCard
-                key="dummy"
-                name="Mamang Kosim"
-                phone="08123456789"
-                address="Jl. Contoh No. 123, Jakarta"
-              />
-            </Card>
+          <div className="col-start-2 flex justify-center">
+            <h1>Belum ada data</h1>
           </div>
         )}
       </div>
+      {error && <p className="text-red-500">{error}</p>}
       <Modal
         title="Driver"
         mode="add"
@@ -128,7 +114,7 @@ function DriverPages() {
         fields={modalInput}
         onSubmit={handleSubmit}
       />
-    </>
+    </div>
   );
 }
 

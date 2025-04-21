@@ -2,20 +2,20 @@ import React from "react";
 import ButtonComponent from "../button/Index";
 import Card from ".";
 
-type AvailabilityStatusProps = {
-  available?: string;
+type CarCardProps = {
+  name: string;
+  type: string;
+  license_plat: string;
+  price: number;
+  status: string;
 };
 
-const AvailabilityStatus = ({ available }) => {
-  return (
-    <p className={available ? "text-green-500" : "text-red-500"}>
-      {available ? "Tersedia" : "Tidak Tersedia"}
-    </p>
-  );
-};
-
-const CarCard: React.FC<AvailabilityStatusProps> = ({
-  available = "Tersedia",
+const CarCard: React.FC<CarCardProps> = ({
+  name,
+  type,
+  license_plat,
+  price,
+  status,
 }) => {
   return (
     <Card>
@@ -26,12 +26,12 @@ const CarCard: React.FC<AvailabilityStatusProps> = ({
       <div className="flex items-center justify-evenly flex-grow w-full col-span-2">
         <div className="flex flex-col justify-center items-center">
           <h1 className="font-bold tracking-wider capitalize text-4xl font-jakarta">
-            Toyota Pickup
+            {name}
           </h1>
-          <h2>Jenis Kendaraan</h2>
-          <h3>Nomor Polisi</h3>
-          <h4>Harga</h4>
-          <AvailabilityStatus available={available} />
+          <p>{type}</p>
+          <p>{license_plat}</p>
+          <p>{price}</p>
+          <p>{status}</p>
         </div>
         <img
           src="/assets/images/cars/truck.png"

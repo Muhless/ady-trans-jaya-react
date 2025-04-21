@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import ButtonComponent from "./button/Index";
 
@@ -17,6 +17,7 @@ type ModalProps = {
   onSubmit?: (data: Record<string, any>) => void;
   fields: FieldConfig[];
   mode?: "add" | "edit";
+  onReset?: () => void;
   dataToEdit?: Record<string, any> | null;
 };
 
@@ -27,11 +28,14 @@ function Modal({
   onSubmit,
   fields,
   mode = "add",
+  onReset,
   dataToEdit = null,
 }: ModalProps) {
   const { register, handleSubmit, reset, setValue } = useForm({
     defaultValues: dataToEdit || {},
   });
+
+  const [fileInputs, setFileInputs] = useState<Record<string, File | null>>({});
 
   useEffect(() => {
     if (dataToEdit) {
@@ -58,8 +62,12 @@ function Modal({
           </button>
         </div>
         <form
+          encType="multipart/form-data"
           className="mt-4"
           onSubmit={handleSubmit((data) => {
+            Object.entries(fileInputs).forEach(([key, file]) => {
+              data[key] = file;
+            });
             onSubmit?.(data);
             onClose();
           })}
@@ -71,6 +79,7 @@ function Modal({
                 <select
                   {...register(name)}
                   className="w-full border p-2 rounded-lg"
+                  defaultValue="Pilih"
                 >
                   {options.map((option) => (
                     <option key={option} value={option}>
@@ -97,8 +106,16 @@ function Modal({
           ))}
 
           <div className="flex justify-end gap-2">
-            <ButtonComponent label="Ulangi" variant="undo" />
-            <ButtonComponent label="Simpan" variant="save" />
+            <ButtonComponent
+              label="Ulangi"
+              variant="undo"
+              onClick={(e) => {
+                e.preventDefault();
+                reset();
+                onReset?.();
+              }}
+            />
+            <ButtonComponent label="Simpan" variant="save" type="submit" />
           </div>
         </form>
       </div>

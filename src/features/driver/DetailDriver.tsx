@@ -1,44 +1,48 @@
-import React from "react";
 import { useParams } from "react-router-dom";
-import SubTitle from "../../components/SubTitle";
-import UserIconComponent from "../../components/UserIcon";
+import { useQuery } from "@tanstack/react-query";
+import React from "react";
 
-function DetailDriverPages() {
-  const { id } = useParams();
+interface Driver {
+  id: string;
+  name: string;
+  phone: string;
+  address: string;
+  status: string;
+}
+
+const fetchDriverDetails = async (id: string) => {
+  const response = await fetch(`http://localhost:8080/api/driver/${id}`);
+  if (!response.ok) {
+    throw new Error("Gagal mengambil data driver");
+  }
+  return response.json();
+};
+
+function DriverDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const { data, isLoading, isError, error } = useQuery<Driver, Error>({
+    queryKey: ["driverDetails", id],
+    queryFn: () => fetchDriverDetails(id!),
+    enabled: !!id,
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error: {(error as Error).message}</div>;
+  }
+
   return (
-    <>
-      <div className="grid grid-cols-3">
-        <div className="col-span-1 bg-secondary flex flex-col">
-          <SubTitle
-            subTitle="Detail Driver"
-            className="p-3 flex justify-center"
-          />
-          <div className="items-center flex justify-center">
-            <UserIconComponent className="size-40 rounded-full" />
-          </div>
-          <div className="p-5 space-y-5">
-            <div className="flex space-x-3">
-              <h1>Nama :</h1>
-              <p>Muhta Nuryadi</p>
-            </div>
-            <div className="flex space-x-3">
-              <h1>N0 Telepon :</h1>
-              <p>08871165551</p>
-            </div>
-            <div className="flex space-x-3">
-              <h1>Alamat :</h1>
-              <p>Kp. Cangkudu Rt.06 Rw.01. Kab.Tangerang</p>
-            </div>
-            <div className="flex space-x-3">
-              <h1>Keterangan :</h1>
-              <p>Tersedia</p>
-            </div>
-          </div>
-        </div>
-        <div className="col-span-2">kolom 2</div>
-      </div>
-    </>
+    <div>
+      <h2>Detail Driver</h2>
+      <p>Nama: {data?.name}</p>
+      <p>Telepon: {data?.phone}</p>
+      <p>Alamat: {data?.address}</p>
+      <p>Status: {data?.status}</p>
+    </div>
   );
 }
 
-export default DetailDriverPages;
+export default DriverDetailPage;

@@ -62,6 +62,9 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
 
   const navigate = useNavigate();
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (type !== "submit") {
+      e.preventDefault();
+    }
     e.preventDefault();
     if (variant === "back") {
       navigate(-1);
@@ -72,7 +75,7 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
   return (
     <button
       className={`${baseStyle} ${roundedStyle} ${variants[variant]} ${className}`}
-      onClick={handleClick}
+      onClick={type !== "submit" ? handleClick : undefined}
       type={type}
     >
       {label && <p>{label}</p>}
