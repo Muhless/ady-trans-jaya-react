@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import SearchInput from "../../components/input/Search";
 import Title from "../../components/Title";
 import ButtonComponent from "../../components/button/Index";
-import Modal from "../../components/Modal";
+import Modal from "../../components/modal/Modal";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },

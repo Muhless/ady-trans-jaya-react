@@ -4,7 +4,7 @@ import Title from "../../components/Title";
 import CarCard from "../../components/card/CarCard";
 import { CarTypeComponent } from "../../components/button/CarType";
 import ButtonComponent from "../../components/button/Index";
-import Modal from "../../components/Modal";
+import ModalAddCar from "../../components/modal/ModalAddCar";
 
 const carTypes = ["Semua", "Pick Up", "CDE", "CDD", "Fuso", "Wingbox"];
 
@@ -38,9 +38,13 @@ function CarPages() {
           throw new Error("Gagal mengambil data mobil");
         }
         const data = await response.json();
-        setCars(data);
-      } catch (err) {
-        setError(err.message);
+        console.log("Respon API:", data);
+        if (!Array.isArray(data.message)) {
+          throw new Error("Respon API tidak sesuai ekspektasi");
+        }
+        setCars(data.message);
+      } catch (err: any) {
+        setError(err.message || "terjadi kesalahan");
       } finally {
         setLoading(false);
       }
@@ -52,7 +56,9 @@ function CarPages() {
     if (!data.status) {
       data.status = "tersedia";
     }
+
     try {
+      data.price = parseFloat(data.price);
       const response = await fetch("http://localhost:8080/api/cars", {
         method: "POST",
         headers: {
@@ -63,7 +69,8 @@ function CarPages() {
       if (!response.ok) {
         throw new Error("Gagal menambahkan data kendaraan");
       }
-      const newCar = await response.json();
+      const result = await response.json();
+      const newCar = result.data;
       console.log("Data berhasil disimpan", newCar);
       setCars([...cars, newCar]);
       setIsModalOpen(false);
@@ -74,7 +81,7 @@ function CarPages() {
   };
 
   return (
-    <>
+    <div>
       <Title title="Kendaraan" />
       <div className="flex justify-between items-center mb-5">
         <ButtonComponent
@@ -91,27 +98,32 @@ function CarPages() {
       ) : error ? (
         <div>Error: {error}</div>
       ) : (
-        <div className="space-y-3">
-          {cars.map((car) => (
-            <CarCard
-              key={car.id}
-              name={car.name}
-              license_plat={car.license_plat}
-              type={car.type}
-              price={car.price}
-              status={car.status}
-            />
-          ))}
-        </div>
+        <>
+          {Array.isArray(cars) && cars.length > 0 ? (
+            <div className="space-y-3">
+              {cars.map((car) => (
+                <CarCard
+                  key={car.id}
+                  name={car.name}
+                  license_plat={car.license_plat}
+                  type={car.type}
+                  price={car.price}
+                  status={car.status}
+                />
+              ))}
+            </div>
+          ) : (
+            <div>Tidak ada kendaraan tersedia</div>
+          )}
+        </>
       )}
-      <Modal
-        title="Kendaraan"
+
+      <ModalAddCar
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        fields={modalInput}
         onSubmit={handleSubmit}
       />
-    </>
+    </div>
   );
 }
 

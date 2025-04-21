@@ -3,9 +3,9 @@ import SearchInput from "../../components/input/Search.tsx";
 import { useNavigate } from "react-router-dom";
 import Title from "../../components/Title.js";
 import ButtonComponent from "../../components/button/Index.tsx";
-import Modal from "../../components/Modal.tsx";
 import TableComponent from "../../components/table/index.tsx";
 import Card from "../../components/card/index.tsx";
+import Modal from "../../components/modal/Modal.tsx";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },

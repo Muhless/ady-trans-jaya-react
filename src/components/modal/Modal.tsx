@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import ButtonComponent from "./button/Index";
+import ButtonComponent from "../button/Index";
 
 type FieldConfig = {
   name: string;
@@ -77,10 +77,14 @@ function Modal({
               <label className="block mb-2">{label}</label>
               {options ? (
                 <select
-                  {...register(name)}
+                  {...register(name, {
+                    required: `Harap pilih ${label.toLowerCase()}`,
+                  })}
                   className="w-full border p-2 rounded-lg"
-                  defaultValue="Pilih"
                 >
+                  <option value="" disabled hidden>
+                    Pilih {label.toLowerCase()}
+                  </option>
                   {options.map((option) => (
                     <option key={option} value={option}>
                       {option}

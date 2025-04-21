@@ -3,7 +3,7 @@ import ProfileCard from "../../components/card/ProfileCard";
 import SearchInput from "../../components/input/Search";
 import Title from "../../components/Title";
 import ButtonComponent from "../../components/button/Index";
-import Modal from "../../components/Modal";
+import Modal from "../../components/modal/Modal";
 import useNavigationHooks from "../../hooks/useNavigation";
 
 const modalInput = [
