@@ -10,7 +10,6 @@ import HomePages from "../pages/Dashboard";
 import AddDriverPages from "../features/driver/AddDriver";
 import DetailDriverPages from "../features/driver/DetailDriver";
 import DriverPages from "../features/driver/Index";
-import CarPages from "../features/car/Index";
 import FinancePages from "../features/finance/Index";
 import CustomerPages from "../features/customer/Index";
 import RentalPages from "../features/rental/Index";
@@ -20,6 +19,7 @@ import ProfilePages from "../pages/Profile";
 import AddDeliveryPages from "../features/delivery/AddDelivery";
 import AddDeliveryFormPages from "../features/delivery/AddDeliveryForm";
 import LoginPages from "../pages/Login";
+import VehiclePages from "../features/vehicle/Index";
 
 function AppRoutes() {
   return (
@@ -32,7 +32,7 @@ function AppRoutes() {
           {/* Profile */}
           <Route path="/profile" element={<ProfilePages />} />
           {/* car */}
-          <Route path="/car" element={<CarPages />} />
+          <Route path="/vehicle" element={<VehiclePages />} />
           {/* driver */}
           <Route path="/driver" element={<DriverPages />} />
           <Route path="/driver/add" element={<AddDriverPages />} />

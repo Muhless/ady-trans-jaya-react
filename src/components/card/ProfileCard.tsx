@@ -38,7 +38,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               status ? "bg-green-600" : "bg-red-600"
             }`}
           >
-            {status ? "tersedia" : "tidak tersedia"}
+            {status ? "Tersedia" : "Tidak Tersedia"}
           </p>
         </div>
       </div>

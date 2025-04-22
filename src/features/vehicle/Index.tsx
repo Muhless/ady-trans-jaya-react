@@ -5,8 +5,9 @@ import CarCard from "../../components/card/CarCard";
 import { CarTypeComponent } from "../../components/button/CarType";
 import ButtonComponent from "../../components/button/Index";
 import ModalAddCar from "../../components/modal/ModalAddCar";
+import Modal from "../../components/modal/Modal";
 
-const carTypes = ["Semua", "Pick Up", "CDE", "CDD", "Fuso", "Wingbox"];
+const carTypes = ["Semua", "Pick up", "CDE", "CDD", "fuso", "wingbox"];
 
 const modalInput = [
   { name: "name", label: "Nama Kendaraan", type: "text" },
@@ -24,7 +25,7 @@ interface Car {
   status: string;
 }
 
-function CarPages() {
+function VehiclePages() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,7 +53,12 @@ function CarPages() {
     fetchCars();
   }, []);
 
-  const handleSubmit = async (data: Record<string, any>) => {
+  const handleSubmitVehicle = async (data: Record<string, any>) => {
+    const transformed = {
+      ...data,
+      type: data.type.toLoweCase(),
+    };
+
     if (!data.status) {
       data.status = "tersedia";
     }
@@ -64,7 +70,7 @@ function CarPages() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(transformed),
       });
       if (!response.ok) {
         throw new Error("Gagal menambahkan data kendaraan");
@@ -118,13 +124,16 @@ function CarPages() {
         </>
       )}
 
-      <ModalAddCar
+      <Modal
+        title="Customer"
+        mode="add"
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={handleSubmit}
+        fields={modalInput}
+        onSubmit={handleSubmitVehicle}
       />
     </div>
   );
 }
 
-export default CarPages;
+export default VehiclePages;
