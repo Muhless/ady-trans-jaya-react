@@ -71,13 +71,20 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
   //   104.5, -8.5, 114.5, -5.5,
   // ];
   const { goToAddDelivery } = useNavigationHooks();
-  const driverOptions = useFetchOptions(
-    "http://localhost:8080/api/driver",
-    "name"
-  );
+  const driverOptions = useFetchOptions("http://localhost:8080/api/driver");
+  const formatVehicleLabel = (vehicle: {
+    name: string;
+    type: string;
+    license_plat: string;
+  }) => {
+    return `${vehicle.name} - (${vehicle.type.toUpperCase()}) - ${
+      vehicle.license_plat
+    }`;
+  };
+
   const vehicleOptions = useFetchOptions(
     "http://localhost:8080/api/vehicle",
-    (vehicle) => `${vehicle.name} - ${vehicle.type}`
+    formatVehicleLabel
   );
 
   useEffect(() => {
@@ -250,8 +257,11 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
   };
 
   const [formData, setFormData] = useState({
-    content: "",
-    value: "",
+    loadType: "",
+    load: "",
+    quantity: "",
+    weight: "",
+    unit: "",
     driver: "",
     vehicle: "",
   });
@@ -280,11 +290,11 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
     <Card className="bg-secondary">
       <form onSubmit={handleSubmit} className="px-10 mt-4 space-y-5">
         <SubTitle subTitle="Form Tambah Pengiriman" className="text-center" />
-
+        {/* form */}
         <SelectComponent
           label="Jenis Muatan"
-          name="content_type"
-          value={formData.content}
+          name="load_type"
+          value={formData.loadType}
           onChange={handleChange}
           options={[
             {
@@ -304,20 +314,28 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
           ]}
         />
         <InputComponent
-          label="Nama Muatan"
+          label="Muatan"
           type="text"
-          name="value_name"
-          value={formData.value}
+          name="load"
+          value={formData.load}
           onChange={handleChange}
         />
         <InputComponent
           label="Jumlah Muatan"
           type="text"
-          name="value"
-          value={formData.value}
+          name="quantity"
+          value={formData.quantity}
           onChange={handleChange}
         />
-        <InputValue label="Berat Muatan" />
+        <InputValue
+          label="Berat Muatan"
+          name="weight"
+          weightName="weight"
+          unitName="unit"
+          weight={formData.weight}
+          unit={formData.unit}
+          onChange={handleChange}
+        />
         <SelectComponent
           label="Driver"
           name="driver"
@@ -336,6 +354,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
           <InputComponent
             label="Keberangkatan"
             type="textarea"
+            // TODO:fix this
             value={address}
             onChange={(e) => {
               setAddress(e.target.value);

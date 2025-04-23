@@ -36,7 +36,7 @@ const FormDelivery = () => {
         options={customerOptions}
       />
 
-      <div className="flex justify-between">
+      <div className="flex justify-between gap-5">
         <h1>Pengiriman</h1>
         <AddDeliveryCard />
       </div>

@@ -22,7 +22,7 @@ function DriverPages() {
     try {
       const response = await fetch("http://localhost:8080/api/driver");
       const json = await response.json();
-      const data = Array.isArray(json.message) ? json.message : [];
+      const data = Array.isArray(json.data) ? json.data : [];
       setDrivers(data);
     } catch (err) {
       console.error("Gagal mengambil data driver:", err);

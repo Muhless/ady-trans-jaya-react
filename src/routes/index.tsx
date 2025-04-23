@@ -16,10 +16,10 @@ import RentalPages from "../features/rental/Index";
 import DetailDeliveryPages from "../features/delivery/DetailDelivery";
 import Layout from "../components/layouts/MainLayout";
 import ProfilePages from "../pages/Profile";
-import AddDeliveryPages from "../features/delivery/AddDelivery";
-import AddDeliveryFormPages from "../features/delivery/AddDeliveryForm";
 import LoginPages from "../pages/Login";
 import VehiclePages from "../features/vehicle/Index";
+import SubmitDeliveryPages from "../features/delivery/SubmitDelivery";
+import AddDeliveryPages from "../features/delivery/AddDelivery";
 
 function AppRoutes() {
   return (
@@ -43,8 +43,8 @@ function AppRoutes() {
           <Route path="/rent" element={<RentalPages />} />
           {/* delivery */}
           <Route path="/delivery" element={<DeliveryPages />} />
-          <Route path="/delivery/add" element={<AddDeliveryPages />} />
-          <Route path="/delivery/add/form" element={<AddDeliveryFormPages />} />
+          <Route path="/delivery/add" element={<SubmitDeliveryPages />} />
+          <Route path="/delivery/add/form" element={<AddDeliveryPages />} />
           <Route path="/delivery/:id" element={<DetailDeliveryPages />} />
           {/* finance */}
           <Route path="/finance" element={<FinancePages />} />

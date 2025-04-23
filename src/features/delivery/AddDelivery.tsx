@@ -1,19 +1,29 @@
-import React from "react";
-import Card from "../../components/card";
-import SubTitle from "../../components/SubTitle";
-import FormDelivery from "../../components/form/FormDelivery";
+import React, { useRef } from "react";
+import "mapbox-gl/dist/mapbox-gl.css";
+import FormAddDelivery from "../../components/form/FormAddDelivery";
 
-function AddDeliveryPages() {
+const AddDeliveryPages: React.FC = () => {
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+
   return (
-    <div className="flex justify-center">
-      <Card className="flex flex-col w-1/2">
-        <SubTitle subTitle="Pengajuan Pengiriman" className="flex justify-center py-5 text-3xl"/>
-        <div className="flex flex-col space-y-4 px-6">
-          <FormDelivery />
-        </div>
-      </Card>
+    <div className="grid grid-cols-4 gap-5">
+      <div className="col-span-2">
+        <FormAddDelivery ref={mapContainerRef} />
+      </div>
+      <div className="col-span-2">
+        <div
+          ref={mapContainerRef}
+          style={{
+            height: "700px",
+            width: "100%",
+            borderRadius: "10px",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            overflow: "hidden",
+          }}
+        />
+      </div>
     </div>
   );
-}
+};
 
 export default AddDeliveryPages;

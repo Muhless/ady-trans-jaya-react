@@ -6,6 +6,7 @@ import { VehicleTypeComponent } from "../../components/button/CarType";
 import ButtonComponent from "../../components/button/Index";
 import ModalAddCar from "../../components/modal/ModalAddCar";
 import Modal from "../../components/modal/Modal";
+import VehicleCard from "../../components/card/CarCard";
 
 const vehicleTypes = ["Semua", "Pick up", "CDE", "CDD", "fuso", "wingbox"];
 
@@ -40,12 +41,13 @@ function VehiclePages() {
         }
         const data = await response.json();
         console.log("Respon API:", data);
-        if (!Array.isArray(data.message)) {
+        if (!Array.isArray(data.data)) {
           throw new Error("Respon API tidak sesuai ekspektasi");
         }
-        setVehicle(data.message);
+
+        setVehicle(data.data);
       } catch (err: any) {
-        setError(err.message || "terjadi kesalahan");
+        setError(err.data || "terjadi kesalahan");
       } finally {
         setLoading(false);
       }
@@ -106,9 +108,9 @@ function VehiclePages() {
       ) : (
         <>
           {Array.isArray(vehicle) && vehicle.length > 0 ? (
-            <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-5">
               {vehicle.map((vehicle) => (
-                <CarCard
+                <VehicleCard
                   key={vehicle.id}
                   name={vehicle.name}
                   license_plat={vehicle.license_plat}

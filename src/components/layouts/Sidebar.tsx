@@ -21,9 +21,9 @@ const Sidebar = () => {
   const menuItems = useMemo(
     () => [
       { to: "/", icon: <Home size={25} /> },
-      { to: "/vehicle", icon: <CarFront size={25} /> },
       { to: "/driver", icon: <User size={25} /> },
       { to: "/customer", icon: <Users size={25} /> },
+      { to: "/vehicle", icon: <CarFront size={25} /> },
       { to: "/rent", icon: <Car size={25} /> },
       { to: "/delivery", icon: <Truck size={25} /> },
       { to: "/finance", icon: <ChartSpline size={25} /> },

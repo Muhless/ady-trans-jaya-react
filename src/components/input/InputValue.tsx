@@ -6,8 +6,11 @@ type InputComponentProps = {
   name?: string;
   className?: string;
   placeholder?: string;
-  value?: string;
+  weightName?: string;
+  weight?: string;
+  unitName?: string;
   unit?: string;
+  value?: string;
   disabled?: boolean;
   onChange?: (
     event: React.ChangeEvent<
@@ -25,39 +28,35 @@ const valueUnitOptions = [
 
 export const InputValue: React.FC<InputComponentProps> = ({
   label,
-  type = "number",
-  name,
-  className,
   placeholder = "",
-  value,
   disabled,
+  weightName,
+  weight,
+  unitName,
   unit,
+  value,
   onChange,
 }) => {
-  const inputClass = ` ${
-    disabled ? "bg-gray-300" : "bg-background"
-  } ${className}`;
   return (
     <div className="flex items-center gap-5 justify-between">
       <label className="text-gray-600">{label}</label>
       <div className="flex w-96 space-x-4">
         <input
           disabled={disabled}
-          type={type}
-          name={name}
-          value={value}
+          name={weightName}
+          value={weight}
           className="p-2 rounded-md w-96 focus:ring-biru focus:ring-2 focus:outline-none bg-background"
           placeholder={placeholder.toLowerCase()}
           onChange={onChange}
         />
         <select
-          name={name}
+          name={unitName}
           value={unit}
           className="bg-background p-2 cursor-pointer rounded-md w-20 focus:ring-biru focus:ring-2 focus:outline-none"
           onChange={onChange}
         >
           <option value="" disabled hidden>
-            Pilih {label}
+            {/* {label} */}
           </option>
           {valueUnitOptions.map((option) => (
             <option

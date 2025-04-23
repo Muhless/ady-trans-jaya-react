@@ -7,7 +7,7 @@ type VehicleCardProps = {
   type: string;
   license_plat: string;
   price: number;
-  status: string;
+  status: string; // "tersedia" | "tidak tersedia"
 };
 
 const VehicleCard: React.FC<VehicleCardProps> = ({
@@ -17,37 +17,39 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
   price,
   status,
 }) => {
+  const isAvailable = status.toLowerCase() === "tersedia";
+
   return (
-    <Card className="py-5">
-      <div className="absolute flex items-center gap-1 text-center cursor-pointer top-2 right-2">
+    <Card className="relative p-6 shadow-md rounded-xl">
+      <div className="absolute top-2 right-2 flex  gap-1">
         <ButtonComponent variant="edit" />
         <ButtonComponent variant="delete" />
       </div>
-      <div className="grid grid-cols-2 items-center justify-evenly mx-10">
-        <div className="flex flex-col justify-center items-center">
-          <h1 className="font-bold tracking-wider capitalize text-4xl font- underline">
-            {name}
-          </h1>
-          <p>{type}</p>
-          <p>{license_plat}</p>
-          <p>{`Rp. ${price}`}</p>
-          <p
-            className={`inline-block text-center py-1 rounded text-white font-semibold mt-2 ${
-              status ? "bg-green-600" : "bg-red-600"
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-2xl font-semibold capitalize tracking-wide">{name}</h2>
+          <p className="text-gray-700 capitalize">{type}</p>
+          <p className="text-sm text-gray-500">{license_plat}</p>
+          <p className="text-sm text-gray-700 font-medium">Rp. {price.toLocaleString()}</p>
+          <span
+            className={`inline-block mt-2 px-3 py-1 text-sm font-semibold rounded-md text-white ${
+              isAvailable ? "bg-green-600" : "bg-red-500"
             }`}
           >
-            {status ? "Tersedia" : "Tidak tersedia"}
-          </p>
+            {isAvailable ? "Tersedia" : "Tidak Tersedia"}
+          </span>
         </div>
-        <img
-          src={`/assets/images/cars/${type.toLowerCase()}.png`}
-          alt={`${type} image`}
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).src =
-              "/assets/images/cars/default.png";
-          }}
-          className="object-contain w-auto h-48"
-        />
+        <div className="flex justify-center items-center">
+          <img
+            src={`/assets/images/cars/${type.toLowerCase()}.png`}
+            alt={`${type} image`}
+            onError={(e) =>
+              ((e.currentTarget as HTMLImageElement).src = "/assets/images/cars/default.png")
+            }
+            className="object-contain h-40 w-auto"
+          />
+        </div>
       </div>
     </Card>
   );
