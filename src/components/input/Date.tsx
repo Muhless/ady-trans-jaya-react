@@ -15,12 +15,12 @@ const DateInputComponent: React.FC<DateInputComponentProps> = ({
 
   return (
     <div className="flex items-center gap-5 justify-between">
-      <label>{label}</label>
+      <label className="text-gray-600">{label}</label>
       <DatePicker
         selected={selectedDate}
         onChange={(date) => setSelectedDate(date)}
         dateFormat="dd/MM/yyyy"
-        className={`bg-background p-2 text-center rounded-md ${className}`}
+        className={`bg-background p-2 text-center rounded-md w-96 focus:ring-biru focus:ring-2 focus:outline-none ${className}`}
         placeholderText="dd/mm/yyyy"
         portalId="root"
       />

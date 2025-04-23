@@ -7,6 +7,8 @@ import SelectComponent from "../input/Select";
 import DateInputComponent from "../input/Date";
 import useNavigationHooks from "../../hooks/useNavigation";
 import Card from "../card";
+import { useFetchOptions } from "../../hooks/useFetchOptions";
+import { InputValue } from "../input/InputValue";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -69,6 +71,14 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
   //   104.5, -8.5, 114.5, -5.5,
   // ];
   const { goToAddDelivery } = useNavigationHooks();
+  const driverOptions = useFetchOptions(
+    "http://localhost:8080/api/driver",
+    "name"
+  );
+  const vehicleOptions = useFetchOptions(
+    "http://localhost:8080/api/vehicle",
+    (vehicle) => `${vehicle.name} - ${vehicle.type}`
+  );
 
   useEffect(() => {
     if (
@@ -240,9 +250,10 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
   };
 
   const [formData, setFormData] = useState({
-    customer: "",
-    muatan: "",
-    jumlahMuatan: "",
+    content: "",
+    value: "",
+    driver: "",
+    vehicle: "",
   });
 
   const handleChange = (event) => {
@@ -253,6 +264,13 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
     }));
   };
 
+  const handleChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form Data:", formData);
@@ -260,49 +278,62 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
 
   return (
     <Card className="bg-secondary">
-      <form onSubmit={handleSubmit} className="px-3 py-2 space-y-2">
-        <SubTitle
-          subTitle="Form Tambah Pengiriman"
-          className="py-2 text-center"
-        />
+      <form onSubmit={handleSubmit} className="px-10 mt-4 space-y-5">
+        <SubTitle subTitle="Form Tambah Pengiriman" className="text-center" />
 
+        <SelectComponent
+          label="Jenis Muatan"
+          name="content_type"
+          value={formData.content}
+          onChange={handleChange}
+          options={[
+            {
+              value: "consumer_goods",
+              label: "Barang Konsumen (Consumer Goods)",
+            },
+            { value: "building_materials", label: "Material Bangunan" },
+            { value: "industrial_goods", label: "Barang Industri" },
+            { value: "agricultural_products", label: "Hasil Pertanian" },
+            { value: "livestock", label: "Ternak" },
+            { value: "chemicals", label: "Bahan Kimia" },
+            { value: "electronics", label: "Elektronik" },
+            { value: "furniture", label: "Furniture" },
+            { value: "automotive_parts", label: "Suku Cadang Otomotif" },
+            { value: "waste_materials", label: "Limbah / Barang Bekas" },
+            { value: "others", label: "Lainnya" },
+          ]}
+        />
         <InputComponent
-          className="w-60"
-          label="Muatan"
+          label="Nama Muatan"
           type="text"
-          name="muatan"
-          value={formData.muatan}
+          name="value_name"
+          value={formData.value}
           onChange={handleChange}
         />
         <InputComponent
-          className="w-60"
-          label="Jumlah"
+          label="Jumlah Muatan"
           type="text"
-          name="jumlahMuatan"
-          value={formData.jumlahMuatan}
+          name="value"
+          value={formData.value}
           onChange={handleChange}
         />
+        <InputValue label="Berat Muatan" />
         <SelectComponent
           label="Driver"
-          className="w-60"
-          options={[
-            { value: "Tyo", label: "Tyo" },
-            { value: "Febri", label: "Febri" },
-            { value: "Farizky", label: "Farizky" },
-          ]}
+          name="driver"
+          options={driverOptions}
+          value={formData.driver}
+          onChange={handleChange}
         />
         <SelectComponent
           label="Kendaraan"
-          className="w-60"
-          options={[
-            { value: "Toyota Pickup", label: "Toyota Pickup" },
-            { value: "Fuso Box", label: "Fuso Box" },
-            { value: "CDC", label: "CDC" },
-          ]}
+          name="vehicle"
+          options={vehicleOptions}
+          value={formData.vehicle}
+          onChange={handleChangeSelect}
         />
         <div className="relative w-full">
           <InputComponent
-            className="w-60"
             label="Keberangkatan"
             type="textarea"
             value={address}
@@ -315,7 +346,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
             {startSuggestions.map((place) => (
               <li
                 key={place.id}
-                className="p-2 cursor-pointer hover:bg-biru hover:text-background border border-black"
+                className="p-2 cursor-pointer hover:bg-biru hover:text-background"
                 onClick={() =>
                   handleSelectAddress(
                     place,
@@ -346,7 +377,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
             {endSuggestions.map((place) => (
               <li
                 key={place.id}
-                className="p-2 cursor-pointer hover:bg-biru hover:text-background border border-black"
+                className="p-2 cursor-pointer hover:bg-biru hover:text-background"
                 onClick={() =>
                   handleSelectAddress(
                     place,
@@ -363,7 +394,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
           </ul>
         </div>
         {distance !== null && duration !== null && (
-          <div className="p-2 space-y-2 border border-black bg-background ">
+          <div className="p-2 space-y-2 text-sm bg-gray-300 rounded-md">
             <div className="flex justify-between">
               <p>Jarak</p>
               <p className="w-56">

@@ -5,14 +5,18 @@ import useNavigationHooks from "../../hooks/useNavigation";
 import SelectComponent from "../input/Select";
 import { InputComponent } from "../input/Input";
 import DateInputComponent from "../input/Date";
+import { useFetchOptions } from "../../hooks/useFetchOptions";
+import AddDeliveryCard from "../card/AddDeliveryCard";
 
 const FormDelivery = () => {
-  const { goToAddDeliveryForm, goToDeliveryPages } = useNavigationHooks();
+  const { goToDeliveryPages } = useNavigationHooks();
+  const customerOptions = useFetchOptions("http://localhost:8080/api/customer", "name");
   const [formData, setFormData] = useState({
     customer: "",
     company: "",
     jumlahMuatan: "",
   });
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
@@ -23,67 +27,24 @@ const FormDelivery = () => {
 
   return (
     <form action="" className="space-y-8">
-      <InputComponent label="Surat Jalan" className="w-96" disabled={true} />
       <SelectComponent
         label="Customer"
         name="customer"
         value={formData.customer}
         className="w-96"
         onChange={handleChange}
-        options={[
-          { value: "cihuy", label: "cihuy" },
-          { value: "cihuy1", label: "cihuy1" },
-          { value: "cihuy2", label: "cihuy2" },
-          { value: "cihuy3", label: "cihuy3" },
-        ]}
-      />
-      <SelectComponent
-        label="Perusahaan"
-        name="company"
-        value={formData.company}
-        className="w-96"
-        onChange={handleChange}
-        options={[
-          { value: "cihuy", label: "cihuy" },
-          { value: "cihuy1", label: "cihuy1" },
-          { value: "cihuy2", label: "cihuy2" },
-          { value: "cihuy3", label: "cihuy3" },
-        ]}
+        options={customerOptions}
       />
 
       <div className="flex justify-between">
         <h1>Pengiriman</h1>
-        <Card className="bg-gray-100 w-96 space-y-1">
-          {/* TODO: Looping this shit */}
-          <div className="flex justify-between items-center p-2 transition duration-300 hover:bg-biru cursor-pointer">
-            <h1>Pengiriman 1</h1>
-            <div className="flex space-x-1">
-              <ButtonComponent variant="edit" className="hover:text-text" />
-              <ButtonComponent variant="delete" />
-            </div>
-          </div>
-          <div className="flex justify-between items-center p-2 transition duration-300 hover:bg-biru">
-            <h1>Pengiriman 2</h1>
-            <div className="flex space-x-1">
-              <ButtonComponent variant="edit" className="hover:text-text" />
-              <ButtonComponent variant="delete" />
-            </div>
-          </div>
-          <div className="flex justify-between items-center p-2 transition duration-300 hover:bg-biru">
-            <h1>Pengiriman 3</h1>
-            <div className="flex space-x-1">
-              <ButtonComponent variant="edit" className="hover:text-text" />
-              <ButtonComponent variant="delete" />
-            </div>
-          </div>
-          <ButtonComponent
-            label="Tambah Pengiriman"
-            variant="add"
-            className="w-full p-2"
-            onClick={goToAddDeliveryForm}
-          />
-        </Card>
+        <AddDeliveryCard />
       </div>
+      <InputComponent
+        label="Jumlah Pengiriman"
+        className="w-96"
+        disabled={true}
+      />
       <InputComponent label="Total" className="w-96" disabled={true} />
       <SelectComponent
         label="Pembayaran"

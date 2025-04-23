@@ -48,8 +48,14 @@ function Modal({
   if (!isOpen) return null;
 
   return (
-    <div className="z-50 fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center text-text">
-      <div className="bg-background p-6 rounded-md shadow-lg w-1/3">
+    <div
+      className="z-50 fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center text-text"
+      onClick={onClose}
+    >
+      <div
+        className="bg-background p-6 rounded-md shadow-lg w-1/3"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="relative flex justify-center">
           <h1 className="font-bold underline text-lg font-compforta">
             {mode === "edit" ? `Edit Data ${title}` : `Tambah Data ${title}`}

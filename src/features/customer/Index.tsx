@@ -26,7 +26,7 @@ interface Customer {
 }
 
 const fetchCustomers = async () => {
-  const res = await axios.get("http://localhost:8080/api/customers");
+  const res = await axios.get("http://localhost:8080/api/customer");
   return res.data.data;
 };
 
@@ -51,7 +51,7 @@ function CustomerPages() {
 
   const handleSumbitCustomers = async (data: Record<string, any>) => {
     try {
-      const response = await fetch("http://localhost:8080/api/customers", {
+      const response = await fetch("http://localhost:8080/api/customer", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

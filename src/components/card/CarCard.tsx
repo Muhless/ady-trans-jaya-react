@@ -2,7 +2,7 @@ import React from "react";
 import ButtonComponent from "../button/Index";
 import Card from ".";
 
-type CarCardProps = {
+type VehicleCardProps = {
   name: string;
   type: string;
   license_plat: string;
@@ -10,7 +10,7 @@ type CarCardProps = {
   status: string;
 };
 
-const CarCard: React.FC<CarCardProps> = ({
+const VehicleCard: React.FC<VehicleCardProps> = ({
   name,
   type,
   license_plat,
@@ -53,4 +53,4 @@ const CarCard: React.FC<CarCardProps> = ({
   );
 };
 
-export default CarCard;
+export default VehicleCard;

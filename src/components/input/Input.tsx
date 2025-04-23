@@ -23,12 +23,12 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   disabled,
   onChange,
 }) => {
-  const inputClass = `p-2 rounded-md ${
+  const inputClass = `p-2 rounded-md w-96 focus:ring-biru focus:ring-2 focus:outline-none ${
     disabled ? "bg-gray-300" : "bg-background"
   } ${className}`;
   return (
     <div className="flex items-center gap-5 justify-between">
-      <label>{label}</label>
+      <label className="text-gray-600">{label}</label>
       {type === "textarea" ? (
         <textarea
           disabled={disabled}

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
-export const CarTypeComponent = ({ carTypes }) => {
+export const VehicleTypeComponent = ({ vehicleTypes }) => {
   const [selectedType, setSelectedType] = useState("Semua");
 
   return (
     <div className="flex justify-center gap-2">
-      {carTypes.map((type, index) => (
+      {vehicleTypes.map((type, index) => (
         <div
           key={index}
           className={`flex items-center justify-center ease-in-out cursor-pointer w-32 text-sm p-2 transition-all duration-300 ${

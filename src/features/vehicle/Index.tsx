@@ -2,21 +2,21 @@ import React, { useEffect, useState } from "react";
 import SearchInput from "../../components/input/Search";
 import Title from "../../components/Title";
 import CarCard from "../../components/card/CarCard";
-import { CarTypeComponent } from "../../components/button/CarType";
+import { VehicleTypeComponent } from "../../components/button/CarType";
 import ButtonComponent from "../../components/button/Index";
 import ModalAddCar from "../../components/modal/ModalAddCar";
 import Modal from "../../components/modal/Modal";
 
-const carTypes = ["Semua", "Pick up", "CDE", "CDD", "fuso", "wingbox"];
+const vehicleTypes = ["Semua", "Pick up", "CDE", "CDD", "fuso", "wingbox"];
 
 const modalInput = [
   { name: "name", label: "Nama Kendaraan", type: "text" },
   { name: "license_plat", label: "Nomor Plat", type: "text" },
-  { name: "type", label: "Tipe", type: "select", options: carTypes },
+  { name: "type", label: "Tipe", type: "select", options: vehicleTypes },
   { name: "price", label: "Harga", type: "number" },
 ];
 
-interface Car {
+interface Vehicles {
   id: number;
   name: string;
   license_plat: string;
@@ -27,36 +27,36 @@ interface Car {
 
 function VehiclePages() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [cars, setCars] = useState<Car[]>([]);
+  const [vehicle, setVehicle] = useState<Vehicles[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchCars = async () => {
+    const fetchVehicle = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/cars");
+        const response = await fetch("http://localhost:8080/api/vehicle");
         if (!response.ok) {
-          throw new Error("Gagal mengambil data mobil");
+          throw new Error("Gagal mengambil data kendaraan");
         }
         const data = await response.json();
         console.log("Respon API:", data);
         if (!Array.isArray(data.message)) {
           throw new Error("Respon API tidak sesuai ekspektasi");
         }
-        setCars(data.message);
+        setVehicle(data.message);
       } catch (err: any) {
         setError(err.message || "terjadi kesalahan");
       } finally {
         setLoading(false);
       }
     };
-    fetchCars();
+    fetchVehicle();
   }, []);
 
   const handleSubmitVehicle = async (data: Record<string, any>) => {
     const transformed = {
       ...data,
-      type: data.type.toLoweCase(),
+      type: data.type.toLowerCase(),
     };
 
     if (!data.status) {
@@ -65,7 +65,7 @@ function VehiclePages() {
 
     try {
       data.price = parseFloat(data.price);
-      const response = await fetch("http://localhost:8080/api/cars", {
+      const response = await fetch("http://localhost:8080/api/vehicle", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -76,9 +76,9 @@ function VehiclePages() {
         throw new Error("Gagal menambahkan data kendaraan");
       }
       const result = await response.json();
-      const newCar = result.data;
-      console.log("Data berhasil disimpan", newCar);
-      setCars([...cars, newCar]);
+      const newVehicle = result.data;
+      console.log("Data berhasil disimpan", newVehicle);
+      setVehicle([...vehicle, newVehicle]);
       setIsModalOpen(false);
     } catch (error) {
       console.error("Gagal menyimpan data:", error);
@@ -96,25 +96,25 @@ function VehiclePages() {
           className="w-48"
           onClick={() => setIsModalOpen(true)}
         />
-        <CarTypeComponent carTypes={carTypes} />
+        <VehicleTypeComponent vehicleTypes={vehicleTypes} />
         <SearchInput placeholder="kendaraan" />
       </div>
       {loading ? (
-        <div>Loading...</div>
+        <div className="text-center">Loading...</div>
       ) : error ? (
-        <div>Error: {error}</div>
+        <div className="text-center">{error}</div>
       ) : (
         <>
-          {Array.isArray(cars) && cars.length > 0 ? (
+          {Array.isArray(vehicle) && vehicle.length > 0 ? (
             <div className="space-y-3">
-              {cars.map((car) => (
+              {vehicle.map((vehicle) => (
                 <CarCard
-                  key={car.id}
-                  name={car.name}
-                  license_plat={car.license_plat}
-                  type={car.type}
-                  price={car.price}
-                  status={car.status}
+                  key={vehicle.id}
+                  name={vehicle.name}
+                  license_plat={vehicle.license_plat}
+                  type={vehicle.type}
+                  price={vehicle.price}
+                  status={vehicle.status}
                 />
               ))}
             </div>
@@ -125,7 +125,7 @@ function VehiclePages() {
       )}
 
       <Modal
-        title="Customer"
+        title="Kendaraan"
         mode="add"
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
