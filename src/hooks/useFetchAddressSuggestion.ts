@@ -1,7 +1,5 @@
-import { useState } from "react";
-
-const MAPBOX_ACCESS_TOKEN =
-  "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
+import React, { useState } from "react";
+import mapboxgl from "mapbox-gl";
 
 interface Place {
   id: string;
@@ -11,8 +9,9 @@ interface Place {
   };
 }
 
-export const useAddressSuggestion = () => {
+export const useFetchAddressSuggestionHooks = () => {
   const [startSuggestions, setStartSuggestions] = useState<Place[]>([]);
+  const [endSuggestions, setEndSuggestions] = useState<Place[]>([]);
 
   const fetchAddressSuggestions = async (
     query: string,
@@ -23,11 +22,14 @@ export const useAddressSuggestion = () => {
       return;
     }
 
+    const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
+    mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
+
     try {
       const response = await fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
           query
-        )}.json?autocomplete=true&access_token=${MAPBOX_ACCESS_TOKEN}`
+        )}.json?autocomplete=true&bbox=104.5,-8.5,114.5,-5.5&access_token=${MAPBOX_ACCESS_TOKEN}`
       );
       const data = await response.json();
       if (data.features) {
@@ -37,5 +39,12 @@ export const useAddressSuggestion = () => {
       console.error("Error fetching address suggestions:", error);
     }
   };
-  return { startSuggestions, setStartSuggestions, fetchAddressSuggestions };
+
+  return {
+    startSuggestions,
+    setStartSuggestions,
+    endSuggestions,
+    setEndSuggestions,
+    fetchAddressSuggestions,
+  };
 };

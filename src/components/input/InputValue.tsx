@@ -34,7 +34,6 @@ export const InputValue: React.FC<InputComponentProps> = ({
   weight,
   unitName,
   unit,
-  value,
   onChange,
 }) => {
   return (
@@ -44,6 +43,7 @@ export const InputValue: React.FC<InputComponentProps> = ({
         <input
           disabled={disabled}
           name={weightName}
+          type="number"
           value={weight}
           className="p-2 rounded-md w-96 focus:ring-biru focus:ring-2 focus:outline-none bg-background"
           placeholder={placeholder.toLowerCase()}
@@ -56,7 +56,7 @@ export const InputValue: React.FC<InputComponentProps> = ({
           onChange={onChange}
         >
           <option value="" disabled hidden>
-            {/* {label} */}
+            {label}
           </option>
           {valueUnitOptions.map((option) => (
             <option

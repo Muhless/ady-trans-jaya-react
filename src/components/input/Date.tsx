@@ -4,23 +4,29 @@ import "react-datepicker/dist/react-datepicker.css";
 
 type DateInputComponentProps = {
   label: string;
-  className?: string;
+  name: string;
+  value: Date | null;
+  onChange: (
+    date: Date | null,
+    event: React.SyntheticEvent<any> | undefined
+  ) => void;
 };
 
 const DateInputComponent: React.FC<DateInputComponentProps> = ({
   label,
-  className,
+  name,
+  value,
+  onChange,
 }) => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
   return (
     <div className="flex items-center gap-5 justify-between">
       <label className="text-gray-600">{label}</label>
       <DatePicker
-        selected={selectedDate}
-        onChange={(date) => setSelectedDate(date)}
+        name={name}
+        selected={value}
+        onChange={onChange}
         dateFormat="dd/MM/yyyy"
-        className={`bg-background p-2 text-center rounded-md w-96 focus:ring-biru focus:ring-2 focus:outline-none ${className}`}
+        className="bg-background p-2 text-center rounded-md w-96 focus:ring-biru focus:ring-2 focus:outline-none"
         placeholderText="dd/mm/yyyy"
         portalId="root"
       />
