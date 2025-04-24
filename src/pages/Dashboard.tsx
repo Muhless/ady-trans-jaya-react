@@ -4,7 +4,6 @@ import Card from "../components/card/index.tsx";
 import useNavigationHooks from "../hooks/useNavigation.ts";
 import SummaryCard from "../components/card/SummaryCard.tsx";
 import GraphCard from "../components/card/GraphCard.tsx";
-import TableComponent from "../components/table/index.tsx";
 import WaitingDeliveryCard from "../components/card/WaitingDeliveryCard.tsx";
 import PendingDeliveryTable from "../components/table/PendingDeliveryTable.tsx";
 

@@ -7,8 +7,8 @@ const delivery = [
   { id: 2, nama: "Kosim", noTelepon: "08871165551" },
   { id: 3, nama: "Mang", noTelepon: "08871165551" },
   { id: 4, nama: "Kosim", noTelepon: "08871165551" },
-  { id: 3, nama: "Mang", noTelepon: "08871165551" },
-  { id: 4, nama: "Kosim", noTelepon: "08871165551" },
+  { id: 5, nama: "Mang", noTelepon: "08871165551" },
+  { id: 6, nama: "Kosim", noTelepon: "08871165551" },
 ];
 
 const WaitingDeliveryCard = () => {

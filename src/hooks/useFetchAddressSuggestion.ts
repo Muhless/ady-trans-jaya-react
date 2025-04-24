@@ -22,7 +22,10 @@ export const useFetchAddressSuggestionHooks = () => {
       return;
     }
 
-    const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
+    const MAPBOX_ACCESS_TOKEN =
+      "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
+
+    console.log("Mapbox Access Token:", MAPBOX_ACCESS_TOKEN);
     mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
     try {

@@ -3,10 +3,10 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 type DateInputComponentProps = {
-  label: string;
-  name: string;
-  value: Date | null;
-  onChange: (
+  label?: string;
+  name?: string;
+  value?: Date | null;
+  onChange?: (
     date: Date | null,
     event: React.SyntheticEvent<any> | undefined
   ) => void;
