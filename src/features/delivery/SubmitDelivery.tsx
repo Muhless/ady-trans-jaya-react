@@ -1,7 +1,7 @@
 import React from "react";
 import Card from "../../components/card";
 import SubTitle from "../../components/SubTitle";
-import FormDelivery from "../../components/form/FormDelivery";
+import FormDelivery from "../../components/form/FormSubmitDelivery";
 
 function SubmitDeliveryPages() {
   return (

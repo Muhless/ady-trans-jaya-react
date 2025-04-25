@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 type InputComponentProps = {
   label?: string;
@@ -6,7 +6,7 @@ type InputComponentProps = {
   name?: string;
   className?: string;
   placeholder?: string;
-  value?: string | number | Date | null | undefined;
+  value?: string | number | undefined;
   disabled?: boolean;
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -23,21 +23,108 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   disabled,
   onChange,
 }) => {
+  const [dateValue, setDateValue] = useState<string>("");
+
+  const formatToDisplayDate = (isoDate: string): string => {
+    if (!isoDate) return "";
+    const date = new Date(isoDate);
+    if (isNaN(date.getTime())) return "";
+
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
+  const formatToIsoDate = (displayDate: string): string => {
+    if (!displayDate) return "";
+    // Parse DD/MM/YYYY format
+    const parts = displayDate.split("/");
+    if (parts.length !== 3) return "";
+
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const year = parseInt(parts[2], 10);
+
+    const date = new Date(year, month, day);
+    if (isNaN(date.getTime())) return "";
+
+    return date.toISOString().split("T")[0];
+  };
+
+  // Initialize the formatted display value
+  useEffect(() => {
+    if (type === "date" && value) {
+      // Check if value is in ISO format or DD/MM/YYYY format
+      if (typeof value === "string" && value.includes("-")) {
+        // Already ISO format, convert to display format
+        setDateValue(formatToDisplayDate(value));
+      } else if (typeof value === "string" && value.includes("/")) {
+        // Already in display format
+        setDateValue(value);
+      }
+    }
+  }, [value, type]);
+
+  // Handle date input changes
+  const handleDateInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setDateValue(inputValue);
+
+    if (onChange) {
+      // Create a synthetic event with the ISO format value for actual form state
+      const isoValue = formatToIsoDate(inputValue);
+      const syntheticEvent = {
+        ...e,
+        target: {
+          ...e.target,
+          value: isoValue,
+        },
+      } as React.ChangeEvent<HTMLInputElement>;
+
+      onChange(syntheticEvent);
+    }
+  };
+
+  const validateDateInput = (input: string): boolean => {
+    // Basic validation for DD/MM/YYYY format
+    const regex = /^(\d{0,2})(\/)?(\d{0,2})?(\/)?(\d{0,4})?$/;
+    return regex.test(input);
+  };
+
+  const handleDateKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Only allow digits, backspace, delete, tab, arrows, and '/'
+    const allowedKeys = [
+      "Backspace",
+      "Delete",
+      "Tab",
+      "ArrowLeft",
+      "ArrowRight",
+      "ArrowUp",
+      "ArrowDown",
+      "/",
+    ];
+    const isDigit = /^\d$/.test(e.key);
+
+    if (!isDigit && !allowedKeys.includes(e.key)) {
+      e.preventDefault();
+    }
+
+    // Auto-add slashes
+    if (isDigit) {
+      const input = e.currentTarget.value;
+      if (input.length === 2 || input.length === 5) {
+        if (e.currentTarget.selectionStart === input.length) {
+          setDateValue((prev) => `${prev}/`);
+        }
+      }
+    }
+  };
+
   const inputClass = `p-2 rounded-md w-72 focus:ring-biru focus:ring-2 focus:outline-none ${
     disabled ? "bg-gray-300" : "bg-background"
-  } ${className}`;
+  } ${className || ""}`;
 
-  const formatValue = (
-    value: string | number | Date | null | undefined
-  ): string => {
-    if (value === undefined || value === null) {
-      return "";
-    }
-    if (value instanceof Date) {
-      return value.toISOString().split("T")[0];
-    }
-    return value != null ? String(value) : "";
-  };
   return (
     <div className="flex items-center gap-5 justify-between">
       <label className="text-gray-600">{label}</label>
@@ -50,12 +137,23 @@ export const InputComponent: React.FC<InputComponentProps> = ({
           placeholder={placeholder}
           onChange={onChange}
         />
+      ) : type === "date" ? (
+        <input
+          disabled={disabled}
+          type="text"
+          name={name}
+          value={dateValue}
+          className={inputClass}
+          placeholder={placeholder || "DD/MM/YYYY"}
+          onChange={handleDateInputChange}
+          onKeyDown={handleDateKeyDown}
+        />
       ) : (
         <input
           disabled={disabled}
           type={type}
           name={name}
-          value={formatValue(value)}
+          value={value}
           className={inputClass}
           placeholder={placeholder}
           onChange={onChange}

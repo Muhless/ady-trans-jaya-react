@@ -17,7 +17,11 @@ export const useForm = () => {
     total: "",
   });
 
-  const handleChange = (event) => {
+  const handleChange = (
+    event: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -32,13 +36,6 @@ export const useForm = () => {
     });
   };
 
-  const handleDateChange = (name: string, date: Date | null) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: date,
-    }));
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const finalData = {
@@ -49,12 +46,9 @@ export const useForm = () => {
     console.log("Form Data:", finalData);
   };
 
-  
-
   return {
     handleChange,
     handleChangeSelect,
-    handleDateChange,
     handleSubmit,
     formData,
     address,

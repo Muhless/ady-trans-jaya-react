@@ -13,7 +13,6 @@ import useNavigationHooks from "../../hooks/useNavigation";
 import Card from "../card";
 import { useFetchOptions } from "../../hooks/useFetchOptions";
 import mapboxgl from "mapbox-gl";
-import { useMapboxHook } from "../../hooks/useMapbox";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -26,12 +25,6 @@ interface Place {
     coordinates: [number, number];
   };
 }
-const valueUnitOptions = [
-  { value: "kg", label: "kg" },
-  { value: "ton", label: "ton" },
-  { value: "m3", label: "m3" },
-  { value: "liter", label: "liter" },
-];
 
 const fetchAddressSuggestions = async (
   query: string,
@@ -77,7 +70,6 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
   const [endAddress, setEndAddress] = useState<string>("");
   const [startSuggestions, setStartSuggestions] = useState<Place[]>([]);
   const [endSuggestions, setEndSuggestions] = useState<Place[]>([]);
-
   const { goToAddDelivery } = useNavigationHooks();
   const driverOptions = useFetchOptions("http://localhost:8080/api/driver");
   const formatVehicleLabel = useCallback(
@@ -93,9 +85,6 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
     formatVehicleLabel
   );
 
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  useMapboxHook(mapContainerRef);
-
   useEffect(() => {
     if (
       !mapRef.current &&
@@ -109,7 +98,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
         // style: "mapbox://styles/mapbox/dark-v11",
         center: [106.8456, -6.2088], // Jakarta
         // center: [106.6297, -6.1781], // Tangerang
-        zoom: 1,
+        // zoom: 5,
         maxBounds: [
           [95.0, -11.0],
           [141.0, 6.1],
@@ -256,38 +245,21 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
     unit: "",
     driver: "",
     vehicle: "",
-    deliveryDate: null as Date | null,
-    deliveryDeadlineDate: null as Date | null,
+    deliveryDate: "",
+    deliveryDeadlineDate: "",
     total: "",
   });
 
   const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    event: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = event.target;
-
-    if (
-      name === "delivery_deadline_date" &&
-      event.target instanceof HTMLInputElement
-    ) {
-      const dateValue = new Date(value);
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: dateValue,
-      }));
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    }
-
-    if (event.target instanceof HTMLSelectElement) {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    }
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   const handleChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -327,8 +299,8 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
   };
 
   return (
-    <Card className="text-sm flex justify-center items-center rounded-none">
-      <form onSubmit={handleSubmit} className="px-10 mt-4 space-y-3">
+    <Card className="text-sm flex justify-center items-center rounded-none shadow-none">
+      <form onSubmit={handleSubmit} className="mt-4 space-y-4 ">
         <SubTitle subTitle="Form Tambah Pengiriman" className="text-center" />
         <SelectComponent
           label="Jenis Muatan"
@@ -457,38 +429,37 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
             ))}
           </ul>
         </div>
-        {distance !== null && duration !== null && (
-          <div className="space-y-4">
-            <InputComponent
-              label="Jarak"
-              disabled={true}
-              value={`${distance} Km`}
-            />
-            <InputComponent
-              label="Perkiraan Waktu"
-              disabled={true}
-              value={duration}
-            />
-          </div>
-        )}
+        {/* {distance !== null && duration !== null && ( */}
+        <div className="space-y-4">
+          <InputComponent
+            label="Jarak"
+            disabled={true}
+            value={distance != null ? `${distance} Km` : ""}
+          />
+          <InputComponent
+            label="Perkiraan Waktu"
+            disabled={true}
+            value={duration ?? ""}
+          />
+        </div>
+        {/* )} */}
 
-        {/* FIXME: Error date */}
         <InputComponent
           label="Tanggal Pengiriman"
           type="date"
-          placeholder=""
-          name="delivery_date"
+          name="deliveryDate"
           value={formData.deliveryDate}
           onChange={handleChange}
         />
+
         <InputComponent
           label="Batas Pengiriman"
           type="date"
-          placeholder="cihuy"
-          name="delivery_deadline_date"
+          name="deliveryDeadlineDate"
           value={formData.deliveryDeadlineDate}
           onChange={handleChange}
         />
+        <InputComponent label="Waktu" disabled={true} value="3 hari" />
         {/* TODO: Toral didapat dari harga sewa mobil x jarak */}
         <InputComponent
           className="w-60"
