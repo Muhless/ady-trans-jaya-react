@@ -6,7 +6,7 @@ type InputComponentProps = {
   name?: string;
   className?: string;
   placeholder?: string;
-  value?: string;
+  value?: string | number | Date | null | undefined;
   disabled?: boolean;
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -23,9 +23,21 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   disabled,
   onChange,
 }) => {
-  const inputClass = `p-2 rounded-md w-96 focus:ring-biru focus:ring-2 focus:outline-none ${
+  const inputClass = `p-2 rounded-md w-72 focus:ring-biru focus:ring-2 focus:outline-none ${
     disabled ? "bg-gray-300" : "bg-background"
   } ${className}`;
+
+  const formatValue = (
+    value: string | number | Date | null | undefined
+  ): string => {
+    if (value === undefined || value === null) {
+      return "";
+    }
+    if (value instanceof Date) {
+      return value.toISOString().split("T")[0];
+    }
+    return value != null ? String(value) : "";
+  };
   return (
     <div className="flex items-center gap-5 justify-between">
       <label className="text-gray-600">{label}</label>
@@ -33,9 +45,9 @@ export const InputComponent: React.FC<InputComponentProps> = ({
         <textarea
           disabled={disabled}
           name={name}
-          value={value}
+          value={String(value)}
           className={`${inputClass} h-20`}
-          placeholder={placeholder.toLowerCase()}
+          placeholder={placeholder}
           onChange={onChange}
         />
       ) : (
@@ -43,9 +55,9 @@ export const InputComponent: React.FC<InputComponentProps> = ({
           disabled={disabled}
           type={type}
           name={name}
-          value={value}
+          value={formatValue(value)}
           className={inputClass}
-          placeholder={placeholder.toLowerCase()}
+          placeholder={placeholder}
           onChange={onChange}
         />
       )}

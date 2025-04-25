@@ -2,6 +2,7 @@ import React from "react";
 
 type SelectComponentProps = {
   label?: string;
+  placeholder?: string;
   name?: string;
   value?: string;
   className?: string;
@@ -12,6 +13,7 @@ type SelectComponentProps = {
 const SelectComponent: React.FC<SelectComponentProps> = ({
   label,
   name,
+  placeholder,
   value,
   className,
   options,
@@ -23,18 +25,16 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
       <select
         name={name}
         value={value}
-        className={`bg-background p-2 cursor-pointer rounded-md w-96 focus:ring-biru focus:ring-2 focus:outline-none ${className}`}
+        className={`bg-background p-2 cursor-pointer rounded-md focus:ring-biru focus:ring-2 focus:outline-none ${
+          className ?? "w-72"
+        }`}
         onChange={onChange}
       >
-        <option value="" disabled hidden>
-          Pilih {label}
+        <option value="" disabled hidden className="text-gray-500">
+          {placeholder}
         </option>
         {options.map((option) => (
-          <option
-            key={option.value}
-            value={option.value}
-            className="text-gray-500"
-          >
+          <option key={option.value} value={option.value}>
             {option.label}
           </option>
         ))}

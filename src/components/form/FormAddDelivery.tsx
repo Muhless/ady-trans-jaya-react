@@ -9,12 +9,11 @@ import { InputComponent } from "../input/Input";
 import ButtonComponent from "../button/Index";
 import SubTitle from "../SubTitle";
 import SelectComponent from "../input/Select";
-import DateInputComponent from "../input/Date";
 import useNavigationHooks from "../../hooks/useNavigation";
 import Card from "../card";
 import { useFetchOptions } from "../../hooks/useFetchOptions";
-import { InputValue } from "../input/InputValue";
 import mapboxgl from "mapbox-gl";
+import { useMapboxHook } from "../../hooks/useMapbox";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -27,6 +26,12 @@ interface Place {
     coordinates: [number, number];
   };
 }
+const valueUnitOptions = [
+  { value: "kg", label: "kg" },
+  { value: "ton", label: "ton" },
+  { value: "m3", label: "m3" },
+  { value: "liter", label: "liter" },
+];
 
 const fetchAddressSuggestions = async (
   query: string,
@@ -88,6 +93,9 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
     formatVehicleLabel
   );
 
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  useMapboxHook(mapContainerRef);
+
   useEffect(() => {
     if (
       !mapRef.current &&
@@ -99,9 +107,9 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
           .current as HTMLDivElement,
         style: "mapbox://styles/mapbox/streets-v11",
         // style: "mapbox://styles/mapbox/dark-v11",
-        // center: [106.8456, -6.2088], // Jakarta
-        center: [106.6297, -6.1781], // Tangerang
-        zoom: 10,
+        center: [106.8456, -6.2088], // Jakarta
+        // center: [106.6297, -6.1781], // Tangerang
+        zoom: 1,
         maxBounds: [
           [95.0, -11.0],
           [141.0, 6.1],
@@ -253,12 +261,33 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
     total: "",
   });
 
-  const handleChange = (event) => {
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+
+    if (
+      name === "delivery_deadline_date" &&
+      event.target instanceof HTMLInputElement
+    ) {
+      const dateValue = new Date(value);
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: dateValue,
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+
+    if (event.target instanceof HTMLSelectElement) {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
   const handleChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -266,13 +295,6 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
       ...formData,
       [e.target.name]: e.target.value,
     });
-  };
-
-  const handleDateChange = (name: string, date: Date | null) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: date,
-    }));
   };
 
   const handleSubmit = (e) => {
@@ -305,15 +327,15 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
   };
 
   return (
-    <Card className="bg-secondary">
-      <form onSubmit={handleSubmit} className="px-10 mt-4 space-y-5">
+    <Card className="text-sm flex justify-center items-center rounded-none">
+      <form onSubmit={handleSubmit} className="px-10 mt-4 space-y-3">
         <SubTitle subTitle="Form Tambah Pengiriman" className="text-center" />
-        {/* form */}
         <SelectComponent
           label="Jenis Muatan"
+          placeholder="Pilih jenis barang utama yang dikirim"
           name="load_type"
           value={formData.loadType}
-          onChange={handleChange}
+          onChange={handleChangeSelect}
           options={[
             {
               value: "consumer_goods",
@@ -333,6 +355,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
         />
         <InputComponent
           label="Muatan"
+          placeholder="AC 2PK, Mesin Cuci, Sofa L"
           type="text"
           name="load"
           value={formData.load}
@@ -340,29 +363,30 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
         />
         <InputComponent
           label="Jumlah Muatan"
+          placeholder="Masukkan jumlah unit, misal: 3"
           type="text"
           name="quantity"
           value={formData.quantity}
           onChange={handleChange}
         />
-        <InputValue
+        <InputComponent
           label="Berat Muatan"
+          placeholder="Masukkan berat total, misal: 150 kg"
           name="weight"
-          weightName="weight"
-          unitName="unit"
-          weight={formData.weight}
-          unit={formData.unit}
+          value={formData.weight}
           onChange={handleChange}
         />
         <SelectComponent
           label="Driver"
+          placeholder="Pilih driver yang akan ditugaskan"
           name="driver"
           options={driverOptions}
           value={formData.driver}
-          onChange={handleChange}
+          onChange={handleChangeSelect}
         />
         <SelectComponent
           label="Kendaraan"
+          placeholder="Pilih kendaraan yang tersedia"
           name="vehicle"
           options={vehicleOptions}
           value={formData.vehicle}
@@ -371,7 +395,8 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
         <div className="relative w-full">
           <InputComponent
             label="Lokasi Penjemputan"
-            type="textarea"
+            placeholder="Jl. Merdeka No.10, Jakarta Pusat"
+            type="text"
             name="pickup_location"
             value={address}
             onChange={(e) => {
@@ -403,7 +428,8 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
           <InputComponent
             className="w-60"
             label="Lokasi Tujuan"
-            type="textarea"
+            placeholder="Pergudangan ABC, Bekasi Timur"
+            type="text"
             name="destination"
             value={endAddress}
             onChange={(e) => {
@@ -431,18 +457,37 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
             ))}
           </ul>
         </div>
+        {distance !== null && duration !== null && (
+          <div className="space-y-4">
+            <InputComponent
+              label="Jarak"
+              disabled={true}
+              value={`${distance} Km`}
+            />
+            <InputComponent
+              label="Perkiraan Waktu"
+              disabled={true}
+              value={duration}
+            />
+          </div>
+        )}
 
-        <DateInputComponent
+        {/* FIXME: Error date */}
+        <InputComponent
           label="Tanggal Pengiriman"
+          type="date"
+          placeholder=""
           name="delivery_date"
           value={formData.deliveryDate}
-          onChange={(date) => handleDateChange("deliveryDate", date)}
+          onChange={handleChange}
         />
-        <DateInputComponent
+        <InputComponent
           label="Batas Pengiriman"
+          type="date"
+          placeholder="cihuy"
           name="delivery_deadline_date"
           value={formData.deliveryDeadlineDate}
-          onChange={(date) => handleDateChange("deliveryDeadlineDate", date)}
+          onChange={handleChange}
         />
         {/* TODO: Toral didapat dari harga sewa mobil x jarak */}
         <InputComponent
@@ -452,23 +497,8 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
           value={formData.total}
           disabled={true}
         />
-        {distance !== null && duration !== null && (
-          <div className="p-2 space-y-2 text-sm bg-gray-300 rounded-md">
-            <div className="flex justify-between">
-              <p>Jarak</p>
-              <p className="w-56">
-                : <strong>{distance} Km</strong>
-              </p>
-            </div>
-            <div className="flex justify-between">
-              <p>Perkiraan waktu</p>
-              <p className="w-56">
-                : <strong>{duration}</strong>
-              </p>
-            </div>
-          </div>
-        )}
-        <div className="flex justify-center w-full gap-3 p-2">
+
+        <div className="flex justify-center w-full gap-3 py-5">
           <ButtonComponent variant="back" label="Kembali" className="w-full" />
           <ButtonComponent
             variant="undo"

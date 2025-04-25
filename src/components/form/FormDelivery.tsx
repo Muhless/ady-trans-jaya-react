@@ -3,7 +3,6 @@ import ButtonComponent from "../button/Index";
 import useNavigationHooks from "../../hooks/useNavigation";
 import SelectComponent from "../input/Select";
 import { InputComponent } from "../input/Input";
-import DateInputComponent from "../input/Date";
 import { useFetchOptions } from "../../hooks/useFetchOptions";
 import AddDeliveryCard from "../card/AddDeliveryCard";
 
@@ -60,10 +59,7 @@ const FormDelivery = () => {
           { value: "cihuy3", label: "cihuy3" },
         ]}
       />
-      <DateInputComponent
-        label="Batas Pembayaran"
-        name="payment_deadline_date"
-      />
+      <InputComponent label="Batas Pembayaran" type="date" placeholder="??" name="payment_deadline_date" onChange={handleChange} />
       <InputComponent label="Status" disabled={true} />
       <div className="flex py-5 gap-4">
         <ButtonComponent label="Kembali" variant="back" className="w-full" />
