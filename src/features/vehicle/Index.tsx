@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from "react";
 import SearchInput from "../../components/input/Search";
 import Title from "../../components/Title";
-import CarCard from "../../components/card/CarCard";
 import { VehicleTypeComponent } from "../../components/button/CarType";
 import ButtonComponent from "../../components/button/Index";
-import ModalAddCar from "../../components/modal/ModalAddCar";
 import Modal from "../../components/modal/Modal";
 import VehicleCard from "../../components/card/CarCard";
 
-const vehicleTypes = ["Semua", "Pick up", "CDE", "CDD", "fuso", "wingbox"];
+const vehicleTypes = ["Semua", "Pick up", "CDE", "CDD", "Fuso", "Wingbox"];
 
 const modalInput = [
   { name: "name", label: "Nama Kendaraan", type: "text" },
   { name: "license_plat", label: "Nomor Plat", type: "text" },
   { name: "type", label: "Tipe", type: "select", options: vehicleTypes },
+  { name: "capacity", label: "Kapasitas", type: "text" },
   { name: "price", label: "Harga", type: "number" },
 ];
 
 interface Vehicles {
   id: number;
   name: string;
-  license_plat: string;
+  license_plate: string;
   type: string;
+  capacity: string;
   price: number;
   status: string;
 }
@@ -59,10 +59,13 @@ function VehiclePages() {
     const transformed = {
       ...data,
       type: data.type.toLowerCase(),
+      status: data.status || "tersedia",
+      price: parseFloat(data.price) || 0,
     };
 
-    if (!data.status) {
-      data.status = "tersedia";
+    if (isNaN(transformed.price)) {
+      setError("Harga harus berupa angka yang valid.");
+      return;
     }
 
     try {
@@ -113,8 +116,9 @@ function VehiclePages() {
                 <VehicleCard
                   key={vehicle.id}
                   name={vehicle.name}
-                  license_plat={vehicle.license_plat}
                   type={vehicle.type}
+                  license_plat={vehicle.license_plate}
+                  capacity={vehicle.capacity}
                   price={vehicle.price}
                   status={vehicle.status}
                 />

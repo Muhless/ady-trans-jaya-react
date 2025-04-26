@@ -94,6 +94,14 @@ function CustomerPages() {
         ) : (
           <TableComponent
             data={Array.isArray(customer) ? customers : customers?.data ?? []}
+            columns={[
+              { key: "name", label: "Nama Kendaraan" },
+              { key: "company", label: "Perusahaan" },
+              { key: "email", label: "Email" },
+              { key: "phone", label: "Nomor Telepon" },
+              { key: "address", label: "Alamat" },
+            
+            ]}
             onRowClick={handleRowClick}
             showActions={true}
           />

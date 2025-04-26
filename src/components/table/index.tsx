@@ -1,28 +1,44 @@
 import React from "react";
 import ButtonComponent from "../button/Index";
 
+type ColumnConfig = {
+  key: string;
+  label: string;
+};
+
 type TableProps = {
   data?: { id: string | number; [key: string]: any }[];
   onRowClick?: (row: any) => void;
   showActions?: boolean;
+  columns?: ColumnConfig[];
 };
 
 const TableComponent: React.FC<TableProps> = ({
   data = [],
   onRowClick,
   showActions = false,
+  columns,
 }) => {
   const headers = data.length > 0 ? Object.keys(data[0]) : [];
-  const displayHeaders = headers.filter((key) => key !== "id");
+  const displayHeaders =
+    columns && columns.length > 0
+      ? columns
+      : headers
+          .filter((key) => key !== "id")
+          .map((key) => ({
+            key,
+            label: key.charAt(0).toUpperCase() + key.slice(1),
+          }));
 
   return (
     <div className="overflow-auto rounded-xl">
       <table className="w-full text-sm text-left border-collapse">
         <thead>
           <tr className="text-center border-b">
-            {displayHeaders.map((key, index) => (
+            <th className="p-3 text-base font-semibold">No</th>{" "}
+            {displayHeaders.map(({ label }, index) => (
               <th key={index} className="p-3 text-base font-semibold">
-                {key.charAt(0).toUpperCase() + key.slice(1)}
+                {label}
               </th>
             ))}
             {showActions && (
@@ -30,11 +46,12 @@ const TableComponent: React.FC<TableProps> = ({
             )}
           </tr>
         </thead>
+
         <tbody>
           {data.length === 0 ? (
             <tr>
               <td
-                colSpan={headers.length + (showActions ? 1 : 0)}
+                colSpan={displayHeaders.length + (showActions ? 1 : 0)}
                 className="text-center p-5 text-gray-500"
               >
                 Tidak ada data
@@ -45,15 +62,15 @@ const TableComponent: React.FC<TableProps> = ({
               <tr
                 key={row.id}
                 onClick={() => onRowClick?.(row)}
-                // className="transition-all duration-200 hover:bg-sky-100 cursor-pointer text-center"
                 className={`transition-all duration-200 hover:bg-sky-100 cursor-pointer text-center ${
                   rowIndex % 2 === 0 ? "bg-white" : "bg-gray-100"
                 }`}
               >
-                {displayHeaders.map((key, colIndex) => (
+                <td className="p-3 border-b">{rowIndex + 1}</td>
+                {displayHeaders.map(({ key }, colIndex) => (
                   <td
                     key={colIndex}
-                    className="p-3 border-b break-words max-2-[200px]"
+                    className="p-3 border-b break-words max-w-[200px]"
                   >
                     {row[key]}
                   </td>

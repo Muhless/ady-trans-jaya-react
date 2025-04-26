@@ -21,28 +21,36 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 }) => {
   return (
     <Card
-      className="bg-secondary hover:bg-third transition-all hover:duration-300"
+      className="bg-secondary hover:bg-third transition-all duration-300 rounded-xl overflow-hidden shadow-md hover:shadow-lg cursor-pointer"
       onClick={onClick}
     >
-      <div className="grid grid-cols-3 p-4">
-        <div className="col-span-1 flex items-center">
-          <UserIconComponent
-            className="size-24 rounded-full object-cover"
-            src="assets/images/profile/profile-picture.png"
-          />
+      <div className="flex p-4 items-center gap-4">
+        {/* Profile Image */}
+        <div className="flex-shrink-0">
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={name}
+              className="w-24 h-24 rounded-full object-cover border-2 border-primary"
+            />
+          ) : (
+            <UserIconComponent className="w-24 h-24 rounded-full bg-gray-300 object-cover" />
+          )}
         </div>
-        <div className="col-span-2 flex flex-col px-3 text-sm py-2">
-          <img src={imageUrl} alt="" />
-          <h1 className="text-lg underline font-bold">{name}</h1>
-          <p>{phone}</p>
-          <p>{address}</p>
-          <p
-            className={`inline-block text-center py-1 rounded text-white font-semibold mt-2 ${
-              status ? "bg-green-600" : "bg-red-600"
-            }`}
+
+        {/* Profile Info */}
+        <div className="flex flex-col flex-grow">
+          <h1 className="text-xl font-bold text-primary mb-1">{name}</h1>
+          <p className="text-sm">{phone}</p>
+          <p className="text-xs underline">{address.toLowerCase()}</p>
+
+          <span
+            className={`mt-3 inline-block px-3 py-1 text-xs font-semibold rounded-md  text-center
+              ${status ? "bg-green-500 text-white" : "bg-red-500 text-white"}
+            `}
           >
             {status ? "Tersedia" : "Tidak Tersedia"}
-          </p>
+          </span>
         </div>
       </div>
     </Card>

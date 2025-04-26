@@ -14,6 +14,7 @@ import Card from "../card";
 import { useFetchOptions } from "../../hooks/useFetchOptions";
 import mapboxgl from "mapbox-gl";
 import { differenceInDays, parseISO } from "date-fns";
+import { useDeliveryCost } from "../../hooks/useDeliveryCost";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -52,6 +53,19 @@ const fetchAddressSuggestions = async (
 };
 
 const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
+  const [formData, setFormData] = useState({
+    loadType: "",
+    load: "",
+    quantity: "",
+    weight: "",
+    unit: "",
+    driver: "",
+    vehicle: "",
+    deliveryDate: "",
+    deliveryDeadlineDate: "",
+    deliveryCost: "",
+  });
+  
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<{
     start: mapboxgl.Marker | null;
@@ -74,9 +88,9 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
   const { goToAddDelivery } = useNavigationHooks();
   const driverOptions = useFetchOptions("http://localhost:8080/api/driver");
   const formatVehicleLabel = useCallback(
-    (vehicle: { name: string; type: string; license_plat: string }) => {
+    (vehicle: { name: string; type: string; capacity: string }) => {
       return `${vehicle.name} - (${vehicle.type.toUpperCase()}) - ${
-        vehicle.license_plat
+        vehicle.capacity
       }`;
     },
     []
@@ -235,19 +249,6 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
     }
   }, [startPoint, endPoint]);
 
-  const [formData, setFormData] = useState({
-    loadType: "",
-    load: "",
-    quantity: "",
-    weight: "",
-    unit: "",
-    driver: "",
-    vehicle: "",
-    deliveryDate: "",
-    deliveryDeadlineDate: "",
-    total: "",
-  });
-
   const handleChange = (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -295,39 +296,6 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-  const tarifPerKmPerVehicle: Record<string, number> = {
-    pickup: 5000,
-    engkel: 7000,
-    tronton: 10000,
-  };
-
-  const [cost, setCost] = useState("");
-  useEffect(() => {
-    const { weight, deliveryDate, deliveryDeadlineDate, vehicle } = formData;
-
-    if (distance && weight && deliveryDate && deliveryDeadlineDate && vehicle) {
-      const berat = parseFloat(weight);
-      const tarifPerKg = 2000;
-      const tarifPerKm = tarifPerKmPerVehicle[vehicle.toLowerCase()] || 5000; 
-
-      const d1 = new Date(deliveryDate);
-      const d2 = new Date(deliveryDeadlineDate);
-      const selisihHari = Math.ceil(
-        (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24)
-      );
-
-      let biaya = distance * tarifPerKm + berat * tarifPerKg;
-
-      if (selisihHari < 2) {
-        biaya *= 1.2;
-      }
-
-      setCost(`Rp ${biaya.toLocaleString("id-ID")}`);
-    } else {
-      setCost("");
-    }
-  }, [distance, formData]);
 
   return (
     <Card className="text-sm flex justify-center items-center rounded-none shadow-none">
@@ -492,7 +460,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
           className="w-60"
           label="Biaya Pengiriman"
           name="DeliveryPrice"
-          value={cost}
+          // value={}
           disabled={true}
         />
 
