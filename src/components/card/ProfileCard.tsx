@@ -7,6 +7,7 @@ type ProfileCardProps = {
   phone: string;
   address: string;
   status: boolean;
+  imageUrl?: string;
   onClick?: () => void;
 };
 
@@ -15,6 +16,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   phone,
   address,
   status,
+  imageUrl,
   onClick,
 }) => {
   return (
@@ -30,6 +32,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
           />
         </div>
         <div className="col-span-2 flex flex-col px-3 text-sm py-2">
+          <img src={imageUrl} alt="" />
           <h1 className="text-lg underline font-bold">{name}</h1>
           <p>{phone}</p>
           <p>{address}</p>

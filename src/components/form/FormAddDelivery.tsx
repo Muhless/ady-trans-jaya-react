@@ -488,11 +488,10 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
           value={formData.deliveryDeadlineDate}
           onChange={handleChange}
         />
-        {/* TODO: Toral didapat dari harga sewa mobil x jarak */}
         <InputComponent
           className="w-60"
-          label="Total"
-          name="total"
+          label="Biaya Pengiriman"
+          name="DeliveryPrice"
           value={cost}
           disabled={true}
         />

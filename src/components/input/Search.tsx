@@ -3,6 +3,7 @@ import React from "react";
 
 type SearchProps = {
   placeholder?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 const SearchInput: React.FC<SearchProps> = ({ placeholder = "cari data" }) => {
@@ -14,7 +15,7 @@ const SearchInput: React.FC<SearchProps> = ({ placeholder = "cari data" }) => {
       <input
         type="text"
         className="px-5 py-2 pl-10 text-sm rounded-2xl bg-secondary focus:border-background focus:outline-none focus:ring-2 focus:ring-biru peer"
-        placeholder={`cari ${placeholder}`}
+        placeholder={`Cari ${placeholder}`}
       />
     </div>
   );

@@ -47,7 +47,7 @@ const FormDelivery = () => {
         className="w-96"
         disabled={true}
       />
-      <InputComponent label="Total" disabled={true} />
+      <InputComponent label="Total" disabled={true} className="w-96" />
       <SelectComponent
         label="Pembayaran"
         name="payment"
@@ -60,14 +60,15 @@ const FormDelivery = () => {
           { value: "cihuy3", label: "cihuy3" },
         ]}
       />
-     
+
       <InputComponent
         label="Batas Pembayaran"
         type="date"
         name="payment_deadline_date"
+        className="w-96"
         onChange={handleChange}
       />
-      <InputComponent label="Status" disabled={true} />
+      <InputComponent label="Status" disabled={true} className="w-96" />
       <div className="flex py-5 gap-4">
         <ButtonComponent label="Kembali" variant="back" className="w-full" />
         <ButtonComponent label="Ulangi" variant="undo" className="w-full" />
