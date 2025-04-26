@@ -13,6 +13,7 @@ import useNavigationHooks from "../../hooks/useNavigation";
 import Card from "../card";
 import { useFetchOptions } from "../../hooks/useFetchOptions";
 import mapboxgl from "mapbox-gl";
+import { differenceInDays, parseISO } from "date-fns";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -134,9 +135,6 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
         setRoute(newRoute);
         setDistance(distanceInKm);
         setDuration(formattedDuration);
-
-        console.log(`Jarak: ${distanceInKm} km`);
-        console.log(`Waktu tempuh: ${formattedDuration}`);
 
         const map = mapRef.current!;
         if (map.getSource("route")) {
@@ -298,6 +296,39 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const tarifPerKmPerVehicle: Record<string, number> = {
+    pickup: 5000,
+    engkel: 7000,
+    tronton: 10000,
+  };
+
+  const [cost, setCost] = useState("");
+  useEffect(() => {
+    const { weight, deliveryDate, deliveryDeadlineDate, vehicle } = formData;
+
+    if (distance && weight && deliveryDate && deliveryDeadlineDate && vehicle) {
+      const berat = parseFloat(weight);
+      const tarifPerKg = 2000;
+      const tarifPerKm = tarifPerKmPerVehicle[vehicle.toLowerCase()] || 5000; 
+
+      const d1 = new Date(deliveryDate);
+      const d2 = new Date(deliveryDeadlineDate);
+      const selisihHari = Math.ceil(
+        (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
+      let biaya = distance * tarifPerKm + berat * tarifPerKg;
+
+      if (selisihHari < 2) {
+        biaya *= 1.2;
+      }
+
+      setCost(`Rp ${biaya.toLocaleString("id-ID")}`);
+    } else {
+      setCost("");
+    }
+  }, [distance, formData]);
+
   return (
     <Card className="text-sm flex justify-center items-center rounded-none shadow-none">
       <form onSubmit={handleSubmit} className="mt-4 space-y-4 ">
@@ -367,7 +398,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
         <div className="relative w-full">
           <InputComponent
             label="Lokasi Penjemputan"
-            placeholder="Jl. Merdeka No.10, Jakarta Pusat"
+            placeholder="Jl. ABC No.10, Jakarta Pusat"
             type="text"
             name="pickup_location"
             value={address}
@@ -429,7 +460,6 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
             ))}
           </ul>
         </div>
-        {/* {distance !== null && duration !== null && ( */}
         <div className="space-y-4">
           <InputComponent
             label="Jarak"
@@ -442,7 +472,6 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
             value={duration ?? ""}
           />
         </div>
-        {/* )} */}
 
         <InputComponent
           label="Tanggal Pengiriman"
@@ -459,13 +488,12 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
           value={formData.deliveryDeadlineDate}
           onChange={handleChange}
         />
-        <InputComponent label="Waktu" disabled={true} value="3 hari" />
         {/* TODO: Toral didapat dari harga sewa mobil x jarak */}
         <InputComponent
           className="w-60"
           label="Total"
           name="total"
-          value={formData.total}
+          value={cost}
           disabled={true}
         />
 

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
-import FormAddDelivery from "../../components/form/FormSubmitAddDelivery";
+import FormAddDelivery from "../../components/form/FormAddDelivery";
 
 const AddDeliveryPages: React.FC = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
