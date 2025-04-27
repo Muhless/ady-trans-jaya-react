@@ -4,7 +4,7 @@ import FormAddDelivery from "../../components/form/FormAddDelivery";
 
 const AddDeliveryPages: React.FC = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const [isFormVisible, setIsFormVisible] = useState<boolean>(true);
+  const [isFormVisible, setIsFormVisible] = useState<boolean>(false);
 
   const toggleForm = () => {
     setIsFormVisible(!isFormVisible);

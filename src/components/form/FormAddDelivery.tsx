@@ -13,8 +13,7 @@ import useNavigationHooks from "../../hooks/useNavigation";
 import Card from "../card";
 import { useFetchOptions } from "../../hooks/useFetchOptions";
 import mapboxgl from "mapbox-gl";
-import { differenceInDays, parseISO } from "date-fns";
-import { useDeliveryCost } from "../../hooks/useDeliveryCost";
+import { useDeliveryCalculation } from "../../hooks/useDeliveryCost";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -65,7 +64,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
     deliveryDeadlineDate: "",
     deliveryCost: "",
   });
-  
+
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<{
     start: mapboxgl.Marker | null;
@@ -85,16 +84,28 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
   const [endAddress, setEndAddress] = useState<string>("");
   const [startSuggestions, setStartSuggestions] = useState<Place[]>([]);
   const [endSuggestions, setEndSuggestions] = useState<Place[]>([]);
+  const [ratePerKM, setRatePerKM] = useState<number>(0);
+  const { deliveryPrice, ratePerKm, loading, error } = useDeliveryCalculation(
+    distance,
+    formData.vehicle
+  );
+
   const { goToAddDelivery } = useNavigationHooks();
   const driverOptions = useFetchOptions("http://localhost:8080/api/driver");
   const formatVehicleLabel = useCallback(
-    (vehicle: { name: string; type: string; capacity: string }) => {
-      return `${vehicle.name} - (${vehicle.type.toUpperCase()}) - ${
+    (vehicle: {
+      name: string;
+      type: string;
+      capacity: string;
+      rate_per_km: number;
+    }) => {
+      return `${vehicle.name} (${vehicle.type.toUpperCase()}) - ${
         vehicle.capacity
-      }`;
+      } - Rp. ${vehicle.rate_per_km.toLocaleString()}/km`;
     },
     []
   );
+
   const vehicleOptions = useFetchOptions(
     "http://localhost:8080/api/vehicle",
     formatVehicleLabel
@@ -138,11 +149,11 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
           (data.routes[0].distance / 1000).toFixed(2)
         );
 
-        // const estimatedHours = distanceInKm / 40;
-        // const estimatedMinutes = Math.ceil(estimatedHours * 60)
-        const durationInMinutes = Math.ceil(data.routes[0].duration / 60);
-        const hours = Math.floor(durationInMinutes / 60);
-        const minutes = durationInMinutes % 60;
+        const estimatedHours = distanceInKm / 40;
+        const estimatedMinutes = Math.ceil(estimatedHours * 60);
+        // const durationInMinutes = Math.ceil(data.routes[0].duration / 60);
+        const hours = Math.floor(estimatedMinutes / 60);
+        const minutes = estimatedMinutes % 60;
         const formattedDuration =
           hours > 0 ? `${hours} jam ${minutes} menit` : `${minutes} menit`;
 
@@ -244,7 +255,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
       bounds.extend([endPoint.lng, endPoint.lat]);
 
       if (mapRef.current.isStyleLoaded()) {
-        mapRef.current.fitBounds(bounds, { padding: 200, maxZoom: 14 });
+        mapRef.current.fitBounds(bounds, { padding: 200, maxZoom: 18 });
       }
     }
   }, [startPoint, endPoint]);
@@ -278,7 +289,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
     console.log("Form Data:", finalData);
   };
 
-  const clearMap = () => {
+  const clearForm = () => {
     setStartPoint(null);
     setEndPoint(null);
     setRoute(null);
@@ -440,7 +451,6 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
             value={duration ?? ""}
           />
         </div>
-
         <InputComponent
           label="Tanggal Pengiriman"
           type="date"
@@ -448,7 +458,6 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
           value={formData.deliveryDate}
           onChange={handleChange}
         />
-
         <InputComponent
           label="Batas Pengiriman"
           type="date"
@@ -459,17 +468,23 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
         <InputComponent
           className="w-60"
           label="Biaya Pengiriman"
-          name="DeliveryPrice"
-          // value={}
+          name="deliveryPrice"
+          value={
+            loading
+              ? "Menghitung..."
+              : isNaN(deliveryPrice)
+              ? "0"
+              : `Rp ${deliveryPrice.toLocaleString("id-ID")}`
+          }
           disabled={true}
         />
-
+        {error && <p className="text-red-500">{error}</p>}
         <div className="flex justify-center w-full gap-3 py-5">
           <ButtonComponent variant="back" label="Kembali" className="w-full" />
           <ButtonComponent
             variant="undo"
             label="Ulangi"
-            onClick={clearMap}
+            onClick={clearForm}
             className="w-full"
           />
           <ButtonComponent

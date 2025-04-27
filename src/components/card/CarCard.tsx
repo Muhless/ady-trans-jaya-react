@@ -5,18 +5,18 @@ import Card from ".";
 type VehicleCardProps = {
   name: string;
   type: string;
-  license_plat: string;
+  license_plate: string;
   capacity: string;
-  price: number;
+  rate_per_km: number;
   status: string;
 };
 
 const VehicleCard: React.FC<VehicleCardProps> = ({
   name,
   type,
-  license_plat,
+  license_plate,
   capacity,
-  price,
+  rate_per_km,
   status,
 }) => {
   const isAvailable = status.toLowerCase() === "tersedia";
@@ -34,10 +34,10 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
             {name}
           </h2>
           <p className="text-gray-700 capitalize">{type}</p>
-          <p className="text-sm text-gray-500">{license_plat}</p>
+          <p className="text-sm text-gray-500">{license_plate}</p>
           <p className="text-sm text-gray-500">{capacity}</p>
           <p className="text-sm text-gray-700 font-medium">
-            Rp. {price.toLocaleString()}
+            Rp. {rate_per_km.toLocaleString()} / Km
           </p>
           <span
             className={`inline-block mt-2 text-center py-1 text-sm font-semibold rounded-md text-white ${

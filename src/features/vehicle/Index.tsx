@@ -13,8 +13,16 @@ const modalInput = [
   { name: "license_plat", label: "Nomor Plat", type: "text" },
   { name: "type", label: "Tipe", type: "select", options: vehicleTypes },
   { name: "capacity", label: "Kapasitas", type: "text" },
-  { name: "price", label: "Harga", type: "number" },
+  { name: "rate_per_km", label: "Harga per Kilometer", type: "number" },
 ];
+
+// const defaultRates: { [key: string]: number } = {
+//   "Pick up": 5000,
+//   CDE: 6000,
+//   CDD: 8000,
+//   Fuso: 10000,
+//   Wingbox: 12000,
+// };
 
 interface Vehicles {
   id: number;
@@ -22,7 +30,7 @@ interface Vehicles {
   license_plate: string;
   type: string;
   capacity: string;
-  price: number;
+  rate_per_km: number;
   status: string;
 }
 
@@ -56,20 +64,22 @@ function VehiclePages() {
   }, []);
 
   const handleSubmitVehicle = async (data: Record<string, any>) => {
+    // const rate = defaultRates[data.type] || parseFloat(data.rate_per_km) || 0;
     const transformed = {
       ...data,
       type: data.type.toLowerCase(),
       status: data.status || "tersedia",
-      price: parseFloat(data.price) || 0,
+      rate_per_km: parseFloat(data.rate_per_km) || 0,
+      // rate_per_km: rate,
     };
 
-    if (isNaN(transformed.price)) {
+    if (isNaN(transformed.rate_per_km)) {
       setError("Harga harus berupa angka yang valid.");
       return;
     }
 
     try {
-      data.price = parseFloat(data.price);
+      data.rate_per_km = parseFloat(data.rate_per_km);
       const response = await fetch("http://localhost:8080/api/vehicle", {
         method: "POST",
         headers: {
@@ -117,9 +127,9 @@ function VehiclePages() {
                   key={vehicle.id}
                   name={vehicle.name}
                   type={vehicle.type}
-                  license_plat={vehicle.license_plate}
+                  license_plate={vehicle.license_plate}
                   capacity={vehicle.capacity}
-                  price={vehicle.price}
+                  rate_per_km={vehicle.rate_per_km}
                   status={vehicle.status}
                 />
               ))}

@@ -5,7 +5,6 @@ import SelectComponent from "../input/Select";
 import { InputComponent } from "../input/Input";
 import { useFetchOptions } from "../../hooks/useFetchOptions";
 import AddDeliveryCard from "../card/AddDeliveryCard";
-import { InputDatePicker } from "../input/Date";
 
 const FormDelivery = () => {
   const { goToDeliveryPages } = useNavigationHooks();

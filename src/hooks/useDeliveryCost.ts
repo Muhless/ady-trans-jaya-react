@@ -1,72 +1,74 @@
-// hooks/useDeliveryCost.js
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
-export const useDeliveryCost = () => {
-  const [vehicleRates, setVehicleRates] = useState({});
-  const [cost, setCost] = useState("");
+// Update your useDeliveryCalculation hook with debugging
+export const useDeliveryCalculation = (distance, vehicleId) => {
+  const [deliveryPrice, setDeliveryPrice] = useState(0);
+  const [ratePerKm, setRatePerKm] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Fetch vehicle rates from API
   useEffect(() => {
-    const fetchVehicleRates = async () => {
+    const calculateDeliveryCost = async () => {
+      // Add logging to check inputs
+      console.log("Calculating delivery cost with:", { distance, vehicleId });
+      
+      // Don't calculate if we don't have a distance or vehicle selected
+      if (!distance || !vehicleId) {
+        console.log("Missing required data, setting price to 0");
+        setDeliveryPrice(0);
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+
       try {
-        const response = await fetch("http://localhost:8080/api/vehicle");
-        const data = await response.json();
+        // Fetch vehicle details to get the rate_per_km
+        console.log("Fetching vehicle data for ID:", vehicleId);
+        const response = await fetch(`http://localhost:8080/api/vehicle/${vehicleId}`);
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch vehicle data: ${response.status}`);
+        }
+        
+        const responseData = await response.json();
+        console.log("Vehicle data received:", responseData);
 
-        // Create a mapping of vehicle type to rate
-        const rates = {};
-        data.forEach((vehicle) => {
-          if (vehicle.type && vehicle.price) {
-            rates[vehicle.type.toLowerCase()] = vehicle.price;
-          }
-        });
-
-        setVehicleRates(rates);
-      } catch (error) {
-        console.error("Error fetching vehicle rates:", error);
-        // Fallback to default rates if API fails
-        setVehicleRates({
-          pickup: 5000,
-          engkel: 7000,
-          tronton: 10000,
-        });
+        const vehicleData = responseData.data || responseData;
+        
+        // Check if rate_per_km exists and is a number
+        const rate = vehicleData.rate_per_km;
+        console.log("Rate per KM:", rate, typeof rate);
+        
+        if (typeof rate !== 'number' || isNaN(rate)) {
+          throw new Error("Invalid rate_per_km value received from API");
+        }
+        
+        // Store the rate for reference
+        setRatePerKm(rate);
+        
+        // Calculate the delivery price
+        const calculatedPrice = rate * distance;
+        console.log("Calculated price:", calculatedPrice);
+        
+        // Round to nearest whole number
+        setDeliveryPrice(Math.round(calculatedPrice));
+      } catch (err) {
+        console.error("Error calculating delivery cost:", err);
+        setError(err.message);
+        setDeliveryPrice(0); // Set to 0 on error
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchVehicleRates();
-  }, []);
+    calculateDeliveryCost();
+  }, [distance, vehicleId]);
 
-  // Function to calculate cost based on inputs
-  const calculateCost = (distance, formData) => {
-    const { weight, deliveryDate, deliveryDeadlineDate, vehicle } = formData;
-
-    if (distance && weight && deliveryDate && deliveryDeadlineDate && vehicle) {
-      const berat = parseFloat(weight);
-      const tarifPerKg = 2000;
-
-      const vehicleType =
-        vehicle.match(/\(([^)]+)\)/)?.[1]?.toLowerCase() || "";
-
-      // Use the fetched rates from API, or fallback to a default
-      const tarifPerKm = vehicleRates[vehicleType] || 5000;
-
-      const d1 = new Date(deliveryDate);
-      const d2 = new Date(deliveryDeadlineDate);
-      const selisihHari = Math.ceil(
-        (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24)
-      );
-
-      let biaya = distance * tarifPerKm + berat * tarifPerKg;
-
-      // Apply urgent delivery surcharge
-      if (selisihHari < 2) {
-        biaya *= 1.2;
-      }
-
-      setCost(`Rp ${biaya.toLocaleString("id-ID")}`);
-    } else {
-      setCost("");
-    }
+  return {
+    deliveryPrice,
+    ratePerKm,
+    loading,
+    error,
   };
-
-  return { cost, calculateCost, vehicleRates };
 };
