@@ -3,27 +3,23 @@ import Card from ".";
 
 type SummaryCardProps = {
   title?: string;
-  className?:string;
+  className?: string;
   value?: number;
-  valueSubDesc?: string;
   textClassName?: string;
   desc?: string;
-  subDesc?: string;
   onClick?: () => void;
 };
 
 const SummaryCard: React.FC<SummaryCardProps> = ({
   title,
   value,
-  valueSubDesc,
   textClassName,
   onClick,
   desc,
-  subDesc,
 }) => {
   return (
     <Card
-      className="cursor-pointer rounded-xl flex flex-col items-center justify-center space-y-1 py-5"
+      className="cursor-pointer flex flex-col items-center justify-center space-y-1 h-40 font-poppins"
       onClick={onClick}
     >
       <p className="text-black text-left w-full px-5">{title}</p>
@@ -31,9 +27,6 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
         <p className={`text-7xl font-bold ${textClassName}`}>{value}</p>
         <p className={`${textClassName}`}>{desc}</p>
       </div>
-      <p className="text-sm text-gray-500">
-        {subDesc} <span>{valueSubDesc}</span>
-      </p>
     </Card>
   );
 };

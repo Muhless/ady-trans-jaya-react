@@ -20,20 +20,20 @@ const Sidebar = () => {
   const location = useLocation();
   const menuItems = useMemo(
     () => [
-      { to: "/", icon: <Home size={25} /> },
-      { to: "/driver", icon: <User size={25} /> },
-      { to: "/customer", icon: <Users size={25} /> },
-      { to: "/vehicle", icon: <CarFront size={25} /> },
-      { to: "/rent", icon: <Car size={25} /> },
-      { to: "/delivery", icon: <Truck size={25} /> },
-      { to: "/finance", icon: <ChartSpline size={25} /> },
+      { to: "/", icon: <Home size={23} /> },
+      { to: "/driver", icon: <User size={23} /> },
+      { to: "/customer", icon: <Users size={23} /> },
+      { to: "/vehicle", icon: <CarFront size={23} /> },
+      { to: "/rent", icon: <Car size={23} /> },
+      { to: "/delivery", icon: <Truck size={23} /> },
+      { to: "/finance", icon: <ChartSpline size={23} /> },
     ],
     []
   );
 
   return (
-    <div className="fixed bottom-0 left-0 flex flex-col w-20 h-screen pt-10 bg-sidebar">
-      <div className="flex flex-col items-center justify-center cursor-pointer">
+    <div className="fixed bottom-0 left-0 flex flex-col w-20 h-screen bg-sidebar">
+      <div className="flex flex-col items-center justify-center cursor-pointer mt-5">
         <img
           src="/assets/images/logo.png"
           alt="Ady Trans Jaya"
@@ -48,7 +48,7 @@ const Sidebar = () => {
             to={to}
             className={`p-2 rounded-full flex items-center text-gray-300 ${
               location.pathname === to
-                ? "bg-hover text-white"
+                ? "bg-white/20 text-white"
                 : "hover:bg-hover hover:text-white"
             }`}
           >

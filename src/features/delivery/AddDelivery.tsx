@@ -65,7 +65,7 @@ const AddDeliveryPages: React.FC = () => {
         ref={mapContainerRef}
         className="absolute z-0 w-full"
         style={{
-          height: "700px",
+          height: "740px",
           width: "100%",
           borderRadius: "10px",
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",

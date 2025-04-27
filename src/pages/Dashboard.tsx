@@ -19,10 +19,10 @@ const HomePages = () => {
       <div
         className="w-full rounded-xl p-6 mb-5 bg-cover bg-no-repeat relative h-28"
         style={{
-          backgroundImage: "url('assets/images/pexels-jplenio-1103970.jpg')",
+          backgroundImage: "url('assets/images/bg.jpg')",
         }}
       >
-        <div className="absolute inset-0 bg-black/40 rounded-xl" />
+        <div className="absolute inset-0 bg-black/40 rounded-md" />
         <div className="relative z-10 text-white">
           <Title title={"Selamat Datang, Admin"} />
         </div>
@@ -33,8 +33,6 @@ const HomePages = () => {
           value={13}
           textClassName="text-[#3884f2]"
           desc="Kendaraan Tersedia"
-          subDesc="Tidak Tersedia :"
-          valueSubDesc="5"
           onClick={goToCarPages}
         />
         <SummaryCard
@@ -42,8 +40,6 @@ const HomePages = () => {
           value={8}
           textClassName="text-[#ee453e]"
           desc="Pengemudi Tersedia"
-          subDesc="Tidak Tersedia :"
-          valueSubDesc="5"
           onClick={goToDriverPages}
         />
         <SummaryCard
@@ -51,8 +47,6 @@ const HomePages = () => {
           value={10}
           textClassName="text-[#e9a60b]"
           desc="Pelanggan Setia"
-          subDesc="Tidak Tersedia :"
-          valueSubDesc="5"
           onClick={goToCustomerPages}
         />
         <SummaryCard
@@ -60,10 +54,9 @@ const HomePages = () => {
           textClassName="text-[#2ebf62]"
           value={5}
           desc="Pengiriman Berlangsung"
-          subDesc="Menunggu Persetujuan :"
-          valueSubDesc="5"
           onClick={goToDeliveryPages}
         />
+       
       </div>
       <div className="grid grid-cols-2 gap-3">
         <GraphCard />
