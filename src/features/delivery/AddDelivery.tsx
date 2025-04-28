@@ -25,8 +25,8 @@ const AddDeliveryPages: React.FC = () => {
 
       <button
         onClick={toggleForm}
-        className={`absolute z-20 top-4 bg-white p-2 rounded-full shadow-md transition-all duration-300 ${
-          isFormVisible ? "right-4" : "right-4"
+        className={`absolute z-20 top-5 bg-white p-2 rounded-full shadow-md transition-all duration-300 ${
+          isFormVisible ? "right-10" : "right-10"
         }`}
         aria-label={isFormVisible ? "Hide form" : "Show form"}
       >

@@ -48,7 +48,7 @@ const matches = [
 ];
 
 function DeliveryPages() {
-  const { goToAddDelivery, goToDetailDelivery } = useNavigationHooks();
+  const { goToDetailDelivery } = useNavigationHooks();
 
   return (
     <>
@@ -75,24 +75,17 @@ function DeliveryPages() {
           desc="Pengiriman Berlangsung"
         />
       </div>
-      <div className="mb-20">
-        <div className="flex flex-row justify-between mb-3">
-          <ButtonComponent
-            label="Tambah Pengiriman"
-            variant="add"
-            className="w-48"
-            onClick={goToAddDelivery}
-          />
-          <SearchInput placeholder={"pengiriman"} />
-        </div>
-        <Card>
-          <TableComponent
-            data={matches}
-            onRowClick={goToDetailDelivery}
-            showActions={true}
-          />
-        </Card>
+      <div className="flex justify-end mb-5">
+        <SearchInput placeholder={"pengiriman"} />
       </div>
+
+      <Card>
+        <TableComponent
+          data={matches}
+          onRowClick={goToDetailDelivery}
+          showActions={true}
+        />
+      </Card>
     </>
   );
 }

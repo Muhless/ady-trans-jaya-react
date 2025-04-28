@@ -14,6 +14,8 @@ import Card from "../card";
 import { useFetchOptions } from "../../hooks/useFetchOptions";
 import mapboxgl from "mapbox-gl";
 import { useDeliveryCalculation } from "../../hooks/useDeliveryCost";
+import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -26,6 +28,19 @@ interface Place {
     coordinates: [number, number];
   };
 }
+
+type FormDataType = {
+  loadType: string;
+  load: string;
+  quantity: string;
+  weight: string;
+  unit: string;
+  driver: string;
+  vehicle: string;
+  deliveryDate: string;
+  deliveryDeadlineDate: string;
+  deliveryCost: string;
+};
 
 const fetchAddressSuggestions = async (
   query: string,
@@ -52,7 +67,7 @@ const fetchAddressSuggestions = async (
 };
 
 const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormDataType>({
     loadType: "",
     load: "",
     quantity: "",
@@ -84,13 +99,12 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
   const [endAddress, setEndAddress] = useState<string>("");
   const [startSuggestions, setStartSuggestions] = useState<Place[]>([]);
   const [endSuggestions, setEndSuggestions] = useState<Place[]>([]);
-  const [ratePerKM, setRatePerKM] = useState<number>(0);
-  const { deliveryPrice, ratePerKm, loading, error } = useDeliveryCalculation(
+  const { deliveryPrice, loading, error } = useDeliveryCalculation(
     distance,
     formData.vehicle
   );
 
-  const { goToAddDelivery } = useNavigationHooks();
+  const { goToTransactionPages } = useNavigationHooks();
   const driverOptions = useFetchOptions("http://localhost:8080/api/driver");
   const formatVehicleLabel = useCallback(
     (vehicle: {
@@ -238,7 +252,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
 
     mapRef.current!.flyTo({
       center: [coordinates.lng, coordinates.lat],
-      zoom: 10,
+      zoom: 15,
     });
   };
 
@@ -279,14 +293,31 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const createData = async (data: FormDataType) => {
+    const response = await axios.post("/api/delivery", data);
+    return response.data.data;
+  };
+
+  const { mutate } = useMutation({
+    mutationFn: () => createData(formData),
+    onSuccess: () => {
+      console.log("Berhasil menyimpan data");
+      clearForm();
+    },
+    onError: (error) => {
+      console.log("Gagal menyimpan data:", error);
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const finalData = {
-      ...formData,
-      pickup_location: address,
-      destination: endAddress,
-    };
-    console.log("Form Data:", finalData);
+    const isEmptyField = Object.values(formData).some((value) => value === "");
+    if (isEmptyField) {
+      alert("Tolong lengkapi semua data dulu!");
+      return;
+    }
+
+    mutate();
   };
 
   const clearForm = () => {
@@ -408,7 +439,6 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
         <div className="relative w-full">
           <InputComponent
-            className="w-60"
             label="Lokasi Tujuan"
             placeholder="Pergudangan ABC, Bekasi Timur"
             type="text"
@@ -491,7 +521,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
             variant="save"
             label="Simpan"
             className="w-full"
-            onClick={goToAddDelivery}
+            onClick={goToTransactionPages}
           />
         </div>
       </form>

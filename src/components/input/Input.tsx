@@ -1,3 +1,4 @@
+import { MapPin } from "lucide-react";
 import React, { useState, useEffect } from "react";
 
 type InputComponentProps = {
@@ -11,6 +12,7 @@ type InputComponentProps = {
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
+  onButtonClick?: () => void; // tambah handler optional
 };
 
 export const InputComponent: React.FC<InputComponentProps> = ({
@@ -22,6 +24,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   value,
   disabled,
   onChange,
+  onButtonClick,
 }) => {
   const [dateValue, setDateValue] = useState<string>("");
 
@@ -38,7 +41,6 @@ export const InputComponent: React.FC<InputComponentProps> = ({
 
   const formatToIsoDate = (displayDate: string): string => {
     if (!displayDate) return "";
-    // Parse DD/MM/YYYY format
     const parts = displayDate.split("/");
     if (parts.length !== 3) return "";
 
@@ -52,27 +54,21 @@ export const InputComponent: React.FC<InputComponentProps> = ({
     return date.toISOString().split("T")[0];
   };
 
-  // Initialize the formatted display value
   useEffect(() => {
     if (type === "date" && value) {
-      // Check if value is in ISO format or DD/MM/YYYY format
       if (typeof value === "string" && value.includes("-")) {
-        // Already ISO format, convert to display format
         setDateValue(formatToDisplayDate(value));
       } else if (typeof value === "string" && value.includes("/")) {
-        // Already in display format
         setDateValue(value);
       }
     }
   }, [value, type]);
 
-  // Handle date input changes
   const handleDateInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     setDateValue(inputValue);
 
     if (onChange) {
-      // Create a synthetic event with the ISO format value for actual form state
       const isoValue = formatToIsoDate(inputValue);
       const syntheticEvent = {
         ...e,
@@ -87,13 +83,11 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   };
 
   const validateDateInput = (input: string): boolean => {
-    // Basic validation for DD/MM/YYYY format
     const regex = /^(\d{0,2})(\/)?(\d{0,2})?(\/)?(\d{0,4})?$/;
     return regex.test(input);
   };
 
   const handleDateKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Only allow digits, backspace, delete, tab, arrows, and '/'
     const allowedKeys = [
       "Backspace",
       "Delete",
@@ -110,7 +104,6 @@ export const InputComponent: React.FC<InputComponentProps> = ({
       e.preventDefault();
     }
 
-    // Auto-add slashes
     if (isDigit) {
       const input = e.currentTarget.value;
       if (input.length === 2 || input.length === 5) {
@@ -121,44 +114,59 @@ export const InputComponent: React.FC<InputComponentProps> = ({
     }
   };
 
-  const inputClass = `p-2 rounded-md w-72 focus:ring-biru focus:ring-2 focus:outline-none ${
+  const isLocationField = label?.toLowerCase().includes("lokasi");
+
+  const inputClass = `p-2 rounded-md ${
+    isLocationField ? "w-60" : "w-72"
+  } focus:ring-biru focus:ring-2 focus:outline-none ${
     disabled ? "bg-gray-300" : "bg-background"
   } ${className || ""}`;
 
   return (
     <div className="flex items-center gap-5 justify-between">
       <label className="text-gray-600">{label}</label>
-      {type === "textarea" ? (
-        <textarea
-          disabled={disabled}
-          name={name}
-          value={String(value)}
-          className={`${inputClass} h-20`}
-          placeholder={placeholder}
-          onChange={onChange}
-        />
-      ) : type === "date" ? (
-        <input
-          disabled={disabled}
-          type="text"
-          name={name}
-          value={dateValue}
-          className={inputClass}
-          placeholder={placeholder || "DD/MM/YYYY"}
-          onChange={handleDateInputChange}
-          onKeyDown={handleDateKeyDown}
-        />
-      ) : (
-        <input
-          disabled={disabled}
-          type={type}
-          name={name}
-          value={value}
-          className={inputClass}
-          placeholder={placeholder}
-          onChange={onChange}
-        />
-      )}
+      <div className="flex items-center gap-2">
+        {type === "textarea" ? (
+          <textarea
+            disabled={disabled}
+            name={name}
+            value={String(value)}
+            className={`${inputClass} h-20`}
+            placeholder={placeholder}
+            onChange={onChange}
+          />
+        ) : type === "date" ? (
+          <input
+            disabled={disabled}
+            type="text"
+            name={name}
+            value={dateValue}
+            className={inputClass}
+            placeholder={placeholder || "DD/MM/YYYY"}
+            onChange={handleDateInputChange}
+            onKeyDown={handleDateKeyDown}
+          />
+        ) : (
+          <input
+            disabled={disabled}
+            type={type}
+            name={name}
+            value={value}
+            className={inputClass}
+            placeholder={placeholder}
+            onChange={onChange}
+          />
+        )}
+        {isLocationField && (
+          <button
+            type="button"
+            onClick={onButtonClick}
+            className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          >
+            <MapPin size={20} />
+          </button>
+        )}
+      </div>
     </div>
   );
 };

@@ -3,7 +3,7 @@ import Card from "../../components/card";
 import SubTitle from "../../components/SubTitle";
 import FormDelivery from "../../components/form/FormSubmitDelivery";
 
-function SubmitDeliveryPages() {
+function AddTransactionPages() {
   return (
     <div className="flex justify-center">
       <Card className="flex flex-col w-1/2">
@@ -16,4 +16,4 @@ function SubmitDeliveryPages() {
   );
 }
 
-export default SubmitDeliveryPages;
+export default AddTransactionPages;

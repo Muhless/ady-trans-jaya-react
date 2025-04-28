@@ -4,9 +4,14 @@ const useNavigationHooks = () => {
   const navigate = useNavigate();
   return {
     goToHome: () => navigate("/"),
-    goToCarPages: () => navigate("/car"),
     goToDriverPages: () => navigate("/driver"),
     goToCustomerPages: () => navigate("/customer"),
+    goToCarPages: () => navigate("/car"),
+    // transaction
+    goToTransactionPages: () => navigate("/transaction"),
+    goToAddTransaction: () => navigate("/transaction/add"),
+    // delivery
+    goToDeliveryPages: () => navigate("/delivery"),
     goToDetailDelivery: (id: string | number) => () => {
       if (id) {
         navigate(`/delivery/${id}`);
@@ -14,8 +19,6 @@ const useNavigationHooks = () => {
         console.warn("ID tidak ditemukan");
       }
     },
-    goToDeliveryPages: () => navigate("/delivery"),
-    goToAddDelivery: () => navigate("/delivery/add"),
     goToAddDeliveryForm: () => navigate("/delivery/add/form"),
     goToDriverDetails: (id: string | number) => () => {
       if (id) {
