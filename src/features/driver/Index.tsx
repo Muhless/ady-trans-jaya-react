@@ -89,10 +89,10 @@ function DriverPages() {
 
   return (
     <div>
-      <Title title={"Driver"} />
+      <Title title={"Pengemudi"} />
       <div className="flex justify-between mb-5">
         <ButtonComponent
-          label="Tambah Driver"
+          label="Tambah Pengemudi"
           variant="add"
           className="w-48"
           onClick={() => {
@@ -101,7 +101,7 @@ function DriverPages() {
           }}
         />
         <SearchInput
-          placeholder="Cari driver..."
+          placeholder="pengemudi..."
           onChange={(e) => handleSearch(e.target.value)}
         />
       </div>

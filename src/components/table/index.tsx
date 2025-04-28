@@ -1,5 +1,6 @@
 import React from "react";
 import ButtonComponent from "../button/Index";
+import Card from "../card";
 
 type ColumnConfig = {
   key: string;
@@ -31,11 +32,13 @@ const TableComponent: React.FC<TableProps> = ({
           }));
 
   return (
-    <div className="overflow-auto rounded-xl">
+    <Card className="overflow-auto rounded-xl">
       <table className="w-full text-sm text-left border-collapse">
         <thead>
           <tr className="text-center border-b">
-            <th className="p-3 text-base font-semibold">No</th>{" "}
+            {displayHeaders.length > 0 && (
+              <th className="p-3 text-base font-semibold">No</th>
+            )}
             {displayHeaders.map(({ label }, index) => (
               <th key={index} className="p-3 text-base font-semibold">
                 {label}
@@ -88,7 +91,7 @@ const TableComponent: React.FC<TableProps> = ({
           )}
         </tbody>
       </table>
-    </div>
+    </Card>
   );
 };
 

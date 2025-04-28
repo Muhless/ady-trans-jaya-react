@@ -76,37 +76,34 @@ function CustomerPages() {
 
   return (
     <>
-      <Title title={"Customer"} />
+      <Title title={"Pelanggan"} />
       <div className="flex justify-between mb-5">
         <ButtonComponent
-          label="Tambah Customer"
+          label="Tambah Pelanggan"
           variant="add"
           className="w-48"
           onClick={() => setModalOpen(true)}
         />
-        <SearchInput placeholder="customer" />
+        <SearchInput placeholder="pelanggan..." />
       </div>
-      <Card>
-        {isLoading ? (
-          <div className="text-center p-5">Loading</div>
-        ) : isError ? (
-          <div className="text-center text-red-600 p-5">Error loading data</div>
-        ) : (
-          <TableComponent
-            data={Array.isArray(customer) ? customers : customers?.data ?? []}
-            columns={[
-              { key: "name", label: "Nama Kendaraan" },
-              { key: "company", label: "Perusahaan" },
-              { key: "email", label: "Email" },
-              { key: "phone", label: "Nomor Telepon" },
-              { key: "address", label: "Alamat" },
-            
-            ]}
-            onRowClick={handleRowClick}
-            showActions={true}
-          />
-        )}
-      </Card>
+      {isLoading ? (
+        <div className="text-center p-5">Loading</div>
+      ) : isError ? (
+        <div className="text-center text-red-600 p-5">Error loading data</div>
+      ) : (
+        <TableComponent
+          data={Array.isArray(customer) ? customers : customers?.data ?? []}
+          columns={[
+            { key: "name", label: "Nama" },
+            { key: "company", label: "Perusahaan" },
+            { key: "email", label: "Email" },
+            { key: "phone", label: "Nomor Telepon" },
+            { key: "address", label: "Alamat" },
+          ]}
+          onRowClick={handleRowClick}
+          showActions={true}
+        />
+      )}
       <Modal
         title="Customer"
         isOpen={modalOpen}

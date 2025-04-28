@@ -66,7 +66,7 @@ const fetchAddressSuggestions = async (
   }
 };
 
-const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
+const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const [formData, setFormData] = useState<FormDataType>({
     loadType: "",
     load: "",
@@ -286,13 +286,6 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
     }));
   };
 
-  const handleChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   const createData = async (data: FormDataType) => {
     const response = await axios.post("/api/delivery", data);
     return response.data.data;
@@ -321,6 +314,19 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
   };
 
   const clearForm = () => {
+    setFormData({
+      loadType: "",
+      load: "",
+      quantity: "",
+      weight: "",
+      unit: "",
+      driver: "",
+      vehicle: "",
+      deliveryDate: "",
+      deliveryDeadlineDate: "",
+      deliveryCost: "",
+    });
+
     setStartPoint(null);
     setEndPoint(null);
     setRoute(null);
@@ -341,14 +347,14 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
 
   return (
     <Card className="text-sm flex justify-center items-center rounded-none shadow-none">
-      <form onSubmit={handleSubmit} className="mt-4 space-y-4 ">
+      <form onSubmit={handleSubmit} className="mt-4 space-y-6 ">
         <SubTitle subTitle="Form Tambah Pengiriman" className="text-center" />
         <SelectComponent
           label="Jenis Muatan"
-          placeholder="Pilih jenis barang utama yang dikirim"
-          name="load_type"
+          placeholder="Pilih jenis barang"
+          name="loadType"
           value={formData.loadType}
-          onChange={handleChangeSelect}
+          onChange={handleChange}
           options={[
             {
               value: "consumer_goods",
@@ -384,7 +390,8 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
         />
         <InputComponent
           label="Berat Muatan"
-          placeholder="Masukkan berat total, misal: 150 kg"
+          type="number"
+          placeholder="Masukkan berat total dalam kg"
           name="weight"
           value={formData.weight}
           onChange={handleChange}
@@ -395,7 +402,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
           name="driver"
           options={driverOptions}
           value={formData.driver}
-          onChange={handleChangeSelect}
+          onChange={handleChange}
         />
         <SelectComponent
           label="Kendaraan"
@@ -403,7 +410,7 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
           name="vehicle"
           options={vehicleOptions}
           value={formData.vehicle}
-          onChange={handleChangeSelect}
+          onChange={handleChange}
         />
         <div className="relative w-full">
           <InputComponent
@@ -529,4 +536,4 @@ const FormAddDelivery = forwardRef<HTMLDivElement>((_, ref) => {
   );
 });
 
-export default FormAddDelivery;
+export default AddDeliveryForm;

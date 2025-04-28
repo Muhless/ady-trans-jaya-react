@@ -6,12 +6,9 @@ import { InputComponent } from "../input/Input";
 import { useFetchOptions } from "../../hooks/useFetchOptions";
 import AddDeliveryCard from "../card/AddDeliveryCard";
 
-const FormDelivery = () => {
+const TransactionSummaryForm = () => {
   const { goToDeliveryPages } = useNavigationHooks();
-  const customerOptions = useFetchOptions(
-    "http://localhost:8080/api/customer",
-    "name"
-  );
+
   const [formData, setFormData] = useState({
     customer: "",
     company: "",
@@ -28,15 +25,6 @@ const FormDelivery = () => {
 
   return (
     <form action="" className="space-y-8">
-      <SelectComponent
-        label="Customer"
-        name="customer"
-        value={formData.customer}
-        className="w-96"
-        onChange={handleChange}
-        options={customerOptions}
-      />
-
       <div className="flex justify-between gap-5">
         <h1>Pengiriman</h1>
         <AddDeliveryCard />
@@ -82,4 +70,4 @@ const FormDelivery = () => {
   );
 };
 
-export default FormDelivery;
+export default TransactionSummaryForm;

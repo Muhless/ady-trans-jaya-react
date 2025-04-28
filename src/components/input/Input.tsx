@@ -115,9 +115,10 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   };
 
   const isLocationField = label?.toLowerCase().includes("lokasi");
+  const isWeightField = label?.toLowerCase().includes("berat");
 
   const inputClass = `p-2 rounded-md ${
-    isLocationField ? "w-60" : "w-72"
+    isLocationField || isWeightField ? "w-[245px]" : "w-72"
   } focus:ring-biru focus:ring-2 focus:outline-none ${
     disabled ? "bg-gray-300" : "bg-background"
   } ${className || ""}`;
@@ -166,6 +167,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
             <MapPin size={20} />
           </button>
         )}
+        {isWeightField && <span className="text-gray-600 p-2">kg</span>}
       </div>
     </div>
   );

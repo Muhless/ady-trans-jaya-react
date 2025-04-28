@@ -1,8 +1,10 @@
 import React, { useRef, useState } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
-import FormAddDelivery from "../../components/form/FormAddDelivery";
+import AddDeliveryForm from "../../components/form/AddDeliveryForm";
+import useNavigationHooks from "../../hooks/useNavigation";
 
 const AddDeliveryPages: React.FC = () => {
+  const { goBack } = useNavigationHooks();
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const [isFormVisible, setIsFormVisible] = useState<boolean>(false);
 
@@ -20,7 +22,7 @@ const AddDeliveryPages: React.FC = () => {
           overflowY: "auto",
         }}
       >
-        <FormAddDelivery ref={mapContainerRef} />
+        <AddDeliveryForm ref={mapContainerRef} />
       </div>
 
       <button

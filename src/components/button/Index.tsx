@@ -1,4 +1,5 @@
 import {
+  ArrowRightIcon,
   Edit,
   LucideRepeat2,
   MapPinPlus,
@@ -21,7 +22,8 @@ type ButtonComponentProps = {
     | "save"
     | "back"
     | "map"
-    | "undo";
+    | "undo"
+    | "next";
   icon?: React.ReactNode;
   className?: string;
   type?: "button" | "submit" | "reset";
@@ -48,6 +50,7 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
     back: "bg-gray-400 hover:bg-gray-500",
     map: "bg-blue-500 hover:bg-blue-600",
     undo: "bg-merah hover:bg-red-400",
+    next: "bg-kuning hover:bg-yellow-500",
   };
 
   const icons = {
@@ -58,6 +61,7 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
     back: <Undo2 size={18} />,
     map: <MapPinPlus size={18} />,
     undo: <LucideRepeat2 size={18} />,
+    next: <ArrowRightIcon size={18} />,
   };
 
   const navigate = useNavigate();

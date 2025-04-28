@@ -51,42 +51,18 @@ function DeliveryPages() {
   const { goToDetailDelivery } = useNavigationHooks();
 
   return (
-    <>
+    <div>
       <Title title={"Pengiriman"} />
-      <div className="grid grid-cols-4 gap-3 mb-10">
-        <SummaryCard
-          value={13}
-          textClassName="text-[#3884f2]"
-          desc="Kendaraan Tersedia"
-        />
-        <SummaryCard
-          value={8}
-          textClassName="text-[#ee453e]"
-          desc="Pengemudi Tersedia"
-        />
-        <SummaryCard
-          value={10}
-          textClassName="text-[#e9a60b]"
-          desc="Pelanggan Setia"
-        />
-        <SummaryCard
-          textClassName="text-[#2ebf62]"
-          value={5}
-          desc="Pengiriman Berlangsung"
-        />
-      </div>
       <div className="flex justify-end mb-5">
         <SearchInput placeholder={"pengiriman"} />
       </div>
 
-      <Card>
         <TableComponent
           data={matches}
           onRowClick={goToDetailDelivery}
           showActions={true}
         />
-      </Card>
-    </>
+    </div>
   );
 }
 

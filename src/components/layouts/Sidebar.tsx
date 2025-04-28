@@ -42,20 +42,26 @@ const Sidebar = () => {
         />
       </div>
       <nav className="flex flex-col items-center justify-center flex-1 p-4 space-y-3">
-        {/* FIXME: make sub link active */}
-        {menuItems.map(({ to, icon }) => (
-          <Link
-            key={to}
-            to={to}
-            className={`p-2 rounded-full flex items-center text-gray-300 ${
-              location.pathname.startsWith(to)
-                ? "bg-white/20 text-white"
-                : "hover:bg-hover hover:text-white"
-            }`}
-          >
-            {icon}
-          </Link>
-        ))}
+        {menuItems.map(({ to, icon }) => {
+          const isActive =
+            to === "/"
+              ? location.pathname === "/"
+              : location.pathname.startsWith(to);
+
+          return (
+            <Link
+              key={to}
+              to={to}
+              className={`p-2 rounded-full flex items-center transition-colors ${
+                isActive
+                  ? "bg-white/20 text-white"
+                  : "text-gray-300 hover:bg-hover hover:text-white"
+              }`}
+            >
+              {icon}
+            </Link>
+          );
+        })}
       </nav>
       <div className="flex flex-col items-center justify-center space-y-4 cursor-pointer mb-7">
         <UserIconComponent

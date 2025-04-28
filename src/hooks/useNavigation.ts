@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 const useNavigationHooks = () => {
   const navigate = useNavigate();
   return {
+    goBack: ()=>navigate(-1),
     goToHome: () => navigate("/"),
     goToDriverPages: () => navigate("/driver"),
     goToCustomerPages: () => navigate("/customer"),

@@ -10,11 +10,7 @@ const delivery = [
 ];
 
 const PendingDeliveryTable = () => {
-  return (
-    <Card title="Pengiriman Sedang Berlangsung" className="p-5">
-      <TableComponent data={delivery} showActions={true} />
-    </Card>
-  );
+  return <TableComponent data={delivery} showActions={true} />;
 };
 
 export default PendingDeliveryTable;
