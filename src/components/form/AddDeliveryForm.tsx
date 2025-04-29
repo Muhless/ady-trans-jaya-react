@@ -110,12 +110,11 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     (vehicle: {
       name: string;
       type: string;
-      capacity: string;
+      // capacity: string;
       rate_per_km: number;
     }) => {
-      return `${vehicle.name} (${vehicle.type.toUpperCase()}) - ${
-        vehicle.capacity
-      } - Rp. ${vehicle.rate_per_km.toLocaleString()}/km`;
+      return `${vehicle.name} (${vehicle.type.toUpperCase()}) - 
+      Rp.${vehicle.rate_per_km.toLocaleString()}/km`;
     },
     []
   );

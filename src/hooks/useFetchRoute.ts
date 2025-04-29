@@ -1,5 +1,5 @@
+import { useMapboxHook } from "./useMapAndRoute";
 import { useState } from "react";
-import { useMapboxHook } from "./useMapbox";
 import { useFItBoundsHook } from "./useFItBounds";
 import { useRoute } from "./useRoute";
 

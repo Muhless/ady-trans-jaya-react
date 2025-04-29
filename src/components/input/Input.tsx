@@ -12,7 +12,7 @@ type InputComponentProps = {
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
-  onButtonClick?: () => void; // tambah handler optional
+  onClick?: () => void;
 };
 
 export const InputComponent: React.FC<InputComponentProps> = ({
@@ -24,7 +24,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   value,
   disabled,
   onChange,
-  onButtonClick,
+  onClick,
 }) => {
   const [dateValue, setDateValue] = useState<string>("");
 
@@ -161,7 +161,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
         {isLocationField && (
           <button
             type="button"
-            onClick={onButtonClick}
+            onClick={onClick}
             className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
           >
             <MapPin size={20} />
