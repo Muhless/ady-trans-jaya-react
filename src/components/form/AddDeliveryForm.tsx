@@ -29,18 +29,21 @@ interface Place {
   };
 }
 
-type FormDataType = {
-  loadType: string;
+interface Delivery {
+  driver_id: string;
+  vehicle_id: string;
+  load_type: string;
   load: string;
-  quantity: string;
-  weight: string;
-  unit: string;
-  driver: string;
+  quantity: number;
+  weight: number;
   vehicle: string;
-  deliveryDate: string;
-  deliveryDeadlineDate: string;
-  deliveryCost: string;
-};
+  pickup_location: string;
+  destination: string;
+  delivery_date: string;
+  delivery_deadline_date: string;
+  delivery_status: string;
+  delivery_cost: number;
+}
 
 const fetchAddressSuggestions = async (
   query: string,
@@ -67,17 +70,20 @@ const fetchAddressSuggestions = async (
 };
 
 const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
-  const [formData, setFormData] = useState<FormDataType>({
-    loadType: "",
+  const [formData, setFormData] = useState<Delivery>({
+    driver_id: "",
+    vehicle_id: "",
+    load_type: "",
     load: "",
-    quantity: "",
-    weight: "",
-    unit: "",
-    driver: "",
+    quantity: 0,
+    weight: 0,
     vehicle: "",
-    deliveryDate: "",
-    deliveryDeadlineDate: "",
-    deliveryCost: "",
+    pickup_location: "",
+    destination: "",
+    delivery_date: "",
+    delivery_deadline_date: "",
+    delivery_status: "",
+    delivery_cost: 0,
   });
 
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -99,6 +105,8 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const [endAddress, setEndAddress] = useState<string>("");
   const [startSuggestions, setStartSuggestions] = useState<Place[]>([]);
   const [endSuggestions, setEndSuggestions] = useState<Place[]>([]);
+  const [deliveryList, setDeliveryList] = useState<Delivery[]>([]);
+  const [transaction, setTransaction] = useState(null);
   const { deliveryPrice, loading, error } = useDeliveryCalculation(
     distance,
     formData.vehicle
@@ -273,6 +281,34 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     }
   }, [startPoint, endPoint]);
 
+  useEffect(() => {
+    const stored = localStorage.getItem("newTransaction");
+    if (stored) {
+      setTransaction(JSON.parse(stored));
+    }
+  }, []);
+
+  const handleAddDelivery = () => {
+    setDeliveryList([
+      ...deliveryList,
+      {
+        driver_id: "",
+        vehicle_id: "",
+        load_type: "",
+        load: "",
+        quantity: 0,
+        weight: 0,
+        vehicle: "",
+        pickup_location: "",
+        destination: "",
+        delivery_date: "",
+        delivery_deadline_date: "",
+        delivery_status: "",
+        delivery_cost: 0,
+      },
+    ]);
+  };
+
   const handleChange = (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -285,45 +321,40 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     }));
   };
 
-  const createData = async (data: FormDataType) => {
-    const response = await axios.post("/api/delivery", data);
-    return response.data.data;
-  };
+  const handleSubmit = async () => {
+    if (!transaction) return alert("Transaksi tidak ditemukan");
 
-  const { mutate } = useMutation({
-    mutationFn: () => createData(formData),
-    onSuccess: () => {
-      console.log("Berhasil menyimpan data");
-      clearForm();
-    },
-    onError: (error) => {
-      console.log("Gagal menyimpan data:", error);
-    },
-  });
+    const finalData = {
+      ...(transaction as Record<string, any>),
+      delivery: deliveryList,
+      total_delivery: deliveryList.length,
+    };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const isEmptyField = Object.values(formData).some((value) => value === "");
-    if (isEmptyField) {
-      alert("Tolong lengkapi semua data dulu!");
-      return;
+    try {
+      await axios.post("http://localhost:8080/transaction", finalData);
+      alert("Transaksi dan pengiriman berhasil dikirim!");
+      localStorage.removeItem("newTransaction");
+    } catch (error) {
+      console.error(error);
+      alert("Gagal menyimpan data");
     }
-
-    mutate();
   };
 
   const clearForm = () => {
     setFormData({
-      loadType: "",
+      driver_id: "",
+      vehicle_id: "",
+      load_type: "",
       load: "",
-      quantity: "",
-      weight: "",
-      unit: "",
-      driver: "",
+      quantity: 0,
+      weight: 0,
       vehicle: "",
-      deliveryDate: "",
-      deliveryDeadlineDate: "",
-      deliveryCost: "",
+      pickup_location: "",
+      destination: "",
+      delivery_date: "",
+      delivery_deadline_date: "",
+      delivery_status: "",
+      delivery_cost: 0,
     });
 
     setStartPoint(null);
@@ -344,6 +375,10 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleCancel = () => {
+    localStorage.removeItem("newTransaction");
+  };
+
   return (
     <Card className="text-sm flex justify-center items-center rounded-none shadow-none">
       <form onSubmit={handleSubmit} className="mt-4 space-y-6 ">
@@ -352,7 +387,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           label="Jenis Muatan"
           placeholder="Pilih jenis barang"
           name="loadType"
-          value={formData.loadType}
+          value={formData.load_type}
           onChange={handleChange}
           options={[
             {
@@ -400,7 +435,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           placeholder="Pilih driver yang akan ditugaskan"
           name="driver"
           options={driverOptions}
-          value={formData.driver}
+          value={formData.driver_id}
           onChange={handleChange}
         />
         <SelectComponent
@@ -491,14 +526,14 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           label="Tanggal Pengiriman"
           type="date"
           name="deliveryDate"
-          value={formData.deliveryDate}
+          value={formData.delivery_date}
           onChange={handleChange}
         />
         <InputComponent
           label="Batas Pengiriman"
           type="date"
           name="deliveryDeadlineDate"
-          value={formData.deliveryDeadlineDate}
+          value={formData.delivery_deadline_date}
           onChange={handleChange}
         />
         <InputComponent
@@ -516,7 +551,12 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         />
         {error && <p className="text-red-500">{error}</p>}
         <div className="flex justify-center w-full gap-3 py-5">
-          <ButtonComponent variant="back" label="Kembali" className="w-full" />
+          <ButtonComponent
+            variant="back"
+            label="Kembali"
+            className="w-full"
+            onClick={handleCancel}
+          />
           <ButtonComponent
             variant="undo"
             label="Ulangi"

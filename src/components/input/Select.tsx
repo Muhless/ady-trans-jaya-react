@@ -33,8 +33,8 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
         <select
           name={name}
           value={value}
-          className={`${baseClass} ${isCustomer ? "w-[340px]" : "w-96"} ${
-            className ?? "w-72"
+          className={`${baseClass} ${isCustomer ? "w-[338px]" : "w-72"} ${
+            className ?? ""
           }`}
           onChange={onChange}
         >
