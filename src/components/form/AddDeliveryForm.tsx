@@ -16,6 +16,7 @@ import mapboxgl from "mapbox-gl";
 import { useDeliveryCalculation } from "../../hooks/useDeliveryCost";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
+import { useDeliveryStore } from "../../stores/deliveryStore";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -27,22 +28,6 @@ interface Place {
   geometry: {
     coordinates: [number, number];
   };
-}
-
-interface Delivery {
-  driver_id: string;
-  vehicle_id: string;
-  load_type: string;
-  load: string;
-  quantity: number;
-  weight: number;
-  vehicle: string;
-  pickup_location: string;
-  destination: string;
-  delivery_date: string;
-  delivery_deadline_date: string;
-  delivery_status: string;
-  delivery_cost: number;
 }
 
 const fetchAddressSuggestions = async (
@@ -70,22 +55,6 @@ const fetchAddressSuggestions = async (
 };
 
 const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
-  const [formData, setFormData] = useState<Delivery>({
-    driver_id: "",
-    vehicle_id: "",
-    load_type: "",
-    load: "",
-    quantity: 0,
-    weight: 0,
-    vehicle: "",
-    pickup_location: "",
-    destination: "",
-    delivery_date: "",
-    delivery_deadline_date: "",
-    delivery_status: "",
-    delivery_cost: 0,
-  });
-
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<{
     start: mapboxgl.Marker | null;
@@ -101,16 +70,11 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const [route, setRoute] = useState<GeoJSON.LineString | null>(null);
   const [distance, setDistance] = useState<number | null>(null);
   const [duration, setDuration] = useState<number | string | null>(null);
-  const [address, setAddress] = useState<string>("");
-  const [endAddress, setEndAddress] = useState<string>("");
+  const [pickupLocation, setPickupLocation] = useState<string>("");
+  const [destination, setDestination] = useState<string>("");
   const [startSuggestions, setStartSuggestions] = useState<Place[]>([]);
   const [endSuggestions, setEndSuggestions] = useState<Place[]>([]);
-  const [deliveryList, setDeliveryList] = useState<Delivery[]>([]);
-  const [transaction, setTransaction] = useState(null);
-  const { deliveryPrice, loading, error } = useDeliveryCalculation(
-    distance,
-    formData.vehicle
-  );
+  const [deliveryList, setDeliveryList] = useState([]);
 
   const { goToTransactionPages } = useNavigationHooks();
   const driverOptions = useFetchOptions("http://localhost:8080/api/driver");
@@ -218,7 +182,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     setPoint: React.Dispatch<
       React.SetStateAction<{ lng: number; lat: number } | null>
     >,
-    setAddress: React.Dispatch<React.SetStateAction<string>>,
+    setPickupLocation: React.Dispatch<React.SetStateAction<string>>,
     setSuggestions: React.Dispatch<React.SetStateAction<Place[]>>,
     type: "start" | "end"
   ) => {
@@ -227,7 +191,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       lat: place.geometry.coordinates[1],
     };
     setPoint(coordinates);
-    setAddress(place.place_name);
+    setPickupLocation(place.place_name);
     setSuggestions([]);
 
     if (markerRef.current[type]) markerRef.current[type]!.remove();
@@ -281,33 +245,16 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     }
   }, [startPoint, endPoint]);
 
-  useEffect(() => {
-    const stored = localStorage.getItem("newTransaction");
-    if (stored) {
-      setTransaction(JSON.parse(stored));
-    }
-  }, []);
-
-  const handleAddDelivery = () => {
-    setDeliveryList([
-      ...deliveryList,
-      {
-        driver_id: "",
-        vehicle_id: "",
-        load_type: "",
-        load: "",
-        quantity: 0,
-        weight: 0,
-        vehicle: "",
-        pickup_location: "",
-        destination: "",
-        delivery_date: "",
-        delivery_deadline_date: "",
-        delivery_status: "",
-        delivery_cost: 0,
-      },
-    ]);
-  };
+  // zustand
+  const { delivery, setDelivery, setAllDelivery, resetDelivery } =
+    useDeliveryStore();
+  const [formData, setFormData] = [delivery, setAllDelivery];
+  const state = useDeliveryStore.getState();
+  console.log(state.delivery);
+  const { deliveryPrice, loading, error } = useDeliveryCalculation(
+    distance,
+    formData.vehicle_id
+  );
 
   const handleChange = (
     event: React.ChangeEvent<
@@ -315,55 +262,21 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     >
   ) => {
     const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
+    setDelivery({
       [name]: value,
-    }));
-  };
-
-  const handleSubmit = async () => {
-    if (!transaction) return alert("Transaksi tidak ditemukan");
-
-    const finalData = {
-      ...(transaction as Record<string, any>),
-      delivery: deliveryList,
-      total_delivery: deliveryList.length,
-    };
-
-    try {
-      await axios.post("http://localhost:8080/transaction", finalData);
-      alert("Transaksi dan pengiriman berhasil dikirim!");
-      localStorage.removeItem("newTransaction");
-    } catch (error) {
-      console.error(error);
-      alert("Gagal menyimpan data");
-    }
+    });
   };
 
   const clearForm = () => {
-    setFormData({
-      driver_id: "",
-      vehicle_id: "",
-      load_type: "",
-      load: "",
-      quantity: 0,
-      weight: 0,
-      vehicle: "",
-      pickup_location: "",
-      destination: "",
-      delivery_date: "",
-      delivery_deadline_date: "",
-      delivery_status: "",
-      delivery_cost: 0,
-    });
+    setFormData(formData);
 
     setStartPoint(null);
     setEndPoint(null);
     setRoute(null);
     setDistance(null);
     setDuration(null);
-    setAddress("");
-    setEndAddress("");
+    setPickupLocation("");
+    setDestination("");
 
     if (markerRef.current.start) markerRef.current.start.remove();
     if (markerRef.current.end) markerRef.current.end.remove();
@@ -376,17 +289,17 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   };
 
   const handleCancel = () => {
-    localStorage.removeItem("newTransaction");
+    resetDelivery();
   };
 
   return (
     <Card className="text-sm flex justify-center items-center rounded-none shadow-none">
-      <form onSubmit={handleSubmit} className="mt-4 space-y-6 ">
+      <form className="mt-4 space-y-6 ">
         <SubTitle subTitle="Form Tambah Pengiriman" className="text-center" />
         <SelectComponent
           label="Jenis Muatan"
           placeholder="Pilih jenis barang"
-          name="loadType"
+          name="load_type"
           value={formData.load_type}
           onChange={handleChange}
           options={[
@@ -433,7 +346,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         <SelectComponent
           label="Driver"
           placeholder="Pilih driver yang akan ditugaskan"
-          name="driver"
+          name="driver_id"
           options={driverOptions}
           value={formData.driver_id}
           onChange={handleChange}
@@ -441,9 +354,9 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         <SelectComponent
           label="Kendaraan"
           placeholder="Pilih kendaraan yang tersedia"
-          name="vehicle"
+          name="vehicle_id"
           options={vehicleOptions}
-          value={formData.vehicle}
+          value={formData.vehicle_id}
           onChange={handleChange}
         />
         <div className="relative w-full">
@@ -451,10 +364,10 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
             label="Lokasi Penjemputan"
             placeholder="Jl. ABC No.10, Jakarta Pusat"
             type="text"
-            name="pickup_location"
-            value={address}
+            name="pickupLocation"
+            value={pickupLocation}
             onChange={(e) => {
-              setAddress(e.target.value);
+              setPickupLocation(e.target.value);
               fetchAddressSuggestions(e.target.value, setStartSuggestions);
             }}
           />
@@ -467,7 +380,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
                   handleSelectAddress(
                     place,
                     setStartPoint,
-                    setAddress,
+                    setPickupLocation,
                     setStartSuggestions,
                     "start"
                   )
@@ -484,9 +397,9 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
             placeholder="Pergudangan ABC, Bekasi Timur"
             type="text"
             name="destination"
-            value={endAddress}
+            value={destination}
             onChange={(e) => {
-              setEndAddress(e.target.value);
+              setDestination(e.target.value);
               fetchAddressSuggestions(e.target.value, setEndSuggestions);
             }}
           />
@@ -499,7 +412,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
                   handleSelectAddress(
                     place,
                     setEndPoint,
-                    setEndAddress,
+                    setDestination,
                     setEndSuggestions,
                     "end"
                   )
@@ -525,21 +438,21 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         <InputComponent
           label="Tanggal Pengiriman"
           type="date"
-          name="deliveryDate"
+          name="delivery_date"
           value={formData.delivery_date}
           onChange={handleChange}
         />
         <InputComponent
           label="Batas Pengiriman"
           type="date"
-          name="deliveryDeadlineDate"
+          name="delivery_deadline_date"
           value={formData.delivery_deadline_date}
           onChange={handleChange}
         />
         <InputComponent
           className="w-60"
           label="Biaya Pengiriman"
-          name="deliveryPrice"
+          name="delivery_cost"
           value={
             loading
               ? "Menghitung..."
@@ -549,7 +462,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           }
           disabled={true}
         />
-        {error && <p className="text-red-500">{error}</p>}
         <div className="flex justify-center w-full gap-3 py-5">
           <ButtonComponent
             variant="back"

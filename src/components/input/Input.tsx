@@ -13,6 +13,7 @@ type InputComponentProps = {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
   onClick?: () => void;
+  error?: string;
 };
 
 export const InputComponent: React.FC<InputComponentProps> = ({
@@ -25,6 +26,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   disabled,
   onChange,
   onClick,
+  error,
 }) => {
   const [dateValue, setDateValue] = useState<string>("");
 
