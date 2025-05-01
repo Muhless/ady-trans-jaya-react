@@ -24,9 +24,8 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
   error,
 }) => {
   const { goToCustomerPages } = useNavigationHooks();
-  const isCustomer = label?.toLowerCase().includes("pelanggan");
-  const baseClass =
-    "bg-background p-2 cursor-pointer rounded-md focus:ring-biru focus:ring-2 focus:outline-none";
+  // const isCustomer = label?.toLowerCase().includes("pelanggan");
+   
 
   return (
     <div className="flex items-center gap-5 justify-between">
@@ -35,9 +34,7 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
         <select
           name={name}
           value={value}
-          className={`${baseClass} ${isCustomer ? "w-[338px]" : "w-72"} ${
-            className ?? ""
-          }`}
+          className={`bg-background p-2 w-72 cursor-pointer rounded-md focus:ring-biru focus:ring-2 focus:outline-none ${className}`}
           onChange={onChange}
         >
           <option value="" disabled hidden className="text-gray-500">
@@ -49,11 +46,11 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
             </option>
           ))}
         </select>
-        {isCustomer && (
+        {/* {isCustomer && (
           <div className="rounded-md bg-green-400 text-white p-2 cursor-pointer">
             <Plus size={22} onClick={goToCustomerPages} />
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
