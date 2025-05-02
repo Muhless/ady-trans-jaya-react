@@ -17,6 +17,7 @@ import { useDeliveryCalculation } from "../../hooks/useDeliveryCost";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { useDeliveryStore } from "../../stores/deliveryStore";
+import SearchLocationInput from "../map/SearchLocation";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -61,10 +62,10 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     end: mapboxgl.Marker | null;
   }>({ start: null, end: null });
   const [startPoint, setStartPoint] = useState<{
-    lng: number;
     lat: number;
+    lng: number;
   } | null>(null);
-  const [endPoint, setEndPoint] = useState<{ lng: number; lat: number } | null>(
+  const [endPoint, setEndPoint] = useState<{ lat: number; lng: number } | null>(
     null
   );
   const [route, setRoute] = useState<GeoJSON.LineString | null>(null);
@@ -74,9 +75,11 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const [destination, setDestination] = useState<string>("");
   const [startSuggestions, setStartSuggestions] = useState<Place[]>([]);
   const [endSuggestions, setEndSuggestions] = useState<Place[]>([]);
-  const [deliveryList, setDeliveryList] = useState([]);
-
-  const { goToTransactionPages } = useNavigationHooks();
+  const [selectingPoint, setSelectingPoint] = useState<"start" | "end" | null>(
+    null
+  );
+  const [startLocation, setStartLocation] = React.useState<string>("");
+  const { goBack, goToTransactionPages } = useNavigationHooks();
   const driverOptions = useFetchOptions("http://localhost:8080/api/driver");
   const formatVehicleLabel = useCallback(
     (vehicle: {
@@ -106,19 +109,57 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         container: (ref as React.RefObject<HTMLDivElement>)
           .current as HTMLDivElement,
         style: "mapbox://styles/mapbox/streets-v11",
-        // style: "mapbox://styles/mapbox/dark-v11",
         center: [106.8456, -6.2088], // Jakarta
-        // center: [106.6297, -6.1781], // Tangerang
-        // zoom: 5,
         maxBounds: [
           [95.0, -11.0],
           [141.0, 6.1],
         ],
       });
+
       mapRef.current.scrollZoom.enable();
       mapRef.current.doubleClickZoom.enable();
+
+      const handleClick = (e: mapboxgl.MapMouseEvent) => {
+        const { lng, lat } = e.lngLat;
+
+        if (selectingPoint === "start") {
+          setStartPoint({ lng, lat });
+          setPickupLocation(`Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`);
+
+          if (markerRef.current.start) markerRef.current.start.remove();
+          markerRef.current.start = new mapboxgl.Marker({ color: "#0ebdf6" })
+            .setLngLat([lng, lat])
+            .addTo(mapRef.current!);
+
+          mapRef.current!.flyTo({
+            center: [lng, lat],
+            zoom: 15,
+          });
+        } else {
+          setEndPoint({ lng, lat });
+          setDestination(`Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`);
+
+          if (markerRef.current.end) markerRef.current.end.remove();
+          markerRef.current.end = new mapboxgl.Marker({ color: "#ffa7a7" })
+            .setLngLat([lng, lat])
+            .addTo(mapRef.current!);
+
+          mapRef.current!.flyTo({
+            center: [lng, lat],
+            zoom: 15,
+          });
+        }
+      };
+
+      mapRef.current.on("click", handleClick);
+
+      return () => {
+        mapRef.current?.off("click", handleClick);
+        mapRef.current?.remove();
+        mapRef.current = null;
+      };
     }
-  }, [ref]);
+  }, [ref, selectingPoint]);
 
   const fetchRoute = async () => {
     if (!startPoint || !endPoint) return;
@@ -182,7 +223,8 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     setPoint: React.Dispatch<
       React.SetStateAction<{ lng: number; lat: number } | null>
     >,
-    setPickupLocation: React.Dispatch<React.SetStateAction<string>>,
+    setInputValue: React.Dispatch<React.SetStateAction<string>>,
+    // setPickupLocation: React.Dispatch<React.SetStateAction<string>>,
     setSuggestions: React.Dispatch<React.SetStateAction<Place[]>>,
     type: "start" | "end"
   ) => {
@@ -191,7 +233,8 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       lat: place.geometry.coordinates[1],
     };
     setPoint(coordinates);
-    setPickupLocation(place.place_name);
+    setInputValue(place.place_name);
+    // setPickupLocation(place.place_name);
     setSuggestions([]);
 
     if (markerRef.current[type]) markerRef.current[type]!.remove();
@@ -290,200 +333,268 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
 
   const handleCancel = () => {
     resetDelivery();
+    goBack;
+  };
+
+  const handlePlaceSelect = (place: Place) => {
+    // Do something with the selected place, for example:
+    setStartLocation(place.place_name);
   };
 
   return (
-    <Card className="text-sm flex justify-center items-center rounded-none shadow-none">
-      <form className="mt-4 space-y-6 ">
-        <SubTitle subTitle="Form Tambah Pengiriman" className="text-center" />
-        <SelectComponent
-          label="Jenis Muatan"
-          placeholder="Pilih jenis barang"
-          name="load_type"
-          value={formData.load_type}
-          onChange={handleChange}
-          options={[
-            {
-              value: "consumer_goods",
-              label: "Barang Konsumen (Consumer Goods)",
-            },
-            { value: "building_materials", label: "Material Bangunan" },
-            { value: "industrial_goods", label: "Barang Industri" },
-            { value: "agricultural_products", label: "Hasil Pertanian" },
-            { value: "livestock", label: "Ternak" },
-            { value: "chemicals", label: "Bahan Kimia" },
-            { value: "electronics", label: "Elektronik" },
-            { value: "furniture", label: "Furniture" },
-            { value: "automotive_parts", label: "Suku Cadang Otomotif" },
-            { value: "waste_materials", label: "Limbah / Barang Bekas" },
-            { value: "others", label: "Lainnya" },
-          ]}
+    <form className="px-5 space-y-5 text-sm flex flex-col justify-center rounded-none shadow-none">
+      <SubTitle
+        subTitle="Form Tambah Pengiriman"
+        className="text-center mt-6"
+      />
+      <SelectComponent
+        label="Jenis Muatan"
+        placeholder="Pilih jenis barang"
+        name="load_type"
+        value={formData.load_type}
+        onChange={handleChange}
+        options={[
+          {
+            value: "consumer_goods",
+            label: "Barang Konsumen (Consumer Goods)",
+          },
+          { value: "building_materials", label: "Material Bangunan" },
+          { value: "industrial_goods", label: "Barang Industri" },
+          { value: "agricultural_products", label: "Hasil Pertanian" },
+          { value: "livestock", label: "Ternak" },
+          { value: "chemicals", label: "Bahan Kimia" },
+          { value: "electronics", label: "Elektronik" },
+          { value: "furniture", label: "Furniture" },
+          { value: "automotive_parts", label: "Suku Cadang Otomotif" },
+          { value: "waste_materials", label: "Limbah / Barang Bekas" },
+          { value: "others", label: "Lainnya" },
+        ]}
+      />
+      <InputComponent
+        label="Muatan"
+        placeholder="AC 2PK, Mesin Cuci, Sofa L"
+        type="text"
+        name="load"
+        value={formData.load}
+        onChange={handleChange}
+      />
+      <InputComponent
+        label="Jumlah Muatan"
+        placeholder="Masukkan jumlah unit, misal: 3"
+        type="text"
+        name="quantity"
+        value={formData.quantity}
+        onChange={handleChange}
+      />
+      <InputComponent
+        label="Berat Muatan"
+        type="number"
+        placeholder="Masukkan berat total dalam kg"
+        name="weight"
+        value={formData.weight}
+        onChange={handleChange}
+      />
+      <SelectComponent
+        label="Driver"
+        placeholder="Pilih driver yang akan ditugaskan"
+        name="driver_id"
+        options={driverOptions}
+        value={formData.driver_id}
+        onChange={handleChange}
+      />
+      <SelectComponent
+        label="Kendaraan"
+        placeholder="Pilih kendaraan yang tersedia"
+        name="vehicle_id"
+        options={vehicleOptions}
+        value={formData.vehicle_id}
+        onChange={handleChange}
+      />
+      <div className="">
+        <SearchLocationInput
+          placeholder="Cari alamat"
+          value={startLocation}
+          onSelectPlace={handlePlaceSelect}
+          mapRef={mapRef}
         />
+        <div id="map" className="h-full"></div>
+      </div>
+
+      <div className="relative w-full">
         <InputComponent
-          label="Muatan"
-          placeholder="AC 2PK, Mesin Cuci, Sofa L"
+          label="Lokasi Penjemputan"
+          placeholder="Jl. ABC No.10, Jakarta Pusat"
           type="text"
-          name="load"
-          value={formData.load}
-          onChange={handleChange}
+          name="pickupLocation"
+          value={pickupLocation}
+          setSelectingPoint={setSelectingPoint}
+          pointType="start"
+          onChange={(e) => {
+            setPickupLocation(e.target.value);
+            fetchAddressSuggestions(e.target.value, setStartSuggestions);
+          }}
         />
+        <ul className="absolute left-0 z-10 w-full mt-1 text-sm rounded top-full bg-background">
+          {startSuggestions.map((place) => (
+            <li
+              key={place.id}
+              className="p-2 cursor-pointer hover:bg-biru hover:text-background border"
+              onClick={() =>
+                handleSelectAddress(
+                  place,
+                  setStartPoint,
+                  setPickupLocation,
+                  setStartSuggestions,
+                  "start"
+                )
+              }
+            >
+              {place.place_name}
+            </li>
+          ))}
+        </ul>
+        <div className="absolute flex justify mt-2 right-0">
+          <InputComponent
+            type="text"
+            name="latitude"
+            placeholder="latitude"
+            className="w-[134px]"
+            setSelectingPoint={() => setSelectingPoint("end")}
+            value={startPoint ? startPoint.lat.toString() : ""}
+            onChange={() => {}}
+            disabled
+          />
+          <InputComponent
+            type="text"
+            name="longitude"
+            placeholder="longitude"
+            className="w-[134px]"
+            value={startPoint ? startPoint.lng.toString() : ""}
+            onChange={() => {}}
+            disabled
+          />
+        </div>
+        <br />
+        <br />
+      </div>
+
+      <div className="relative w-full">
         <InputComponent
-          label="Jumlah Muatan"
-          placeholder="Masukkan jumlah unit, misal: 3"
+          label="Lokasi Tujuan"
+          placeholder="Pergudangan ABC, Bekasi Timur"
           type="text"
-          name="quantity"
-          value={formData.quantity}
-          onChange={handleChange}
+          name="destination"
+          setSelectingPoint={setSelectingPoint}
+          pointType="end"
+          value={destination}
+          onChange={(e) => {
+            setDestination(e.target.value);
+            fetchAddressSuggestions(e.target.value, setEndSuggestions);
+          }}
         />
-        <InputComponent
-          label="Berat Muatan"
-          type="number"
-          placeholder="Masukkan berat total dalam kg"
-          name="weight"
-          value={formData.weight}
-          onChange={handleChange}
-        />
-        <SelectComponent
-          label="Driver"
-          placeholder="Pilih driver yang akan ditugaskan"
-          name="driver_id"
-          options={driverOptions}
-          value={formData.driver_id}
-          onChange={handleChange}
-        />
-        <SelectComponent
-          label="Kendaraan"
-          placeholder="Pilih kendaraan yang tersedia"
-          name="vehicle_id"
-          options={vehicleOptions}
-          value={formData.vehicle_id}
-          onChange={handleChange}
-        />
-        <div className="relative w-full">
+        <ul className="absolute left-0 z-10 w-full mt-1 text-sm rounded top-full bg-background">
+          {endSuggestions.map((place) => (
+            <li
+              key={place.id}
+              className="p-2 cursor-pointer hover:bg-biru hover:text-background"
+              onClick={() =>
+                handleSelectAddress(
+                  place,
+                  setEndPoint,
+                  setDestination,
+                  setEndSuggestions,
+                  "end"
+                )
+              }
+            >
+              {place.place_name}
+            </li>
+          ))}
+        </ul>
+        <div className="absolute flex justify mt-2 right-0">
           <InputComponent
-            label="Lokasi Penjemputan"
-            placeholder="Jl. ABC No.10, Jakarta Pusat"
             type="text"
-            name="pickupLocation"
-            value={pickupLocation}
-            onChange={(e) => {
-              setPickupLocation(e.target.value);
-              fetchAddressSuggestions(e.target.value, setStartSuggestions);
-            }}
+            name="latitude"
+            placeholder="latitude"
+            className="w-[134px]"
+            value={endPoint ? endPoint.lat.toString() : ""}
+            onChange={() => {}}
+            disabled
           />
-          <ul className="absolute left-0 z-10 w-full mt-1 text-sm rounded top-full bg-background">
-            {startSuggestions.map((place) => (
-              <li
-                key={place.id}
-                className="p-2 cursor-pointer hover:bg-biru hover:text-background border"
-                onClick={() =>
-                  handleSelectAddress(
-                    place,
-                    setStartPoint,
-                    setPickupLocation,
-                    setStartSuggestions,
-                    "start"
-                  )
-                }
-              >
-                {place.place_name}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="relative w-full">
           <InputComponent
-            label="Lokasi Tujuan"
-            placeholder="Pergudangan ABC, Bekasi Timur"
             type="text"
-            name="destination"
-            value={destination}
-            onChange={(e) => {
-              setDestination(e.target.value);
-              fetchAddressSuggestions(e.target.value, setEndSuggestions);
-            }}
-          />
-          <ul className="absolute left-0 z-10 w-full mt-1 text-sm rounded top-full bg-background">
-            {endSuggestions.map((place) => (
-              <li
-                key={place.id}
-                className="p-2 cursor-pointer hover:bg-biru hover:text-background"
-                onClick={() =>
-                  handleSelectAddress(
-                    place,
-                    setEndPoint,
-                    setDestination,
-                    setEndSuggestions,
-                    "end"
-                  )
-                }
-              >
-                {place.place_name}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="space-y-4">
-          <InputComponent
-            label="Jarak"
-            disabled={true}
-            value={distance != null ? `${distance} Km` : ""}
-          />
-          <InputComponent
-            label="Perkiraan Waktu"
-            disabled={true}
-            value={duration ?? ""}
+            name="longitude"
+            placeholder="longitude"
+            className="w-[134px]"
+            value={endPoint ? endPoint.lng.toString() : ""}
+            onChange={() => {}}
+            disabled
           />
         </div>
+        <br />
+        <br />
+      </div>
+
+      <div className="space-y-4">
         <InputComponent
-          label="Tanggal Pengiriman"
-          type="date"
-          name="delivery_date"
-          value={formData.delivery_date}
-          onChange={handleChange}
-        />
-        <InputComponent
-          label="Batas Pengiriman"
-          type="date"
-          name="delivery_deadline_date"
-          value={formData.delivery_deadline_date}
-          onChange={handleChange}
-        />
-        <InputComponent
-          className="w-60"
-          label="Biaya Pengiriman"
-          name="delivery_cost"
-          value={
-            loading
-              ? "Menghitung..."
-              : isNaN(deliveryPrice)
-              ? "0"
-              : `Rp ${deliveryPrice.toLocaleString("id-ID")}`
-          }
+          label="Jarak"
           disabled={true}
+          value={distance != null ? `${distance} Km` : ""}
         />
-        <div className="flex justify-center w-full gap-3 py-5">
-          <ButtonComponent
-            variant="back"
-            label="Kembali"
-            className="w-full"
-            onClick={handleCancel}
-          />
-          <ButtonComponent
-            variant="undo"
-            label="Ulangi"
-            onClick={clearForm}
-            className="w-full"
-          />
-          <ButtonComponent
-            variant="save"
-            label="Simpan"
-            className="w-full"
-            onClick={goToTransactionPages}
-          />
-        </div>
-      </form>
-    </Card>
+        <InputComponent
+          label="Perkiraan Waktu"
+          disabled={true}
+          value={duration ?? ""}
+        />
+      </div>
+      <InputComponent
+        label="Tanggal Pengiriman"
+        type="date"
+        name="delivery_date"
+        value={formData.delivery_date}
+        onChange={handleChange}
+      />
+      <InputComponent
+        label="Batas Pengiriman"
+        type="date"
+        name="delivery_deadline_date"
+        value={formData.delivery_deadline_date}
+        onChange={handleChange}
+      />
+      <InputComponent
+        className="w-60"
+        label="Biaya Pengiriman"
+        name="delivery_cost"
+        value={
+          loading
+            ? "Menghitung..."
+            : isNaN(deliveryPrice)
+            ? "0"
+            : `Rp ${deliveryPrice.toLocaleString("id-ID")}`
+        }
+        disabled={true}
+      />
+      <div className="flex justify-center w-full gap-3 py-5">
+        <ButtonComponent
+          variant="back"
+          label="Kembali"
+          className="w-full"
+          onClick={handleCancel}
+        />
+        <ButtonComponent
+          variant="undo"
+          label="Ulangi"
+          onClick={clearForm}
+          className="w-full"
+        />
+        <ButtonComponent
+          variant="save"
+          label="Simpan"
+          className="w-full"
+          onClick={goToTransactionPages}
+        />
+      </div>
+    </form>
   );
 });
 

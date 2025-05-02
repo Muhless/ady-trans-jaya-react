@@ -12,6 +12,7 @@ function AddTransactionPages() {
           className="flex justify-center mt-5 text-3xl"
         />
         <AddTransactionForm />
+      
       </Card>
     </div>
   );

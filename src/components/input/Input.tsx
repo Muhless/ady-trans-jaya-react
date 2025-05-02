@@ -1,5 +1,5 @@
 import { MapPin } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 type InputComponentProps = {
   label?: string;
@@ -12,7 +12,11 @@ type InputComponentProps = {
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
-  onClick?: () => void;
+  pointType?: "start" | "end";
+
+  setSelectingPoint?: React.Dispatch<
+    React.SetStateAction<"start" | "end" | null>
+  >;
 };
 
 export const InputComponent: React.FC<InputComponentProps> = ({
@@ -24,7 +28,8 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   value,
   disabled,
   onChange,
-  onClick,
+  pointType,
+  setSelectingPoint,
 }) => {
   const isLocationField = label?.toLowerCase().includes("lokasi");
   const isWeightField = label?.toLowerCase().includes("berat");
@@ -59,15 +64,16 @@ export const InputComponent: React.FC<InputComponentProps> = ({
             onChange={onChange}
           />
         )}
-        {isLocationField && (
+        {isLocationField && pointType && (
           <button
             type="button"
-            onClick={onClick}
+            onClick={() => setSelectingPoint?.(pointType)}
             className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
           >
             <MapPin size={20} />
           </button>
         )}
+
         {isWeightField && <span className="text-gray-600 p-2">kg</span>}
       </div>
     </div>

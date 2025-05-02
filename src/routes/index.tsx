@@ -21,6 +21,7 @@ import SubmitDeliveryPages from "../features/transaction/AddTransaction";
 import AddDeliveryPages from "../features/delivery/AddDelivery";
 import TransactionPages from "../features/transaction/Index";
 import AddTransactionPages from "../features/transaction/AddTransaction";
+import TransactionSummaryForm from "../components/form/TransactionSummaryForm";
 
 function AppRoutes() {
   return (
@@ -44,12 +45,18 @@ function AppRoutes() {
           <Route path="/rent" element={<RentalPages />} />
           {/* delivery */}
           <Route path="/delivery" element={<DeliveryPages />} />
-          <Route path="/delivery/add" element={<SubmitDeliveryPages />} />
-          <Route path="/delivery/add/form" element={<AddDeliveryPages />} />
+          <Route
+            path="/transaction/add/delivery"
+            element={<AddDeliveryPages />}
+          />
           <Route path="/delivery/:id" element={<DetailDeliveryPages />} />
           {/* transaction */}
           <Route path="/transaction" element={<TransactionPages />} />
           <Route path="/transaction/add" element={<AddTransactionPages />} />
+          <Route
+            path="/transaction/add/summary"
+            element={<TransactionSummaryForm />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>

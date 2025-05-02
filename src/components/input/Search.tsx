@@ -2,13 +2,21 @@ import { Search } from "lucide-react";
 import React from "react";
 
 type SearchProps = {
+  label?: string;
   placeholder?: string;
+  value?: string;
+  type?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-const SearchInput: React.FC<SearchProps> = ({ placeholder = "cari data" }) => {
+const SearchInput: React.FC<SearchProps> = ({
+  label,
+  value,
+  type,
+  placeholder = "cari data",
+}) => {
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <span className="absolute inset-y-0 flex items-center transition-colors duration-200 left-3">
         <Search size={18} />
       </span>

@@ -3,7 +3,7 @@ import { InputComponent } from "../input/Input";
 import ButtonComponent from "../button/Index";
 import useNavigationHooks from "../../hooks/useNavigation";
 
-const SummaryTransactionForm = () => {
+const TransactionSummaryForm = () => {
   const { goToAddDeliveryForm } = useNavigationHooks();
 
   const handleAddDelivery = () => {
@@ -11,7 +11,7 @@ const SummaryTransactionForm = () => {
   };
   return (
     <form action="">
-    <div className="flex justify-between gap-5">
+      <div className="flex justify-between gap-5">
         <h1>Pengiriman</h1>
         <div className="flex flex-col">
           <div className="flex justify-between items-center p-2 transition rounded-md duration-300 hover:bg-biru cursor-pointer bg-background border w-96">
@@ -48,7 +48,7 @@ const SummaryTransactionForm = () => {
         // onChange={handleChange}
       />
       <hr />
-    
+
       <InputComponent
         label="Total"
         disabled
@@ -69,9 +69,9 @@ const SummaryTransactionForm = () => {
           className="w-full"
           type="submit"
         />
-        </div>
+      </div>
     </form>
   );
 };
 
-export default SummaryTransactionForm;
+export default TransactionSummaryForm;

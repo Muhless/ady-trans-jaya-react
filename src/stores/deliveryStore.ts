@@ -1,4 +1,3 @@
-// src/stores/DeliveryStore.ts
 import { create } from "zustand";
 
 type Delivery = {
@@ -19,7 +18,9 @@ type Delivery = {
 type DeliveryStore = {
   delivery: Delivery;
   setDelivery: (data: Partial<Delivery>) => void;
+  setPickupLocation: (value: string) => void;
   setAllDelivery: (data: Delivery) => void;
+  setDestination: (value: string) => void;
   resetDelivery: () => void;
 };
 
@@ -37,11 +38,18 @@ export const useDeliveryStore = create<DeliveryStore>((set) => ({
     delivery_deadline_date: "",
     delivery_status: "",
     delivery_cost: 0,
-
   },
   setDelivery: (data) =>
     set((state) => ({
       delivery: { ...state.delivery, ...data },
+    })),
+  setPickupLocation: (value) =>
+    set((state) => ({
+      delivery: { ...state.delivery, pickup_location: value },
+    })),
+  setDestination: (value) =>
+    set((state) => ({
+      delivery: { ...state.delivery, destination: value },
     })),
   setAllDelivery: (data) => set({ delivery: data }),
   resetDelivery: () =>

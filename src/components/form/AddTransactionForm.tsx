@@ -1,34 +1,25 @@
-import React, { useState } from "react";
-import SelectComponent from "../input/Select";
+import React from "react";
 import { useCustomers } from "../../hooks/useCustomers";
 import useNavigationHooks from "../../hooks/useNavigation";
-import axios from "axios";
+import { useTransactionStore } from "../../stores/transactionStore";
+import SelectComponent from "../input/Select";
 import ButtonComponent from "../button/Index";
 
 const AddTransactionForm = () => {
-  const { goToAddDeliveryForm, goToCustomerPages } = useNavigationHooks();
+  const { goToAddDeliveryForm, goToCustomerPages, goBack } =
+    useNavigationHooks();
   const { customers, loading, error } = useCustomers();
 
-  const [formData, setFormData] = useState({
-    customer_id: "",
-    // total_delivery: 0,
-    // cost: 0,
-    // payment_deadline: "",
-    // down_payment: 0,
-    // down_payment_status: "unpaid",
-    // down_payment_time: "",
-    // full_payment: 0,
-    // full_payment_status: "unpaid",
-    // full_payment_time: "",
-    // transaction_status: "ongoing",
-  });
-
+  const { transaction, setTransaction, resetTransaction } =
+    useTransactionStore();
+  const state = useTransactionStore.getState();
+  console.log(state.transaction);
   const customerOptions = customers.map((customer) => ({
     value: customer.id.toString(),
     label: customer.name,
   }));
   const selectedCustomer = customers.find(
-    (c) => c.id === Number(formData.customer_id)
+    (c) => c.id === Number(transaction.customer_id)
   );
   const handleChange = (
     event: React.ChangeEvent<
@@ -36,14 +27,17 @@ const AddTransactionForm = () => {
     >
   ) => {
     const { name, value } = event.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setTransaction({ [name]: value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!transaction.customer_id) {
+      alert("Silakan pilih pelanggan terlebih dahulu.");
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:8080/api/transaction", {
         method: "POST",
@@ -51,25 +45,26 @@ const AddTransactionForm = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ...formData,
-          customer_id: Number(formData.customer_id),
+          ...transaction,
+          customer_id: Number(transaction.customer_id),
         }),
       });
-
-      if (!formData.customer_id) {
-        alert("Silakan pilih pelanggan terlebih dahulu.");
-        return;
-      }
 
       const result = await response.json();
       if (!response.ok) {
         throw new Error(result.error || "Gagal menyimpan data");
       }
+
       console.log("Data berhasil disimpan", result);
       goToAddDeliveryForm();
     } catch (error: any) {
       console.error("Terjadi kesalahan", error);
     }
+  };
+
+  const handleCancel = () => {
+    resetTransaction();
+    goBack;
   };
 
   if (loading) return <p>Harap tunggu sebentar...</p>;
@@ -80,7 +75,7 @@ const AddTransactionForm = () => {
       <SelectComponent
         label="Pelanggan"
         name="customer_id"
-        value={formData.customer_id}
+        value={transaction.customer_id}
         className="w-96"
         onChange={handleChange}
         options={customerOptions}
@@ -119,7 +114,12 @@ const AddTransactionForm = () => {
       </div>
 
       <div className="flex w-full gap-3">
-        <ButtonComponent label="Kembali" variant="back" className="w-full" />
+        <ButtonComponent
+          label="Batal"
+          variant="back"
+          className="w-full"
+          onClick={handleCancel}
+        />
         <ButtonComponent
           label="Lanjutkan"
           type="submit"
