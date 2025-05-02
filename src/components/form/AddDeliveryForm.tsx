@@ -18,6 +18,8 @@ import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { useDeliveryStore } from "../../stores/deliveryStore";
 import SearchLocationInput from "../map/SearchLocation";
+import { InputLatLang } from "../input/InputLatLang";
+import { MapPin } from "lucide-react";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -121,34 +123,52 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
 
       const handleClick = (e: mapboxgl.MapMouseEvent) => {
         const { lng, lat } = e.lngLat;
+        const type = selectingPoint === "start" ? "start" : "end";
 
-        if (selectingPoint === "start") {
+        const markerColor = type === "start" ? "#0ebdf6" : "#ffa7a7";
+
+        // Set state
+        if (type === "start") {
           setStartPoint({ lng, lat });
           setPickupLocation(`Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`);
-
-          if (markerRef.current.start) markerRef.current.start.remove();
-          markerRef.current.start = new mapboxgl.Marker({ color: "#0ebdf6" })
-            .setLngLat([lng, lat])
-            .addTo(mapRef.current!);
-
-          mapRef.current!.flyTo({
-            center: [lng, lat],
-            zoom: 15,
-          });
         } else {
           setEndPoint({ lng, lat });
           setDestination(`Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`);
-
-          if (markerRef.current.end) markerRef.current.end.remove();
-          markerRef.current.end = new mapboxgl.Marker({ color: "#ffa7a7" })
-            .setLngLat([lng, lat])
-            .addTo(mapRef.current!);
-
-          mapRef.current!.flyTo({
-            center: [lng, lat],
-            zoom: 15,
-          });
         }
+
+        // Remove existing marker
+        if (markerRef.current[type]) markerRef.current[type]!.remove();
+
+        // Create popup
+        const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
+          `<div style="
+              background-color: ${markerColor};
+              color: white;
+              padding: 8px 12px;
+              border-radius: 8px;
+              font-size: 14px;
+              font-weight: bold;
+              text-align: center;
+              box-shadow: 0px 4px 8px rgba(0,0,0,0.3);
+              border: 2px solid white;
+              letter-spacing: 0.5px;
+              min-width: 100px;
+          ">
+              ${type === "start" ? "🚀 Keberangkatan" : "📍 Tujuan"}
+          </div>`
+        );
+
+        // Add new marker with popup
+        markerRef.current[type] = new mapboxgl.Marker({ color: markerColor })
+          .setLngLat([lng, lat])
+          .setPopup(popup)
+          .addTo(mapRef.current!);
+
+        // Fly to selected point
+        mapRef.current!.flyTo({
+          center: [lng, lat],
+          zoom: 15,
+        });
       };
 
       mapRef.current.on("click", handleClick);
@@ -224,7 +244,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       React.SetStateAction<{ lng: number; lat: number } | null>
     >,
     setInputValue: React.Dispatch<React.SetStateAction<string>>,
-    // setPickupLocation: React.Dispatch<React.SetStateAction<string>>,
     setSuggestions: React.Dispatch<React.SetStateAction<Place[]>>,
     type: "start" | "end"
   ) => {
@@ -234,7 +253,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     };
     setPoint(coordinates);
     setInputValue(place.place_name);
-    // setPickupLocation(place.place_name);
     setSuggestions([]);
 
     if (markerRef.current[type]) markerRef.current[type]!.remove();
@@ -299,6 +317,8 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     formData.vehicle_id
   );
 
+  const handleSubmit = () => {};
+
   const handleChange = (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -333,11 +353,14 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
 
   const handleCancel = () => {
     resetDelivery();
-    goBack;
+    goBack();
+    console.log(
+      "Transaction state after reset:",
+      useDeliveryStore.getState().delivery
+    );
   };
 
   const handlePlaceSelect = (place: Place) => {
-    // Do something with the selected place, for example:
     setStartLocation(place.place_name);
   };
 
@@ -410,131 +433,79 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         value={formData.vehicle_id}
         onChange={handleChange}
       />
-      <div className="">
+
+      <InputComponent
+        label="Alamat Penjemputan"
+        placeholder="Jl. ABC No.10, Jakarta Pusat"
+        type="textarea"
+        name="pickup_address"
+        value={formData.pickup_address}
+        onChange={handleChange}
+      />
+      <div>
         <SearchLocationInput
-          placeholder="Cari alamat"
+          placeholder="cari alamat"
           value={startLocation}
           onSelectPlace={handlePlaceSelect}
           mapRef={mapRef}
         />
         <div id="map" className="h-full"></div>
       </div>
-
-      <div className="relative w-full">
-        <InputComponent
-          label="Lokasi Penjemputan"
-          placeholder="Jl. ABC No.10, Jakarta Pusat"
-          type="text"
-          name="pickupLocation"
-          value={pickupLocation}
-          setSelectingPoint={setSelectingPoint}
-          pointType="start"
-          onChange={(e) => {
-            setPickupLocation(e.target.value);
-            fetchAddressSuggestions(e.target.value, setStartSuggestions);
-          }}
+      <div className="flex w-full gap-3">
+        <InputLatLang
+          placeholder="latitude"
+          disabled={true}
+          value={startPoint ? startPoint.lat.toString() : ""}
         />
-        <ul className="absolute left-0 z-10 w-full mt-1 text-sm rounded top-full bg-background">
-          {startSuggestions.map((place) => (
-            <li
-              key={place.id}
-              className="p-2 cursor-pointer hover:bg-biru hover:text-background border"
-              onClick={() =>
-                handleSelectAddress(
-                  place,
-                  setStartPoint,
-                  setPickupLocation,
-                  setStartSuggestions,
-                  "start"
-                )
-              }
-            >
-              {place.place_name}
-            </li>
-          ))}
-        </ul>
-        <div className="absolute flex justify mt-2 right-0">
-          <InputComponent
-            type="text"
-            name="latitude"
-            placeholder="latitude"
-            className="w-[134px]"
-            setSelectingPoint={() => setSelectingPoint("end")}
-            value={startPoint ? startPoint.lat.toString() : ""}
-            onChange={() => {}}
-            disabled
-          />
-          <InputComponent
-            type="text"
-            name="longitude"
-            placeholder="longitude"
-            className="w-[134px]"
-            value={startPoint ? startPoint.lng.toString() : ""}
-            onChange={() => {}}
-            disabled
-          />
-        </div>
-        <br />
-        <br />
-      </div>
-
-      <div className="relative w-full">
-        <InputComponent
-          label="Lokasi Tujuan"
-          placeholder="Pergudangan ABC, Bekasi Timur"
-          type="text"
-          name="destination"
-          setSelectingPoint={setSelectingPoint}
-          pointType="end"
-          value={destination}
-          onChange={(e) => {
-            setDestination(e.target.value);
-            fetchAddressSuggestions(e.target.value, setEndSuggestions);
-          }}
+        <InputLatLang
+          placeholder="longitude"
+          disabled={true}
+          value={startPoint ? startPoint.lng.toString() : ""}
         />
-        <ul className="absolute left-0 z-10 w-full mt-1 text-sm rounded top-full bg-background">
-          {endSuggestions.map((place) => (
-            <li
-              key={place.id}
-              className="p-2 cursor-pointer hover:bg-biru hover:text-background"
-              onClick={() =>
-                handleSelectAddress(
-                  place,
-                  setEndPoint,
-                  setDestination,
-                  setEndSuggestions,
-                  "end"
-                )
-              }
-            >
-              {place.place_name}
-            </li>
-          ))}
-        </ul>
-        <div className="absolute flex justify mt-2 right-0">
-          <InputComponent
-            type="text"
-            name="latitude"
-            placeholder="latitude"
-            className="w-[134px]"
-            value={endPoint ? endPoint.lat.toString() : ""}
-            onChange={() => {}}
-            disabled
-          />
-          <InputComponent
-            type="text"
-            name="longitude"
-            placeholder="longitude"
-            className="w-[134px]"
-            value={endPoint ? endPoint.lng.toString() : ""}
-            onChange={() => {}}
-            disabled
-          />
-        </div>
-        <br />
-        <br />
+        <button
+          type="button"
+          onClick={() => setSelectingPoint("start")}
+          className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        >
+          <MapPin size={20} />
+        </button>
       </div>
-
+      <InputComponent
+        label="Alamat Tujuan"
+        placeholder="Pergudangan ABC, Bekasi Timur"
+        type="textarea"
+        name="destination_address"
+        value={formData.destination_address}
+        onChange={handleChange}
+      />
+      <div>
+        <SearchLocationInput
+          placeholder="cari alamat"
+          value={startLocation}
+          onSelectPlace={handlePlaceSelect}
+          mapRef={mapRef}
+        />
+        <div id="map" className="h-full"></div>
+      </div>
+      <div className="flex w-full gap-3">
+        <InputLatLang
+          placeholder="latitude"
+          disabled={true}
+          value={endPoint ? endPoint.lat.toString() : ""}
+        />
+        <InputLatLang
+          placeholder="longitude"
+          disabled={true}
+          value={endPoint ? endPoint.lng.toString() : ""}
+        />
+        <button
+          type="button"
+          onClick={() => setSelectingPoint("end")}
+          className="p-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+        >
+          <MapPin size={20} />
+        </button>
+      </div>
       <div className="space-y-4">
         <InputComponent
           label="Jarak"
@@ -579,6 +550,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           variant="back"
           label="Kembali"
           className="w-full"
+          type="button"
           onClick={handleCancel}
         />
         <ButtonComponent

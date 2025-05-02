@@ -14,13 +14,16 @@ const AddTransactionForm = () => {
     useTransactionStore();
   const state = useTransactionStore.getState();
   console.log(state.transaction);
+
   const customerOptions = customers.map((customer) => ({
     value: customer.id.toString(),
     label: customer.name,
   }));
+
   const selectedCustomer = customers.find(
     (c) => c.id === Number(transaction.customer_id)
   );
+
   const handleChange = (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -37,34 +40,32 @@ const AddTransactionForm = () => {
       alert("Silakan pilih pelanggan terlebih dahulu.");
       return;
     }
-
     try {
-      const response = await fetch("http://localhost:8080/api/transaction", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...transaction,
-          customer_id: Number(transaction.customer_id),
-        }),
+      const formattedPaymentDeadline = transaction.payment_deadline
+        ? new Date(transaction.payment_deadline).toISOString()
+        : null;
+
+      setTransaction({
+        customer_id: Number(transaction.customer_id),
+        payment_deadline: formattedPaymentDeadline,
       });
 
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.error || "Gagal menyimpan data");
-      }
+      console.log("Data tersimpan ke state:", transaction);
 
-      console.log("Data berhasil disimpan", result);
       goToAddDeliveryForm();
     } catch (error: any) {
       console.error("Terjadi kesalahan", error);
+      alert(`Error: ${error.message}`);
     }
   };
 
   const handleCancel = () => {
     resetTransaction();
-    goBack;
+    goBack();
+    console.log(
+      "Transaction state after reset:",
+      useTransactionStore.getState().transaction
+    );
   };
 
   if (loading) return <p>Harap tunggu sebentar...</p>;
@@ -117,6 +118,7 @@ const AddTransactionForm = () => {
         <ButtonComponent
           label="Batal"
           variant="back"
+          type="button"
           className="w-full"
           onClick={handleCancel}
         />

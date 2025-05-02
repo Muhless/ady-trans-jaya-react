@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import mapboxgl from "mapbox-gl";
 import { Search } from "lucide-react";
+import ButtonComponent from "../button/Index";
 
 interface Place {
   id: string;
@@ -60,8 +61,13 @@ const SearchLocationInput = ({
     }
   };
 
+  const handleReset = () => {
+    setInputValue("");
+    setSuggestions([]);
+  };
+
   return (
-    <div className="relative border">
+    <div className="relative flex gap-2">
       <span className="absolute inset-y-0 flex items-center transition-colors duration-200 left-3">
         <Search size={18} />
       </span>
@@ -70,7 +76,12 @@ const SearchLocationInput = ({
         value={inputValue}
         placeholder={placeholder}
         onChange={handleChange}
-        className="px-5 py-1 pl-10 text-sm rounded-md bg-secondary focus:border-background focus:outline-none focus:ring-2 focus:ring-biru peer w-full"
+        className="px-5 py-1 pl-10 text-sm rounded-md bg-secondary focus:border-background focus:outline-none focus:ring-2 focus:ring-biru peer w-full border"
+      />
+      <ButtonComponent
+        variant="delete"
+        className="rounded-md"
+        onClick={handleReset}
       />
       {suggestions.length > 0 && (
         <ul className="absolute z-10 bg-white border border-gray-300 w-full mt-1 rounded shadow max-h-48 overflow-y-auto">
