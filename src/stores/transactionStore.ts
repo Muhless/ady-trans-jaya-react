@@ -5,13 +5,13 @@ type Transaction = {
   customer_id: number;
   total_delivery: number;
   cost: number;
-  payment_deadline: string | null;
+  payment_deadline: string;
   down_payment: number;
   down_payment_status: string;
-  down_payment_time: string | null;
+  down_payment_time: string;
   full_payment: number;
   full_payment_status: string;
-  full_payment_time: string | null;
+  full_payment_time: string;
   transaction_status: string;
   deliveries: Delivery[];
 };
@@ -28,14 +28,14 @@ export const useTransactionStore = create<TransactionStore>((set) => ({
     customer_id: 0,
     total_delivery: 0,
     cost: 0,
-    payment_deadline: null,
+    payment_deadline: "",
     down_payment: 0,
     down_payment_status: "",
-    down_payment_time: null,
+    down_payment_time: "",
     full_payment: 0,
     full_payment_status: "",
-    full_payment_time: null,
-    transaction_status: "",
+    full_payment_time: "",
+    transaction_status: "menunggu persetujuan",
     deliveries: [],
   },
   setTransaction: (data) =>
@@ -57,14 +57,14 @@ export const useTransactionStore = create<TransactionStore>((set) => ({
         customer_id: 0,
         total_delivery: 0,
         cost: 0,
-        payment_deadline: null,
+        payment_deadline: "",
         down_payment: 0,
         down_payment_status: "",
-        down_payment_time: null,
+        down_payment_time: "",
         full_payment: 0,
         full_payment_status: "",
-        full_payment_time: null,
-        transaction_status: "",
+        full_payment_time: "",
+        transaction_status: "menunggu persetujuan",
         deliveries: [],
       },
     }),

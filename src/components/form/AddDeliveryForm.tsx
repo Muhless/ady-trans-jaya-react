@@ -20,6 +20,7 @@ import { useDeliveryStore } from "../../stores/deliveryStore";
 import SearchLocationInput from "../map/SearchLocation";
 import { InputLatLang } from "../input/InputLatLang";
 import { MapPin } from "lucide-react";
+import { useTransactionStore } from "../../stores/transactionStore";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -306,6 +307,24 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     }
   }, [startPoint, endPoint]);
 
+  useEffect(() => {
+    if (startPoint) {
+      setDelivery({
+        pickup_address_lat: startPoint.lat,
+        pickup_address_lang: startPoint.lng,
+      });
+    }
+  }, [startPoint]);
+
+  useEffect(() => {
+    if (endPoint) {
+      setDelivery({
+        destination_address_lat: endPoint.lat,
+        destination_address_lang: endPoint.lng,
+      });
+    }
+  }, [endPoint]);
+
   // zustand
   const { delivery, setDelivery, setAllDelivery, resetDelivery } =
     useDeliveryStore();
@@ -316,8 +335,36 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     distance,
     formData.vehicle_id
   );
+  const { addDeliveryToTransaction } = useTransactionStore();
 
-  const handleSubmit = () => {};
+  const handleSubmitDelivery = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const defaultDate = new Date().toISOString();
+      const formattedDeliveryDate = delivery.delivery_date
+        ? new Date(delivery.delivery_date).toISOString()
+        : defaultDate;
+
+      const formattedDeliveryDeadlineDate = delivery.delivery_deadline_date
+        ? new Date(delivery.delivery_deadline_date).toISOString()
+        : defaultDate;
+
+      const payload = {
+        ...delivery,
+        delivery_date: formattedDeliveryDate,
+        delivery_deadline_date: formattedDeliveryDeadlineDate,
+      };
+
+      addDeliveryToTransaction(payload);
+      console.log("Delivery disimpan ke transaksi:", payload);
+
+      resetDelivery();
+      goBack();
+    } catch (err) {
+      console.error("Gagal simpan delivery:", err);
+    }
+  };
 
   const handleChange = (
     event: React.ChangeEvent<
@@ -365,7 +412,10 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   };
 
   return (
-    <form className="px-5 space-y-5 text-sm flex flex-col justify-center rounded-none shadow-none">
+    <form
+      onSubmit={handleSubmitDelivery}
+      className="px-5 space-y-5 text-sm flex flex-col justify-center rounded-none shadow-none"
+    >
       <SubTitle
         subTitle="Form Tambah Pengiriman"
         className="text-center mt-6"
@@ -458,7 +508,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           value={startPoint ? startPoint.lat.toString() : ""}
         />
         <InputLatLang
-          placeholder="longitude"
+          placeholder="langitude"
           disabled={true}
           value={startPoint ? startPoint.lng.toString() : ""}
         />
@@ -491,12 +541,12 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         <InputLatLang
           placeholder="latitude"
           disabled={true}
-          value={endPoint ? endPoint.lat.toString() : ""}
+          value={formData.destination_address_lat}
         />
         <InputLatLang
-          placeholder="longitude"
+          placeholder="langitude"
           disabled={true}
-          value={endPoint ? endPoint.lng.toString() : ""}
+          value={formData.destination_address_lang}
         />
         <button
           type="button"
@@ -556,12 +606,14 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         <ButtonComponent
           variant="undo"
           label="Ulangi"
-          onClick={clearForm}
+          type="reset"
           className="w-full"
+          onClick={clearForm}
         />
         <ButtonComponent
           variant="save"
           label="Simpan"
+          type="submit"
           className="w-full"
           onClick={goToTransactionPages}
         />

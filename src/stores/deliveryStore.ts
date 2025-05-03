@@ -18,6 +18,7 @@ export type Delivery = {
   delivery_deadline_date: string;
   delivery_status: string;
   delivery_cost: number;
+  approved_at: string;
 };
 
 type DeliveryStore = {
@@ -25,10 +26,22 @@ type DeliveryStore = {
   setDelivery: (data: Partial<Delivery>) => void;
   setAllDelivery: (data: Delivery) => void;
   resetDelivery: () => void;
+  deliveryList: Delivery[];
+  addDelivery: (newDelivery: Delivery) => void;
+  removeDelivery: (index: number) => void;
 };
 
 export const useDeliveryStore = create<DeliveryStore>()(
   devtools((set) => ({
+    deliveryList: [], // List pengiriman
+    addDelivery: (newDelivery: Delivery) =>
+      set((state) => ({
+        deliveryList: [...state.deliveryList, newDelivery], // Menambahkan pengiriman baru ke list
+      })),
+    removeDelivery: (index: number) =>
+      set((state) => ({
+        deliveryList: state.deliveryList.filter((_, i) => i !== index), // Menghapus pengiriman berdasarkan index
+      })),
     delivery: {
       driver_id: "",
       vehicle_id: "",
@@ -46,12 +59,13 @@ export const useDeliveryStore = create<DeliveryStore>()(
       delivery_deadline_date: "",
       delivery_status: "menunggu persetujuan",
       delivery_cost: 0,
+      approved_at: "",
     },
     setDelivery: (data) =>
       set((state) => ({
         delivery: { ...state.delivery, ...data },
       })),
-    setAllDelivery: (data) => set({ delivery: data }),
+    setAllDelivery: (data: Delivery) => set({ delivery: data }),
     resetDelivery: () =>
       set({
         delivery: {
@@ -71,6 +85,7 @@ export const useDeliveryStore = create<DeliveryStore>()(
           delivery_deadline_date: "",
           delivery_status: "menunggu persetujuan",
           delivery_cost: 0,
+          approved_at: "",
         },
       }),
   }))

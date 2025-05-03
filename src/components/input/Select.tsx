@@ -10,7 +10,6 @@ type SelectComponentProps = {
   className?: string;
   options: { value: string | number; label: string }[];
   onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  error?: string;
 };
 
 const SelectComponent: React.FC<SelectComponentProps> = ({
@@ -21,11 +20,7 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
   className,
   options,
   onChange,
-  error,
 }) => {
-  const { goToCustomerPages } = useNavigationHooks();
-  // const isCustomer = label?.toLowerCase().includes("pelanggan");
-   
 
   return (
     <div className="flex items-center gap-5 justify-between">
