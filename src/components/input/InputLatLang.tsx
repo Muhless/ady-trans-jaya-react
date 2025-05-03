@@ -7,7 +7,7 @@ type InputLatLangProps = {
   name?: string;
   className?: string;
   placeholder?: string;
-  value?: string | number | undefined;
+  value?: string | number | undefined | null;
   disabled?: boolean;
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -21,18 +21,15 @@ type InputLatLangProps = {
 
 export const InputLatLang: React.FC<InputLatLangProps> = ({
   label,
-  type = "text",
+  type = "number",
   name,
   className,
   placeholder = "",
   value,
   disabled,
   onChange,
-  pointType,
-  setSelectingPoint,
 }) => {
-  const isLocationField = label?.toLowerCase().includes("lokasi");
-  const isWeightField = label?.toLowerCase().includes("berat");
+  const stringValue = value === null ? "" : String(value);
 
   const inputClass = `p-2 rounded-md focus:ring-biru focus:ring-2 focus:outline-none ${
     disabled ? "bg-gray-300" : "bg-background"
@@ -44,12 +41,11 @@ export const InputLatLang: React.FC<InputLatLangProps> = ({
         disabled={disabled}
         type={type}
         name={name}
-        value={value}
+        value={stringValue}
         className={inputClass}
         placeholder={placeholder}
         onChange={onChange}
       />
-      
     </div>
   );
 };

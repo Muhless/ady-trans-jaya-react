@@ -7,7 +7,7 @@ type InputComponentProps = {
   name?: string;
   className?: string;
   placeholder?: string;
-  value?: string | number | undefined;
+  value?: string | number | undefined | null;
   disabled?: boolean;
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -32,9 +32,12 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   setSelectingPoint,
 }) => {
   const isLocationField = label?.toLowerCase().includes("lokasi");
+  const isQuantityField = label?.toLowerCase().includes("jumlah");
   const isWeightField = label?.toLowerCase().includes("berat");
+  const stringValue = value === null ? "" : String(value);
 
   const inputClass = `p-2 rounded-md ${
+    // isLocationField || isWeightField || isQuantityField ? "w-[245px]" : "w-72"
     isLocationField || isWeightField ? "w-[245px]" : "w-72"
   } focus:ring-biru focus:ring-2 focus:outline-none ${
     disabled ? "bg-gray-300" : "bg-background"
@@ -58,7 +61,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
             disabled={disabled}
             type={type}
             name={name}
-            value={value}
+            value={stringValue}
             className={inputClass}
             placeholder={placeholder}
             onChange={onChange}
@@ -73,7 +76,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
             <MapPin size={20} />
           </button>
         )}
-
+        {/* {isQuantityField && <span className="text-gray-600 p-2">kg</span>} */}
         {isWeightField && <span className="text-gray-600 p-2">kg</span>}
       </div>
     </div>

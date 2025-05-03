@@ -2,16 +2,16 @@ import { create } from "zustand";
 import { type Delivery } from "./deliveryStore";
 
 type Transaction = {
-  customer_id: number;
+  customer_id: number | null;
   total_delivery: number;
   cost: number;
-  payment_deadline: string;
-  down_payment: number;
+  payment_deadline: string | null;
+  down_payment: number | null;
   down_payment_status: string;
-  down_payment_time: string;
-  full_payment: number;
+  down_payment_time: string | null;
+  full_payment: number | null;
   full_payment_status: string;
-  full_payment_time: string;
+  full_payment_time: string | null;
   transaction_status: string;
   deliveries: Delivery[];
 };
@@ -25,16 +25,16 @@ type TransactionStore = {
 
 export const useTransactionStore = create<TransactionStore>((set) => ({
   transaction: {
-    customer_id: 0,
+    customer_id: null,
     total_delivery: 0,
     cost: 0,
-    payment_deadline: "",
-    down_payment: 0,
+    payment_deadline: null,
+    down_payment: null,
     down_payment_status: "",
-    down_payment_time: "",
-    full_payment: 0,
+    down_payment_time: null,
+    full_payment: null,
     full_payment_status: "",
-    full_payment_time: "",
+    full_payment_time: null,
     transaction_status: "menunggu persetujuan",
     deliveries: [],
   },
@@ -54,14 +54,14 @@ export const useTransactionStore = create<TransactionStore>((set) => ({
   resetTransaction: () =>
     set({
       transaction: {
-        customer_id: 0,
+        customer_id: null,
         total_delivery: 0,
         cost: 0,
-        payment_deadline: "",
-        down_payment: 0,
+        payment_deadline: null,
+        down_payment: null,
         down_payment_status: "",
-        down_payment_time: "",
-        full_payment: 0,
+        down_payment_time: null,
+        full_payment: null,
         full_payment_status: "",
         full_payment_time: "",
         transaction_status: "menunggu persetujuan",

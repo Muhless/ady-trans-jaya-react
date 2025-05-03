@@ -337,7 +337,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   );
   const { addDeliveryToTransaction } = useTransactionStore();
 
-  const handleSubmitDelivery = (e: React.FormEvent) => {
+  const handleSubmitDelivery = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
@@ -352,6 +352,13 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
 
       const payload = {
         ...delivery,
+
+        driver_id: Number(delivery.driver_id),
+        vehicle_id: Number(delivery.vehicle_id),
+        quantity: delivery.quantity
+          ? parseInt(delivery.quantity.toString())
+          : null,
+        weight: delivery.weight ? parseInt(delivery.weight.toString()) : null,
         delivery_date: formattedDeliveryDate,
         delivery_deadline_date: formattedDeliveryDeadlineDate,
       };
@@ -361,8 +368,9 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
 
       resetDelivery();
       goBack();
-    } catch (err) {
+    } catch (err: any) {
       console.error("Gagal simpan delivery:", err);
+      alert(`Gagal menyimpan delivery: ${err.message}`);
     }
   };
 
@@ -372,8 +380,27 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     >
   ) => {
     const { name, value } = event.target;
+    const numberFields = [
+      "driver_id",
+      "vehicle_id",
+      "quantity",
+      "weight",
+      "pickup_address_lat",
+      "pickup_address_lang",
+      "destination_address_lat",
+      "destination_address_lang",
+      "delivery_cost",
+    ];
+
+    const parsedValue = numberFields.includes(name)
+      ? name === "delivery_cost"
+        ? parseFloat(value) || 0
+        : parseFloat(value) || null
+      : value;
+
     setDelivery({
-      [name]: value,
+      ...delivery,
+      [name]: parsedValue,
     });
   };
 
@@ -454,7 +481,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       <InputComponent
         label="Jumlah Muatan"
         placeholder="Masukkan jumlah unit, misal: 3"
-        type="text"
+        type="number"
         name="quantity"
         value={formData.quantity}
         onChange={handleChange}

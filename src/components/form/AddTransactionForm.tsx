@@ -6,6 +6,7 @@ import SelectComponent from "../input/Select";
 import ButtonComponent from "../button/Index";
 import { InputComponent } from "../input/Input";
 import { useDeliveryStore } from "../../stores/deliveryStore";
+import { useNavigate } from "react-router-dom";
 
 const AddTransactionForm = () => {
   const {
@@ -15,7 +16,7 @@ const AddTransactionForm = () => {
     goToTransactionPages,
   } = useNavigationHooks();
   const { customers, loading, error } = useCustomers();
-
+  const { delivery, resetDelivery } = useDeliveryStore();
   const { transaction, setTransaction, resetTransaction } =
     useTransactionStore();
   const state = useTransactionStore.getState();
@@ -50,39 +51,25 @@ const AddTransactionForm = () => {
       return;
     }
 
+    if (!transaction.deliveries || transaction.deliveries.length === 0) {
+      alert("Silakan tambahkan minimal 1 pengiriman.");
+      return;
+    }
+
     try {
-      const formattedPaymentDeadline = transaction.payment_deadline
+      const payload: any = {
+        ...transaction,
+        customer_id: Number(transaction.customer_id),
+        total_delivery: transaction.deliveries.length,
+      };
+
+      payload.payment_deadline = transaction.payment_deadline?.trim()
         ? new Date(transaction.payment_deadline).toISOString()
         : null;
 
-      const formattedDownPaymentTime = transaction.down_payment_time
-        ? new Date(transaction.down_payment_time).toISOString()
-        : null;
-
-      const formattedFullPaymentTime = transaction.full_payment_time
-        ? new Date(transaction.full_payment_time).toISOString()
-        : null;
-
-        const payload = {
-          ...transaction,
-          customer_id: Number(transaction.customer_id),
-          payment_deadline: transaction.payment_deadline
-            ? new Date(transaction.payment_deadline).toISOString()
-            : null,
-          down_payment_time: transaction.down_payment_time
-            ? new Date(transaction.down_payment_time).toISOString()
-            : null,
-          full_payment_time: transaction.full_payment_time
-            ? new Date(transaction.full_payment_time).toISOString()
-            : null,
-        };
-        
-
       const response = await fetch("http://localhost:8080/api/transactions", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
@@ -95,6 +82,7 @@ const AddTransactionForm = () => {
       const result = await response.json();
       console.log("Transaksi berhasil disimpan:", result);
 
+      resetTransaction();
       goToTransactionPages();
     } catch (error: any) {
       console.error("Terjadi kesalahan saat mengirim data:", error);
@@ -102,20 +90,18 @@ const AddTransactionForm = () => {
     }
   };
 
-  const handleCancel = () => {
+  const handleReset = () => {
     resetTransaction();
-    goBack();
+    resetDelivery();
     console.log(
       "Transaction state after reset:",
       useTransactionStore.getState().transaction
     );
   };
-
-  const deliveryList = () => {
-    const { deliveryList, addDelivery } = useDeliveryStore((state) => ({
-      deliveryList: state.deliveryList,
-      addDelivery: state.addDelivery,
-    }));
+  const handleCancel = () => {
+    resetTransaction();
+    resetDelivery();
+    goBack();
   };
 
   const handleAddDelivery = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -222,10 +208,14 @@ const AddTransactionForm = () => {
         disabled
         className="w-96"
         name="cost"
-        value={transaction.cost}
+        value={new Intl.NumberFormat("id-ID", {
+          style: "currency",
+          currency: "IDR",
+          minimumFractionDigits: 0,
+        }).format(transaction.cost)}
         onChange={handleChange}
       />
-      <div className="flex w-full gap-3">
+      <div className="flex w-full gap-3 py-4">
         <ButtonComponent
           label="Batal"
           variant="back"
@@ -233,6 +223,14 @@ const AddTransactionForm = () => {
           className="w-full"
           onClick={handleCancel}
         />
+        <ButtonComponent
+          label="Ulangi"
+          variant="undo"
+          type="reset"
+          className="w-full"
+          onClick={handleReset}
+        />
+
         <ButtonComponent
           label="Simpan"
           type="submit"

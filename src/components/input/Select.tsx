@@ -1,12 +1,11 @@
 import { Divide, Plus } from "lucide-react";
 import React from "react";
-import useNavigationHooks from "../../hooks/useNavigation";
 
 type SelectComponentProps = {
   label?: string;
   placeholder?: string;
   name?: string;
-  value?: string | number;
+  value?: string | number | null;
   className?: string;
   options: { value: string | number; label: string }[];
   onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -21,14 +20,14 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
   options,
   onChange,
 }) => {
-
+  const stringValue = value === null ? "" : String(value);
   return (
     <div className="flex items-center gap-5 justify-between">
       {label && <label className="text-gray-600">{label}</label>}
       <div className="flex gap-2 items-center">
         <select
           name={name}
-          value={value}
+          value={stringValue}
           className={`bg-background p-2 w-72 cursor-pointer rounded-md focus:ring-biru focus:ring-2 focus:outline-none ${className}`}
           onChange={onChange}
         >

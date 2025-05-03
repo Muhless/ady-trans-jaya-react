@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useTransactionStore } from "../stores/transactionStore";
 
 const useNavigationHooks = () => {
   const navigate = useNavigate();
@@ -10,8 +11,10 @@ const useNavigationHooks = () => {
     goToCarPages: () => navigate("/car"),
     // transaction
     goToTransactionPages: () => navigate("/transaction"),
-    goToAddTransaction: () => navigate("/transaction/add"),
-    goToTransactionSummary: () => navigate("/transaction/add/summary"),
+    goToAddTransaction: () => {
+      useTransactionStore.getState().resetTransaction();
+      navigate("/transaction/add");
+    },
     // delivery
     goToDeliveryPages: () => navigate("delivery"),
     goToDetailDelivery: (id: string | number) => () => {

@@ -2,23 +2,23 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
 export type Delivery = {
-  driver_id: string;
-  vehicle_id: string;
+  driver_id: number | null;
+  vehicle_id: number | null;
   load_type: string;
   load: string;
-  quantity: string;
-  weight: number;
+  quantity: number | null;
+  weight: number | null;
   pickup_address: string;
-  pickup_address_lat: number;
-  pickup_address_lang: number;
+  pickup_address_lat: number | null;
+  pickup_address_lang: number | null;
   destination_address: string;
-  destination_address_lat: number;
-  destination_address_lang: number;
-  delivery_date: string;
-  delivery_deadline_date: string;
+  destination_address_lat: number | null;
+  destination_address_lang: number | null;
+  delivery_date: string | null;
+  delivery_deadline_date: string | null;
   delivery_status: string;
   delivery_cost: number;
-  approved_at: string;
+  approved_at: string | null;
 };
 
 type DeliveryStore = {
@@ -43,23 +43,23 @@ export const useDeliveryStore = create<DeliveryStore>()(
         deliveryList: state.deliveryList.filter((_, i) => i !== index), // Menghapus pengiriman berdasarkan index
       })),
     delivery: {
-      driver_id: "",
-      vehicle_id: "",
+      driver_id: null,
+      vehicle_id: null,
       load_type: "",
       load: "",
-      quantity: "",
-      weight: 0,
+      quantity: null,
+      weight: null,
       pickup_address: "",
-      pickup_address_lat: 0,
-      pickup_address_lang: 0,
+      pickup_address_lat: null,
+      pickup_address_lang: null,
       destination_address: "",
-      destination_address_lat: 0,
-      destination_address_lang: 0,
-      delivery_date: "",
-      delivery_deadline_date: "",
+      destination_address_lat: null,
+      destination_address_lang: null,
+      delivery_date: null,
+      delivery_deadline_date: null,
       delivery_status: "menunggu persetujuan",
       delivery_cost: 0,
-      approved_at: "",
+      approved_at: null,
     },
     setDelivery: (data) =>
       set((state) => ({
@@ -69,23 +69,23 @@ export const useDeliveryStore = create<DeliveryStore>()(
     resetDelivery: () =>
       set({
         delivery: {
-          driver_id: "",
-          vehicle_id: "",
+          driver_id: null,
+          vehicle_id: null,
           load_type: "",
           load: "",
-          quantity: "",
-          weight: 0,
+          quantity: null,
+          weight: null,
           pickup_address: "",
-          pickup_address_lat: 0,
-          pickup_address_lang: 0,
+          pickup_address_lat: null,
+          pickup_address_lang: null,
           destination_address: "",
-          destination_address_lat: 0,
-          destination_address_lang: 0,
-          delivery_date: "",
-          delivery_deadline_date: "",
+          destination_address_lat: null,
+          destination_address_lang: null,
+          delivery_date: null,
+          delivery_deadline_date: null,
           delivery_status: "menunggu persetujuan",
           delivery_cost: 0,
-          approved_at: "",
+          approved_at: null,
         },
       }),
   }))
