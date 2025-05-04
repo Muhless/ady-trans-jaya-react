@@ -1,6 +1,5 @@
 import React from "react";
 import Title from "../components/Title.tsx";
-import Card from "../components/card/index.tsx";
 import useNavigationHooks from "../hooks/useNavigation.ts";
 import SummaryCard from "../components/card/SummaryCard.tsx";
 import GraphCard from "../components/card/GraphCard.tsx";
@@ -17,17 +16,17 @@ const HomePages = () => {
   return (
     <div>
       <div
-        className="w-full rounded-xl p-6 mb-5 bg-cover bg-no-repeat relative h-28"
+        className="w-full rounded-xl p-6 mb-5 bg-cover bg-no-repeat relative h-28 flex items-center"
         style={{
           backgroundImage: "url('assets/images/bg.jpg')",
         }}
       >
         <div className="absolute inset-0 bg-black/40 rounded-md" />
         <div className="relative z-10 text-white">
-          <Title title={"Selamat Datang, Admin"} />
+          <Title title="Selamat Datang, Admin" />
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-3 mb-5">
+      <div className="grid grid-cols-4 gap-5 mb-5">
         <SummaryCard
           title="Kendaraan"
           value={13}
@@ -58,7 +57,7 @@ const HomePages = () => {
         />
        
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-5">
         <GraphCard />
         <WaitingDeliveryCard />
       </div>

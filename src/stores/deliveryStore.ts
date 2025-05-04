@@ -6,8 +6,8 @@ export type Delivery = {
   vehicle_id: number | null;
   load_type: string;
   load: string;
-  quantity: number | null;
-  weight: number | null;
+  quantity: string;
+  weight: string;
   pickup_address: string;
   pickup_address_lat: number | null;
   pickup_address_lang: number | null;
@@ -47,8 +47,8 @@ export const useDeliveryStore = create<DeliveryStore>()(
       vehicle_id: null,
       load_type: "",
       load: "",
-      quantity: null,
-      weight: null,
+      quantity: "",
+      weight: "",
       pickup_address: "",
       pickup_address_lat: null,
       pickup_address_lang: null,
@@ -73,8 +73,8 @@ export const useDeliveryStore = create<DeliveryStore>()(
           vehicle_id: null,
           load_type: "",
           load: "",
-          quantity: null,
-          weight: null,
+          quantity: "",
+          weight: "",
           pickup_address: "",
           pickup_address_lat: null,
           pickup_address_lang: null,

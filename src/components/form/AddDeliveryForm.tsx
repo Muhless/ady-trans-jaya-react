@@ -17,10 +17,11 @@ import { useDeliveryCalculation } from "../../hooks/useDeliveryCost";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { useDeliveryStore } from "../../stores/deliveryStore";
-import SearchLocationInput from "../map/SearchLocation";
+import SearchLocationInput from "../input/SearchLocation";
 import { InputLatLang } from "../input/InputLatLang";
 import { MapPin } from "lucide-react";
 import { useTransactionStore } from "../../stores/transactionStore";
+import Swal from "sweetalert2";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -78,8 +79,8 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const [destination, setDestination] = useState<string>("");
   const [startSuggestions, setStartSuggestions] = useState<Place[]>([]);
   const [endSuggestions, setEndSuggestions] = useState<Place[]>([]);
-  const [selectingPoint, setSelectingPoint] = useState<"start" | "end" | null>(
-    null
+  const [selectingPoint, setSelectingPoint] = useState<"start" | "end">(
+    "start"
   );
   const [startLocation, setStartLocation] = React.useState<string>("");
   const { goBack, goToTransactionPages } = useNavigationHooks();
@@ -112,7 +113,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         container: (ref as React.RefObject<HTMLDivElement>)
           .current as HTMLDivElement,
         style: "mapbox://styles/mapbox/streets-v11",
-        center: [106.8456, -6.2088], // Jakarta
+        center: [106.8456, -6.2088],
         maxBounds: [
           [95.0, -11.0],
           [141.0, 6.1],
@@ -126,9 +127,8 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         const { lng, lat } = e.lngLat;
         const type = selectingPoint === "start" ? "start" : "end";
 
-        const markerColor = type === "start" ? "#0ebdf6" : "#ffa7a7";
+        const markerColor = type === "start" ? "#3b82f6" : "#ef4444";
 
-        // Set state
         if (type === "start") {
           setStartPoint({ lng, lat });
           setPickupLocation(`Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`);
@@ -137,10 +137,8 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           setDestination(`Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`);
         }
 
-        // Remove existing marker
         if (markerRef.current[type]) markerRef.current[type]!.remove();
 
-        // Create popup
         const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
           `<div style="
               background-color: ${markerColor};
@@ -159,13 +157,11 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           </div>`
         );
 
-        // Add new marker with popup
         markerRef.current[type] = new mapboxgl.Marker({ color: markerColor })
           .setLngLat([lng, lat])
           .setPopup(popup)
           .addTo(mapRef.current!);
 
-        // Fly to selected point
         mapRef.current!.flyTo({
           center: [lng, lat],
           zoom: 15,
@@ -239,56 +235,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     }
   };
 
-  const handleSelectAddress = (
-    place: Place,
-    setPoint: React.Dispatch<
-      React.SetStateAction<{ lng: number; lat: number } | null>
-    >,
-    setInputValue: React.Dispatch<React.SetStateAction<string>>,
-    setSuggestions: React.Dispatch<React.SetStateAction<Place[]>>,
-    type: "start" | "end"
-  ) => {
-    const coordinates = {
-      lng: place.geometry.coordinates[0],
-      lat: place.geometry.coordinates[1],
-    };
-    setPoint(coordinates);
-    setInputValue(place.place_name);
-    setSuggestions([]);
-
-    if (markerRef.current[type]) markerRef.current[type]!.remove();
-    const markerColor = type === "start" ? "#0ebdf6" : "#ffa7a7";
-    const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-      `<div style="
-          background-color: ${markerColor};
-          color: white;
-          padding: 8px 12px;
-          border-radius: 8px;
-          font-size: 14px;
-          font-weight: bold;
-          text-align: center;
-          box-shadow: 0px 4px 8px rgba(0,0,0,0.3);
-          border: 2px solid white;
-          letter-spacing: 0.5px;
-          min-width: 100px;
-      ">
-          ${type === "start" ? "🚀 Keberangkatan" : "📍 Tujuan"}
-      </div>`
-    );
-
-    markerRef.current[type] = new mapboxgl.Marker()
-      .setLngLat([coordinates.lng, coordinates.lat])
-      .setPopup(popup)
-      .addTo(mapRef.current!);
-
-    markerRef.current[type]!.togglePopup();
-
-    mapRef.current!.flyTo({
-      center: [coordinates.lng, coordinates.lat],
-      zoom: 15,
-    });
-  };
-
   useEffect(() => {
     if (startPoint && endPoint) {
       fetchRoute();
@@ -355,10 +301,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
 
         driver_id: Number(delivery.driver_id),
         vehicle_id: Number(delivery.vehicle_id),
-        quantity: delivery.quantity
-          ? parseInt(delivery.quantity.toString())
-          : null,
-        weight: delivery.weight ? parseInt(delivery.weight.toString()) : null,
         delivery_date: formattedDeliveryDate,
         delivery_deadline_date: formattedDeliveryDeadlineDate,
       };
@@ -425,14 +367,29 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleCancel = () => {
+
+const handleCancel = async () => {
+  const result = await Swal.fire({
+    title: "Batalkan Pengiriman?",
+    text: "Semua data akan dihapus dan tidak bisa dikembalikan.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Ya, batalkan",
+    cancelButtonText: "Batal",
+  });
+
+  if (result.isConfirmed) {
     resetDelivery();
     goBack();
     console.log(
       "Transaction state after reset:",
       useDeliveryStore.getState().delivery
     );
-  };
+  }
+};
+
 
   const handlePlaceSelect = (place: Place) => {
     setStartLocation(place.place_name);
@@ -480,15 +437,13 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       />
       <InputComponent
         label="Jumlah Muatan"
-        placeholder="Masukkan jumlah unit, misal: 3"
-        type="number"
+        placeholder="Masukkan jumlah unit, misal: 3 unit"
         name="quantity"
         value={formData.quantity}
         onChange={handleChange}
       />
       <InputComponent
         label="Berat Muatan"
-        type="number"
         placeholder="Masukkan berat total dalam kg"
         name="weight"
         value={formData.weight}
@@ -519,9 +474,20 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         value={formData.pickup_address}
         onChange={handleChange}
       />
+
+      <InputComponent
+        label="Alamat Tujuan"
+        placeholder="Pergudangan ABC, Bekasi Timur"
+        type="textarea"
+        name="destination_address"
+        value={formData.destination_address}
+        onChange={handleChange}
+      />
       <div>
         <SearchLocationInput
-          placeholder="cari alamat"
+          placeholder={`Cari alamat ${
+            selectingPoint === "start" ? "penjemputan" : "tujuan"
+          }`}
           value={startLocation}
           onSelectPlace={handlePlaceSelect}
           mapRef={mapRef}
@@ -546,23 +512,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         >
           <MapPin size={20} />
         </button>
-      </div>
-      <InputComponent
-        label="Alamat Tujuan"
-        placeholder="Pergudangan ABC, Bekasi Timur"
-        type="textarea"
-        name="destination_address"
-        value={formData.destination_address}
-        onChange={handleChange}
-      />
-      <div>
-        <SearchLocationInput
-          placeholder="cari alamat"
-          value={startLocation}
-          onSelectPlace={handlePlaceSelect}
-          mapRef={mapRef}
-        />
-        <div id="map" className="h-full"></div>
       </div>
       <div className="flex w-full gap-3">
         <InputLatLang

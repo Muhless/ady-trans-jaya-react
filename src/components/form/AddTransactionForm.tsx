@@ -7,6 +7,7 @@ import ButtonComponent from "../button/Index";
 import { InputComponent } from "../input/Input";
 import { useDeliveryStore } from "../../stores/deliveryStore";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const AddTransactionForm = () => {
   const {
@@ -98,10 +99,27 @@ const AddTransactionForm = () => {
       useTransactionStore.getState().transaction
     );
   };
+
   const handleCancel = () => {
     resetTransaction();
     resetDelivery();
     goBack();
+  };
+
+  const handleButtonClick = () => {
+    Swal.fire({
+      title: "Apakah kamu yakin?",
+      text: "Data yang belum disimpan akan hilang!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Ya, batal",
+      cancelButtonText: "Tidak",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleCancel();
+      }
+    });
   };
 
   const handleAddDelivery = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -221,7 +239,7 @@ const AddTransactionForm = () => {
           variant="back"
           type="button"
           className="w-full"
-          onClick={handleCancel}
+          onClick={handleButtonClick}
         />
         <ButtonComponent
           label="Ulangi"

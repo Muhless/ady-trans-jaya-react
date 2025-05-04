@@ -32,7 +32,7 @@ const TableComponent: React.FC<TableProps> = ({
           }));
 
   return (
-    <Card className="overflow-auto rounded-xl">
+    <Card className="overflow-auto rounded-xl hover:shadow-none">
       <table className="w-full text-sm text-left border-collapse">
         <thead>
           <tr className="text-center border-b">

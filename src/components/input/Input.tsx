@@ -38,7 +38,8 @@ export const InputComponent: React.FC<InputComponentProps> = ({
 
   const inputClass = `p-2 rounded-md ${
     // isLocationField || isWeightField || isQuantityField ? "w-[245px]" : "w-72"
-    isLocationField || isWeightField ? "w-[245px]" : "w-72"
+    // isLocationField || isWeightField ? "w-[245px]" : "w-72"
+    isLocationField ? "w-[245px]" : "w-72"
   } focus:ring-biru focus:ring-2 focus:outline-none ${
     disabled ? "bg-gray-300" : "bg-background"
   } ${className || ""}`;
@@ -77,7 +78,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
           </button>
         )}
         {/* {isQuantityField && <span className="text-gray-600 p-2">kg</span>} */}
-        {isWeightField && <span className="text-gray-600 p-2">kg</span>}
+        {/* {isWeightField && <span className="text-gray-600 p-2">kg</span>} */}
       </div>
     </div>
   );

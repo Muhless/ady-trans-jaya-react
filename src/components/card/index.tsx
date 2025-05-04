@@ -24,7 +24,7 @@ const Card: React.FC<CardProps> = ({
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
-      {title && <p className="font-compforta py-3 text-black">{title}</p>}
+      {title && <p className="font-compforta py-3 text-black font-bold text-xl">{title}</p>}
       {children}
     </div>
   );

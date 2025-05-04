@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import { Search } from "lucide-react";
 import ButtonComponent from "../button/Index";
@@ -19,35 +19,50 @@ type Props = {
   mapRef: React.MutableRefObject<mapboxgl.Map | null>;
 };
 
-const SearchLocationInput = ({
+const MAPBOX_ACCESS_TOKEN =
+  "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
+
+mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
+
+const SearchLocationInput: React.FC<Props> = ({
   label,
   placeholder,
   value,
   onSelectPlace,
   mapRef,
-}: Props) => {
+}) => {
   const [inputValue, setInputValue] = useState(value);
   const [suggestions, setSuggestions] = useState<Place[]>([]);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  const MAPBOX_ACCESS_TOKEN =
-    "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
-  mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
 
   const fetchSuggestions = async (query: string) => {
     if (!query) return setSuggestions([]);
-    const res = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-        query
-      )}.json?access_token=${MAPBOX_ACCESS_TOKEN}&autocomplete=true&limit=5&bbox=105.0,-9.0,115.0,-5.0`
-    );
-    const data = await res.json();
-    setSuggestions(data.features);
+    try {
+      const res = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+          query
+        )}.json?access_token=${MAPBOX_ACCESS_TOKEN}&autocomplete=true&limit=5&bbox=105.0,-9.0,115.0,-5.0`
+      );
+      const data = await res.json();
+      setSuggestions(data.features);
+    } catch (error) {
+      console.error("Gagal mengambil saran lokasi:", error);
+      setSuggestions([]);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setInputValue(val);
-    fetchSuggestions(val);
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      fetchSuggestions(val);
+    }, 300);
   };
 
   const handleSelect = (place: Place) => {
@@ -67,8 +82,8 @@ const SearchLocationInput = ({
   };
 
   return (
-    <div className="relative flex gap-2">
-      <span className="absolute inset-y-0 flex items-center transition-colors duration-200 left-3">
+    <div className="relative flex gap-2 w-full">
+      <span className="absolute inset-y-0 flex items-center left-3 text-gray-500">
         <Search size={18} />
       </span>
       <input
@@ -84,7 +99,7 @@ const SearchLocationInput = ({
         onClick={handleReset}
       />
       {suggestions.length > 0 && (
-        <ul className="absolute z-10 bg-white border border-gray-300 w-full mt-1 rounded shadow max-h-48 overflow-y-auto">
+        <ul className="absolute z-10 bg-white border border-gray-300 w-full mt-10 rounded shadow max-h-48 overflow-y-auto">
           {suggestions.map((place) => (
             <li
               key={place.id}
