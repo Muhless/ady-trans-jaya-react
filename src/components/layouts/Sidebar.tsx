@@ -9,6 +9,7 @@ import {
   Car,
   LogOut,
   Moon,
+  Handshake,
 } from "lucide-react";
 import { useMemo } from "react";
 import React from "react";
@@ -26,7 +27,7 @@ const Sidebar = () => {
       { to: "/vehicle", icon: <CarFront size={23} /> },
       // { to: "/rent", icon: <Car size={23} /> },
       { to: "/delivery", icon: <Truck size={23} /> },
-      { to: "/transaction", icon: <ChartSpline size={23} /> },
+      { to: "/transaction", icon: <Handshake size={23} /> },
     ],
     []
   );

@@ -74,7 +74,7 @@ const formatDate = (dateString: string) => {
 };
 
 function TransactionPages() {
-  const { goToAddTransaction } = useNavigationHooks();
+  const { goToAddTransaction, goToDetailTransaction } = useNavigationHooks();
 
   const {
     data: transactions,
@@ -102,7 +102,7 @@ function TransactionPages() {
   return (
     <div>
       <Title title="Transaksi" />
-      <div className="flex flex-row justify-between mb-3">
+      <div className="flex flex-row justify-between mb-5">
         <ButtonComponent
           label="Tambah Transaksi"
           variant="add"
@@ -118,6 +118,7 @@ function TransactionPages() {
       ) : (
         <TableComponent
           data={Array.isArray(transformedData) ? transformedData : []}
+          onRowClick={(row) => goToDetailTransaction(row.id)()}
           columns={[
             { key: "customerName", label: "Pelanggan" },
             { key: "total_delivery", label: "Jumlah Pengiriman" },

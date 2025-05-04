@@ -63,7 +63,7 @@ export const useTransactionStore = create<TransactionStore>((set) => ({
         down_payment_time: null,
         full_payment: null,
         full_payment_status: "",
-        full_payment_time: "",
+        full_payment_time: null,
         transaction_status: "menunggu persetujuan",
         deliveries: [],
       },

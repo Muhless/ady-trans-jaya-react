@@ -12,16 +12,15 @@ import DetailDriverPages from "../features/driver/DetailDriver";
 import DriverPages from "../features/driver/Index";
 import CustomerPages from "../features/customer/Index";
 import RentalPages from "../features/rental/Index";
-import DetailDeliveryPages from "../features/delivery/DetailDelivery";
 import Layout from "../components/layouts/MainLayout";
 import ProfilePages from "../pages/Profile";
 import LoginPages from "../pages/Login";
 import VehiclePages from "../features/vehicle/Index";
-import SubmitDeliveryPages from "../features/transaction/AddTransaction";
 import AddDeliveryPages from "../features/delivery/AddDelivery";
 import TransactionPages from "../features/transaction/Index";
 import AddTransactionPages from "../features/transaction/AddTransaction";
-import TransactionSummaryForm from "../components/form/TransactionSummaryForm";
+import DetailTransactionPages from "../features/transaction/DetailTransaction";
+import DetailDeliveryPage from "../features/delivery/DetailDelivery";
 
 function AppRoutes() {
   return (
@@ -49,13 +48,13 @@ function AppRoutes() {
             path="/transaction/add/delivery"
             element={<AddDeliveryPages />}
           />
-          <Route path="/delivery/:id" element={<DetailDeliveryPages />} />
+          <Route path="/delivery/:id" element={<DetailDeliveryPage />} />
           {/* transaction */}
           <Route path="/transaction" element={<TransactionPages />} />
           <Route path="/transaction/add" element={<AddTransactionPages />} />
           <Route
-            path="/transaction/add/summary"
-            element={<TransactionSummaryForm />}
+            path="/transaction/:id"
+            element={<DetailTransactionPages />}
           />
         </Route>
       </Routes>

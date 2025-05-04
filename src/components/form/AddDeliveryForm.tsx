@@ -325,8 +325,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     const numberFields = [
       "driver_id",
       "vehicle_id",
-      "quantity",
-      "weight",
       "pickup_address_lat",
       "pickup_address_lang",
       "destination_address_lat",
@@ -367,29 +365,27 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleCancel = async () => {
+    const result = await Swal.fire({
+      title: "Batalkan Pengiriman?",
+      text: "Semua data akan dihapus dan tidak bisa dikembalikan.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, batalkan",
+      cancelButtonText: "Batal",
+    });
 
-const handleCancel = async () => {
-  const result = await Swal.fire({
-    title: "Batalkan Pengiriman?",
-    text: "Semua data akan dihapus dan tidak bisa dikembalikan.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Ya, batalkan",
-    cancelButtonText: "Batal",
-  });
-
-  if (result.isConfirmed) {
-    resetDelivery();
-    goBack();
-    console.log(
-      "Transaction state after reset:",
-      useDeliveryStore.getState().delivery
-    );
-  }
-};
-
+    if (result.isConfirmed) {
+      resetDelivery();
+      goBack();
+      console.log(
+        "Transaction state after reset:",
+        useDeliveryStore.getState().delivery
+      );
+    }
+  };
 
   const handlePlaceSelect = (place: Place) => {
     setStartLocation(place.place_name);
@@ -412,19 +408,19 @@ const handleCancel = async () => {
         onChange={handleChange}
         options={[
           {
-            value: "consumer_goods",
-            label: "Barang Konsumen (Consumer Goods)",
+            value: "Barang Konsumen",
+            label: "Barang Konsumen",
           },
-          { value: "building_materials", label: "Material Bangunan" },
-          { value: "industrial_goods", label: "Barang Industri" },
-          { value: "agricultural_products", label: "Hasil Pertanian" },
-          { value: "livestock", label: "Ternak" },
-          { value: "chemicals", label: "Bahan Kimia" },
-          { value: "electronics", label: "Elektronik" },
-          { value: "furniture", label: "Furniture" },
-          { value: "automotive_parts", label: "Suku Cadang Otomotif" },
-          { value: "waste_materials", label: "Limbah / Barang Bekas" },
-          { value: "others", label: "Lainnya" },
+          { value: "Material Bangunan", label: "Material Bangunan" },
+          { value: "Barang Industri", label: "Barang Industri" },
+          { value: "Hasil Pertanian", label: "Hasil Pertanian" },
+          { value: "Ternak", label: "Ternak" },
+          { value: "Bahan Kimia", label: "Bahan Kimia" },
+          { value: "Elektronik", label: "Elektronik" },
+          { value: "Furniture", label: "Furniture" },
+          { value: "Suku Cadang Otomotif", label: "Suku Cadang Otomotif" },
+          { value: "Limbah / Barang Bekas", label: "Limbah / Barang Bekas" },
+          { value: "Lainnya", label: "Lainnya" },
         ]}
       />
       <InputComponent

@@ -15,6 +15,13 @@ const useNavigationHooks = () => {
       useTransactionStore.getState().resetTransaction();
       navigate("/transaction/add");
     },
+    goToDetailTransaction: (id: string | number) => () => {
+      if (id) {
+        navigate(`/transaction/${id}`);
+      } else {
+        console.warn("ID tidak ditemukan");
+      }
+    },
     // delivery
     goToDeliveryPages: () => navigate("delivery"),
     goToDetailDelivery: (id: string | number) => () => {
