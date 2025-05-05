@@ -1,3 +1,4 @@
+import { API_BASE_URL } from './../apiConfig';
 import { useEffect, useState } from "react";
 
 export type Customer = {
@@ -17,7 +18,7 @@ export const useCustomers = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/customer");
+        const response = await fetch(`${API_BASE_URL}/customer`);
         if (!response.ok) {
           throw new Error("Error fetching customers data");
         }

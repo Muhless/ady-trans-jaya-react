@@ -22,7 +22,7 @@ function DriverPages() {
 
   const fetchDrivers = async (query = "") => {
     try {
-      let url = "http://localhost:8080/api/driver";
+      let url = "http://202.10.41.13:8080/api/driver";
       if (query) {
         url = `${url}?search=${encodeURIComponent(query)}`;
       }
@@ -59,7 +59,7 @@ function DriverPages() {
         return;
       }
 
-      const response = await fetch("http://localhost:8080/api/driver", {
+      const response = await fetch("http://202.10.41.13:8080/api/driver", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

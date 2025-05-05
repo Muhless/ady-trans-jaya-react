@@ -43,7 +43,8 @@ function VehiclePages() {
   useEffect(() => {
     const fetchVehicle = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/vehicle");
+        const apiUrl = "http://202.10.41.13:8080/api/vehicle";
+        const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error("Gagal mengambil data kendaraan");
         }
@@ -80,7 +81,9 @@ function VehiclePages() {
 
     try {
       data.rate_per_km = parseFloat(data.rate_per_km);
-      const response = await fetch("http://localhost:8080/api/vehicle", {
+      const apiUrl = "http://202.10.41.13:8080/api/vehicle";
+
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

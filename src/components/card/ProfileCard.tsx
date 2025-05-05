@@ -82,19 +82,6 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             </div>
           </div>
         </div>
-
-        {/* Action Footer */}
-        <div className="pt-2 pb-3 px-5 border-t border-gray-100 flex justify-end">
-          <button
-            className="px-3 py-1 bg-primary/10 hover:bg-primary/20 text-primary text-xs rounded-md transition-colors duration-200"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Additional action if needed
-            }}
-          >
-            Lihat Detail
-          </button>
-        </div>
       </div>
     </Card>
   );

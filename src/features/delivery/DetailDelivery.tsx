@@ -28,7 +28,7 @@ const DetailDeliveryPage = () => {
     const fetchDeliveryDetails = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/deliveries/${id}`
+          `http://202.10.41.13:8080/api/deliveries/${id}`
         );
         setDelivery(response.data.data);
         setLoading(false);

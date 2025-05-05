@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDeliveryStore } from "../stores/deliveryStore";
+import { API_BASE_URL } from "../apiConfig";
 
 export const useDeliveryCalculation = (distance, vehicleId) => {
   const [deliveryPrice, setDeliveryPrice] = useState(0);
@@ -22,7 +23,7 @@ export const useDeliveryCalculation = (distance, vehicleId) => {
 
       try {
         console.log("Fetching vehicle data for ID:", vehicleId);
-        const response = await fetch(`http://localhost:8080/api/vehicle/${vehicleId}`);
+        const response = await fetch(`${API_BASE_URL}/vehicle/${vehicleId}`);
         
         if (!response.ok) {
           throw new Error(`Failed to fetch vehicle data: ${response.status}`);

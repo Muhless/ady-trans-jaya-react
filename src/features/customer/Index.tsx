@@ -26,7 +26,7 @@ interface Customer {
 }
 
 const fetchCustomers = async () => {
-  const res = await axios.get("http://localhost:8080/api/customer");
+  const res = await axios.get("http://202.10.41.13:8080/api/customer");
   return res.data.data;
 };
 

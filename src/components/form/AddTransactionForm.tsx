@@ -6,8 +6,8 @@ import SelectComponent from "../input/Select";
 import ButtonComponent from "../button/Index";
 import { InputComponent } from "../input/Input";
 import { useDeliveryStore } from "../../stores/deliveryStore";
-import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { API_BASE_URL } from "../../apiConfig";
 
 const AddTransactionForm = () => {
   const {
@@ -17,7 +17,14 @@ const AddTransactionForm = () => {
     goToTransactionPages,
   } = useNavigationHooks();
   const { customers, loading, error } = useCustomers();
-  const { delivery, resetDelivery } = useDeliveryStore();
+  const {
+    deliveryList,
+    addDelivery,
+    removeDelivery,
+    delivery,
+    setDelivery,
+    resetDelivery,
+  } = useDeliveryStore();
   const { transaction, setTransaction, resetTransaction } =
     useTransactionStore();
   const state = useTransactionStore.getState();
@@ -68,7 +75,7 @@ const AddTransactionForm = () => {
         ? new Date(transaction.payment_deadline).toISOString()
         : null;
 
-      const response = await fetch("http://localhost:8080/api/transactions", {
+      const response = await fetch(`${API_BASE_URL}/transactions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -146,6 +153,10 @@ const AddTransactionForm = () => {
   if (loading) return <p>Harap tunggu sebentar...</p>;
   if (error) return <p>Terjadi kesalahan saat mengambil data pelanggan.</p>;
 
+  const handleEditDelivery = (deliveryToEdit) => {
+    setDelivery(deliveryToEdit);
+  };
+
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
       <SelectComponent
@@ -188,14 +199,34 @@ const AddTransactionForm = () => {
       </p>
       <div className="flex justify-between gap-5">
         <h1>Pengiriman</h1>
-        <div className="flex flex-col">
-          <div className="flex justify-between items-center p-2 transition rounded-md duration-300 hover:bg-biru cursor-pointer bg-background border w-96">
-            <h1>Pengiriman </h1>
-            <div className="flex space-x-1">
-              <ButtonComponent variant="edit" className="hover:text-text" />
-              <ButtonComponent variant="delete" />
+        <div>
+          {deliveryList && deliveryList.length > 0 ? (
+            <div>
+              {deliveryList.map((deliveryItem, index) => (
+                <div
+                  key={deliveryItem.id}
+                  className="flex justify-between items-center p-2 transition rounded-md duration-300 hover:bg-biru cursor-pointer bg-background border w-96"
+                >
+                  <h1>Pengiriman {index + 1}</h1>
+                  <div className="flex space-x-1">
+                    <ButtonComponent
+                      variant="edit"
+                      className="hover:text-text"
+                      onClick={() => handleEditDelivery(deliveryItem)}
+                    />
+                    <ButtonComponent
+                      variant="delete"
+                      onClick={() => removeDelivery(deliveryItem.id)}
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
+          ) : (
+            <div className="flex justify-center items-center p-2 text-gray-500">
+              <p>Tidak ada pengiriman saat ini.</p>
+            </div>
+          )}
           <ButtonComponent
             label="Tambah Pengiriman"
             variant="add"
@@ -205,6 +236,7 @@ const AddTransactionForm = () => {
           />
         </div>
       </div>
+
       <InputComponent
         label="Jumlah Pengiriman"
         className="w-96"

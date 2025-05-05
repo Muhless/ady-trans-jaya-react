@@ -22,6 +22,7 @@ import { InputLatLang } from "../input/InputLatLang";
 import { MapPin } from "lucide-react";
 import { useTransactionStore } from "../../stores/transactionStore";
 import Swal from "sweetalert2";
+import { API_BASE_URL } from "../../apiConfig";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -84,7 +85,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   );
   const [startLocation, setStartLocation] = React.useState<string>("");
   const { goBack, goToTransactionPages } = useNavigationHooks();
-  const driverOptions = useFetchOptions("http://localhost:8080/api/driver");
+  const driverOptions = useFetchOptions(`${API_BASE_URL}/driver`);
   const formatVehicleLabel = useCallback(
     (vehicle: {
       name: string;
@@ -99,7 +100,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   );
 
   const vehicleOptions = useFetchOptions(
-    "http://localhost:8080/api/vehicle",
+    `${API_BASE_URL}/vehicle`,
     formatVehicleLabel
   );
 

@@ -7,7 +7,7 @@ type UserIconComponentProps = {
 };
 
 const UserIconComponent: React.FC<UserIconComponentProps> = ({
-  src = "/assets/images/profile/1.jpg",
+  src = "/assets/images/profile/profile-picture.png",
   onClick,
   className,
 }) => {

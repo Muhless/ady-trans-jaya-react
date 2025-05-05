@@ -7,8 +7,15 @@ const useNavigationHooks = () => {
     goBack: () => navigate(-1),
     goToHome: () => navigate("/"),
     goToDriverPages: () => navigate("/driver"),
+    goToDriverDetails: (id: string | number) => () => {
+      if (id) {
+        navigate(`/driver/${id}`);
+      } else {
+        console.warn("ID tidak tersedia");
+      }
+    },
     goToCustomerPages: () => navigate("/customer"),
-    goToCarPages: () => navigate("/car"),
+    goToVehiclePages: () => navigate("/vehicle"),
     // transaction
     goToTransactionPages: () => navigate("/transaction"),
     goToAddTransaction: () => {
@@ -32,13 +39,6 @@ const useNavigationHooks = () => {
       }
     },
     goToAddDeliveryForm: () => navigate("/transaction/add/delivery"),
-    goToDriverDetails: (id: string | number) => () => {
-      if (id) {
-        navigate(`/driver/${id}`);
-      } else {
-        console.warn("ID tidak tersedia");
-      }
-    },
   };
 };
 

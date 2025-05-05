@@ -14,6 +14,9 @@ import {
   Edit,
   Trash,
 } from "lucide-react";
+import ButtonComponent from "../../components/button/Index";
+import axios from "axios";
+import useNavigationHooks from "../../hooks/useNavigation";
 
 interface Driver {
   id: string;
@@ -35,30 +38,56 @@ interface DeliveryHistory {
   load: string;
 }
 
-const fetchDriverDetails = async (id: string) => {
-  const response = await fetch(`http://localhost:8080/api/driver/${id}`);
-  if (!response.ok) {
-    throw new Error("Gagal mengambil data driver");
-  }
-  const data = await response.json();
-  return data.data;
-};
-
-const fetchDriverDeliveries = async (id: string) => {
-  const response = await fetch(
-    `http://localhost:8080/api/deliveries/search?driver_id=${id}`
-  );
-  if (!response.ok) {
-    throw new Error("Gagal mengambil riwayat pengiriman");
-  }
-  const data = await response.json();
-  return data.data;
-};
-
 function DriverDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"profile" | "history">("profile");
+  const { goBack } = useNavigationHooks();
+
+  const fetchDriverDetails = async (id: string) => {
+    const response = await fetch(`http://202.10.41.13:8080/api/driver/${id}`);
+    if (!response.ok) {
+      throw new Error("Gagal mengambil data driver");
+    }
+    const data = await response.json();
+    return data.data;
+  };
+
+  const fetchDriverDeliveries = async (id: string) => {
+    const response = await fetch(
+      `http://202.10.41.13:8080/api/deliveries/search?driver_id=${id}`
+    );
+    if (!response.ok) {
+      throw new Error("Gagal mengambil riwayat pengiriman");
+    }
+    const data = await response.json();
+    return data.data;
+  };
+
+  const deleteDriver = async (id: string) => {
+    const confirmDelete = window.confirm(
+      "Yakin ingin menghapus data pengemudi ini?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(
+        `http://202.10.41.13:8080/api/driver/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Gagal menghapus driver");
+      }
+
+      alert("Driver berhasil dihapus.");
+      goBack();
+    } catch (error) {
+      console.error(error);
+      alert("Terjadi kesalahan saat menghapus driver.");
+    }
+  };
 
   const {
     data: driver,
@@ -91,7 +120,7 @@ function DriverDetailPage() {
 
   if (isLoadingDriver) {
     return (
-      <div className="flex items-center justify-center bg-gray-50 h-screen ">
+      <div className="flex items-center justify-center bg-gray-50 h-max ">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
@@ -99,13 +128,13 @@ function DriverDetailPage() {
 
   if (isErrorDriver) {
     return (
-      <div className="flex items-center justify-center bg-gray-50 h-screen">
+      <div className="flex items-center justify-center bg-gray-50 h-max">
         <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg max-w-md">
           <h3 className="font-bold mb-2">Error</h3>
           <p>{(errorDriver as Error).message}</p>
           <button
             className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
-            onClick={() => navigate(-1)}
+            onClick={() => goBack}
           >
             Kembali
           </button>
@@ -115,11 +144,11 @@ function DriverDetailPage() {
   }
 
   return (
-    <div className="bg-gray-50 h-screen py-6 px-4 md:px-6">
+    <div className="bg-gray-50 h-max py-6 px-4 md:px-6">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center mb-6">
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => goBack}
             className="mr-4 p-2 rounded-full hover:bg-gray-200 transition-colors"
           >
             <ArrowLeft size={20} />
@@ -127,12 +156,17 @@ function DriverDetailPage() {
           <h1 className="text-2xl font-bold text-gray-800">Detail Driver</h1>
 
           <div className="ml-auto flex space-x-2">
-            <button className="flex items-center px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm transition-colors">
-              <Edit size={16} className="mr-1" /> Edit
-            </button>
-            <button className="flex items-center px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm transition-colors">
-              <Trash size={16} className="mr-1" /> Hapus
-            </button>
+            <ButtonComponent
+              label="Ubah"
+              variant="edit"
+              className="rounded-md w-32"
+            />
+            <ButtonComponent
+              label="Hapus"
+              variant="delete"
+              className="rounded-md w-32"
+              onClick={() => driver?.id && deleteDriver(driver.id)}
+            />
           </div>
         </div>
 
@@ -277,10 +311,10 @@ function DriverDetailPage() {
                     {!isLoadingDeliveries &&
                       !isErrorDeliveries &&
                       deliveries &&
-                      deliveries.length > 0 &&
-                      deliveries.every(
-                        (d) => d.delivery_status === "menunggu persetujuan"
-                      ) && (
+                      (deliveries.length === 0 ||
+                        deliveries.every(
+                          (d) => d.delivery_status === "menunggu persetujuan"
+                        )) && (
                         <div className="flex items-center justify-center h-32 bg-gray-50 rounded-lg">
                           <div className="text-center text-gray-500">
                             <Award

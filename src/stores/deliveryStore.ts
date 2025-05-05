@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
 export type Delivery = {
+  id: string;
   driver_id: number | null;
   vehicle_id: number | null;
   load_type: string;
@@ -22,27 +23,37 @@ export type Delivery = {
 };
 
 type DeliveryStore = {
-  delivery: Delivery;
+  delivery: Delivery; // Single delivery object (for form editing)
   setDelivery: (data: Partial<Delivery>) => void;
   setAllDelivery: (data: Delivery) => void;
   resetDelivery: () => void;
-  deliveryList: Delivery[];
+  deliveryList: Delivery[]; // List of deliveries
   addDelivery: (newDelivery: Delivery) => void;
-  removeDelivery: (index: number) => void;
+  removeDelivery: (id: string) => void; // Changed parameter type to string to match ID
+  updateDelivery: (id: string, updatedDelivery: Partial<Delivery>) => void; // Added update function
 };
 
 export const useDeliveryStore = create<DeliveryStore>()(
   devtools((set) => ({
-    deliveryList: [], // List pengiriman
+    deliveryList: [], // Array of deliveries
     addDelivery: (newDelivery: Delivery) =>
       set((state) => ({
-        deliveryList: [...state.deliveryList, newDelivery], // Menambahkan pengiriman baru ke list
+        deliveryList: [...state.deliveryList, newDelivery], 
       })),
-    removeDelivery: (index: number) =>
+    removeDelivery: (id: string) => // Changed parameter to match the function signature
       set((state) => ({
-        deliveryList: state.deliveryList.filter((_, i) => i !== index), // Menghapus pengiriman berdasarkan index
+        deliveryList: state.deliveryList.filter(
+          (delivery) => delivery.id !== id
+        ),
       })),
-    delivery: {
+    updateDelivery: (id: string, updatedDelivery: Partial<Delivery>) =>
+      set((state) => ({
+        deliveryList: state.deliveryList.map(delivery => 
+          delivery.id === id ? { ...delivery, ...updatedDelivery } : delivery
+        ),
+      })),
+    delivery: { // Default values for a single delivery
+      id: "",
       driver_id: null,
       vehicle_id: null,
       load_type: "",
@@ -69,6 +80,7 @@ export const useDeliveryStore = create<DeliveryStore>()(
     resetDelivery: () =>
       set({
         delivery: {
+          id: "",
           driver_id: null,
           vehicle_id: null,
           load_type: "",

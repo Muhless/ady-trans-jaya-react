@@ -51,7 +51,7 @@ interface Transaction {
 }
 
 const fetchTransactions = async () => {
-  const res = await axios.get("http://localhost:8080/api/transactions");
+  const res = await axios.get("http://202.10.41.13:8080/api/transactions");
   return res.data.data;
 };
 
