@@ -62,7 +62,7 @@ function DriverPages() {
         return;
       }
 
-      const response = await fetch("http://202.10.41.13:8080/api/driver", {
+      const response = await fetch("/api/driver", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
