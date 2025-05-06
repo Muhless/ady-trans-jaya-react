@@ -22,12 +22,15 @@ function DriverPages() {
 
   const fetchDrivers = async (query = "") => {
     try {
-      let url = "http://202.10.41.13:8080/api/driver";
+      let url = "/api/driver";
       if (query) {
         url = `${url}?search=${encodeURIComponent(query)}`;
       }
 
       const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const json = await response.json();
       const data = Array.isArray(json.data) ? json.data : [];
       setDrivers(data);

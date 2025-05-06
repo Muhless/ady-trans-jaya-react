@@ -1,0 +1,9 @@
+{
+          "rewrites": [
+            {
+              "source": "/api/driver",
+              "destination": "http://202.10.41.13:8080/api/driver"
+            }
+          ]
+        }
+        
