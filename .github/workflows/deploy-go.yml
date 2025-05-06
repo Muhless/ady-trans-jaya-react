@@ -1,0 +1,39 @@
+name: Deploy Go Application
+
+on:
+  push:
+    branches: [ main ]  # Sesuaikan dengan branch Anda
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'  # Sesuaikan dengan versi Go Anda
+        
+    - name: Build
+      run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o app-binary
+        
+    - name: Deploy to VPS
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: "app-binary"
+        target: "/var/www/go-apps"
+        
+    - name: Restart service
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          sudo chmod +x /var/www/go-apps/app-binary
+          sudo systemctl restart go-app

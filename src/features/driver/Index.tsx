@@ -5,6 +5,7 @@ import Title from "../../components/Title";
 import ButtonComponent from "../../components/button/Index";
 import Modal from "../../components/modal/Modal";
 import useNavigationHooks from "../../hooks/useNavigation";
+import { API_BASE_URL } from "../../apiConfig";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },
@@ -22,7 +23,7 @@ function DriverPages() {
 
   const fetchDrivers = async (query = "") => {
     try {
-      let url = "/api/driver";
+      let url = `${API_BASE_URL}/driver`;
       if (query) {
         url = `${url}?search=${encodeURIComponent(query)}`;
       }
@@ -62,7 +63,7 @@ function DriverPages() {
         return;
       }
 
-      const response = await fetch("/api/driver", {
+      const response = await fetch(`${API_BASE_URL}/driver`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
