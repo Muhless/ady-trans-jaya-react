@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import ButtonComponent from "../button/Index";
 import { InputComponent } from "../input/Input";
 import { EyeOff, Eye } from "lucide-react";
+import { API_BASE_URL } from "../../apiConfig";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
@@ -13,7 +14,7 @@ const LoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/login", {
+      const res = await axios.post(`${API_BASE_URL}/users`, {
         username,
         password,
       });
@@ -46,7 +47,7 @@ const LoginForm = () => {
         <button
           type="button"
           onClick={() => setShowPassword((prev) => !prev)}
-          className="absolute top-1/2 right-8 transform -translate-y-1/2 text-gray-500"
+          className="absolute top-1/2 right-28 transform -translate-y-1/2 text-gray-500"
         >
           {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
         </button>
