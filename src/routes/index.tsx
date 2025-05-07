@@ -26,7 +26,7 @@ function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/auth/login" element={<LoginPages />} />
+        <Route path="/login" element={<LoginPages />} />
 
         <Route element={<Layout />}>
           {/* pages */}

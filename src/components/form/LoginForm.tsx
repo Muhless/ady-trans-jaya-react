@@ -1,48 +1,58 @@
-import axios from "axios";
 import React, { useState } from "react";
 import ButtonComponent from "../button/Index";
 import { InputComponent } from "../input/Input";
 import { EyeOff, Eye } from "lucide-react";
-import { API_BASE_URL } from "../../apiConfig";
+import { useAuthStore } from "../../stores/AuthStore";
+import useNavigationHooks from "../../hooks/useNavigation";
 
 const LoginForm = () => {
+  const { login, isLoading, error } = useAuthStore();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const { goToHome } = useNavigationHooks();
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // Validasi input sederhana
+    if (!username.trim() || !password.trim()) {
+      return;
+    }
+    
     try {
-      const res = await axios.post(`${API_BASE_URL}/users`, {
-        username,
-        password,
-      });
-      const { token } = res.data;
-      localStorage.setItem("token", token);
-      window.location.href = "/homepage";
-    } catch {
-      setError("Login gagal. Coba lagi.");
+      // Memanggil fungsi login dari AuthStore
+      const success = await login(username, password);
+      
+      // Redirect ke halaman utama jika login berhasil
+      if (success) {
+        goToHome();
+      }
+    } catch (err) {
+      // Error handling ditangani oleh AuthStore
+      console.error("Login error:", err);
     }
   };
 
   return (
-    <form onSubmit={handleLogin} className="flex flex-col justify-center">
+    <form onSubmit={handleSubmit} className="flex flex-col justify-center">
       <InputComponent
         type="text"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         className="w-[26rem] rounded-md p-3 bg-white border mb-3"
         placeholder="Masukkan username anda"
+        required
       />
 
-      <div className="relative">
+      <div className="relative mb-4">
         <InputComponent
           type={showPassword ? "text" : "password"}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="w-[26rem] rounded-md p-3 pr-12 bg-white border"
           placeholder="**********************"
+          required
         />
         <button
           type="button"
@@ -54,9 +64,10 @@ const LoginForm = () => {
       </div>
 
       <ButtonComponent
-        label="Masuk"
+        label={isLoading ? "Memproses..." : "Masuk"}
         type="submit"
-        className="w-[26rem] bg-blue-700 text-white hover:bg-blue-800 p-3 mt-5"
+        className="w-[26rem] bg-blue-600 text-white hover:bg-blue-700 p-3 mt-5"
+        // disabled={isLoading}
       />
 
       {error && <p className="text-red-500 mt-2">{error}</p>}

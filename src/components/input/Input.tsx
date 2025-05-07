@@ -13,6 +13,7 @@ type InputComponentProps = {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
   pointType?: "start" | "end";
+  required?: boolean;
 
   setSelectingPoint?: React.Dispatch<
     React.SetStateAction<"start" | "end" | null>
@@ -30,6 +31,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   onChange,
   pointType,
   setSelectingPoint,
+  required,
 }) => {
   const isLocationField = label?.toLowerCase().includes("lokasi");
   const isQuantityField = label?.toLowerCase().includes("jumlah");
@@ -58,6 +60,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
             className={`${inputClass} h-20`}
             placeholder={placeholder}
             onChange={onChange}
+            required={required}
           />
         ) : (
           <input

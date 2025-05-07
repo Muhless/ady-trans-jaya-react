@@ -1,7 +1,15 @@
 import React from "react";
 import LoginForm from "../components/form/LoginForm";
+import { Navigate } from "react-router-dom";
+import { useAuthStore } from "../stores/AuthStore";
 
 const LoginPages = () => {
+  const { isAuthenticated } = useAuthStore();
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <div className="grid grid-cols-3">
       <div className="h-screen w-full col-span-2">

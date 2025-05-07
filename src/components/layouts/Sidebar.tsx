@@ -15,9 +15,11 @@ import { useMemo } from "react";
 import React from "react";
 import UserIconComponent from "../UserIcon";
 import useNavigationHooks from "../../hooks/useNavigation";
+import { useAuthStore } from "../../stores/AuthStore";
 
 const Sidebar = () => {
   const { goToHome, goToDriverPages } = useNavigationHooks();
+  const logout = useAuthStore((state) => state.logout);
   const location = useLocation();
   const menuItems = useMemo(
     () => [
@@ -31,6 +33,13 @@ const Sidebar = () => {
     ],
     []
   );
+
+  const handleLogout= () => {
+    const confirmLogout = window.confirm("Yakin ingin keluar ?");
+    if (confirmLogout) {
+      logout();
+    }
+  };
 
   return (
     <div className="fixed bottom-0 left-0 flex flex-col w-20 h-screen bg-sidebar">
@@ -69,7 +78,10 @@ const Sidebar = () => {
           onClick={goToDriverPages}
           className="size-9 rounded-full"
         />
-        <div className="p-2 rotate-180 text-gray-300 rounded-full hover:bg-red-500 hover:text-white">
+        <div
+          className="p-2 rotate-180 text-gray-300 rounded-full hover:bg-red-500 hover:text-white"
+          onClick={handleLogout}
+        >
           <LogOut size={25} />
         </div>
       </div>
