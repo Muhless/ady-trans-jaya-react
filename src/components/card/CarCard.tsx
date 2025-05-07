@@ -1,31 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import ButtonComponent from "../button/Index";
 import Card from ".";
+import { Vehicles } from "../../features/vehicle/Index";
 
-type VehicleCardProps = {
-  name: string;
-  type: string;
-  license_plate: string;
-  capacity: string;
-  rate_per_km: number;
-  status: string;
-};
-
-const VehicleCard: React.FC<VehicleCardProps> = ({
+const VehicleCard: React.FC<Vehicles> = ({
+  id,
   name,
   type,
   license_plate,
   capacity,
   rate_per_km,
   status,
+  onDelete,
 }) => {
   const isAvailable = status.toLowerCase() === "tersedia";
 
   return (
     <Card className="relative p-6 shadow-md rounded-xl">
-      <div className="absolute top-2 right-2 flex  gap-1">
+      <div className="absolute top-2 right-2 flex gap-1">
         <ButtonComponent variant="edit" />
-        <ButtonComponent variant="delete" />
+        <ButtonComponent variant="delete" onClick={()=> onDelete(id)}/>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">

@@ -5,6 +5,8 @@ import { VehicleTypeComponent } from "../../components/button/CarType";
 import ButtonComponent from "../../components/button/Index";
 import Modal from "../../components/modal/Modal";
 import VehicleCard from "../../components/card/CarCard";
+import { API_BASE_URL } from "../../apiConfig";
+import { addVehicle, deleteVehicle, fetchVehicles } from "../../api/vehicleApi";
 
 const vehicleTypes = ["Semua", "Pick up", "CDE", "CDD", "Fuso", "Wingbox"];
 
@@ -16,15 +18,7 @@ const modalInput = [
   { name: "rate_per_km", label: "Harga per Kilometer", type: "number" },
 ];
 
-// const defaultRates: { [key: string]: number } = {
-//   "Pick up": 5000,
-//   CDE: 6000,
-//   CDD: 8000,
-//   Fuso: 10000,
-//   Wingbox: 12000,
-// };
-
-interface Vehicles {
+export interface Vehicles {
   id: number;
   name: string;
   license_plate: string;
@@ -32,6 +26,7 @@ interface Vehicles {
   capacity: string;
   rate_per_km: number;
   status: string;
+  onDelete: (id: number) => void;
 }
 
 function VehiclePages() {
@@ -43,20 +38,15 @@ function VehiclePages() {
   useEffect(() => {
     const fetchVehicle = async () => {
       try {
-        const apiUrl = "http://202.10.41.13:8080/api/vehicle";
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
+        const data = await fetchVehicles();
+        if (!Array.isArray(data)) {
           throw new Error("Gagal mengambil data kendaraan");
         }
-        const data = await response.json();
-        console.log("Respon API:", data);
-        if (!Array.isArray(data.data)) {
-          throw new Error("Respon API tidak sesuai ekspektasi");
-        }
-
-        setVehicle(data.data);
+        setVehicle(data);
       } catch (err: any) {
-        setError(err.data || "terjadi kesalahan");
+        setError(
+          err.message || "terjadi kesalahan saat mengambil data kendaraan"
+        );
       } finally {
         setLoading(false);
       }
@@ -81,26 +71,24 @@ function VehiclePages() {
 
     try {
       data.rate_per_km = parseFloat(data.rate_per_km);
-      const apiUrl = "http://202.10.41.13:8080/api/vehicle";
-
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(transformed),
-      });
-      if (!response.ok) {
-        throw new Error("Gagal menambahkan data kendaraan");
-      }
-      const result = await response.json();
-      const newVehicle = result.data;
-      console.log("Data berhasil disimpan", newVehicle);
+      const newVehicle = await addVehicle(transformed);
       setVehicle([...vehicle, newVehicle]);
       setIsModalOpen(false);
     } catch (error) {
       console.error("Gagal menyimpan data:", error);
       setError(error.message);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Yakin ingin menghapus kendaraan ini?")) return;
+
+    try {
+      await deleteVehicle(id);
+      setVehicle((prev) => prev.filter((v) => v.id !== id));
+    } catch (error) {
+      console.error("Gagal hapus kendaraan:", error);
+      setError("Gagal menghapus kendaraan");
     }
   };
 
@@ -128,12 +116,14 @@ function VehiclePages() {
               {vehicle.map((vehicle) => (
                 <VehicleCard
                   key={vehicle.id}
+                  id={vehicle.id}
                   name={vehicle.name}
                   type={vehicle.type}
                   license_plate={vehicle.license_plate}
                   capacity={vehicle.capacity}
                   rate_per_km={vehicle.rate_per_km}
                   status={vehicle.status}
+                  onDelete={handleDelete}
                 />
               ))}
             </div>

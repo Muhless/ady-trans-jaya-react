@@ -36,30 +36,6 @@ interface Place {
   };
 }
 
-const fetchAddressSuggestions = async (
-  query: string,
-  setSuggestions: React.Dispatch<React.SetStateAction<Place[]>>
-) => {
-  if (!query) {
-    setSuggestions([]);
-    return;
-  }
-
-  try {
-    const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-        query
-      )}.json?autocomplete=true&bbox=104.5,-8.5,114.5,-5.5&access_token=${MAPBOX_ACCESS_TOKEN}`
-    );
-    const data = await response.json();
-    if (data.features) {
-      setSuggestions(data.features);
-    }
-  } catch (error) {
-    console.error("Error fetching address suggestions:", error);
-  }
-};
-
 const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<{
@@ -287,6 +263,11 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const handleSubmitDelivery = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!delivery.driver_id) {
+      alert("Silahkan pilih pengemudi terlebih dahulu.");
+      return;
+    }
+
     try {
       const defaultDate = new Date().toISOString();
       const formattedDeliveryDate = delivery.delivery_date
@@ -300,6 +281,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       const payload = {
         ...delivery,
 
+        id: Number(delivery.id),
         driver_id: Number(delivery.driver_id),
         vehicle_id: Number(delivery.vehicle_id),
         delivery_date: formattedDeliveryDate,

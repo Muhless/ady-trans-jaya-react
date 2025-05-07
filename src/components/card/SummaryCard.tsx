@@ -24,7 +24,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
     >
       <p className="text-black text-left w-full px-5">{title}</p>
       <div className="flex flex-col items-center">
-        <p className={`text-7xl font-bold ${textClassName}`}>{value}</p>
+        <p className={` font-bold ${textClassName}`}>{value}</p>
         <p className={`${textClassName}`}>{desc}</p>
       </div>
     </Card>

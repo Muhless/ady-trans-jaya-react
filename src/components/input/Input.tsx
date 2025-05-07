@@ -45,7 +45,9 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   } ${className || ""}`;
 
   return (
-    <div className="flex items-center gap-5 justify-between">
+    <div
+      className={`flex items-center ${label ? "gap-5 justify-between" : ""}`}
+    >
       <label className="text-gray-600">{label}</label>
       <div className="flex items-center gap-2">
         {type === "textarea" ? (

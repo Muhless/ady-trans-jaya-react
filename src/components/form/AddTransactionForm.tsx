@@ -69,11 +69,22 @@ const AddTransactionForm = () => {
         ...transaction,
         customer_id: Number(transaction.customer_id),
         total_delivery: transaction.deliveries.length,
+        deliveries: transaction.deliveries.map((d) => ({
+          ...d,
+          id: Number(d.id),
+        })),
       };
 
-      payload.payment_deadline = transaction.payment_deadline?.trim()
-        ? new Date(transaction.payment_deadline).toISOString()
-        : null;
+      if (transaction.payment_deadline?.trim()) {
+        const paymentDeadlineDate = new Date(transaction.payment_deadline);
+        if (isNaN(paymentDeadlineDate.getTime())) {
+          alert("Tanggal jatuh tempo pembayaran tidak valid.");
+          return;
+        }
+        payload.payment_deadline = paymentDeadlineDate.toISOString();
+      } else {
+        payload.payment_deadline = null;
+      }
 
       const response = await fetch(`${API_BASE_URL}/transactions`, {
         method: "POST",

@@ -17,6 +17,7 @@ import {
 import ButtonComponent from "../../components/button/Index";
 import axios from "axios";
 import useNavigationHooks from "../../hooks/useNavigation";
+import { API_BASE_URL } from "../../apiConfig";
 
 interface Driver {
   id: string;
@@ -71,7 +72,7 @@ function DriverDetailPage() {
 
     try {
       const response = await fetch(
-        `http://202.10.41.13:8080/api/driver/${id}`,
+        `${API_BASE_URL}/driver/${id}`,
         {
           method: "DELETE",
         }
@@ -134,7 +135,7 @@ function DriverDetailPage() {
           <p>{(errorDriver as Error).message}</p>
           <button
             className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
-            onClick={() => goBack}
+            onClick={() => goBack()}
           >
             Kembali
           </button>
@@ -148,7 +149,7 @@ function DriverDetailPage() {
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center mb-6">
           <button
-            onClick={() => goBack}
+            onClick={() => goBack()}
             className="mr-4 p-2 rounded-full hover:bg-gray-200 transition-colors"
           >
             <ArrowLeft size={20} />

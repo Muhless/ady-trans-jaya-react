@@ -8,7 +8,7 @@ import PendingDeliveryTable from "../components/table/PendingDeliveryTable.tsx";
 
 const HomePages = () => {
   const {
-    goToCarPages,
+    goToVehiclePages,
     goToDriverPages,
     goToCustomerPages,
     goToDeliveryPages,
@@ -28,34 +28,29 @@ const HomePages = () => {
       </div>
       <div className="grid grid-cols-4 gap-5 mb-5">
         <SummaryCard
-          title="Kendaraan"
+          title="Total Pengiriman"
           value={13}
-          textClassName="text-[#3884f2]"
           desc="Kendaraan Tersedia"
-          onClick={goToCarPages}
+          onClick={goToVehiclePages}
         />
         <SummaryCard
           title="Pengemudi"
           value={8}
-          textClassName="text-[#ee453e]"
           desc="Pengemudi Tersedia"
           onClick={goToDriverPages}
         />
         <SummaryCard
           title="Pelanggan"
           value={10}
-          textClassName="text-[#e9a60b]"
           desc="Pelanggan Setia"
           onClick={goToCustomerPages}
         />
         <SummaryCard
           title="Pengiriman"
-          textClassName="text-[#2ebf62]"
           value={5}
           desc="Pengiriman Berlangsung"
           onClick={goToDeliveryPages}
         />
-       
       </div>
       <div className="grid grid-cols-2 gap-5">
         <GraphCard />
