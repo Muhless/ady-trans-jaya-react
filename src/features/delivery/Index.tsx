@@ -5,9 +5,10 @@ import useNavigationHooks from "../../hooks/useNavigation.ts";
 import TableComponent from "../../components/table/index.tsx";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import { API_BASE_URL } from "../../apiConfig.ts";
 
 const fetchDelivery = async () => {
-  const res = await axios.get("http://202.10.41.13:8080/api/deliveries");
+  const res = await axios.get(`${API_BASE_URL}/deliveries`);
   return res.data.data;
 };
 

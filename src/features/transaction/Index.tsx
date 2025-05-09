@@ -6,6 +6,7 @@ import useNavigationHooks from "../../hooks/useNavigation";
 import TableComponent from "../../components/table";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { API_BASE_URL } from "../../apiConfig";
 
 interface Transaction {
   id: number;
@@ -51,7 +52,7 @@ interface Transaction {
 }
 
 const fetchTransactions = async () => {
-  const res = await axios.get("http://202.10.41.13:8080/api/transactions");
+  const res = await axios.get(`${API_BASE_URL}/transactions`);
   return res.data.data;
 };
 

@@ -14,22 +14,16 @@ const LoginForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    // Validasi input sederhana
+
     if (!username.trim() || !password.trim()) {
       return;
     }
-    
     try {
-      // Memanggil fungsi login dari AuthStore
       const success = await login(username, password);
-      
-      // Redirect ke halaman utama jika login berhasil
       if (success) {
         goToHome();
       }
     } catch (err) {
-      // Error handling ditangani oleh AuthStore
       console.error("Login error:", err);
     }
   };
@@ -66,11 +60,10 @@ const LoginForm = () => {
       <ButtonComponent
         label={isLoading ? "Memproses..." : "Masuk"}
         type="submit"
-        className="w-[26rem] bg-blue-600 text-white hover:bg-blue-700 p-3 mt-5"
-        // disabled={isLoading}
+        className="w-[26rem] bg-red-500 text-white hover:bg-red-700 p-3 mt-5"
       />
 
-      {error && <p className="text-red-500 mt-2">{error}</p>}
+      {error && <p className="text-red-500">{error}</p>}
     </form>
   );
 };

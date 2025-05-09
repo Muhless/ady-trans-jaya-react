@@ -23,13 +23,13 @@ const Sidebar = () => {
   const location = useLocation();
   const menuItems = useMemo(
     () => [
-      { to: "/", icon: <Home size={23} /> },
-      { to: "/driver", icon: <User size={23} /> },
-      { to: "/customer", icon: <Users size={23} /> },
-      { to: "/vehicle", icon: <CarFront size={23} /> },
-      // { to: "/rent", icon: <Car size={23} /> },
-      { to: "/delivery", icon: <Truck size={23} /> },
-      { to: "/transaction", icon: <Handshake size={23} /> },
+      { to: "/", icon: <Home size={20} /> },
+      { to: "/driver", icon: <User size={20} /> },
+      { to: "/customer", icon: <Users size={20} /> },
+      { to: "/vehicle", icon: <CarFront size={20} /> },
+      // { to: "/rent", icon: <Car size={20} /> },
+      { to: "/delivery", icon: <Truck size={20} /> },
+      { to: "/transaction", icon: <Handshake size={20} /> },
     ],
     []
   );
@@ -42,7 +42,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 flex flex-col w-20 h-screen bg-sidebar">
+    <div className="fixed bottom-0 left-0 flex flex-col w-20 h-screen bg-gray-800">
       <div className="flex justify-center cursor-pointer mt-5">
         <img
           src="/assets/images/logo.png"
@@ -51,7 +51,7 @@ const Sidebar = () => {
           onClick={goToHome}
         />
       </div>
-      <nav className="flex flex-col items-center justify-center flex-1 p-4 space-y-3">
+      <nav className="flex flex-col items-center flex-1 p-4 space-y-2 mt-3">
         {menuItems.map(({ to, icon }) => {
           const isActive =
             to === "/"
@@ -62,10 +62,10 @@ const Sidebar = () => {
             <Link
               key={to}
               to={to}
-              className={`p-2 rounded-full flex items-center transition-colors ${
+              className={`p-3 rounded-md flex items-center transition-colors ${
                 isActive
-                  ? "bg-white/20 text-white"
-                  : "text-gray-300 hover:bg-hover hover:text-white"
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-300 hover:bg-white/20 hover:text-white"
               }`}
             >
               {icon}
@@ -76,13 +76,13 @@ const Sidebar = () => {
       <div className="flex flex-col items-center justify-center space-y-4 cursor-pointer mb-7">
         <UserIconComponent
           onClick={goToDriverPages}
-          className="size-9 rounded-full"
+          className="size-8 rounded-full"
         />
         <div
-          className="p-2 rotate-180 text-gray-300 rounded-full hover:bg-red-500 hover:text-white"
+          className="p-3 rotate-180 text-gray-300 rounded-md hover:bg-red-500 hover:text-white"
           onClick={handleLogout}
         >
-          <LogOut size={25} />
+          <LogOut size={20} />
         </div>
       </div>
     </div>

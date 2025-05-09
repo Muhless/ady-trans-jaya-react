@@ -7,6 +7,7 @@ import Card from "../../components/card/index.tsx";
 import Modal from "../../components/modal/Modal.tsx";
 import axios from "axios";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { API_BASE_URL } from "../../apiConfig.ts";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },
@@ -26,7 +27,7 @@ interface Customer {
 }
 
 const fetchCustomers = async () => {
-  const res = await axios.get("http://202.10.41.13:8080/api/customer");
+  const res = await axios.get(`${API_BASE_URL}/customer`);
   return res.data.data;
 };
 

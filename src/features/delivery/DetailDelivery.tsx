@@ -16,6 +16,7 @@ import {
   Check,
   UserCog2Icon,
 } from "lucide-react";
+import { API_BASE_URL } from "../../apiConfig";
 
 const DetailDeliveryPage = () => {
   const { id } = useParams();
@@ -28,7 +29,7 @@ const DetailDeliveryPage = () => {
     const fetchDeliveryDetails = async () => {
       try {
         const response = await axios.get(
-          `http://202.10.41.13:8080/api/deliveries/${id}`
+          `${API_BASE_URL}/deliveries/${id}`
         );
         setDelivery(response.data.data);
         setLoading(false);

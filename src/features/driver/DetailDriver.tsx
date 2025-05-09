@@ -45,7 +45,7 @@ function DriverDetailPage() {
   const { goBack } = useNavigationHooks();
 
   const fetchDriverDetails = async (id: string) => {
-    const response = await fetch(`http://202.10.41.13:8080/api/driver/${id}`);
+    const response = await fetch(`${API_BASE_URL}/driver/${id}`);
     if (!response.ok) {
       throw new Error("Gagal mengambil data driver");
     }
@@ -55,7 +55,7 @@ function DriverDetailPage() {
 
   const fetchDriverDeliveries = async (id: string) => {
     const response = await fetch(
-      `http://202.10.41.13:8080/api/deliveries/search?driver_id=${id}`
+      `${API_BASE_URL}/deliveries/search?driver_id=${id}`
     );
     if (!response.ok) {
       throw new Error("Gagal mengambil riwayat pengiriman");

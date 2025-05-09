@@ -21,6 +21,7 @@ import DetailTransactionPages from "../features/transaction/DetailTransaction";
 import DetailDeliveryPage from "../features/delivery/DetailDelivery";
 import HomePages from "../pages/Homepage";
 import LoginPages from "../pages/Login";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 function AppRoutes() {
   return (
@@ -28,8 +29,13 @@ function AppRoutes() {
       <Routes>
         <Route path="/login" element={<LoginPages />} />
 
-        <Route element={<Layout />}>
-          {/* pages */}
+        <Route
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
           <Route path="/" element={<HomePages />} />
           {/* Profile */}
           <Route path="/profile" element={<ProfilePages />} />

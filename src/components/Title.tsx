@@ -1,16 +1,14 @@
 import React from "react";
 
-type TItleProps = {
+type TitleProps = {
   title: string;
 };
 
-const Title: React.FC<TItleProps> = ({ title }) => {
+const Title: React.FC<TitleProps> = ({ title }) => {
   return (
-    <div>
       <h1 className="text-4xl font-bold py-5 font-compforta">
         {title}
       </h1>
-    </div>
   );
 };
 
