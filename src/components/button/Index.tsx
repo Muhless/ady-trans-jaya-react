@@ -27,6 +27,7 @@ type ButtonComponentProps = {
   icon?: React.ReactNode;
   className?: string;
   type?: "button" | "submit" | "reset";
+  disabled?: boolean;
 };
 
 const ButtonComponent: React.FC<ButtonComponentProps> = ({
@@ -35,6 +36,7 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
   variant = "default",
   className,
   type = "button",
+  disabled = false,
 }) => {
   const baseStyle =
     "transition focus:outline-none flex justify-center items-center gap-2 text-sm p-2";
@@ -81,6 +83,7 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
       className={`${baseStyle} ${roundedStyle} ${variants[variant]} ${className}`}
       onClick={type !== "submit" ? handleClick : undefined}
       type={type}
+      disabled={disabled}
     >
       {label && <p>{label}</p>}
       {icons[variant] && <span>{icons[variant]}</span>}

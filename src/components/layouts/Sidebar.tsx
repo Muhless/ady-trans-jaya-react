@@ -34,11 +34,9 @@ const Sidebar = () => {
     []
   );
 
-  const handleLogout= () => {
-    const confirmLogout = window.confirm("Yakin ingin keluar ?");
-    if (confirmLogout) {
-      logout();
-    }
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
   };
 
   return (

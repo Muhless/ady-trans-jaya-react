@@ -14,6 +14,9 @@ type InputComponentProps = {
   ) => void;
   pointType?: "start" | "end";
   required?: boolean;
+  onBlur?: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
 
   setSelectingPoint?: React.Dispatch<
     React.SetStateAction<"start" | "end" | null>
@@ -27,7 +30,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   className,
   placeholder = "",
   value,
-  disabled,
+  disabled = false,
   onChange,
   pointType,
   setSelectingPoint,
@@ -54,23 +57,23 @@ export const InputComponent: React.FC<InputComponentProps> = ({
       <div className="flex items-center gap-2">
         {type === "textarea" ? (
           <textarea
-            disabled={disabled}
             name={name}
             value={String(value)}
             className={`${inputClass} h-20`}
             placeholder={placeholder}
             onChange={onChange}
             required={required}
+            disabled={disabled}
           />
         ) : (
           <input
-            disabled={disabled}
             type={type}
             name={name}
             value={stringValue}
             className={inputClass}
             placeholder={placeholder}
             onChange={onChange}
+            disabled={disabled}
           />
         )}
         {isLocationField && pointType && (

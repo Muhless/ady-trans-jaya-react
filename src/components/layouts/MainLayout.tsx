@@ -1,7 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import React from "react";
-import TopBar from "./Topbar";
 
 const Layout = () => {
   return (

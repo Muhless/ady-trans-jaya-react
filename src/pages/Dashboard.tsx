@@ -5,42 +5,50 @@ import SummaryCard from "../components/card/SummaryCard.tsx";
 import GraphCard from "../components/card/GraphCard.tsx";
 import WaitingDeliveryCard from "../components/card/WaitingDeliveryCard.tsx";
 import PendingDeliveryTable from "../components/table/PendingDeliveryTable.tsx";
-import { useAuth } from "../../utils/AuthContext.tsx";
 import { useAuthStore } from "../stores/AuthStore.ts";
+import axios from "axios";
+import { API_BASE_URL } from "../apiConfig.ts";
 
-const HomePages: React.FC<{ title?: string }> = ({ title }) => {
-  const { userRole } = useAuth();
-  const { role } = useAuthStore();
-  const [pageTitle, setPageTitle] = useState<string>(""); // State untuk menyimpan title
-
+const DashboardPages = () => {
   const {
     goToVehiclePages,
     goToDriverPages,
     goToCustomerPages,
     goToDeliveryPages,
   } = useNavigationHooks();
+  const user = useAuthStore((state) => state.user);
+  const setUser = useAuthStore((state) => state.setUser);
 
-  const getWelcomeMessage = () => {
-    const currentRole = role || userRole;
-
-    if (currentRole === "admin") {
-      return "Selamat Datang, Admin";
-    } else if (currentRole === "owner") {
-      return "Selamat Datang, Owner";
-    } else if (currentRole === "driver") {
-      return "Selamat Datang, Driver";
-    } else if (currentRole === "manager") {
-      return "Selamat Datang, Manager";
-    } else {
-      return "Selamat Datang";
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "/login";
+      return;
     }
-  };
+
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+    axios
+      .get(`${API_BASE_URL}/users`)
+      .then((res) => {
+        console.log("Data user dari /login:", res.data);
+        setUser(res.data.user);
+      })
+      .catch((err) => {
+        console.error("Gagal ambil data user", err);
+        if (err.response?.status === 401) {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
+      });
+  }, []);
+
+  if (!user) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div>
-      {/* Set document title */}
-      {pageTitle && <title>{pageTitle}</title>}
-
       <div
         className="w-full rounded-xl p-6 mb-5 bg-cover bg-no-repeat relative h-28 flex items-center"
         style={{
@@ -49,7 +57,7 @@ const HomePages: React.FC<{ title?: string }> = ({ title }) => {
       >
         <div className="absolute inset-0 bg-black/40 rounded-md" />
         <div className="relative z-10 text-white">
-          <Title title={getWelcomeMessage()} />
+          <Title title="Selamat Datang, ???" />
         </div>
       </div>
       <div className="grid grid-cols-4 gap-5 mb-5">
@@ -87,4 +95,4 @@ const HomePages: React.FC<{ title?: string }> = ({ title }) => {
   );
 };
 
-export default HomePages;
+export default DashboardPages;

@@ -6,7 +6,7 @@ import ButtonComponent from "../../components/button/Index";
 import Modal from "../../components/modal/Modal";
 import VehicleCard from "../../components/card/CarCard";
 import { API_BASE_URL } from "../../apiConfig";
-import { addVehicle, deleteVehicle, fetchVehicles } from "../../api/vehicleApi";
+import { addVehicle, deleteVehicle, fetchVehicles } from "../../api/vehicle";
 
 const vehicleTypes = ["Semua", "Pick up", "CDE", "CDD", "Fuso", "Wingbox"];
 
