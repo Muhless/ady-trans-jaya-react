@@ -1,6 +1,4 @@
-// src/routes/AppRoutes.tsx
-import { Routes, Route, Navigate, BrowserRouter } from "react-router-dom";
-
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 import LoginPages from "../pages/Login";
 import React from "react";
 import Layout from "../components/layouts/MainLayout";
@@ -16,9 +14,8 @@ import DetailTransactionPages from "../features/transaction/DetailTransaction";
 import TransactionPages from "../features/transaction/Index";
 import VehiclePages from "../features/vehicle/Index";
 import ProfilePages from "../pages/Profile";
-import HomePages from "../pages/Dashboard";
-import Spinner from "../components/Spinner";
 import DashboardPages from "../pages/Dashboard";
+import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRoutes() {
   return (
@@ -26,27 +23,70 @@ export default function AppRoutes() {
       <Routes>
         <Route path="/login" element={<LoginPages />} />
 
+        {/* Protected routes wrapped inside Layout */}
         <Route path="/" element={<Layout />}>
-          <Route index element={<DashboardPages />} />
-          <Route path="profile" element={<ProfilePages />} />
-          <Route path="vehicle" element={<VehiclePages />} />
-          <Route path="driver" element={<DriverPages />} />
-          <Route path="driver/add" element={<AddDriverPages />} />
-          <Route path="driver/:id" element={<DetailDeliveryPage />} />
-          <Route path="customer" element={<CustomerPages />} />
-          <Route path="rent" element={<RentalPages />} />
-          <Route path="delivery" element={<DeliveryPages />} />
+          <Route
+            index
+            element={<ProtectedRoute element={<DashboardPages />} />}
+          />
+          <Route
+            path="profile"
+            element={<ProtectedRoute element={<ProfilePages />} />}
+          />
+          <Route
+            path="vehicle"
+            element={<ProtectedRoute element={<VehiclePages />} />}
+          />
+          <Route
+            path="driver"
+            element={<ProtectedRoute element={<DriverPages />} />}
+          />
+          <Route
+            path="driver/add"
+            element={<ProtectedRoute element={<AddDriverPages />} />}
+          />
+          <Route
+            path="driver/:id"
+            element={<ProtectedRoute element={<DetailDeliveryPage />} />}
+          />
+          <Route
+            path="customer"
+            element={<ProtectedRoute element={<CustomerPages />} />}
+          />
+          <Route
+            path="rent"
+            element={<ProtectedRoute element={<RentalPages />} />}
+          />
+          <Route
+            path="delivery"
+            element={<ProtectedRoute element={<DeliveryPages />} />}
+          />
           <Route
             path="transaction/add/delivery"
-            element={<AddDeliveryPages />}
+            element={<ProtectedRoute element={<AddDeliveryPages />} />}
           />
-          <Route path="delivery/:id" element={<DetailDeliveryPage />} />
-          <Route path="transaction" element={<TransactionPages />} />
-          <Route path="transaction/add" element={<AddTransactionPages />} />
-          <Route path="transaction/:id" element={<DetailTransactionPages />} />
+          <Route
+            path="delivery/:id"
+            element={<ProtectedRoute element={<DetailDeliveryPage />} />}
+          />
+          <Route
+            path="transaction"
+            element={<ProtectedRoute element={<TransactionPages />} />}
+          />
+          <Route
+            path="transaction/add"
+            element={<ProtectedRoute element={<AddTransactionPages />} />}
+          />
+          <Route
+            path="transaction/:id"
+            element={<ProtectedRoute element={<DetailTransactionPages />} />}
+          />
         </Route>
 
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route
+          path="*"
+          element={<div className="p-4">Halaman tidak ditemukan</div>}
+        />
       </Routes>
     </BrowserRouter>
   );

@@ -19,7 +19,6 @@ import { useAuthStore } from "../../stores/AuthStore";
 
 const Sidebar = () => {
   const { goToHome, goToDriverPages } = useNavigationHooks();
-  const logout = useAuthStore((state) => state.logout);
   const location = useLocation();
   const menuItems = useMemo(
     () => [
@@ -34,7 +33,10 @@ const Sidebar = () => {
     []
   );
 
+  const { logout } = useAuthStore();
+
   const handleLogout = () => {
+    logout();
     localStorage.removeItem("token");
     window.location.href = "/login";
   };

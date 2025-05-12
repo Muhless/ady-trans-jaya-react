@@ -7,6 +7,7 @@ import Modal from "../../components/modal/Modal";
 import VehicleCard from "../../components/card/CarCard";
 import { API_BASE_URL } from "../../apiConfig";
 import { addVehicle, deleteVehicle, fetchVehicles } from "../../api/vehicle";
+import Spinner from "../../components/Spinner";
 
 const vehicleTypes = ["Semua", "Pick up", "CDE", "CDD", "Fuso", "Wingbox"];
 
@@ -91,6 +92,22 @@ function VehiclePages() {
       setError("Gagal menghapus kendaraan");
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center text-red-600">
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div>

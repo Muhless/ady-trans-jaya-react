@@ -1,31 +1,52 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ButtonComponent from "../button/Index";
 import { InputComponent } from "../input/Input";
 import { EyeOff, Eye, AlertCircle } from "lucide-react";
-import axios from "axios";
 import { API_BASE_URL } from "../../apiConfig";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../stores/AuthStore";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate();
+  const { isAuthenticated, login, checkAuth } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate, checkAuth]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
+
+    console.log("Username:", username);
+    console.log("Remember Me:", rememberMe);
 
     try {
-      const res = await axios.post(`${API_BASE_URL}/login`, {
-        username,
-        password,
-      });
-      const token = res.data.token;
-      localStorage.setItem("token", token);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      window.location.href = "/dashboard";
+      // Gunakan fungsi login dari auth store
+      const result = await login(username, password, API_BASE_URL, rememberMe);
+
+      if (result.success) {
+        console.log("Login berhasil:", result.data);
+        navigate("/");
+      } else {
+        setError(result.error);
+      }
     } catch (err) {
-      setError("Username atau password salah");
+      console.error("Login error:", err);
+      setError("Terjadi kesalahan saat login. Silakan coba lagi.");
+    } finally {
+      setLoading(false);
     }
   };
 

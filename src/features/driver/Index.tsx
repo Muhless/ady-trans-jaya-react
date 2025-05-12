@@ -6,6 +6,7 @@ import ButtonComponent from "../../components/button/Index";
 import Modal from "../../components/modal/Modal";
 import useNavigationHooks from "../../hooks/useNavigation";
 import { API_BASE_URL } from "../../apiConfig";
+import Spinner from "../../components/Spinner";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },
@@ -20,6 +21,7 @@ function DriverPages() {
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const { goToDriverDetails } = useNavigationHooks();
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchDrivers = async (query = "") => {
     try {
@@ -90,6 +92,7 @@ function DriverPages() {
       }
     }
   };
+
 
   return (
     <div>

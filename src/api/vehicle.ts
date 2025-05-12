@@ -2,7 +2,7 @@ import axios from "axios";
 import { API_BASE_URL } from "../apiConfig";
 
 export const fetchVehicles = async () => {
-  const response = await axios.get(`${API_BASE_URL}/vehicles`);
+  const response = await axios.get(`${API_BASE_URL}/vehicle`);
   return response.data.data;
 };
 
