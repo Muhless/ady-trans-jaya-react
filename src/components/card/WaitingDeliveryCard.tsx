@@ -12,7 +12,7 @@ const delivery = [
 
 const WaitingDeliveryCard = () => {
   return (
-    <Card className="w-full h-96 px-5" title="Menunggu Persetujuan">
+    <Card className="w-full h-96 px-5">
       <TableComponent data={delivery} />
     </Card>
   );

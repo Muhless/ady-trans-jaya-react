@@ -33,7 +33,6 @@ const LoginForm = () => {
     console.log("Remember Me:", rememberMe);
 
     try {
-      // Gunakan fungsi login dari auth store
       const result = await login(username, password, API_BASE_URL, rememberMe);
 
       if (result.success) {

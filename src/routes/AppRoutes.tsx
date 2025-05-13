@@ -22,6 +22,10 @@ export default function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPages />} />
+        <Route
+            path="transaction/add/delivery"
+            element={<AddDeliveryPages />} 
+          />
 
         {/* Protected routes wrapped inside Layout */}
         <Route path="/" element={<Layout />}>
@@ -61,10 +65,7 @@ export default function AppRoutes() {
             path="delivery"
             element={<ProtectedRoute element={<DeliveryPages />} />}
           />
-          <Route
-            path="transaction/add/delivery"
-            element={<ProtectedRoute element={<AddDeliveryPages />} />}
-          />
+       
           <Route
             path="delivery/:id"
             element={<ProtectedRoute element={<DetailDeliveryPage />} />}

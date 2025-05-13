@@ -1,7 +1,9 @@
 import React from "react";
 import Card from ".";
+import { Bubbles, EllipsisVertical } from "lucide-react";
 
 type SummaryCardProps = {
+  icon?: React.ReactNode;
   title?: string;
   className?: string;
   value?: number;
@@ -11,6 +13,7 @@ type SummaryCardProps = {
 };
 
 const SummaryCard: React.FC<SummaryCardProps> = ({
+  icon,
   title,
   value,
   textClassName,
@@ -19,13 +22,12 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
 }) => {
   return (
     <Card
-      className="cursor-pointer flex flex-col items-center justify-center space-y-1 h-40 font-poppins"
+      className="cursor-pointer flex flex-col space-y-1 h-96 font-poppins p-5 rounded-3xl"
       onClick={onClick}
     >
-      <p className="text-black text-left w-full px-5">{title}</p>
-      <div className="flex flex-col items-center">
-        <p className={` font-bold ${textClassName}`}>{value}</p>
-        <p className={`${textClassName}`}>{desc}</p>
+      <div className="flex justify-between items-center">{icon}</div>
+      <div className=" bottom-5">
+        <p className="text-sm text-center text-muted-foreground">{title}</p>
       </div>
     </Card>
   );

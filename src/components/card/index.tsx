@@ -7,15 +7,10 @@ type CardProps = {
   onClick?: () => void;
 };
 
-const Card: React.FC<CardProps> = ({
-  title,
-  className,
-  children,
-  onClick,
-}) => {
+const Card: React.FC<CardProps> = ({ title, className, children, onClick }) => {
   return (
     <div
-      className={`${className} relative p-2 rounded-md transition-all duration-300 hover:shadow-md bg-card ${
+      className={`${className} relative p-2 transition-all duration-300 bg-card ${
         onClick
           ? "cursor-pointer transition-all focus-visible:ring-2 focus-visible:ring-black"
           : ""
@@ -24,7 +19,11 @@ const Card: React.FC<CardProps> = ({
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
-      {title && <p className="font-compforta py-3 text-black font-bold text-xl">{title}</p>}
+      {title && (
+        <p className="py-3 text-black font-bold text-2xl">
+          {title}
+        </p>
+      )}
       {children}
     </div>
   );

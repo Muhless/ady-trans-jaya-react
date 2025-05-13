@@ -49,9 +49,8 @@ const options: ChartOptions<"line"> = {
     },
     title: {
       display: true,
-      text: "Transaksi",
       font: {
-        family: "Comfortaa, sans-serif",
+        family: "Comforta, sans-serif",
         size: 16,
         weight: "lighter"
       },

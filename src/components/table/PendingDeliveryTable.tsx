@@ -11,7 +11,7 @@ const delivery = [
 
 const PendingDeliveryTable = () => {
   return (
-    <Card title="Pengiriman" className="px-5">
+    <Card className="px-5">
       <TableComponent data={delivery} showActions={true} />
     </Card>
   );
