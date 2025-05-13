@@ -16,6 +16,7 @@ import VehiclePages from "../features/vehicle/Index";
 import ProfilePages from "../pages/Profile";
 import DashboardPages from "../pages/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
+import DriverDetailPage from "../features/driver/DetailDriver";
 
 export default function AppRoutes() {
   return (
@@ -51,7 +52,7 @@ export default function AppRoutes() {
           />
           <Route
             path="driver/:id"
-            element={<ProtectedRoute element={<DetailDeliveryPage />} />}
+            element={<ProtectedRoute element={<DriverDetailPage />} />}
           />
           <Route
             path="customer"

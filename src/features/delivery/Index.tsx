@@ -60,6 +60,7 @@ function DeliveryPages() {
         <div className="text-center text-red-600 p-5">Error loading data</div>
       ) : (
         <TableComponent
+          classNameTH="p-3"
           onRowClick={(row) => goToDetailDelivery(row.id)()}
           data={formattedData}
           columns={columns}

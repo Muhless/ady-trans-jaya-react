@@ -118,6 +118,7 @@ function TransactionPages() {
         <div className="text-center text-red-600 p-5">Error loading data</div>
       ) : (
         <TableComponent
+          classNameTH="p-3"
           data={Array.isArray(transformedData) ? transformedData : []}
           onRowClick={(row) => goToDetailTransaction(row.id)()}
           columns={[

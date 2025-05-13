@@ -1,15 +1,9 @@
 import React from "react";
-import {
-  Package,
-  Truck,
-  CheckCircle,
-  XCircle,
-  Wallet,
-} from "lucide-react";
+import { Package, Truck, CheckCircle, XCircle, ClockFading } from "lucide-react";
 
 const stats = [
   {
-    label: "Total Pengiriman Hari Ini",
+    label: "Total Pengiriman",
     value: 28,
     icon: <Package className="w-6 h-6 text-blue-500" />,
   },
@@ -24,14 +18,14 @@ const stats = [
     icon: <CheckCircle className="w-6 h-6 text-green-500" />,
   },
   {
+    label: "Pending",
+    value: 5,
+    icon: <ClockFading className="w-6 h-6 text-purple-500" />,
+  },
+  {
     label: "Gagal",
     value: 3,
     icon: <XCircle className="w-6 h-6 text-red-500" />,
-  },
-  {
-    label: "Pendapatan Hari Ini",
-    value: "Rp 1.200.000",
-    icon: <Wallet className="w-6 h-6 text-purple-500" />,
   },
 ];
 

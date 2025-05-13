@@ -7,7 +7,7 @@ type ProfileCardProps = {
   name: string;
   phone: string;
   address: string;
-  status: boolean;
+  status: string;
   imageUrl?: string;
   onClick?: () => void;
 };

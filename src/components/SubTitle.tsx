@@ -7,7 +7,7 @@ type SubTitleProps = {
 
 const SubTitle: React.FC<SubTitleProps> = ({ subTitle, className }) => {
   return (
-    <h1 className={`${className} text-xl font-jakarta mb-3`}>
+    <h1 className={`${className} text-lg font-poppins font-bold`}>
       {subTitle}
     </h1>
   );

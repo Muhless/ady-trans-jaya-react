@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SearchInput from "../../components/input/Search.tsx";
 import Title from "../../components/Title.js";
 import ButtonComponent from "../../components/button/Index.tsx";
@@ -8,6 +8,12 @@ import Modal from "../../components/modal/Modal.tsx";
 import axios from "axios";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { API_BASE_URL } from "../../apiConfig.ts";
+import Spinner from "../../components/Spinner.tsx";
+import {
+  addCustomer,
+  deleteCustomer,
+  fetchCustomers,
+} from "../../api/customer.ts";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },
@@ -26,54 +32,73 @@ interface Customer {
   address: string;
 }
 
-const fetchCustomers = async () => {
-  const res = await axios.get(`${API_BASE_URL}/customer`);
-  return res.data.data;
-};
-
 function CustomerPages() {
   const [modalOpen, setModalOpen] = useState(false);
-  const [customer, setCustomers] = useState<Customer[]>([]);
-  const queryClient = useQueryClient();
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const {
-    data: customers,
-    isLoading,
-    isError,
-    refetch,
-  } = useQuery({
-    queryKey: ["customers"],
-    queryFn: fetchCustomers,
-  });
+  const [loading, setLoading] = useState(true);
 
   const handleRowClick = (row: any) => {
     console.log("Row Clicked", row);
   };
 
-  const handleSumbitCustomers = async (data: Record<string, any>) => {
-    try {
-      const response = await fetch("http://localhost:8080/api/customer", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const result = await response.json();
-        throw new Error(result.error || "Gagal menyimpan data");
+  useEffect(() => {
+    const fetchCustomersData = async () => {
+      try {
+        const data = await fetchCustomers();
+        if (!Array.isArray(data)) {
+          throw new Error("Gagal mengambil data pelanggan");
+        }
+        setCustomers(data);
+      } catch (err: any) {
+        setError(
+          err.message || "Terjadi kesalahan saat mengambil data pelanggan"
+        );
+      } finally {
+        setLoading(false);
       }
-      const result = await response.json();
-      const newCustomer = result.message?.[0];
-      console.log("Berhasil menyimpan data Customer", newCustomer);
-      queryClient.invalidateQueries({ queryKey: ["customers"] });
+    };
+    fetchCustomersData();
+  }, []);
+
+  const handleSubmit = async (data: Record<string, any>) => {
+    try {
+      const newCustomer = await addCustomer(data);
+      setCustomers((prev) => [...prev, newCustomer]);
       setModalOpen(false);
-    } catch (error) {
-      console.log("Gagal menyimpan data:", error);
-      setError(error.message);
+    } catch (error: any) {
+      console.error("Gagal menyimpan data:", error);
+      setError(error.message || "Gagal menyimpan data pelanggan");
     }
   };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Yakin ingin menghapus data pelanggan ini ?")) return;
+
+    try {
+      await deleteCustomer(id);
+      setCustomers((prev) => prev.filter((v) => v.id !== id));
+    } catch (error) {
+      console.error("Gagal hapus data pelanggan:", error);
+      setError("Gagal menghapus data pelanggan");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center text-red-600">
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -87,13 +112,13 @@ function CustomerPages() {
         />
         <SearchInput placeholder="pelanggan..." />
       </div>
-      {isLoading ? (
+      {loading ? (
         <div className="text-center p-5">Loading</div>
-      ) : isError ? (
+      ) : error ? (
         <div className="text-center text-red-600 p-5">Error loading data</div>
       ) : (
         <TableComponent
-          data={Array.isArray(customer) ? customers : customers?.data ?? []}
+          data={customers}
           columns={[
             { key: "name", label: "Nama" },
             { key: "company", label: "Perusahaan" },
@@ -103,6 +128,7 @@ function CustomerPages() {
           ]}
           onRowClick={handleRowClick}
           showActions={true}
+          onDelete={handleDelete}
         />
       )}
       <Modal
@@ -110,7 +136,7 @@ function CustomerPages() {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         fields={modalInput}
-        onSubmit={handleSumbitCustomers}
+        onSubmit={handleSubmit}
       />
     </>
   );

@@ -14,6 +14,7 @@ export default {
       },
       colors: {
         background: "#f4f3f9",
+        // background: "#f4f3f9",
         sidebar: "#0d3762",
         // hover: "#2c3345",
         card: "#ffffff",

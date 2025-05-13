@@ -8,7 +8,7 @@ const useNavigationHooks = () => {
     goToHome: () => navigate("/"),
     goToLginPage: () => navigate("/login"),
     goToDriverPages: () => navigate("/driver"),
-    goToDriverDetails: (id: string | number) => () => {
+    goToDriverDetails: (id: number) => () => {
       if (id) {
         navigate(`/driver/${id}`);
       } else {
@@ -23,7 +23,7 @@ const useNavigationHooks = () => {
       useTransactionStore.getState().resetTransaction();
       navigate("/transaction/add");
     },
-    goToDetailTransaction: (id: string | number) => () => {
+    goToDetailTransaction: (id: number) => () => {
       if (id) {
         navigate(`/transaction/${id}`);
       } else {
@@ -32,7 +32,7 @@ const useNavigationHooks = () => {
     },
     // delivery
     goToDeliveryPages: () => navigate("delivery"),
-    goToDetailDelivery: (id: string | number) => () => {
+    goToDetailDelivery: (id: number) => () => {
       if (id) {
         navigate(`/delivery/${id}`);
       } else {

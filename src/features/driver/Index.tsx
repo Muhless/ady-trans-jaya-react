@@ -5,8 +5,22 @@ import Title from "../../components/Title";
 import ButtonComponent from "../../components/button/Index";
 import Modal from "../../components/modal/Modal";
 import useNavigationHooks from "../../hooks/useNavigation";
-import { API_BASE_URL } from "../../apiConfig";
 import Spinner from "../../components/Spinner";
+import {
+  addDriver,
+  deleteDriver,
+  searchDriver,
+  fetchDrivers,
+} from "../../api/driver";
+
+interface Driver {
+  id: number;
+  name: string;
+  phone: string;
+  address: string;
+  photo?: string;
+  status?: string;
+}
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },
@@ -16,83 +30,60 @@ const modalInput = [
 ];
 
 function DriverPages() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [drivers, setDrivers] = useState<any[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [drivers, setDrivers] = useState<Driver[]>([]);
   const [error, setError] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
   const { goToDriverDetails } = useNavigationHooks();
-  const [isLoading, setIsLoading] = useState(true);
-
-  const fetchDrivers = async (query = "") => {
-    try {
-      let url = `${API_BASE_URL}/driver`;
-      if (query) {
-        url = `${url}?search=${encodeURIComponent(query)}`;
-      }
-
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const json = await response.json();
-      const data = Array.isArray(json.data) ? json.data : [];
-      setDrivers(data);
-    } catch (err) {
-      console.error("Gagal mengambil data driver:", err);
-      setDrivers([]);
-    }
-  };
 
   useEffect(() => {
-    fetchDrivers();
+    const fetchDriver = async () => {
+      try {
+        const data = await fetchDrivers();
+        if (!Array.isArray(data)) {
+          throw new Error("Gagal mengambil data pengemudi");
+        }
+        setDrivers(data);
+      } catch (err: any) {
+        setError(
+          err.message || "terjadi kesalahan saat mengambil data pengemudi"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDriver();
   }, []);
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    fetchDrivers(query);
-  };
-
-  const handleSubmit = async (formValues: Record<string, any>) => {
+  const handleSubmit = async (data: Record<string, any>) => {
     try {
-      setError("");
-
-      if (!formValues.status) {
-        formValues.status = "tersedia";
-      }
-
-      if (!formValues.phone) {
-        setError("Nomor telepon tidak boleh kosong");
-        return;
-      }
-
-      const response = await fetch(`${API_BASE_URL}/driver`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formValues),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || "Gagal menyimpan data");
-      }
-
-      console.log("Data berhasil disimpan", result);
-      setIsModalOpen(false);
-      setError("");
-      fetchDrivers(searchQuery);
+      const newDriver = await addDriver(data);
+      setDrivers((prev) => [...prev, newDriver]);
+      setModalOpen(false);
     } catch (error: any) {
-      console.error("Terjadi kesalahan", error);
-      setError(error.message || "Gagal menyimpan data, coba lagi.");
-
-      if (error.message.includes("telepon sudah terdaftar")) {
-        setError("Nomor telepon sudah terdaftar. Gunakan nomor telepon lain.");
-      }
+      console.error("Gagal menyimpan data:", error);
+      setError(error.message || "Gagal menyimpan data pengemudi");
     }
   };
 
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    try {
+      const results = await searchDriver(value);
+      setDrivers(results);
+    } catch (error) {
+      console.error("Gagal mencari pengemudi:", error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -104,13 +95,10 @@ function DriverPages() {
           className="w-48"
           onClick={() => {
             setError("");
-            setIsModalOpen(true);
+            setModalOpen(true);
           }}
         />
-        <SearchInput
-          placeholder="pengemudi..."
-          onChange={(e) => handleSearch(e.target.value)}
-        />
+        <SearchInput placeholder="pengemudi..." onChange={handleSearch} />
       </div>
 
       {error && (
@@ -146,9 +134,9 @@ function DriverPages() {
       <Modal
         title="Driver"
         mode="add"
-        isOpen={isModalOpen}
+        isOpen={modalOpen}
         onClose={() => {
-          setIsModalOpen(false);
+          setModalOpen(false);
           setError("");
         }}
         fields={modalInput}

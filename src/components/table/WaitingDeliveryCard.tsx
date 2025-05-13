@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
+import Card from "../card";
 import TableComponent from ".";
 import { fetchDeliveries } from "../../api/delivery";
-import { Package } from "lucide-react";
 
-const OnGoingDeliveryTable = () => {
+const WaitingDeliveryTable = () => {
   const [deliveries, setDeliveries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -26,15 +26,6 @@ const OnGoingDeliveryTable = () => {
     getDeliveries();
   }, []);
 
-  const columns = [
-    { key: "customerName", label: "No Resi" },
-    { key: "customerName", label: "Pengemudi" },
-    { key: "driverName", label: "Kendaraan" },
-    { key: "pickupTime", label: "Batas Pengiriman" },
-    { key: "destination", label: "Tujuan" },
-    { key: "status", label: "Status" },
-  ];
-
   if (loading) {
     return <div className="text-center py-5">Memuat data...</div>;
   }
@@ -43,16 +34,18 @@ const OnGoingDeliveryTable = () => {
     return <div className="text-center text-red-600">{error}</div>;
   }
 
+  const columns = [
+    { key: "customerName", label: "No Resi" },
+    { key: "destination", label: "Tujuan" },
+  ];
+
   return (
-    <div className="flex justify-between">
-      <Package/>
-      <h1>No Resi</h1>
-      <h1>Nama Pengirim</h1>
-      <h1>No Resi</h1>
-      <h1>Status</h1>
-      <h1>Lokasi</h1>
-    </div>
+    <TableComponent
+      data={deliveries.slice(0, 5)}
+      columns={columns}
+      showActions={false}
+    />
   );
 };
 
-export default OnGoingDeliveryTable;
+export default WaitingDeliveryTable;

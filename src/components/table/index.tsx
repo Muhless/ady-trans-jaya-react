@@ -10,15 +10,21 @@ type ColumnConfig = {
 type TableProps = {
   data?: { id: string | number; [key: string]: any }[];
   onRowClick?: (row: any) => void;
+  onDelete?: (id: number) => void;
   showActions?: boolean;
   columns?: ColumnConfig[];
+  classNameTH?: string;
+  classNameTD?: string;
 };
 
 const TableComponent: React.FC<TableProps> = ({
   data = [],
   onRowClick,
+  onDelete,
   showActions = false,
   columns,
+  classNameTH,
+  classNameTD,
 }) => {
   const headers = data.length > 0 ? Object.keys(data[0]) : [];
   const displayHeaders =
@@ -32,20 +38,20 @@ const TableComponent: React.FC<TableProps> = ({
           }));
 
   return (
-    <Card className="overflow-auto rounded-xl hover:shadow-none">
+    <Card className="overflow-auto rounded-md">
       <table className="w-full text-sm text-left border-collapse">
         <thead>
           <tr className="text-center border-b">
             {displayHeaders.length > 0 && (
-              <th className="p-3 text-base font-semibold">No</th>
+              <th className={`${classNameTH}  text-base`}>No</th>
             )}
             {displayHeaders.map(({ label }, index) => (
-              <th key={index} className="p-3 text-base font-semibold">
+              <th key={index} className={`${classNameTH} text-base`}>
                 {label}
               </th>
             ))}
             {showActions && (
-              <th className="p-3 text-base font-semibold ">Aksi</th>
+              <th className={`${classNameTH} text-base`}>Aksi</th>
             )}
           </tr>
         </thead>
@@ -54,10 +60,14 @@ const TableComponent: React.FC<TableProps> = ({
           {data.length === 0 ? (
             <tr>
               <td
-                colSpan={displayHeaders.length + (showActions ? 1 : 0)}
-                className="text-center p-5 text-gray-500"
+                colSpan={displayHeaders.length + (showActions ? 2 : 1)}
+                className={`${classNameTD} text-center`}
               >
-                Tidak ada data
+                <div className="flex items-center justify-center w-full h-full">
+                  <span className="text-gray-500 text-lg font-medium">
+                    Tidak ada data
+                  </span>
+                </div>
               </td>
             </tr>
           ) : (
@@ -81,8 +91,20 @@ const TableComponent: React.FC<TableProps> = ({
                 {showActions && (
                   <td className="p-3 text-center border-b">
                     <div className="flex justify-center gap-2">
-                      <ButtonComponent variant="edit" />
-                      <ButtonComponent variant="delete" />
+                      <ButtonComponent
+                        variant="edit"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onRowClick?.(row);
+                        }}
+                      />
+                      <ButtonComponent
+                        variant="delete"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete?.(Number(row.id));
+                        }}
+                      />
                     </div>
                   </td>
                 )}
