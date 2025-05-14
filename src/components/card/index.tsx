@@ -20,7 +20,7 @@ const Card: React.FC<CardProps> = ({ title, className, children, onClick }) => {
       tabIndex={onClick ? 0 : undefined}
     >
       {title && (
-        <p className="py-3 text-black font-bold text-2xl">
+        <p className="p-2">
           {title}
         </p>
       )}

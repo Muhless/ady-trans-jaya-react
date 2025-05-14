@@ -4,7 +4,7 @@ import Title from "../../components/Title";
 import { VehicleTypeComponent } from "../../components/button/CarType";
 import ButtonComponent from "../../components/button/Index";
 import Modal from "../../components/modal/Modal";
-import VehicleCard from "../../components/card/CarCard";
+import VehicleCard from "../../components/card/VehicleCard";
 import { API_BASE_URL } from "../../apiConfig";
 import { addVehicle, deleteVehicle, fetchVehicles } from "../../api/vehicle";
 import Spinner from "../../components/Spinner";

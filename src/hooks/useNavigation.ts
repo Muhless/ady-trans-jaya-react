@@ -32,6 +32,8 @@ const useNavigationHooks = () => {
     },
     // delivery
     goToDeliveryPages: () => navigate("delivery"),
+    goToAddDeliveryForm: () => navigate("/transaction/add/delivery"),
+    goToDeliveryMapPages: (id: number) => navigate(`/delivery/map/${id}`),
     goToDetailDelivery: (id: number) => () => {
       if (id) {
         navigate(`/delivery/${id}`);
@@ -39,7 +41,6 @@ const useNavigationHooks = () => {
         console.warn("ID tidak ditemukan");
       }
     },
-    goToAddDeliveryForm: () => navigate("/transaction/add/delivery"),
   };
 };
 

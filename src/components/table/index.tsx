@@ -2,7 +2,7 @@ import React from "react";
 import ButtonComponent from "../button/Index";
 import Card from "../card";
 
-type ColumnConfig = {
+export type ColumnConfig = {
   key: string;
   label: string;
 };
@@ -64,7 +64,7 @@ const TableComponent: React.FC<TableProps> = ({
                 className={`${classNameTD} text-center`}
               >
                 <div className="flex items-center justify-center w-full h-full">
-                  <span className="text-gray-500 text-lg font-medium">
+                  <span className="text-gray-500 text-sm font-medium">
                     Tidak ada data
                   </span>
                 </div>
@@ -75,21 +75,19 @@ const TableComponent: React.FC<TableProps> = ({
               <tr
                 key={row.id}
                 onClick={() => onRowClick?.(row)}
-                className={`transition-all duration-200 hover:bg-sky-100 cursor-pointer text-center ${
-                  rowIndex % 2 === 0 ? "bg-white" : "bg-gray-100"
-                }`}
+                className="transition-all duration-200 hover:bg-sky-100 cursor-pointer text-center"
               >
-                <td className="p-3 border-b">{rowIndex + 1}</td>
+                <td className={`${classNameTD} border-b`}>{rowIndex + 1}</td>
                 {displayHeaders.map(({ key }, colIndex) => (
                   <td
                     key={colIndex}
-                    className="p-3 border-b break-words max-w-[200px]"
+                    className={`${classNameTD}  border-b break-words max-w-[200px]`}
                   >
                     {row[key]}
                   </td>
                 ))}
                 {showActions && (
-                  <td className="p-3 text-center border-b">
+                  <td className={`${classNameTD} border-b text-center`}>
                     <div className="flex justify-center gap-2">
                       <ButtonComponent
                         variant="edit"

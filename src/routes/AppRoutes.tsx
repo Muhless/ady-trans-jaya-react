@@ -17,16 +17,14 @@ import ProfilePages from "../pages/Profile";
 import DashboardPages from "../pages/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import DriverDetailPage from "../features/driver/DetailDriver";
+import DeliveryMap from "../features/delivery/DeliveryMap";
 
 export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPages />} />
-        <Route
-            path="transaction/add/delivery"
-            element={<AddDeliveryPages />} 
-          />
+        <Route path="transaction/add/delivery" element={<AddDeliveryPages />} />
 
         {/* Protected routes wrapped inside Layout */}
         <Route path="/" element={<Layout />}>
@@ -66,11 +64,16 @@ export default function AppRoutes() {
             path="delivery"
             element={<ProtectedRoute element={<DeliveryPages />} />}
           />
-       
+          {/* delivery */}
           <Route
             path="delivery/:id"
             element={<ProtectedRoute element={<DetailDeliveryPage />} />}
           />
+          <Route
+            path="delivery/map/:id"
+            element={<ProtectedRoute element={<DeliveryMap />} />}
+          />
+          {/* end delivery */}
           <Route
             path="transaction"
             element={<ProtectedRoute element={<TransactionPages />} />}

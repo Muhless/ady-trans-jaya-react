@@ -61,6 +61,7 @@ function DeliveryPages() {
       ) : (
         <TableComponent
           classNameTH="p-3"
+          classNameTD="p-3"
           onRowClick={(row) => goToDetailDelivery(row.id)()}
           data={formattedData}
           columns={columns}

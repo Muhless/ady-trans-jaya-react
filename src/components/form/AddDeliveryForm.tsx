@@ -76,7 +76,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   );
 
   const vehicleOptions = useFetchOptions(
-    `${API_BASE_URL}/vehicle`,
+    `${API_BASE_URL}/vehicles`,
     formatVehicleLabel
   );
 
@@ -116,27 +116,8 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
 
         if (markerRef.current[type]) markerRef.current[type]!.remove();
 
-        const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-          `<div style="
-              background-color: ${markerColor};
-              color: white;
-              padding: 8px 12px;
-              border-radius: 8px;
-              font-size: 14px;
-              font-weight: bold;
-              text-align: center;
-              box-shadow: 0px 4px 8px rgba(0,0,0,0.3);
-              border: 2px solid white;
-              letter-spacing: 0.5px;
-              min-width: 100px;
-          ">
-              ${type === "start" ? "🚀 Keberangkatan" : "📍 Tujuan"}
-          </div>`
-        );
-
         markerRef.current[type] = new mapboxgl.Marker({ color: markerColor })
           .setLngLat([lng, lat])
-          .setPopup(popup)
           .addTo(mapRef.current!);
 
         mapRef.current!.flyTo({
@@ -254,7 +235,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const [formData, setFormData] = [delivery, setAllDelivery];
   const state = useDeliveryStore.getState();
   console.log(state.delivery);
-  const { deliveryPrice, loading, error } = useDeliveryCalculation(
+  const { deliveryPrice, loading } = useDeliveryCalculation(
     distance,
     formData.vehicle_id
   );

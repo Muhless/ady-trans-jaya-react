@@ -18,7 +18,7 @@ export const useCustomers = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/customer`);
+        const response = await fetch(`${API_BASE_URL}/customers`);
         if (!response.ok) {
           throw new Error("Error fetching customers data");
         }

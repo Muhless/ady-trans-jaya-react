@@ -1,5 +1,16 @@
 import React from "react";
-import { Package, Truck, CheckCircle, XCircle, ClockFading } from "lucide-react";
+import {
+  Package,
+  Truck,
+  CheckCircle,
+  XCircle,
+  ClockFading,
+  GripVerticalIcon,
+  Grip,
+  ArrowDown,
+  FileDown,
+  EllipsisIcon,
+} from "lucide-react";
 
 const stats = [
   {
@@ -31,17 +42,23 @@ const stats = [
 
 const StatCards = () => {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-      {stats.map((item, index) => (
-        <div
-          key={index}
-          className="bg-white shadow rounded p-4 text-center space-y-2"
-        >
-          <div className="flex justify-center">{item.icon}</div>
-          <p className="text-sm text-gray-600">{item.label}</p>
-          <p className="text-xl font-semibold">{item.value}</p>
-        </div>
-      ))}
+    <div className="">
+      <div className="flex justify-end items-center mb-2 gap-3">
+        <p className="text-sm text-gray-700">Urutkan</p>
+        <EllipsisIcon />
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        {stats.map((item, index) => (
+          <div
+            key={index}
+            className="bg-white shadow rounded p-4 text-center space-y-2"
+          >
+            <div className="flex justify-center">{item.icon}</div>
+            <p className="text-sm text-gray-600">{item.label}</p>
+            <p className="text-xl font-semibold">{item.value}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

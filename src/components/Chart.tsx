@@ -48,23 +48,16 @@ const options: ChartOptions<"line"> = {
       position: "bottom",
     },
     title: {
-      display: true,
-      font: {
-        family: "Comforta, sans-serif",
-        size: 16,
-        weight: "lighter"
-      },
-      color: "#000000",
-      padding: {
-        top: 10,
-        bottom: 30,
-      },
+      display: false,
     },
   },
 };
 
-const ChartComponent = () => {
-  return <Line data={data} options={options} />;
-};
+interface ChartComponentProps {
+  sortOrder?: "asc" | "desc";
+}
+
+
+const ChartComponent = () => <Line data={data} options={options} />;
 
 export default ChartComponent;

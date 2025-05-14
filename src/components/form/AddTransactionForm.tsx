@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useCustomers } from "../../hooks/useCustomers";
 import useNavigationHooks from "../../hooks/useNavigation";
 import { useTransactionStore } from "../../stores/transactionStore";
@@ -6,8 +6,8 @@ import SelectComponent from "../input/Select";
 import ButtonComponent from "../button/Index";
 import { InputComponent } from "../input/Input";
 import { useDeliveryStore } from "../../stores/deliveryStore";
-import Swal from "sweetalert2";
 import { API_BASE_URL } from "../../apiConfig";
+import { fetchCustomers } from "../../api/customer";
 
 const AddTransactionForm = () => {
   const {
@@ -16,31 +16,41 @@ const AddTransactionForm = () => {
     goBack,
     goToTransactionPages,
   } = useNavigationHooks();
-  const { customers, loading, error } = useCustomers();
-  const {
-    deliveryList,
-    addDelivery,
-    removeDelivery,
-    delivery,
-    setDelivery,
-    resetDelivery,
-  } = useDeliveryStore();
+  const { deliveryList, removeDelivery, setDelivery, resetDelivery } =
+    useDeliveryStore();
   const { transaction, setTransaction, resetTransaction } =
     useTransactionStore();
   const state = useTransactionStore.getState();
   console.log(state.transaction);
 
-  const customerOptions = [
-    { value: "", label: "Pilih pelanggan" },
-    ...customers.map((customer) => ({
-      value: customer.id.toString(),
-      label: customer.name,
-    })),
-  ];
+  const [customers, setCustomers] = useState<any[]>([]);
+  const [selectedCustomer, setSelectedCustomer] = useState<any | null>(null);
 
-  const selectedCustomer = customers.find(
-    (c) => c.id === Number(transaction.customer_id)
-  );
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const customersData = await fetchCustomers();
+        setCustomers(customersData);
+      } catch (error) {
+        console.error("Error fetching customers:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Create customer options for the select component
+  const customerOptions = customers.map((customer) => ({
+    value: customer.id.toString(),
+    label: customer.name,
+  }));
+
+  const handleCustomerSelect = (customerId: string) => {
+    const customer = customers.find(
+      (customer) => customer.id.toString() === customerId
+    );
+    setSelectedCustomer(customer || null);
+  };
 
   const handleChange = (
     event: React.ChangeEvent<
@@ -49,6 +59,11 @@ const AddTransactionForm = () => {
   ) => {
     const { name, value } = event.target;
     setTransaction({ [name]: value });
+
+    // If the customer_id changed, update the selected customer
+    if (name === "customer_id") {
+      handleCustomerSelect(value);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -112,6 +127,7 @@ const AddTransactionForm = () => {
   const handleReset = () => {
     resetTransaction();
     resetDelivery();
+    setSelectedCustomer(null)
     console.log(
       "Transaction state after reset:",
       useTransactionStore.getState().transaction
@@ -122,22 +138,6 @@ const AddTransactionForm = () => {
     resetTransaction();
     resetDelivery();
     goBack();
-  };
-
-  const handleButtonClick = () => {
-    Swal.fire({
-      title: "Apakah kamu yakin?",
-      text: "Data yang belum disimpan akan hilang!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Ya, batal",
-      cancelButtonText: "Tidak",
-      reverseButtons: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        handleCancel();
-      }
-    });
   };
 
   const handleAddDelivery = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -161,15 +161,13 @@ const AddTransactionForm = () => {
     }
   };
 
-  if (loading) return <p>Harap tunggu sebentar...</p>;
-  if (error) return <p>Terjadi kesalahan saat mengambil data pelanggan.</p>;
-
   const handleEditDelivery = (deliveryToEdit) => {
     setDelivery(deliveryToEdit);
+    goToAddDeliveryForm();
   };
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
+    <form className="space-y-2" onSubmit={handleSubmit}>
       <SelectComponent
         label="Pelanggan"
         className="w-96"
@@ -179,26 +177,31 @@ const AddTransactionForm = () => {
         options={customerOptions}
       />
       {selectedCustomer && (
-        <div className="text-gray-700 w-full space-y-4 text-sm">
-          <div className="flex items-center gap-5 justify-between">
-            <p className="font-semibold">Nama</p>
-            <p className="w-96">: {selectedCustomer.name}</p>
-          </div>
-          <div className="flex items-center gap-5 justify-between">
-            <p className="font-semibold">Perusahaan</p>
-            <p className="w-96">: {selectedCustomer.company}</p>
-          </div>
-          <div className="flex items-center gap-5 justify-between">
-            <p className="font-semibold">Email</p>
-            <p className="w-96">: {selectedCustomer.email}</p>
-          </div>
-          <div className="flex items-center gap-5 justify-between">
-            <p className="font-semibold">Nomor Telepon</p>
-            <p className="w-96">: {selectedCustomer.phone}</p>
-          </div>
-          <div className="flex items-center gap-5 justify-between">
-            <p className="font-semibold">Alamat</p>
-            <p className="w-96">: {selectedCustomer.address}</p>
+        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm w-full text-sm mt-2">
+          <h3 className="font-medium text-gray-800 mb-2 border-b pb-1">
+            Detail Pelanggan
+          </h3>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <p className="text-gray-500 mb-1">Nama</p>
+              <p className="font-medium">{selectedCustomer.name}</p>
+            </div>
+            <div>
+              <p className="text-gray-500 mb-1">Perusahaan</p>
+              <p className="font-medium">{selectedCustomer.company}</p>
+            </div>
+            <div>
+              <p className="text-gray-500 mb-1">Email</p>
+              <p className="font-medium">{selectedCustomer.email}</p>
+            </div>
+            <div>
+              <p className="text-gray-500 mb-1">Nomor Telepon</p>
+              <p className="font-medium">{selectedCustomer.phone}</p>
+            </div>
+            <div className="col-span-2">
+              <p className="text-gray-500 mb-1">Alamat</p>
+              <p className="font-medium">{selectedCustomer.address}</p>
+            </div>
           </div>
         </div>
       )}
@@ -282,7 +285,7 @@ const AddTransactionForm = () => {
           variant="back"
           type="button"
           className="w-full"
-          onClick={handleButtonClick}
+          onClick={handleCancel}
         />
         <ButtonComponent
           label="Ulangi"
