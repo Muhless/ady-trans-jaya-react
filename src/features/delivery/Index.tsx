@@ -6,6 +6,7 @@ import TableComponent from "../../components/table/index.tsx";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { API_BASE_URL } from "../../apiConfig.ts";
+import StatCards from "../../components/card/StatCard.tsx";
 
 const fetchDelivery = async () => {
   const res = await axios.get(`${API_BASE_URL}/deliveries`);
@@ -49,9 +50,10 @@ function DeliveryPages() {
   }));
 
   return (
-    <div>
+    <div className="">
       <Title title={"Pengiriman"} />
-      <div className="flex justify-end mb-5">
+      <StatCards />
+      <div className="flex justify-end py-5">
         <SearchInput placeholder={"pengiriman"} />
       </div>
       {isLoading ? (

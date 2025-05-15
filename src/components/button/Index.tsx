@@ -39,20 +39,20 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
   disabled = false,
 }) => {
   const baseStyle =
-    "transition focus:outline-none flex justify-center items-center gap-2 text-sm p-2";
+    "transition focus:outline-none flex justify-center items-center gap-2 text-sm p-2 text-white";
 
   const roundedStyle =
     variant === "edit" || variant === "delete" ? "rounded-full" : "rounded-md";
   const variants = {
-    default: "bg-gray-400 hover:bg-gray-500",
-    add: "bg-biru hover:bg-sky-500 ",
-    edit: "bg-kuning hover:bg-yellow-500",
-    delete: "bg-merah hover:bg-red-400",
-    save: "bg-biru hover:bg-sky-500",
-    back: "bg-gray-400 hover:bg-gray-500",
-    map: "bg-blue-500 hover:bg-blue-600",
-    undo: "bg-merah hover:bg-red-400",
-    next: "bg-kuning hover:bg-yellow-500",
+    default: "bg-gray-600 hover:bg-gray-700",
+    add: "bg-blue-600 hover:bg-blue-700 ",
+    edit: "bg-yellow-500 hover:bg-yellow-600",
+    delete: "bg-red-600 hover:bg-red-700",
+    save: "bg-green-600 hover:bg-green-700",
+    back: "bg-gray-600 hover:bg-gray-700",
+    map: "bg-blue-600 hover:bg-blue-700",
+    undo: "bg-red-600 hover:bg-red-700",
+    next: "bg-green-600 hover:bg-green-700",
   };
 
   const icons = {

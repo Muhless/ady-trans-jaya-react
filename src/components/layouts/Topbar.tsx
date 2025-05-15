@@ -7,7 +7,7 @@ const TopBar: React.FC = () => {
   const logout = useAuthStore((state) => state.logout);
 
   return (
-    <div className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
+    <div className="bg-white shadow-md px-6 py-3 flex justify-between items-center">
       <div className="flex items-center gap-2 text-biru font-semibold text-lg">
         <Truck size={24} />
         <span>Dashboard Pengiriman</span>

@@ -1,52 +1,81 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Package,
   Truck,
   CheckCircle,
   XCircle,
   ClockFading,
-  GripVerticalIcon,
-  Grip,
-  ArrowDown,
-  FileDown,
-  EllipsisIcon,
 } from "lucide-react";
+import axios from "axios";
+import { API_BASE_URL } from "../../apiConfig";
 
-const stats = [
-  {
-    label: "Total Pengiriman",
-    value: 28,
-    icon: <Package className="w-6 h-6 text-blue-500" />,
-  },
-  {
-    label: "Dalam Pengiriman",
-    value: 10,
-    icon: <Truck className="w-6 h-6 text-yellow-500" />,
-  },
-  {
-    label: "Selesai",
-    value: 15,
-    icon: <CheckCircle className="w-6 h-6 text-green-500" />,
-  },
-  {
-    label: "Pending",
-    value: 5,
-    icon: <ClockFading className="w-6 h-6 text-purple-500" />,
-  },
-  {
-    label: "Gagal",
-    value: 3,
-    icon: <XCircle className="w-6 h-6 text-red-500" />,
-  },
-];
+export const fetchDeliveries = async () => {
+  const response = await axios.get(`${API_BASE_URL}/deliveries`);
+  return response.data.data;
+};
 
 const StatCards = () => {
+  const [counts, setCounts] = useState({
+    total: 0,
+    delivering: 0,
+    completed: 0,
+    pending: 0,
+    failed: 0,
+  });
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const deliveries = await fetchDeliveries();
+
+        const newCounts = {
+          total: deliveries.length,
+          delivering: deliveries.filter((d) => d.status === "dalam_pengiriman")
+            .length,
+          completed: deliveries.filter((d) => d.status === "selesai").length,
+          pending: deliveries.filter((d) => d.status === "pending").length,
+          failed: deliveries.filter((d) => d.status === "gagal").length,
+        };
+
+        setCounts(newCounts);
+      } catch (error) {
+        console.error("Gagal memuat data pengiriman:", error);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  const stats = [
+    {
+      label: "Total Pengiriman",
+      value: counts.total,
+      icon: <Package className="w-6 h-6 text-blue-500" />,
+    },
+    {
+      label: "Dalam Pengiriman",
+      value: counts.delivering,
+      icon: <Truck className="w-6 h-6 text-yellow-500" />,
+    },
+    {
+      label: "Selesai",
+      value: counts.completed,
+      icon: <CheckCircle className="w-6 h-6 text-green-500" />,
+    },
+    {
+      label: "Pending",
+      value: counts.pending,
+      icon: <ClockFading className="w-6 h-6 text-purple-500" />,
+    },
+    {
+      label: "Gagal",
+      value: counts.failed,
+      icon: <XCircle className="w-6 h-6 text-red-500" />,
+    },
+  ];
+
   return (
-    <div className="">
-      <div className="flex justify-end items-center mb-2 gap-3">
-        <p className="text-sm text-gray-700">Urutkan</p>
-        <EllipsisIcon />
-      </div>
+    <div>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {stats.map((item, index) => (
           <div
