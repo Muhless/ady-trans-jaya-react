@@ -8,11 +8,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { API_BASE_URL } from "../../apiConfig";
-
-export const fetchDeliveries = async () => {
-  const response = await axios.get(`${API_BASE_URL}/deliveries`);
-  return response.data.data;
-};
+import { fetchDeliveries } from "../../api/delivery";
 
 const StatCards = () => {
   const [counts, setCounts] = useState({
@@ -30,11 +26,12 @@ const StatCards = () => {
 
         const newCounts = {
           total: deliveries.length,
-          delivering: deliveries.filter((d) => d.status === "dalam_pengiriman")
+          delivering: deliveries.filter((d) => d.delivery_status === "dalam pengiriman")
             .length,
-          completed: deliveries.filter((d) => d.status === "selesai").length,
-          pending: deliveries.filter((d) => d.status === "pending").length,
-          failed: deliveries.filter((d) => d.status === "gagal").length,
+          completed: deliveries.filter((d) => d.delivery_status === "selesai").length,
+          pending: deliveries.filter((d) => d.delivery_status === "menunggu persetujuan")
+            .length,
+          failed: deliveries.filter((d) => d.delivery_status === "gagal").length,
         };
 
         setCounts(newCounts);

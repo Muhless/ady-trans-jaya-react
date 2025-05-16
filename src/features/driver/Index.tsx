@@ -12,6 +12,8 @@ import {
   searchDriver,
   fetchDrivers,
 } from "../../api/driver";
+import DriverForm from "../../components/form/DriverForm";
+import { getFullImageUrl } from "../../../utils/imageHelper";
 
 interface Driver {
   id: number;
@@ -22,15 +24,8 @@ interface Driver {
   status?: string;
 }
 
-const modalInput = [
-  { name: "name", label: "Nama", type: "text" },
-  { name: "phone", label: "Nomor Telepon", type: "number" },
-  { name: "address", label: "Alamat", type: "textarea" },
-  // { name: "photo", label: "Foto", type: "image" },
-];
-
 function DriverPages() {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -56,10 +51,19 @@ function DriverPages() {
   }, []);
 
   const handleSubmit = async (data: Record<string, any>) => {
+    const formData = new FormData();
+
+    formData.append("name", data.name);
+    formData.append("phone", data.phone);
+    formData.append("address", data.address);
+    if (data.photo && data.photo.length > 0) {
+      formData.append("photo", data.photo[0]);
+    }
+
     try {
-      const newDriver = await addDriver(data);
+      const newDriver = await addDriver(formData);
       setDrivers((prev) => [...prev, newDriver]);
-      setModalOpen(false);
+      setIsModalOpen(false);
     } catch (error: any) {
       console.error("Gagal menyimpan data:", error);
       setError(error.message || "Gagal menyimpan data pengemudi");
@@ -95,7 +99,7 @@ function DriverPages() {
           className="w-48"
           onClick={() => {
             setError("");
-            setModalOpen(true);
+            setIsModalOpen(true);
           }}
         />
         <SearchInput placeholder="pengemudi..." onChange={handleSearch} />
@@ -110,7 +114,6 @@ function DriverPages() {
           <span className="block sm:inline">{error}</span>
         </div>
       )}
-
       <div className="grid grid-cols-3 gap-3">
         {drivers.length > 0 ? (
           drivers.map((driver) => (
@@ -120,7 +123,7 @@ function DriverPages() {
               phone={driver.phone || "Tidak ada nomor"}
               address={driver.address || "Tidak ada alamat"}
               status={driver.status || "tidak diketahui"}
-              imageUrl={driver.photo || ""}
+              imageUrl={getFullImageUrl(driver.photo)}
               onClick={goToDriverDetails(driver.id)}
             />
           ))
@@ -132,16 +135,12 @@ function DriverPages() {
       </div>
 
       <Modal
-        title="Driver"
-        mode="add"
-        isOpen={modalOpen}
-        onClose={() => {
-          setModalOpen(false);
-          setError("");
-        }}
-        fields={modalInput}
-        onSubmit={handleSubmit}
-      />
+        title="Pengemudi"
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      >
+        <DriverForm onSubmit={handleSubmit} />
+      </Modal>
     </div>
   );
 }

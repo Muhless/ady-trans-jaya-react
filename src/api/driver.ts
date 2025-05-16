@@ -13,8 +13,12 @@ export const searchDriver = async (query: string) => {
   return response.data.data;
 };
 
-export const addDriver = async (data: Record<string, any>) => {
-  const response = await axios.post(`${API_BASE_URL}/driver`, data);
+export const addDriver = async (data: FormData) => {
+  const response = await axios.post(`${API_BASE_URL}/driver`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data.data;
 };
 

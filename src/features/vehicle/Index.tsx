@@ -4,37 +4,26 @@ import Title from "../../components/Title";
 import { VehicleTypeComponent } from "../../components/button/CarType";
 import ButtonComponent from "../../components/button/Index";
 import Modal from "../../components/modal/Modal";
-import VehicleCard from "../../components/card/VehicleCard";
+import VehicleCard, { Vehicles } from "../../components/card/VehicleCard";
 import { API_BASE_URL } from "../../apiConfig";
-import { addVehicle, deleteVehicle, fetchVehicles } from "../../api/vehicle";
+import {
+  addVehicle,
+  deleteVehicle,
+  fetchVehicles,
+  updateVehicle,
+} from "../../api/vehicle";
 import Spinner from "../../components/Spinner";
+import VehicleForm from "../../components/form/VehicleForm";
 
 const vehicleTypes = ["Semua", "Pick up", "CDE", "CDD", "Fuso", "Wingbox"];
 
-const modalInput = [
-  { name: "name", label: "Nama Kendaraan", type: "text" },
-  { name: "license_plat", label: "Nomor Plat", type: "text" },
-  { name: "type", label: "Tipe", type: "select", options: vehicleTypes },
-  { name: "capacity", label: "Kapasitas", type: "text" },
-  { name: "rate_per_km", label: "Harga per Kilometer", type: "number" },
-];
-
-export interface Vehicles {
-  id: number;
-  name: string;
-  license_plate: string;
-  type: string;
-  capacity: string;
-  rate_per_km: number;
-  status: string;
-  onDelete: (id: number) => void;
-}
-
 function VehiclePages() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [vehicle, setVehicle] = useState<Vehicles[]>([]);
+  const [vehicles, setVehicle] = useState<Vehicles[]>([]);
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicles | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<"add" | "edit">("add");
 
   useEffect(() => {
     const fetchVehicle = async () => {
@@ -56,28 +45,45 @@ function VehiclePages() {
   }, []);
 
   const handleSubmitVehicle = async (data: Record<string, any>) => {
-    // const rate = defaultRates[data.type] || parseFloat(data.rate_per_km) || 0;
-    const transformed = {
-      ...data,
-      type: data.type.toLowerCase(),
-      status: data.status || "tersedia",
-      rate_per_km: parseFloat(data.rate_per_km) || 0,
-      // rate_per_km: rate,
-    };
-
-    if (isNaN(transformed.rate_per_km)) {
-      setError("Harga harus berupa angka yang valid.");
-      return;
-    }
-
     try {
-      data.rate_per_km = parseFloat(data.rate_per_km);
-      const newVehicle = await addVehicle(transformed);
-      setVehicle([...vehicle, newVehicle]);
+      const transformed = {
+        ...data,
+        type: data.type.toLowerCase(),
+        status: data.status || "tersedia",
+        rate_per_km: parseFloat(data.rate_per_km) || 0,
+      };
+
+      if (isNaN(transformed.rate_per_km)) {
+        setError("Harga harus berupa angka yang valid.");
+        return;
+      }
+
+      if (mode === "edit" && selectedVehicle) {
+        console.log(
+          "Updating vehicle ID:",
+          selectedVehicle.id,
+          "with data:",
+          transformed
+        );
+        await updateVehicle(selectedVehicle.id, transformed);
+
+        const refreshedData = await fetchVehicles();
+        setVehicle(refreshedData);
+      } else {
+        const newVehicle = await addVehicle(transformed);
+        setVehicle([...vehicles, newVehicle]);
+      }
+
       setIsModalOpen(false);
+      setSelectedVehicle(null);
+      setMode("add");
     } catch (error) {
       console.error("Gagal menyimpan data:", error);
-      setError(error.message);
+      setError(
+        error.response?.data?.message ||
+          error.message ||
+          "Terjadi kesalahan saat menyimpan data"
+      );
     }
   };
 
@@ -93,21 +99,23 @@ function VehiclePages() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <Spinner />
-      </div>
-    );
-  }
+  const handleEdit = (vehicleId: number) => {
+    const vehicleToEdit = vehicles.find((v) => v.id === vehicleId);
+    if (vehicleToEdit) {
+      console.log("Vehicle to edit:", vehicleToEdit);
+      setSelectedVehicle(vehicleToEdit);
+      setMode("edit");
+      setIsModalOpen(true);
+    }
+  };
 
-  if (error) {
-    return (
-      <div className="text-center text-red-600">
-        <p>{error}</p>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (mode === "edit" && selectedVehicle) {
+      console.log("Mode changed to edit with vehicle:", selectedVehicle);
+    } else {
+      console.log("Mode changed to add");
+    }
+  }, [mode, selectedVehicle]);
 
   return (
     <div>
@@ -128,9 +136,9 @@ function VehiclePages() {
         <div className="text-center">{error}</div>
       ) : (
         <>
-          {Array.isArray(vehicle) && vehicle.length > 0 ? (
+          {Array.isArray(vehicles) && vehicles.length > 0 ? (
             <div className="grid grid-cols-2 gap-5">
-              {vehicle.map((vehicle) => (
+              {vehicles.map((vehicle) => (
                 <VehicleCard
                   key={vehicle.id}
                   id={vehicle.id}
@@ -141,6 +149,7 @@ function VehiclePages() {
                   rate_per_km={vehicle.rate_per_km}
                   status={vehicle.status}
                   onDelete={handleDelete}
+                  onEdit={handleEdit}
                 />
               ))}
             </div>
@@ -152,12 +161,20 @@ function VehiclePages() {
 
       <Modal
         title="Kendaraan"
-        mode="add"
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        fields={modalInput}
-        onSubmit={handleSubmitVehicle}
-      />
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedVehicle(null);
+          setMode("add");
+        }}
+      >
+        <VehicleForm
+          onSubmit={handleSubmitVehicle}
+          defaultValues={selectedVehicle || {}}
+          onReset={() => setSelectedVehicle(null)}
+          mode={mode}
+        />
+      </Modal>
     </div>
   );
 }

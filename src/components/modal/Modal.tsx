@@ -1,49 +1,22 @@
 import { X } from "lucide-react";
-import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import ButtonComponent from "../button/Index";
-
-type FieldConfig = {
-  name: string;
-  label: string;
-  type: string;
-  options?: string[];
-};
+import React from "react";
 
 type ModalProps = {
   title: string;
   isOpen: boolean;
   onClose: () => void;
-  onSubmit?: (data: Record<string, any>) => void;
-  fields: FieldConfig[];
+  children: React.ReactNode;
   mode?: "add" | "edit";
-  onReset?: () => void;
-  dataToEdit?: Record<string, any> | null;
 };
 
-function Modal({
-  title,
-  isOpen,
-  onClose,
-  onSubmit,
-  fields,
-  mode = "add",
-  onReset,
-  dataToEdit = null,
-}: ModalProps) {
-  const { register, handleSubmit, reset, setValue } = useForm({
-    defaultValues: dataToEdit || {},
-  });
-
-  useEffect(() => {
-    if (dataToEdit) {
-      Object.keys(dataToEdit).forEach((key) => setValue(key, dataToEdit[key]));
-    } else {
-      reset();
-    }
-  }, [dataToEdit, setValue, reset]);
-
+const Modal: React.FC<ModalProps> = ({ title, isOpen, onClose, children, mode = "add" }) => {
   if (!isOpen) return null;
+
+  const renderTitle = () => {
+    if (mode === "edit") return `Edit Data ${title}`;
+    if (mode === "add") return `Tambah Data ${title}`;
+    return title;
+  };
 
   return (
     <div
@@ -56,7 +29,7 @@ function Modal({
       >
         <div className="relative flex justify-center">
           <h1 className="font-bold underline text-lg font-compforta">
-            {mode === "edit" ? `Edit Data ${title}` : `Tambah Data ${title}`}
+            {renderTitle()}
           </h1>
           <button
             onClick={onClose}
@@ -66,63 +39,10 @@ function Modal({
           </button>
         </div>
 
-        <form
-          className="mt-4"
-          onSubmit={handleSubmit((formValues) => {
-            onSubmit?.(formValues); // kirim data JSON
-          })}
-        >
-          {fields.map(({ name, label, type, options }) => (
-            <div key={name} className="mb-4">
-              <label className="block mb-2 font-medium">{label}</label>
-              {options ? (
-                <select
-                  {...register(name, { required: `Harap pilih ${label.toLowerCase()}` })}
-                  className="w-full border p-2 rounded-lg"
-                >
-                  <option value="" disabled hidden>
-                    Pilih {label.toLowerCase()}
-                  </option>
-                  {options.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              ) : type === "textarea" ? (
-                <textarea
-                  {...register(name)}
-                  className="w-full border rounded p-2 focus:outline-blue-400"
-                  rows={4}
-                  placeholder={`Masukkan ${label.toLowerCase()}`}
-                />
-              ) : (
-                <input
-                  type={type}
-                  {...register(name)}
-                  className="w-full border rounded p-2 focus:outline-blue-400"
-                  placeholder={`Masukkan ${label.toLowerCase()}`}
-                />
-              )}
-            </div>
-          ))}
-
-          <div className="flex justify-end gap-2 mt-6">
-            <ButtonComponent
-              label="Ulangi"
-              variant="undo"
-              onClick={(e) => {
-                e.preventDefault();
-                reset();
-                onReset?.();
-              }}
-            />
-            <ButtonComponent label="Simpan" variant="save" type="submit" />
-          </div>
-        </form>
+        <div className="mt-4">{children}</div>
       </div>
     </div>
   );
-}
+};
 
 export default Modal;
