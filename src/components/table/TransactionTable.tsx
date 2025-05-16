@@ -9,43 +9,13 @@ interface Transaction {
   id: number;
   customer_id: number;
   customer?: {
-    id: number;
     name: string;
-    company: string;
-    email: string;
     phone: string;
-    address: string;
   };
-  total_delivery: number;
   cost: number;
   payment_deadline: string;
-  down_payment: number | null;
-  down_payment_status: string;
-  down_payment_time: string | null;
-  full_payment: number | null;
-  full_payment_status: string;
-  full_payment_time: string | null;
+  total_delivery: number;
   transaction_status: string;
-  created_at: string;
-  updated_at: string;
-  delivery: Array<{
-    id: number;
-    load_type: string;
-    load: string;
-    quantity: number;
-    weight: number;
-    pickup_address: string;
-    pickup_address_lat: number;
-    pickup_address_lang: number;
-    destination_address: string;
-    destination_address_lat: number;
-    destination_address_lang: number;
-    delivery_date: string;
-    delivery_deadline_date: string;
-    delivery_status: string;
-    delivery_cost: number;
-    approved_at: string | null;
-  }>;
 }
 
 type ColumnConfig = {

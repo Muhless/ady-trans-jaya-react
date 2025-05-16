@@ -1,13 +1,13 @@
 // src/pages/Dashboard.tsx
-import React, { useState } from "react";
-import useNavigationHooks from "../hooks/useNavigation.ts";
+import React from "react";
 import Spinner from "../components/Spinner";
 import { useAuthStore } from "../stores/AuthStore.js";
-import StatCards from "../components/card/StatCard.tsx";
 import TransactionTable from "../components/card/TransactionCard.tsx";
 import TransactionGraphic from "../components/card/TransactionGraphic.tsx";
 import OnGoingDeliveryCard from "../components/card/OnGoingDeliveryCard.tsx";
 import WaitingDeliveryCard from "../components/card/WaitingDeliveryCard.tsx";
+import DashboardStatCard from "../components/card/stat/DashboardStatCard.tsx";
+import TransactionCard from "../components/card/TransactionCard.tsx";
 
 const DashboardPages = () => {
   const user = useAuthStore((state) => state.user);
@@ -41,13 +41,13 @@ const DashboardPages = () => {
           <p className="text-white/80">Dashboard PT. Ady Trans Jaya</p>
         </div>
       </div>
-      <StatCards />
+      <DashboardStatCard />
       <div className="grid grid-cols-3 gap-5">
         <div className="col-span-1">
           <TransactionGraphic />
         </div>
         <div className="col-span-2">
-          <TransactionTable />
+          <TransactionCard />
         </div>
       </div>
       <div className="grid grid-cols-2 gap-5">

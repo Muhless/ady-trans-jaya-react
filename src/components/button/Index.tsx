@@ -45,12 +45,12 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
     variant === "edit" || variant === "delete" ? "rounded-full" : "rounded-md";
   const variants = {
     default: "bg-gray-600 hover:bg-gray-700",
-    add: "bg-blue-600 hover:bg-blue-700 ",
+    add: "bg-sky-600 hover:bg-sky-700 ",
     edit: "bg-yellow-500 hover:bg-yellow-600",
     delete: "bg-red-600 hover:bg-red-700",
     save: "bg-green-600 hover:bg-green-700",
     back: "bg-gray-600 hover:bg-gray-700",
-    map: "bg-blue-600 hover:bg-blue-700",
+    map: "bg-sky-600 hover:bg-sky-700",
     undo: "bg-red-600 hover:bg-red-700",
     next: "bg-green-600 hover:bg-green-700",
   };

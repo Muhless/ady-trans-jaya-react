@@ -17,13 +17,16 @@ export const useAuthStore = create((set, get) => ({
   refreshToken: null,
   user: null,
   role: null,
+
   isAuthenticated: false,
   isLoading: true,
   sessionType: SESSION_TYPES.TEMPORARY,
 
+  setToken: (token) => set({ token }),
+  setRole: (role) => set({ role }),
+
   setSessionType: (type) => {
     set({ sessionType: type });
-    sessionStorage.setItem(SESSION_TYPE_KEY, type);
     localStorage.setItem(SESSION_TYPE_KEY, type);
   },
 
@@ -99,8 +102,10 @@ export const useAuthStore = create((set, get) => ({
       storage.removeItem(TOKEN_KEY);
       storage.removeItem(REFRESH_TOKEN_KEY);
       storage.removeItem(USER_KEY);
+      storage.removeItem(SESSION_TYPE_KEY);
     });
 
+    get().clearStorage();
     window.location.href = "/login";
   },
 
@@ -149,15 +154,16 @@ export const useAuthStore = create((set, get) => ({
     const token = storage.getItem(TOKEN_KEY);
     const refreshToken = storage.getItem(REFRESH_TOKEN_KEY);
     let user = null;
-    const role = user?.role || null;
+    let role = null;
 
     try {
       const userJson = storage.getItem(USER_KEY);
       if (userJson) {
         user = JSON.parse(userJson);
+        role = user?.role || null;
       }
     } catch (error) {
-      console.error("Error parsing stored user:", error);
+      console.error("Error decoding or validating token in checkAuth:", error);
     }
 
     if (token) {

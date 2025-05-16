@@ -16,6 +16,7 @@ import { API_BASE_URL } from "../../apiConfig";
 import { formatDate } from "../../../utils/Formatters";
 import UserIconComponent from "../../components/UserIcon";
 import { getFullImageUrl } from "../../../utils/imageHelper";
+import DeliveryHistoryCard from "../../components/card/DeliveryHistoryCard";
 
 interface Driver {
   id: string;
@@ -163,23 +164,17 @@ function DriverDetailPage() {
 
       <div className="grid grid-cols-3 bg-white rounded-md border">
         <div className="col-span-1 p-10 border-r">
-          <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="bg-gradient-to-r from-primary to-primary/70 p-6 text-center h-96">
+          <div className="overflow-hidden">
+            <div className="text-center h-96">
               {photoUrl ? (
                 <img
                   src={photoUrl}
                   alt={driver?.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover rounded-xl"
                 />
               ) : (
                 <UserIconComponent className="w-full h-full" />
               )}
-              <h2 className="mt-4 text-xl font-bold text-white">
-                {driver?.name}
-              </h2>
-              <p className="text-primary-100">
-                {driver?.id ? `ID: ${driver.id}` : ""}
-              </p>
             </div>
           </div>
         </div>
@@ -238,79 +233,11 @@ function DriverDetailPage() {
             </div>
             {/*  */}
             <div>
-              <h3 className="text-lg font-semibold mb-4 border-b pb-2">
-                Riwayat Pengiriman
-              </h3>
-              {isErrorDeliveries && (
-                <div className="bg-red-50 p-4 rounded-lg text-red-600">
-                  Gagal memuat riwayat pengiriman
-                </div>
-              )}
-
-              {!isLoadingDeliveries &&
-                !isErrorDeliveries &&
-                deliveries &&
-                (deliveries.length === 0 ||
-                  deliveries.every(
-                    (d) => d.delivery_status === "menunggu persetujuan"
-                  )) && (
-                  <div className="flex items-center justify-center h-32 bg-gray-50 rounded-lg">
-                    <div className="text-center text-gray-500">
-                      <Award size={32} className="mx-auto mb-2 text-gray-400" />
-                      <p>Belum ada riwayat pengiriman</p>
-                    </div>
-                  </div>
-                )}
-
-              {!isLoadingDeliveries &&
-                !isErrorDeliveries &&
-                deliveries &&
-                deliveries.length > 0 && (
-                  <div className="space-y-4">
-                    {deliveries
-                      .filter(
-                        (delivery) =>
-                          delivery.delivery_status !== "menunggu persetujuan"
-                      )
-                      .map((delivery) => (
-                        <div
-                          key={delivery.id}
-                          className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
-                        >
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <p className="text-lg font-medium">
-                                {delivery.load_type}: {delivery.load}
-                              </p>
-                              <div className="flex items-center mt-1 text-sm text-gray-500">
-                                <MapPin size={14} className="mr-1" />
-                                {delivery.destination_address}
-                              </div>
-                              <div className="flex items-center mt-1 text-sm text-gray-500">
-                                <Calendar size={14} className="mr-1" />
-                                {formatDate(delivery.delivery_date)}
-                              </div>
-                            </div>
-                            <span
-                              className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                delivery.delivery_status === "selesai"
-                                  ? "bg-green-100 text-green-800"
-                                  : delivery.delivery_status ===
-                                    "dalam perjalanan"
-                                  ? "bg-blue-100 text-blue-800"
-                                  : delivery.delivery_status ===
-                                    "menunggu persetujuan"
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : "bg-gray-100 text-gray-800"
-                              }`}
-                            >
-                              {delivery.delivery_status}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                )}
+              <DeliveryHistoryCard
+                deliveries={deliveries}
+                isLoading={isLoadingDeliveries}
+                isError={isErrorDeliveries}
+              />
             </div>
           </div>
         </div>

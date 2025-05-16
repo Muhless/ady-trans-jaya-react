@@ -3,13 +3,10 @@ import {
   Home,
   Users,
   Truck,
-  ChartSpline,
   User,
   CarFront,
-  Car,
-  LogOut,
-  Moon,
   Handshake,
+  LogOut,
 } from "lucide-react";
 import { useMemo } from "react";
 import React from "react";
@@ -18,22 +15,25 @@ import useNavigationHooks from "../../hooks/useNavigation";
 import { useAuthStore } from "../../stores/AuthStore";
 
 const Sidebar = () => {
-  const { goToHome, goToDriverPages } = useNavigationHooks();
+  const { goToHome } = useNavigationHooks();
+  const { role, logout } = useAuthStore();
   const location = useLocation();
+
   const menuItems = useMemo(
     () => [
-      { to: "/", icon: <Home size={20} /> },
-      { to: "/driver", icon: <User size={20} /> },
-      { to: "/customer", icon: <Users size={20} /> },
-      { to: "/vehicle", icon: <CarFront size={20} /> },
-      // { to: "/rent", icon: <Car size={20} /> },
-      { to: "/delivery", icon: <Truck size={20} /> },
-      { to: "/transaction", icon: <Handshake size={20} /> },
+      { to: "/", icon: <Home size={20} />, label: "Home" },
+      { to: "/driver", icon: <User size={20} />, label: "Driver" },
+      { to: "/customer", icon: <Users size={20} />, label: "Customer" },
+      { to: "/vehicle", icon: <CarFront size={20} />, label: "Vehicle" },
+      { to: "/delivery", icon: <Truck size={20} />, label: "Delivery" },
+      {
+        to: "/transaction",
+        icon: <Handshake size={20} />,
+        label: "Transaction",
+      },
     ],
     []
   );
-
-  const { logout } = useAuthStore();
 
   const handleLogout = () => {
     logout();
@@ -42,16 +42,18 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 flex flex-col w-20 h-screen bg-sidebar">
-      <div className="flex justify-center cursor-pointer mt-2">
+    <aside className="fixed left-0 top-0 flex flex-col items-center w-20 h-screen bg-sidebar shadow-lg">
+      {/* Logo */}
+      <div className="mt-4 mb-6 cursor-pointer" onClick={goToHome}>
         <img
           src="/assets/images/logo.png"
           alt="Ady Trans Jaya"
-          className="w-14 h-auto"
-          onClick={goToHome}
+          className="w-12 h-auto"
         />
       </div>
-      <nav className="flex flex-col items-center flex-1 p-4 space-y-2 mt-3">
+
+      {/* Navigation */}
+      <nav className="flex flex-col items-center flex-1 space-y-3">
         {menuItems.map(({ to, icon }) => {
           const isActive =
             to === "/"
@@ -62,10 +64,10 @@ const Sidebar = () => {
             <Link
               key={to}
               to={to}
-              className={`p-3 rounded-md flex items-center transition-colors ${
+              className={`p-3 rounded-lg transition-colors ${
                 isActive
                   ? "bg-blue-500 text-white"
-                  : "text-gray-300 hover:bg-white/20 hover:text-white"
+                  : "text-gray-400 hover:bg-white/10 hover:text-white"
               }`}
             >
               {icon}
@@ -73,19 +75,27 @@ const Sidebar = () => {
           );
         })}
       </nav>
-      <div className="flex flex-col items-center justify-center space-y-4 cursor-pointer mb-7">
+
+      <div className="flex flex-col items-center mb-5 space-y-3">
         <UserIconComponent
-          onClick={goToDriverPages}
-          className="size-8 rounded-full"
+          className="size-10 rounded-full bg-white"
+          src={
+            role === "admin"
+              ? "/assets/images/businesswoman.png"
+              : "/assets/images/businessman.png"
+          }
         />
-        <div
-          className="p-3 rotate-180 text-gray-300 rounded-md hover:bg-red-500 hover:text-white"
+        <span className="text-[10px] font-medium bg-white/10 text-white px-2 py-0.5 rounded-full uppercase tracking-wide">
+          {role || "Guest"}
+        </span>
+        <button
           onClick={handleLogout}
+          className="p-2 text-gray-400 hover:text-white hover:bg-red-500 rounded-md transition-colors"
         >
           <LogOut size={20} />
-        </div>
+        </button>
       </div>
-    </div>
+    </aside>
   );
 };
 

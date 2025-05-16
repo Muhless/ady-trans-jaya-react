@@ -7,10 +7,10 @@ import {
   ClockFading,
 } from "lucide-react";
 import axios from "axios";
-import { API_BASE_URL } from "../../apiConfig";
-import { fetchDeliveries } from "../../api/delivery";
+import { API_BASE_URL } from "../../../apiConfig";
+import { fetchDeliveries } from "../../../api/delivery";
 
-const StatCards = () => {
+const DeliveryStatCard = () => {
   const [counts, setCounts] = useState({
     total: 0,
     delivering: 0,
@@ -26,12 +26,16 @@ const StatCards = () => {
 
         const newCounts = {
           total: deliveries.length,
-          delivering: deliveries.filter((d) => d.delivery_status === "dalam pengiriman")
+          delivering: deliveries.filter(
+            (d) => d.delivery_status === "dalam pengiriman"
+          ).length,
+          completed: deliveries.filter((d) => d.delivery_status === "selesai")
             .length,
-          completed: deliveries.filter((d) => d.delivery_status === "selesai").length,
-          pending: deliveries.filter((d) => d.delivery_status === "menunggu persetujuan")
+          pending: deliveries.filter(
+            (d) => d.delivery_status === "menunggu persetujuan"
+          ).length,
+          failed: deliveries.filter((d) => d.delivery_status === "gagal")
             .length,
-          failed: deliveries.filter((d) => d.delivery_status === "gagal").length,
         };
 
         setCounts(newCounts);
@@ -89,4 +93,4 @@ const StatCards = () => {
   );
 };
 
-export default StatCards;
+export default DeliveryStatCard;

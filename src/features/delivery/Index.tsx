@@ -6,7 +6,7 @@ import TableComponent from "../../components/table/index.tsx";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { API_BASE_URL } from "../../apiConfig.ts";
-import StatCards from "../../components/card/StatCard.tsx";
+import DeliveryStatCard from "../../components/card/stat/DeliveryStatCard.tsx";
 
 const fetchDelivery = async () => {
   const res = await axios.get(`${API_BASE_URL}/deliveries`);
@@ -20,7 +20,6 @@ function DeliveryPages() {
     data: delivery,
     isLoading,
     isError,
-    refetch,
   } = useQuery({
     queryKey: ["delivery"],
     queryFn: fetchDelivery,
@@ -50,9 +49,9 @@ function DeliveryPages() {
   }));
 
   return (
-    <div className="">
+    <div>
       <Title title={"Pengiriman"} />
-      <StatCards />
+      <DeliveryStatCard />
       <div className="flex justify-end py-5">
         <SearchInput placeholder={"pengiriman"} />
       </div>

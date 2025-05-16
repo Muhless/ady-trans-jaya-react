@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { API_BASE_URL } from "../../apiConfig";
 import TransactionTable from "../../components/table/TransactionTable";
-
+import TransactionsStatCard from "../../components/card/stat/TransactionsStatCard";
 
 const fetchTransactions = async () => {
   const res = await axios.get(`${API_BASE_URL}/transactions`);
@@ -17,10 +17,7 @@ const fetchTransactions = async () => {
 function TransactionPages() {
   const { goToAddTransaction } = useNavigationHooks();
 
-  const {
-    isLoading,
-    isError,
-  } = useQuery({
+  const { isLoading, isError } = useQuery({
     queryKey: ["transactions"],
     queryFn: fetchTransactions,
   });
@@ -28,7 +25,8 @@ function TransactionPages() {
   return (
     <div>
       <Title title="Transaksi" />
-      <div className="flex flex-row justify-between mb-5">
+      <TransactionsStatCard />
+      <div className="flex flex-row justify-between py-5">
         <ButtonComponent
           label="Tambah Transaksi"
           variant="add"
@@ -42,7 +40,11 @@ function TransactionPages() {
       ) : isError ? (
         <div className="text-center text-red-600 p-5">Error loading data</div>
       ) : (
-        <TransactionTable classNameTH="p-3" classNameTD="p-3" showActions={false}/>
+        <TransactionTable
+          classNameTH="p-3"
+          classNameTD="p-5"
+          showActions={false}
+        />
       )}
     </div>
   );

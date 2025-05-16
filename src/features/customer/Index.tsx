@@ -14,6 +14,7 @@ import {
   deleteCustomer,
   fetchCustomers,
 } from "../../api/customer.ts";
+import AddCustomerForm from "../../components/form/AddCustomerForm.tsx";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },
@@ -118,6 +119,8 @@ function CustomerPages() {
         <div className="text-center text-red-600 p-5">Error loading data</div>
       ) : (
         <TableComponent
+        classNameTH="p-3"
+        classNameTD="p-3"
           data={customers}
           columns={[
             { key: "name", label: "Nama" },
@@ -135,9 +138,9 @@ function CustomerPages() {
         title="Customer"
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        fields={modalInput}
-        onSubmit={handleSubmit}
-      />
+      >
+        <AddCustomerForm onSubmit={handleSubmit} />
+      </Modal>
     </>
   );
 }
