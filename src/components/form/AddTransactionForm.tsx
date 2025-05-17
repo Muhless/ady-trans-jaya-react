@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useCustomers } from "../../hooks/useCustomers";
 import useNavigationHooks from "../../hooks/useNavigation";
 import { useTransactionStore } from "../../stores/transactionStore";
 import SelectComponent from "../input/Select";
@@ -8,6 +7,10 @@ import { InputComponent } from "../input/Input";
 import { useDeliveryStore } from "../../stores/deliveryStore";
 import { API_BASE_URL } from "../../apiConfig";
 import { fetchCustomers } from "../../api/customer";
+import ConfirmDialog from "../common/ConfirmDialog";
+import { Button } from "../ui/button";
+import { ArrowLeft } from "lucide-react";
+import axios from "axios";
 
 const AddTransactionForm = () => {
   const {
@@ -87,6 +90,8 @@ const AddTransactionForm = () => {
         deliveries: transaction.deliveries.map((d) => ({
           ...d,
           id: Number(d.id),
+          driver_id: Number(d.driver_id),
+          vehicle_id: Number(d.vehicle_id),
         })),
       };
 
@@ -116,6 +121,16 @@ const AddTransactionForm = () => {
       const result = await response.json();
       console.log("Transaksi berhasil disimpan:", result);
 
+      for (const d of transaction.deliveries) {
+        await axios.patch(`${API_BASE_URL}/driver/${d.driver_id}`, {
+          status: "tidak tersedia",
+        });
+
+        await axios.patch(`${API_BASE_URL}/vehicle/${d.vehicle_id}`, {
+          status: "tidak tersedia",
+        });
+      }
+
       resetTransaction();
       goToTransactionPages();
     } catch (error: any) {
@@ -127,7 +142,7 @@ const AddTransactionForm = () => {
   const handleReset = () => {
     resetTransaction();
     resetDelivery();
-    setSelectedCustomer(null)
+    setSelectedCustomer(null);
     console.log(
       "Transaction state after reset:",
       useTransactionStore.getState().transaction
@@ -280,12 +295,16 @@ const AddTransactionForm = () => {
         onChange={handleChange}
       />
       <div className="flex w-full gap-3 py-4">
-        <ButtonComponent
-          label="Batal"
-          variant="back"
-          type="button"
-          className="w-full"
-          onClick={handleCancel}
+        <ConfirmDialog
+          trigger={
+            <Button className="w-full">
+              <ArrowLeft />
+              Batalkan
+            </Button>
+          }
+          title="Batalkan"
+          description="Data yang diinput akan dihapus!"
+          onConfirm={handleCancel}
         />
         <ButtonComponent
           label="Ulangi"

@@ -20,6 +20,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   imageUrl,
   onClick,
 }) => {
+  const isAvailable = status.toLowerCase() === "tersedia";
+
   return (
     <Card
       className="bg-card hover:bg-third transition-all duration-300 rounded-xl overflow-hidden shadow-md hover:shadow-lg cursor-pointer border border-gray-100"
@@ -28,12 +30,12 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       <div className="relative">
         <div
           className={`absolute top-3 right-3 z-10 flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-            status
+            isAvailable
               ? "bg-green-100 text-green-800 border border-green-200"
               : "bg-red-100 text-red-800 border border-red-200"
           }`}
         >
-          {status ? (
+          {isAvailable ? (
             <>
               <Check size={14} className="mr-1" /> Tersedia
             </>

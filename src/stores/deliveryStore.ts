@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
 export type Delivery = {
+  driver: any;
+  vehicle: any;
   id: number;
   driver_id: number | null;
   vehicle_id: number | null;
@@ -81,6 +83,8 @@ export const useDeliveryStore = create<DeliveryStore>()(
       set({
         delivery: {
           id: 0,
+          driver: null,
+          vehicle: null,
           driver_id: null,
           vehicle_id: null,
           load_type: "",
@@ -100,5 +104,6 @@ export const useDeliveryStore = create<DeliveryStore>()(
           approved_at: null,
         },
       }),
+      
   }))
 );

@@ -16,13 +16,15 @@ import mapboxgl from "mapbox-gl";
 import { useDeliveryCalculation } from "../../hooks/useDeliveryCost";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
-import { useDeliveryStore } from "../../stores/deliveryStore";
+import { Delivery, useDeliveryStore } from "../../stores/deliveryStore";
 import SearchLocationInput from "../input/SearchLocation";
 import { InputLatLang } from "../input/InputLatLang";
-import { MapPin } from "lucide-react";
+import { ArrowLeft, MapPin } from "lucide-react";
 import { useTransactionStore } from "../../stores/transactionStore";
 import Swal from "sweetalert2";
 import { API_BASE_URL } from "../../apiConfig";
+import ConfirmDialog from "../common/ConfirmDialog";
+import { Button } from "../ui/button";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -35,6 +37,20 @@ interface Place {
     coordinates: [number, number];
   };
 }
+
+type Driver = {
+  id: number;
+  name: string;
+  status: string;
+};
+
+type Vehicle = {
+  id: number;
+  name: string;
+  status: string;
+  type: string;
+  rate_per_km: number;
+};
 
 const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -54,14 +70,18 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const [duration, setDuration] = useState<number | string | null>(null);
   const [pickupLocation, setPickupLocation] = useState<string>("");
   const [destination, setDestination] = useState<string>("");
-  const [startSuggestions, setStartSuggestions] = useState<Place[]>([]);
-  const [endSuggestions, setEndSuggestions] = useState<Place[]>([]);
   const [selectingPoint, setSelectingPoint] = useState<"start" | "end">(
     "start"
   );
   const [startLocation, setStartLocation] = React.useState<string>("");
   const { goBack, goToTransactionPages } = useNavigationHooks();
-  const driverOptions = useFetchOptions(`${API_BASE_URL}/driver`);
+  const driverOptions = useFetchOptions<Driver>(
+    `${API_BASE_URL}/drivers`,
+    "name",
+    "id",
+    (driver) => driver.status === "tersedia"
+  );
+
   const formatVehicleLabel = useCallback(
     (vehicle: {
       name: string;
@@ -75,9 +95,11 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     []
   );
 
-  const vehicleOptions = useFetchOptions(
+  const vehicleOptions = useFetchOptions<Vehicle>(
     `${API_BASE_URL}/vehicles`,
-    formatVehicleLabel
+    formatVehicleLabel,
+    "id",
+    (vehicle) => vehicle.status === "tersedia"
   );
 
   useEffect(() => {
@@ -229,7 +251,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     }
   }, [endPoint]);
 
-  // zustand
   const { delivery, setDelivery, setAllDelivery, resetDelivery } =
     useDeliveryStore();
   const [formData, setFormData] = [delivery, setAllDelivery];
@@ -240,44 +261,51 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     formData.vehicle_id
   );
   const { addDeliveryToTransaction } = useTransactionStore();
+  const updateDriverStatus = useTransactionStore(
+    (state) => state.updateDriverStatus
+  );
+  const updateVehicleStatus = useTransactionStore(
+    (state) => state.updateVehicleStatus
+  );
 
-  const handleSubmitDelivery = async (e: React.FormEvent) => {
+  const handleSubmitDelivery = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!delivery.driver_id) {
       alert("Silahkan pilih pengemudi terlebih dahulu.");
       return;
     }
-
-    try {
-      const defaultDate = new Date().toISOString();
-      const formattedDeliveryDate = delivery.delivery_date
-        ? new Date(delivery.delivery_date).toISOString()
-        : defaultDate;
-
-      const formattedDeliveryDeadlineDate = delivery.delivery_deadline_date
-        ? new Date(delivery.delivery_deadline_date).toISOString()
-        : defaultDate;
-
-      const payload = {
-        ...delivery,
-
-        id: Number(delivery.id),
-        driver_id: Number(delivery.driver_id),
-        vehicle_id: Number(delivery.vehicle_id),
-        delivery_date: formattedDeliveryDate,
-        delivery_deadline_date: formattedDeliveryDeadlineDate,
-      };
-
-      addDeliveryToTransaction(payload);
-      console.log("Delivery disimpan ke transaksi:", payload);
-
-      resetDelivery();
-      goBack();
-    } catch (err: any) {
-      console.error("Gagal simpan delivery:", err);
-      alert(`Gagal menyimpan delivery: ${err.message}`);
+    if (!delivery.vehicle_id) {
+      alert("Silahkan pilih Kendaraan terlebih dahulu.");
+      return;
     }
+
+    const defaultDate = new Date().toISOString();
+    const formattedDeliveryDate = delivery.delivery_date
+      ? new Date(delivery.delivery_date).toISOString()
+      : defaultDate;
+
+    const formattedDeliveryDeadlineDate = delivery.delivery_deadline_date
+      ? new Date(delivery.delivery_deadline_date).toISOString()
+      : defaultDate;
+
+    const payload: Delivery = {
+      ...delivery,
+      id: Number(delivery.id),
+      driver_id: Number(delivery.driver_id),
+      vehicle_id: Number(delivery.vehicle_id),
+      delivery_date: formattedDeliveryDate,
+      delivery_deadline_date: formattedDeliveryDeadlineDate,
+      delivery_status: "menunggu persetujuan",
+    };
+
+    addDeliveryToTransaction(payload);
+
+    updateDriverStatus(payload.driver_id, "tidak tersedia");
+    updateVehicleStatus(payload.vehicle_id, "tidak tersedia");
+
+    resetDelivery();
+    goBack();
   };
 
   const handleChange = (
@@ -330,25 +358,12 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   };
 
   const handleCancel = async () => {
-    const result = await Swal.fire({
-      title: "Batalkan Pengiriman?",
-      text: "Semua data akan dihapus dan tidak bisa dikembalikan.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Ya, batalkan",
-      cancelButtonText: "Batal",
-    });
-
-    if (result.isConfirmed) {
-      resetDelivery();
-      goBack();
-      console.log(
-        "Transaction state after reset:",
-        useDeliveryStore.getState().delivery
-      );
-    }
+    resetDelivery();
+    goBack();
+    console.log(
+      "Transaction state after reset:",
+      useDeliveryStore.getState().delivery
+    );
   };
 
   const handlePlaceSelect = (place: Place) => {
@@ -410,8 +425,8 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         onChange={handleChange}
       />
       <SelectComponent
-        label="Driver"
-        placeholder="Pilih driver yang akan ditugaskan"
+        label="Pengemudi"
+        placeholder="Pilih pengemudi yang akan ditugaskan"
         name="driver_id"
         options={driverOptions}
         value={formData.driver_id}
@@ -532,12 +547,15 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         disabled={true}
       />
       <div className="flex justify-center w-full gap-3 py-5">
-        <ButtonComponent
-          variant="back"
-          label="Kembali"
-          className="w-full"
-          type="button"
-          onClick={handleCancel}
+        <ConfirmDialog
+          trigger={
+            <Button className="w-full">
+              <ArrowLeft /> Kembali
+            </Button>
+          }
+          title="Kembali"
+          description="Yakin ingin membatalkan tambah pengiriman?"
+          onConfirm={handleCancel}
         />
         <ButtonComponent
           variant="undo"
