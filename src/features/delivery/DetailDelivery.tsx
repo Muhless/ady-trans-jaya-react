@@ -15,8 +15,12 @@ import {
   Mail,
   Check,
   UserCog2Icon,
+  ArrowLeft,
 } from "lucide-react";
 import { API_BASE_URL } from "../../apiConfig";
+import { useAuthStore } from "@/stores/AuthStore";
+import { formatDate, formatCurrency } from "../../../utils/Formatters";
+import { Button } from "@/components/ui/button";
 
 const DetailDeliveryPage = () => {
   const { id } = useParams();
@@ -24,13 +28,12 @@ const DetailDeliveryPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { goBack } = useNavigationHooks();
+  const role = useAuthStore((state) => state.role);
 
   useEffect(() => {
     const fetchDeliveryDetails = async () => {
       try {
-        const response = await axios.get(
-          `${API_BASE_URL}/deliveries/${id}`
-        );
+        const response = await axios.get(`${API_BASE_URL}/deliveries/${id}`);
         setDelivery(response.data.data);
         setLoading(false);
       } catch (err) {
@@ -41,21 +44,6 @@ const DetailDeliveryPage = () => {
 
     fetchDeliveryDetails();
   }, [id]);
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("id-ID", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  };
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-    }).format(amount);
-  };
 
   if (loading)
     return (
@@ -80,7 +68,6 @@ const DetailDeliveryPage = () => {
           <h1 className="text-2xl font-bold text-gray-800">
             Detail Pengiriman
           </h1>
-          <ButtonComponent label="Kembali" variant="back" onClick={goBack} />
         </div>
 
         <div className="mb-3">
@@ -279,29 +266,35 @@ const DetailDeliveryPage = () => {
         </div>
 
         <div className="mt-8 flex justify-end space-x-4">
+          <Button variant="default" onClick={() => goBack()}>
+            <ArrowLeft /> Kembali
+          </Button>
           {delivery.delivery_status === "disetujui" && (
-            <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md">
+            <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-md">
               Mulai Pengiriman
             </button>
           )}
           {delivery.delivery_status === "dalam perjalanan" && (
-            <button className="bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded-md">
+            <button className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 rounded-md">
               Selesaikan Pengiriman
             </button>
           )}
-          <button className="border border-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-50">
-            Cetak Surat Jalan
-          </button>
-          {delivery.delivery_status === "menunggu persetujuan" && (
-            <>
-              <button className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md">
-                Tolak Pengiriman
-              </button>
-              <button className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md flex items-center">
-                <Check size={18} className="mr-2" /> Setujui Pengiriman
-              </button>
-            </>
+          {delivery.delivery_status === "disetujui" && (
+            <button className="border border-gray-300 text-gray-700 px-4 rounded-md hover:bg-gray-50">
+              Cetak Surat Jalan
+            </button>
           )}
+          {role === "owner" &&
+            delivery.delivery_status === "menunggu persetujuan" && (
+              <>
+                <button className="bg-red-500 hover:bg-red-600 text-white px-4 rounded-md">
+                  Tolak Pengiriman
+                </button>
+                <button className="bg-green-600 hover:bg-green-700 text-white px-4 rounded-md flex items-center">
+                  <Check size={18} className="mr-2" /> Setujui Pengiriman
+                </button>
+              </>
+            )}
         </div>
       </div>
     </div>

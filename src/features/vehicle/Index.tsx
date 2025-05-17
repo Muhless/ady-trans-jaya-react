@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
 import SearchInput from "../../components/input/Search";
 import Title from "../../components/Title";
-import { VehicleTypeComponent } from "../../components/button/CarType";
+import { VehicleTypeComponent } from "../../components/button/VehicleType";
 import ButtonComponent from "../../components/button/Index";
 import Modal from "../../components/modal/Modal";
 import VehicleCard, { Vehicles } from "../../components/card/VehicleCard";
-import { API_BASE_URL } from "../../apiConfig";
 import {
   addVehicle,
   deleteVehicle,
   fetchVehicles,
   updateVehicle,
 } from "../../api/vehicle";
-import Spinner from "../../components/Spinner";
 import VehicleForm from "../../components/form/VehicleForm";
 
 const vehicleTypes = ["Semua", "Pick up", "CDE", "CDD", "Fuso", "Wingbox"];
@@ -24,6 +22,7 @@ function VehiclePages() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<"add" | "edit">("add");
+  const [selectedType, setSelectedType] = useState("Semua");
 
   useEffect(() => {
     const fetchVehicle = async () => {
@@ -59,16 +58,12 @@ function VehiclePages() {
       }
 
       if (mode === "edit" && selectedVehicle) {
-        console.log(
-          "Updating vehicle ID:",
-          selectedVehicle.id,
-          "with data:",
-          transformed
-        );
         await updateVehicle(selectedVehicle.id, transformed);
 
-        const refreshedData = await fetchVehicles();
-        setVehicle(refreshedData);
+        const updatedVehicles = vehicles.map((v) =>
+          v.id === selectedVehicle.id ? { ...v, ...transformed } : v
+        );
+        setVehicle(updatedVehicles);
       } else {
         const newVehicle = await addVehicle(transformed);
         setVehicle([...vehicles, newVehicle]);
@@ -117,6 +112,13 @@ function VehiclePages() {
     }
   }, [mode, selectedVehicle]);
 
+  const filteredVehicles =
+    selectedType === "Semua"
+      ? vehicles
+      : vehicles.filter(
+          (v) => v.type.toLowerCase() === selectedType.toLowerCase()
+        );
+
   return (
     <div>
       <Title title="Kendaraan" />
@@ -127,7 +129,13 @@ function VehiclePages() {
           className="w-48"
           onClick={() => setIsModalOpen(true)}
         />
-        <VehicleTypeComponent vehicleTypes={vehicleTypes} />
+        <VehicleTypeComponent
+          vehicleTypes={vehicleTypes}
+          vehicles={vehicles}
+          selectedType={selectedType}
+          setSelectedType={setSelectedType}
+        />
+
         <SearchInput placeholder="kendaraan" />
       </div>
       {loading ? (
@@ -136,9 +144,9 @@ function VehiclePages() {
         <div className="text-center">{error}</div>
       ) : (
         <>
-          {Array.isArray(vehicles) && vehicles.length > 0 ? (
+          {filteredVehicles.length > 0 ? (
             <div className="grid grid-cols-2 gap-5">
-              {vehicles.map((vehicle) => (
+              {filteredVehicles.map((vehicle) => (
                 <VehicleCard
                   key={vehicle.id}
                   id={vehicle.id}
@@ -154,7 +162,9 @@ function VehiclePages() {
               ))}
             </div>
           ) : (
-            <div>Tidak ada kendaraan tersedia</div>
+            <div className="flex justify-center p-5 text-red-500 ">
+              Tidak ada kendaraan
+            </div>
           )}
         </>
       )}

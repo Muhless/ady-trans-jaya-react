@@ -2,12 +2,11 @@
 import React from "react";
 import Spinner from "../components/Spinner";
 import { useAuthStore } from "../stores/AuthStore.js";
-import TransactionTable from "../components/card/TransactionCard.tsx";
-import TransactionGraphic from "../components/card/TransactionGraphic.tsx";
-import OnGoingDeliveryCard from "../components/card/OnGoingDeliveryCard.tsx";
-import WaitingDeliveryCard from "../components/card/WaitingDeliveryCard.tsx";
-import DashboardStatCard from "../components/card/stat/DashboardStatCard.tsx";
-import TransactionCard from "../components/card/TransactionCard.tsx";
+import DashboardStatCard from "@/components/card/stat/DashboardStatCard";
+import TransactionGraphic from "@/components/card/TransactionGraphic";
+import TransactionCard from "@/components/card/TransactionCard";
+import OnGoingDeliveryCard from "@/components/card/OnGoingDeliveryCard";
+import WaitingDeliveryCard from "@/components/card/OnGoingDeliveryCard";
 
 const DashboardPages = () => {
   const user = useAuthStore((state) => state.user);

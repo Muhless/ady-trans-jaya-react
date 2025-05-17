@@ -7,7 +7,7 @@ const Layout = () => {
     <div className="flex h-screen">
       <Sidebar />
       <div className="flex flex-col flex-1 ml-20">
-        <main className="flex-1 bg-background text-text overflow-auto h-screen py-5 px-10">
+        <main className="flex-1 bg-bg text-text overflow-auto h-screen py-5 px-10">
           <div className="rounded-xl min-h-full">
             <Outlet />
           </div>

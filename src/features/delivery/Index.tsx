@@ -1,12 +1,13 @@
-import SearchInput from "../../components/input/Search.tsx";
 import React from "react";
-import Title from "../../components/Title.tsx";
-import useNavigationHooks from "../../hooks/useNavigation.ts";
-import TableComponent from "../../components/table/index.tsx";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import { API_BASE_URL } from "../../apiConfig.ts";
-import DeliveryStatCard from "../../components/card/stat/DeliveryStatCard.tsx";
+import SearchInput from "@/components/input/Search.js";
+import { API_BASE_URL } from "@/apiConfig";
+import DeliveryStatCard from "@/components/card/stat/DeliveryStatCard";
+import TableComponent from "@/components/table";
+import useNavigationHooks from "@/hooks/useNavigation";
+import { Title } from "chart.js";
+import TitleComponent from "@/components/Title";
 
 const fetchDelivery = async () => {
   const res = await axios.get(`${API_BASE_URL}/deliveries`);
@@ -50,7 +51,7 @@ function DeliveryPages() {
 
   return (
     <div>
-      <Title title={"Pengiriman"} />
+      <TitleComponent title={"Pengiriman"} />
       <DeliveryStatCard />
       <div className="flex justify-end py-5">
         <SearchInput placeholder={"pengiriman"} />
@@ -66,7 +67,6 @@ function DeliveryPages() {
           onRowClick={(row) => goToDetailDelivery(row.id)()}
           data={formattedData}
           columns={columns}
-          showActions={true}
         />
       )}
     </div>

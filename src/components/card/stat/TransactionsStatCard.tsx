@@ -34,10 +34,11 @@ const TransactionsStatCard = () => {
         const failed = transactions.filter(
           (tx: any) => tx.transaction_status === "failed"
         ).length;
-        const totalCost = transactions.reduce(
-          (acc: number, tx: any) => acc + Number(tx.cost || 0),
-          0
-        );
+
+        // Hanya ambil cost dari transaksi yang selesai (completed)
+        const totalCost = transactions
+          .filter((tx: any) => tx.transaction_status === "completed")
+          .reduce((acc: number, tx: any) => acc + Number(tx.cost || 0), 0);
 
         setStats({
           total,

@@ -9,6 +9,7 @@ import {
   CheckCircle,
   XCircle,
   ArrowLeft,
+  Trash2,
 } from "lucide-react";
 import ButtonComponent from "../../components/button/Index";
 import useNavigationHooks from "../../hooks/useNavigation";
@@ -17,6 +18,8 @@ import { formatDate } from "../../../utils/Formatters";
 import UserIconComponent from "../../components/UserIcon";
 import { getFullImageUrl } from "../../../utils/imageHelper";
 import DeliveryHistoryCard from "../../components/card/DeliveryHistoryCard";
+import ConfirmDialog from "@/components/common/ConfirmDialog";
+import { Button } from "@/components/ui/button";
 
 interface Driver {
   id: string;
@@ -64,11 +67,6 @@ function DriverDetailPage() {
   };
 
   const deleteDriver = async (id: string) => {
-    const confirmDelete = window.confirm(
-      "Yakin ingin menghapus data pengemudi ini?"
-    );
-    if (!confirmDelete) return;
-
     try {
       const response = await fetch(`${API_BASE_URL}/driver/${id}`, {
         method: "DELETE",
@@ -78,7 +76,6 @@ function DriverDetailPage() {
         throw new Error("Gagal menghapus driver");
       }
 
-      alert("Driver berhasil dihapus.");
       goBack();
     } catch (error) {
       console.error(error);
@@ -153,11 +150,17 @@ function DriverDetailPage() {
             // TODO: ADD handle to edit data
             // onClick={handleEdit}
           />
-          <ButtonComponent
-            label="Hapus"
-            variant="delete"
-            className="rounded-md w-32"
-            onClick={() => driver?.id && deleteDriver(driver.id)}
+          <ConfirmDialog
+            trigger={
+              <Button variant="destructive" className="w-32">
+                <Trash2 /> Hapus
+              </Button>
+            }
+            title="Hapus Data Pengemudi?"
+            description="Yakin ingin menghapus data pengemudi ini?"
+            confirmText="Ya, Hapus"
+            cancelText="Batal"
+            onConfirm={() => driver?.id && deleteDriver(driver.id)}
           />
         </div>
       </div>

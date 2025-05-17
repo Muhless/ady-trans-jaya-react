@@ -9,10 +9,11 @@ import {
   LogOut,
 } from "lucide-react";
 import { useMemo } from "react";
-import React from "react";
 import UserIconComponent from "../UserIcon";
 import useNavigationHooks from "../../hooks/useNavigation";
 import { useAuthStore } from "../../stores/AuthStore";
+import ConfirmDialog from "../common/ConfirmDialog";
+import { Button } from "../ui/button";
 
 const Sidebar = () => {
   const { goToHome } = useNavigationHooks();
@@ -88,12 +89,21 @@ const Sidebar = () => {
         <span className="text-[10px] font-medium bg-white/10 text-white px-2 py-0.5 rounded-full uppercase tracking-wide">
           {role || "Guest"}
         </span>
-        <button
-          onClick={handleLogout}
-          className="p-2 text-gray-400 hover:text-white hover:bg-red-500 rounded-md transition-colors"
-        >
-          <LogOut size={20} />
-        </button>
+        <ConfirmDialog
+          trigger={
+            <Button
+              variant="ghost"
+              className="py-5 px-4 transition-colors text-gray-400 hover:bg-destructive hover:text-white"
+            >
+              <LogOut size={20} />
+            </Button>
+          }
+          title="Logout"
+          description="Yakin ingin keluar?"
+          confirmText="Ya"
+          cancelText="Batal"
+          onConfirm={handleLogout}
+        />
       </div>
     </aside>
   );

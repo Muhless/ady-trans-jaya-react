@@ -22,7 +22,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 }) => {
   return (
     <Card
-      className="bg-secondary hover:bg-third transition-all duration-300 rounded-xl overflow-hidden shadow-md hover:shadow-lg cursor-pointer border border-gray-100"
+      className="bg-card hover:bg-third transition-all duration-300 rounded-xl overflow-hidden shadow-md hover:shadow-lg cursor-pointer border border-gray-100"
       onClick={onClick}
     >
       <div className="relative">
@@ -51,7 +51,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                 <img
                   src={imageUrl}
                   alt={name}
-                  className="w-24 h-24 rounded-full object-cover border-2 border-primary shadow-md"
+                  className="w-24 h-24 rounded-full object-cover border-2 shadow-md"
                 />
               ) : (
                 <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center border-2 border-primary/50 shadow-md">

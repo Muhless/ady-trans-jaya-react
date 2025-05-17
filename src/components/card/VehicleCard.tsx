@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import ButtonComponent from "../button/Index";
 import Card from ".";
+import ConfirmDialog from "../common/ConfirmDialog";
+import { Button } from "../ui/button";
+import { Edit, Trash2 } from "lucide-react";
 
 export interface Vehicles {
   id: number;
@@ -30,8 +33,22 @@ const VehicleCard: React.FC<Vehicles> = ({
   return (
     <Card className="relative p-6 shadow-md rounded-xl">
       <div className="absolute top-2 right-2 flex gap-1">
-        <ButtonComponent variant="edit" onClick={() => onEdit(id)} />
-        <ButtonComponent variant="delete" onClick={() => onDelete(id)} />
+        {/* <ButtonComponent variant="edit" onClick={() => onEdit(id)} /> */}
+        <Button className="p-2 bg-yellow-500 hover:bg-yellow-700" onClick={() => onEdit(id)}>
+          <Edit />
+        </Button>
+        <ConfirmDialog
+          trigger={
+            <Button variant="destructive" className="p-2">
+              <Trash2 />
+            </Button>
+          }
+          title="Hapus Kendaraan?"
+          description={`Yakin ingin menghapus kendaraan "${name}"?`}
+          confirmText="Ya, Hapus"
+          cancelText="Batal"
+          onConfirm={() => onDelete(id)}
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">

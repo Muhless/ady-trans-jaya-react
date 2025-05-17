@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import ButtonComponent from "../button/Index";
 import { InputComponent } from "../input/Input";
-import { EyeOff, Eye, AlertCircle } from "lucide-react";
+import { EyeOff, Eye, AlertCircle, LogIn } from "lucide-react";
 import { API_BASE_URL } from "../../apiConfig";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/AuthStore";
+import { Button } from "../ui/button";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
@@ -79,11 +80,9 @@ const LoginForm = () => {
         </div>
       </div>
 
-      <ButtonComponent
-        label="Masuk"
-        type="submit"
-        className="w-[26rem] bg-red-500 text-white hover:bg-red-700 p-3 mt-5"
-      />
+      <Button className="w-[26rem] bg-sky-600 text-white hover:bg-sky-700 p-5 ">
+        <LogIn /> Masuk
+      </Button>
       {error && (
         <div className="text-red-500 text-sm mt-1 flex items-center">
           <AlertCircle size={16} className="mr-1" />

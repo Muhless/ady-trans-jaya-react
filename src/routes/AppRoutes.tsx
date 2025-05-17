@@ -13,7 +13,6 @@ import AddTransactionPages from "../features/transaction/AddTransaction";
 import DetailTransactionPages from "../features/transaction/DetailTransaction";
 import TransactionPages from "../features/transaction/Index";
 import VehiclePages from "../features/vehicle/Index";
-import ProfilePages from "../pages/Profile";
 import DashboardPages from "../pages/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import DriverDetailPage from "../features/driver/DetailDriver";
@@ -31,10 +30,6 @@ export default function AppRoutes() {
           <Route
             index
             element={<ProtectedRoute element={<DashboardPages />} />}
-          />
-          <Route
-            path="profile"
-            element={<ProtectedRoute element={<ProfilePages />} />}
           />
           <Route
             path="vehicle"
