@@ -23,8 +23,18 @@ export const addDriver = async (data: FormData) => {
 };
 
 export const updateDriver = async (id: number, data: Record<string, any>) => {
-  const response = await axios.put(`${API_BASE_URL}/driver/${id}`, data);
-  return response.data.data;
+  const formData = new FormData();
+  formData.append("name", data.name);
+  formData.append("phone", data.phone);
+  formData.append("address", data.address);
+  formData.append("status", data.status);
+  if (data.photo && data.photo.length > 0) {
+    formData.append("photo", data.photo[0]);
+  }
+
+  await axios.put(`${API_BASE_URL}/driver/${id}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 };
 
 export const deleteDriver = async (id: number) => {

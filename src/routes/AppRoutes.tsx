@@ -6,7 +6,6 @@ import CustomerPages from "../features/customer/Index";
 import AddDeliveryPages from "../features/delivery/AddDelivery";
 import DetailDeliveryPage from "../features/delivery/DetailDelivery";
 import DeliveryPages from "../features/delivery/Index";
-import AddDriverPages from "../features/driver/AddDriver";
 import DriverPages from "../features/driver/Index";
 import RentalPages from "../features/rental/Index";
 import AddTransactionPages from "../features/transaction/AddTransaction";
@@ -38,10 +37,6 @@ export default function AppRoutes() {
           <Route
             path="driver"
             element={<ProtectedRoute element={<DriverPages />} />}
-          />
-          <Route
-            path="driver/add"
-            element={<ProtectedRoute element={<AddDriverPages />} />}
           />
           <Route
             path="driver/:id"

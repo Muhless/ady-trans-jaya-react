@@ -33,8 +33,10 @@ const VehicleCard: React.FC<Vehicles> = ({
   return (
     <Card className="relative p-6 shadow-md rounded-xl">
       <div className="absolute top-2 right-2 flex gap-1">
-        {/* <ButtonComponent variant="edit" onClick={() => onEdit(id)} /> */}
-        <Button className="p-2 bg-yellow-500 hover:bg-yellow-700" onClick={() => onEdit(id)}>
+        <Button
+          className="p-2 bg-yellow-500 hover:bg-yellow-700"
+          onClick={() => onEdit(id)}
+        >
           <Edit />
         </Button>
         <ConfirmDialog

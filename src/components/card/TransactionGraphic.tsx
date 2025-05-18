@@ -5,7 +5,7 @@ import SubTitle from "../SubTitle";
 
 const TransactionGraphic = () => {
   return (
-    <Card className="h-[22rem] rounded-md">
+    <Card className="h-[25rem] rounded-md">
       <div className="flex justify-between items-center mb-2 p-3 border-b">
         <SubTitle subTitle="Transaksi" />
        {/* sort by date */}

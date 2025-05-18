@@ -14,41 +14,12 @@ import {
 } from "../../api/driver";
 import DriverForm from "../../components/form/DriverForm";
 import { getFullImageUrl } from "../../../utils/imageHelper";
-
-interface Driver {
-  id: number;
-  name: string;
-  phone: string;
-  address: string;
-  photo?: string;
-  status?: string;
-}
+import { useDrivers } from "@/hooks/useDrivers";
 
 function DriverPages() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [drivers, setDrivers] = useState<Driver[]>([]);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const { drivers, setDrivers, loading, error, setError } = useDrivers();
   const { goToDriverDetails } = useNavigationHooks();
-
-  useEffect(() => {
-    const fetchDriver = async () => {
-      try {
-        const data = await fetchDrivers();
-        if (!Array.isArray(data)) {
-          throw new Error("Gagal mengambil data pengemudi");
-        }
-        setDrivers(data);
-      } catch (err: any) {
-        setError(
-          err.message || "terjadi kesalahan saat mengambil data pengemudi"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDriver();
-  }, []);
 
   const handleSubmit = async (data: Record<string, any>) => {
     const formData = new FormData();

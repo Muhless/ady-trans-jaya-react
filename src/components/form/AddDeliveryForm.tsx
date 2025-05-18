@@ -2,6 +2,7 @@ import React, {
   forwardRef,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -53,6 +54,7 @@ type Vehicle = {
 };
 
 const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
+  const { goBack, goToTransactionPages } = useNavigationHooks();
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<{
     start: mapboxgl.Marker | null;
@@ -74,33 +76,51 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     "start"
   );
   const [startLocation, setStartLocation] = React.useState<string>("");
-  const { goBack, goToTransactionPages } = useNavigationHooks();
-  const driverOptions = useFetchOptions<Driver>(
-    `${API_BASE_URL}/drivers`,
-    "name",
-    "id",
-    (driver) => driver.status === "tersedia"
-  );
+  const [driverOptions, setDriverOptions] = useState([]);
+  const [vehicleOptions, setVehicleOptions] = useState([]);
 
   const formatVehicleLabel = useCallback(
-    (vehicle: {
-      name: string;
-      type: string;
-      // capacity: string;
-      rate_per_km: number;
-    }) => {
-      return `${vehicle.name} (${vehicle.type.toUpperCase()}) - 
-      Rp.${vehicle.rate_per_km.toLocaleString()}/km`;
-    },
+    (vehicle: Vehicle) =>
+      `${
+        vehicle.name
+      } (${vehicle.type.toUpperCase()}) - Rp.${vehicle.rate_per_km.toLocaleString()}/km`,
     []
   );
 
-  const vehicleOptions = useFetchOptions<Vehicle>(
-    `${API_BASE_URL}/vehicles`,
-    formatVehicleLabel,
-    "id",
-    (vehicle) => vehicle.status === "tersedia"
-  );
+  useEffect(() => {
+    axios
+      .get(`${API_BASE_URL}/drivers`)
+      .then((res) => {
+        const options = res.data.data
+          .filter((driver) => driver.status === "tersedia")
+          .map((driver) => ({
+            label: driver.name,
+            value: driver.id,
+          }));
+        setDriverOptions(options);
+        useTransactionStore.getState().setDrivers(res.data.data);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch drivers", err);
+      });
+
+    axios
+      .get(`${API_BASE_URL}/vehicles`)
+      .then((res) => {
+        console.log("Data kendaraan:", res.data);
+        const options = res.data.data
+          .filter((vehicle) => vehicle.status === "tersedia")
+          .map((vehicle) => ({
+            label: formatVehicleLabel(vehicle),
+            value: vehicle.id,
+          }));
+        setVehicleOptions(options);
+        useTransactionStore.getState().setVehicles(res.data.data);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch vehicles", err);
+      });
+  }, []);
 
   useEffect(() => {
     if (

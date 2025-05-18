@@ -5,6 +5,7 @@ import {
   CarFront,
   Truck,
   Handshake,
+  Filter,
 } from "lucide-react";
 import { fetchCustomers } from "../../../api/customer";
 import { fetchDeliveries } from "../../../api/delivery";
@@ -74,18 +75,23 @@ const DashboardStats = () => {
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-      {stats.map((item, idx) => (
-        <div
-          key={idx}
-          className="bg-white shadow rounded p-4 text-center space-y-2"
-        >
-          <div className="flex justify-center">{item.icon}</div>
-          <p className="text-sm text-gray-600">{item.label}</p>
-          <p className="text-xl font-semibold">{item.value}</p>
-        </div>
-      ))}
-    </div>
+    <>
+      {/* <div className="flex justify-end">
+        <Filter size={20} />
+      </div> */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        {stats.map((item, idx) => (
+          <div
+            key={idx}
+            className="bg-white shadow rounded p-4 text-center space-y-2"
+          >
+            <div className="flex justify-center">{item.icon}</div>
+            <p className="text-sm text-gray-600">{item.label}</p>
+            <p className="text-xl font-semibold">{item.value}</p>
+          </div>
+        ))}
+      </div>
+    </>
   );
 };
 

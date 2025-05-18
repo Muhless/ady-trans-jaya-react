@@ -19,7 +19,7 @@ const columns = [
 const TransactionCard: React.FC<TransactionCardProps> = ({}) => {
   const { goToTransactionPages } = useNavigationHooks();
   return (
-    <Card className="rounded-md h-[22rem]">
+    <Card className="rounded-md h-[25rem]">
       <div className="flex justify-between items-center p-2">
         <SubTitle subTitle="Daftar Transaksi" />
         <p

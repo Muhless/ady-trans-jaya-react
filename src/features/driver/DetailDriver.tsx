@@ -20,17 +20,11 @@ import { getFullImageUrl } from "../../../utils/imageHelper";
 import DeliveryHistoryCard from "../../components/card/DeliveryHistoryCard";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-
-interface Driver {
-  id: string;
-  name: string;
-  phone: string;
-  address: string;
-  status: string;
-  photo?: string;
-  created_at: string;
-  updated_at: string;
-}
+import Modal from "@/components/modal/Modal";
+import { addDriver, updateDriver } from "@/api/driver";
+import { Driver, useDrivers } from "@/hooks/useDrivers";
+import DriverForm, { DriverFormData } from "@/components/form/DriverForm";
+import { toast } from "@/hooks/use-toast";
 
 interface DeliveryHistory {
   id: string;
@@ -43,8 +37,8 @@ interface DeliveryHistory {
 
 function DriverDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const [activeTab, setActiveTab] = useState<"profile" | "history">("profile");
   const { goBack } = useNavigationHooks();
+  const { drivers, setDrivers, loading, error, setError } = useDrivers();
 
   const fetchDriverDetails = async (id: string) => {
     const response = await fetch(`${API_BASE_URL}/driver/${id}`);
@@ -83,12 +77,57 @@ function DriverDetailPage() {
     }
   };
 
-  const {
-    data: driver,
-    isLoading: isLoadingDriver,
-    isError: isErrorDriver,
-    error: errorDriver,
-  } = useQuery<Driver, Error>({
+  const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
+  const [mode, setMode] = useState<"add" | "edit">("add");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSubmitEdit = async (formData: DriverFormData) => {
+    if (!selectedDriver) return;
+
+    try {
+      const updatedDriver = await updateDriver(selectedDriver.id, formData);
+      setDrivers((prev) =>
+        prev.map((driver) =>
+          driver.id === selectedDriver.id ? updatedDriver : driver
+        )
+      );
+      setIsModalOpen(false);
+      setSelectedDriver(null);
+
+      toast({
+        title: "Berhasil",
+        description: "Data pengemudi berhasil diperbarui",
+        variant: "default",
+      });
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error: any) {
+      const message =
+        error.response?.data?.error ||
+        error.message ||
+        "Gagal memperbarui data pengemudi";
+      setError(message);
+      console.error("Gagal mengedit driver:", message);
+      toast({
+        title: "Gagal",
+        description: message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleEdit = () => {
+    if (driver) {
+      console.log("Driver to edit:", driver);
+      setSelectedDriver(driver);
+      setMode("edit");
+      setIsModalOpen(true);
+    }
+  };
+
+  const { data: driver } = useQuery<Driver, Error>({
     queryKey: ["driverDetails", id],
     queryFn: () => fetchDriverDetails(id!),
     enabled: !!id,
@@ -101,33 +140,7 @@ function DriverDetailPage() {
   } = useQuery<DeliveryHistory[], Error>({
     queryKey: ["driverDeliveries", id],
     queryFn: () => fetchDriverDeliveries(id!),
-    enabled: !!id && activeTab === "history",
   });
-
-  if (isLoadingDriver) {
-    return (
-      <div className="flex items-center justify-center bg-gray-50 h-max">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (isErrorDriver) {
-    return (
-      <div className="flex items-center justify-center bg-gray-50 h-max">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg max-w-md">
-          <h3 className="font-bold mb-2">Error</h3>
-          <p>{(errorDriver as Error).message}</p>
-          <button
-            className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
-            onClick={() => goBack()}
-          >
-            Kembali
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   const photoUrl = getFullImageUrl(driver?.photo);
 
@@ -147,8 +160,7 @@ function DriverDetailPage() {
             label="Ubah"
             variant="edit"
             className="rounded-md w-32"
-            // TODO: ADD handle to edit data
-            // onClick={handleEdit}
+            onClick={handleEdit}
           />
           <ConfirmDialog
             trigger={
@@ -160,7 +172,7 @@ function DriverDetailPage() {
             description="Yakin ingin menghapus data pengemudi ini?"
             confirmText="Ya, Hapus"
             cancelText="Batal"
-            onConfirm={() => driver?.id && deleteDriver(driver.id)}
+            onConfirm={() => driver?.id && deleteDriver(driver.id.toString())}
           />
         </div>
       </div>
@@ -244,6 +256,22 @@ function DriverDetailPage() {
             </div>
           </div>
         </div>
+        <Modal
+          title="Pengemudi"
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedDriver(null);
+            setMode("add");
+          }}
+        >
+          <DriverForm
+            onSubmit={handleSubmitEdit}
+            defaultValues={selectedDriver || {}}
+            onReset={() => setSelectedDriver(null)}
+            mode={mode}
+          />
+        </Modal>
       </div>
     </div>
   );

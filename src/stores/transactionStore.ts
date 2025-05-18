@@ -88,15 +88,23 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
 
   addDeliveryToTransaction: (delivery) =>
     set((state) => {
-      const driver = state.drivers.find((d) => d.id === delivery.driver_id);
-      const vehicle = state.vehicles.find((v) => v.id === delivery.vehicle_id);
+      console.log("Drivers available:", state.drivers);
+      console.log("Delivery driver_id:", delivery.driver_id);
 
+      const driver = state.drivers.find((d) => d.id === delivery.driver_id);
       if (!driver || driver.status !== "tersedia") {
+        console.error("Driver tidak tersedia:", driver);
         throw new Error("Driver tidak tersedia");
       }
-      if (!vehicle || vehicle.status !== "tersedia") {
+
+      const vehicle = state.vehicles.find((v) => v.id === delivery.vehicle_id);
+      if (!vehicle || vehicle.status !== "tersedia")
         throw new Error("Vehicle tidak tersedia");
-      }
+
+      const updateStatus = (items, id, newStatus) =>
+        items.map((item) =>
+          item.id === id ? { ...item, status: newStatus } : item
+        );
 
       return {
         transaction: {
@@ -105,11 +113,15 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
           total_delivery: state.transaction.total_delivery + 1,
           cost: state.transaction.cost + (delivery.delivery_cost || 0),
         },
-        drivers: state.drivers.map((d) =>
-          d.id === delivery.driver_id ? { ...d, status: "tidak tersedia" } : d
+        drivers: updateStatus(
+          state.drivers,
+          delivery.driver_id,
+          "tidak tersedia"
         ),
-        vehicles: state.vehicles.map((v) =>
-          v.id === delivery.vehicle_id ? { ...v, status: "tidak tersedia" } : v
+        vehicles: updateStatus(
+          state.vehicles,
+          delivery.vehicle_id,
+          "tidak tersedia"
         ),
       };
     }),

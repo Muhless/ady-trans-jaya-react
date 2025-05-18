@@ -6,7 +6,7 @@ import DashboardStatCard from "@/components/card/stat/DashboardStatCard";
 import TransactionGraphic from "@/components/card/TransactionGraphic";
 import TransactionCard from "@/components/card/TransactionCard";
 import OnGoingDeliveryCard from "@/components/card/OnGoingDeliveryCard";
-import WaitingDeliveryCard from "@/components/card/OnGoingDeliveryCard";
+import WaitingDeliveryCard from "@/components/card/WaitingDeliveryCard";
 
 const DashboardPages = () => {
   const user = useAuthStore((state) => state.user);
@@ -25,7 +25,7 @@ const DashboardPages = () => {
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-3">
       <div
         className="w-full rounded-md p-6 bg-cover bg-no-repeat relative h-32 flex items-center"
         style={{

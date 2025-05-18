@@ -6,7 +6,8 @@ export type DriverFormData = {
   name: string;
   phone: string;
   address: string;
-  photo?: FileList;
+  photo?: FileList | string;
+  status: "tersedia" | "tidak tersedia" | string;
 };
 
 type DriverFormProps = {
@@ -34,9 +35,8 @@ const DriverForm: React.FC<DriverFormProps> = ({
   useEffect(() => {
     if (mode === "edit" && defaultValues) {
       Object.entries(defaultValues).forEach(([key, value]) => {
-        if (key !== "photo") {
-          setValue(key as keyof DriverFormData, value as any);
-        }
+        if (key === "photo") return; // jangan set photo langsung
+        setValue(key as keyof DriverFormData, value as any);
       });
     }
   }, [defaultValues, setValue, mode]);
@@ -91,6 +91,22 @@ const DriverForm: React.FC<DriverFormProps> = ({
         )}
       </div>
 
+      {/* Status */}
+      <div>
+        <label className="block font-medium mb-1">Status</label>
+        <select
+          {...register("status", { required: "Status wajib diisi" })}
+          className="w-full border p-2 rounded"
+        >
+          <option value="">Pilih status</option>
+          <option value="tersedia">Tersedia</option>
+          <option value="tidak tersedia">Tidak tersedia</option>
+        </select>
+        {errors.status && (
+          <p className="text-red-500 text-sm">{errors.status.message}</p>
+        )}
+      </div>
+
       {/* Foto */}
       <div>
         <label className="block font-medium mb-1">Foto</label>
@@ -102,7 +118,10 @@ const DriverForm: React.FC<DriverFormProps> = ({
         />
         {watchedPhoto && watchedPhoto.length > 0 && (
           <p className="text-sm text-green-600 mt-1">
-            File dipilih: {watchedPhoto[0].name}
+            File dipilih:{" "}
+            {watchedPhoto[0] instanceof File
+              ? watchedPhoto[0].name
+              : watchedPhoto[0]}
           </p>
         )}
       </div>
