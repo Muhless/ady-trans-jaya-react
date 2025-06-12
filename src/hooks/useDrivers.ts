@@ -8,6 +8,8 @@ export interface Driver {
   address: string;
   status: string;
   photo?: string;
+  username: string;
+  password: string;
   created_at: string;
   updated_at: string;
 }

@@ -27,11 +27,17 @@ function DriverPages() {
     formData.append("name", data.name);
     formData.append("phone", data.phone);
     formData.append("address", data.address);
+    formData.append("username", data.username);
+    formData.append("password", data.password);
     if (data.photo && data.photo.length > 0) {
       formData.append("photo", data.photo[0]);
     }
 
     try {
+      for (const [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+
       const newDriver = await addDriver(formData);
       setDrivers((prev) => [...prev, newDriver]);
       setIsModalOpen(false);
@@ -108,6 +114,7 @@ function DriverPages() {
       <Modal
         title="Pengemudi"
         isOpen={isModalOpen}
+        width="w-[800px]"
         onClose={() => setIsModalOpen(false)}
       >
         <DriverForm onSubmit={handleSubmit} />

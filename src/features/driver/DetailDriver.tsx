@@ -86,6 +86,7 @@ function DriverDetailPage() {
 
     try {
       const updatedDriver = await updateDriver(selectedDriver.id, formData);
+
       setDrivers((prev) =>
         prev.map((driver) =>
           driver.id === selectedDriver.id ? updatedDriver : driver
@@ -259,10 +260,11 @@ function DriverDetailPage() {
         <Modal
           title="Pengemudi"
           isOpen={isModalOpen}
+          width="w-[800px]"
+          mode="edit"
           onClose={() => {
             setIsModalOpen(false);
             setSelectedDriver(null);
-            setMode("add");
           }}
         >
           <DriverForm

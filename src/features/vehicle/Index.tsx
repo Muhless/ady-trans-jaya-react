@@ -60,9 +60,16 @@ function VehiclePages() {
       if (mode === "edit" && selectedVehicle) {
         await updateVehicle(selectedVehicle.id, transformed);
 
-        const updatedVehicles = vehicles.map((v) =>
-          v.id === selectedVehicle.id ? { ...v, ...transformed } : v
-        );
+        const updatedVehicles = vehicles.map((v) => {
+          if (v.id === selectedVehicle.id) {
+            return {
+              ...v,
+              ...transformed,
+            };
+          }
+          return v;
+        });
+
         setVehicle(updatedVehicles);
       } else {
         const newVehicle = await addVehicle(transformed);

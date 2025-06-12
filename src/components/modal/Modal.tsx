@@ -7,9 +7,17 @@ type ModalProps = {
   onClose: () => void;
   children: React.ReactNode;
   mode?: "add" | "edit";
+  width?: string;
 };
 
-const Modal: React.FC<ModalProps> = ({ title, isOpen, onClose, children, mode = "add" }) => {
+const Modal: React.FC<ModalProps> = ({
+  title,
+  isOpen,
+  onClose,
+  children,
+  mode = "add",
+  width
+}) => {
   if (!isOpen) return null;
 
   const renderTitle = () => {
@@ -24,7 +32,9 @@ const Modal: React.FC<ModalProps> = ({ title, isOpen, onClose, children, mode = 
       onClick={onClose}
     >
       <div
-        className="bg-background p-6 rounded-md shadow-lg w-full max-w-md mx-2"
+        className={`bg-background p-6 rounded-md shadow-lg mx-2 ${
+          width ?? "w-full max-w-md"
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative flex justify-center">

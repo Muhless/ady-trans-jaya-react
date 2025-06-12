@@ -28,6 +28,8 @@ export const updateDriver = async (id: number, data: Record<string, any>) => {
   formData.append("phone", data.phone);
   formData.append("address", data.address);
   formData.append("status", data.status);
+  formData.append("username", data.username);
+  formData.append("password", data.password);
   if (data.photo && data.photo.length > 0) {
     formData.append("photo", data.photo[0]);
   }
