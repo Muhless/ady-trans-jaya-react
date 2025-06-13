@@ -1,4 +1,5 @@
-import { MapPin } from "lucide-react";
+import useNavigationHooks from "@/hooks/useNavigation";
+import { MapPin, Plus } from "lucide-react";
 import React, { useState } from "react";
 
 type InputComponentProps = {
@@ -36,16 +37,16 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   setSelectingPoint,
   required,
 }) => {
+  const { goToAddDeliveryItemPages } = useNavigationHooks();
   const isLocationField = label?.toLowerCase().includes("lokasi");
-  const isQuantityField = label?.toLowerCase().includes("jumlah");
-  const isWeightField = label?.toLowerCase().includes("berat");
+  const listItem = label?.toLowerCase().includes("jumlah");
   const stringValue = value === null ? "" : String(value);
 
   const inputClass = `p-2 rounded-md ${
     isLocationField ? "w-[245px]" : "w-72"
   } focus:ring-biru focus:ring-2 focus:outline-none ${
     disabled ? "bg-gray-300" : "bg-bg"
-  } ${className || ""}`;
+  } ${listItem ? "w-[245px]" : ""} ${className || ""}`;
 
   return (
     <div
@@ -74,6 +75,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
             disabled={disabled}
           />
         )}
+
         {isLocationField && pointType && (
           <button
             type="button"
@@ -83,8 +85,16 @@ export const InputComponent: React.FC<InputComponentProps> = ({
             <MapPin size={20} />
           </button>
         )}
-        {/* {isQuantityField && <span className="text-gray-600 p-2">kg</span>} */}
-        {/* {isWeightField && <span className="text-gray-600 p-2">kg</span>} */}
+
+        {listItem && (
+          <button
+            type="button"
+            onClick={goToAddDeliveryItemPages}
+            className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          >
+            <Plus size={20} />
+          </button>
+        )}
       </div>
     </div>
   );

@@ -26,6 +26,7 @@ import Swal from "sweetalert2";
 import { API_BASE_URL } from "../../apiConfig";
 import ConfirmDialog from "../common/ConfirmDialog";
 import { Button } from "../ui/button";
+import { useDeliveryItemStore } from "@/stores/deliveryItemStore";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -54,7 +55,7 @@ type Vehicle = {
 };
 
 const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
-  const { goBack, goToTransactionPages } = useNavigationHooks();
+  const { goBack, goToAddTransaction } = useNavigationHooks();
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<{
     start: mapboxgl.Marker | null;
@@ -98,7 +99,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
             value: driver.id,
           }));
         setDriverOptions(options);
-        useTransactionStore.getState().setDrivers(res.data.data);
+        // useTransactionStore.getState().setDrivers(res.data.data);
       })
       .catch((err) => {
         console.error("Failed to fetch drivers", err);
@@ -115,7 +116,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
             value: vehicle.id,
           }));
         setVehicleOptions(options);
-        useTransactionStore.getState().setVehicles(res.data.data);
+        // useTransactionStore.getState().setVehicles(res.data.data);
       })
       .catch((err) => {
         console.error("Failed to fetch vehicles", err);
@@ -273,20 +274,25 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
 
   const { delivery, setDelivery, setAllDelivery, resetDelivery } =
     useDeliveryStore();
+  const items = useDeliveryItemStore((state) => state.items);
+
   const [formData, setFormData] = [delivery, setAllDelivery];
   const state = useDeliveryStore.getState();
-  console.log(state.delivery);
+
+  // FIXME:
+  // console.log(state.delivery);
+
   const { deliveryPrice, loading } = useDeliveryCalculation(
     distance,
     formData.vehicle_id
   );
   const { addDeliveryToTransaction } = useTransactionStore();
-  const updateDriverStatus = useTransactionStore(
-    (state) => state.updateDriverStatus
-  );
-  const updateVehicleStatus = useTransactionStore(
-    (state) => state.updateVehicleStatus
-  );
+  // const updateDriverStatus = useTransactionStore(
+  //   (state) => state.updateDriverStatus
+  // );
+  // const updateVehicleStatus = useTransactionStore(
+  //   (state) => state.updateVehicleStatus
+  // );
 
   const handleSubmitDelivery = (e: React.FormEvent) => {
     e.preventDefault();
@@ -309,6 +315,8 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       ? new Date(delivery.delivery_deadline_date).toISOString()
       : defaultDate;
 
+    const items = useDeliveryItemStore.getState().items;
+
     const payload: Delivery = {
       ...delivery,
       id: Number(delivery.id),
@@ -317,15 +325,18 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       delivery_date: formattedDeliveryDate,
       delivery_deadline_date: formattedDeliveryDeadlineDate,
       delivery_status: "menunggu persetujuan",
+      total_item: items.length,
+      items: items,
     };
 
+    console.log("Items:", items);
+    console.log("Payload to submit:", payload);
+
     addDeliveryToTransaction(payload);
+    // updateDriverStatus(payload.driver_id, "tidak tersedia");
+    // updateVehicleStatus(payload.vehicle_id, "tidak tersedia");
 
-    updateDriverStatus(payload.driver_id, "tidak tersedia");
-    updateVehicleStatus(payload.vehicle_id, "tidak tersedia");
-
-    resetDelivery();
-    goBack();
+    goToAddTransaction();
   };
 
   const handleChange = (
@@ -389,7 +400,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const handlePlaceSelect = (place: Place) => {
     setStartLocation(place.place_name);
   };
-
   return (
     <form
       onSubmit={handleSubmitDelivery}
@@ -400,7 +410,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         className="text-center mt-6"
       />
       <SelectComponent
-        label="Jenis Muatan"
+        label="Jenis Barang"
         placeholder="Pilih jenis barang"
         name="load_type"
         value={formData.load_type}
@@ -423,27 +433,13 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         ]}
       />
       <InputComponent
-        label="Muatan"
-        placeholder="AC 2PK, Mesin Cuci, Sofa L"
-        type="text"
-        name="load"
-        value={formData.load}
-        onChange={handleChange}
+        label="Jumlah Barang"
+        disabled={true}
+        name="total_item"
+        value={items.length}
+        onChange={() => {}}
       />
-      <InputComponent
-        label="Jumlah Muatan"
-        placeholder="Masukkan jumlah unit, misal: 3 unit"
-        name="quantity"
-        value={formData.quantity}
-        onChange={handleChange}
-      />
-      <InputComponent
-        label="Berat Muatan"
-        placeholder="Masukkan berat total dalam kg"
-        name="weight"
-        value={formData.weight}
-        onChange={handleChange}
-      />
+
       <SelectComponent
         label="Pengemudi"
         placeholder="Pilih pengemudi yang akan ditugaskan"
@@ -589,7 +585,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           label="Simpan"
           type="submit"
           className="w-full"
-          onClick={goToTransactionPages}
         />
       </div>
     </form>

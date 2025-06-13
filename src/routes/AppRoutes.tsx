@@ -16,6 +16,7 @@ import DashboardPages from "../pages/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import DriverDetailPage from "../features/driver/DetailDriver";
 import DeliveryMap from "../features/delivery/DeliveryMap";
+import AddDeliveryItemPages from "@/features/delivery/AddDeliveryItemPages";
 
 export default function AppRoutes() {
   return (
@@ -71,6 +72,14 @@ export default function AppRoutes() {
           <Route
             path="transaction/add"
             element={<ProtectedRoute element={<AddTransactionPages />} />}
+          />
+          <Route
+            path="transaction/add/delivery"
+            element={<ProtectedRoute element={<AddDeliveryPages />} />}
+          />
+          <Route
+            path="transaction/add/delivery/item"
+            element={<ProtectedRoute element={<AddDeliveryItemPages />} />}
           />
           <Route
             path="transaction/:id"

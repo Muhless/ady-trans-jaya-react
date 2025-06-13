@@ -33,6 +33,7 @@ const useNavigationHooks = () => {
     // delivery
     goToDeliveryPages: () => navigate("delivery"),
     goToAddDeliveryForm: () => navigate("/transaction/add/delivery"),
+    goToAddDeliveryItemPages: () => navigate("/transaction/add/delivery/item"),
     goToDeliveryMapPages: (id: number) => navigate(`/delivery/map/${id}`),
     goToDetailDelivery: (id: number) => () => {
       if (id) {

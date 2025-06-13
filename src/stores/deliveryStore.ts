@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
+import { DeliveryItem } from "./deliveryItemStore";
 
 export type Delivery = {
   driver: any;
@@ -8,9 +9,7 @@ export type Delivery = {
   driver_id: number | null;
   vehicle_id: number | null;
   load_type: string;
-  load: string;
-  quantity: string;
-  weight: string;
+  total_item: number;
   pickup_address: string;
   pickup_address_lat: number | null;
   pickup_address_lang: number | null;
@@ -22,6 +21,7 @@ export type Delivery = {
   delivery_status: string;
   delivery_cost: number;
   approved_at: string | null;
+  items: DeliveryItem[];
 };
 
 type DeliveryStore = {
@@ -59,9 +59,7 @@ export const useDeliveryStore = create<DeliveryStore>()(
       driver_id: null,
       vehicle_id: null,
       load_type: "",
-      load: "",
-      quantity: "",
-      weight: "",
+      total_item: 0,
       pickup_address: "",
       pickup_address_lat: null,
       pickup_address_lang: null,
@@ -73,12 +71,19 @@ export const useDeliveryStore = create<DeliveryStore>()(
       delivery_status: "menunggu persetujuan",
       delivery_cost: 0,
       approved_at: null,
+      items: [],
     },
-    setDelivery: (data) =>
+
+    setDelivery: (data: Partial<Delivery>) =>
       set((state) => ({
-        delivery: { ...state.delivery, ...data },
+        delivery: {
+          ...state.delivery,
+          ...data,
+        },
       })),
+
     setAllDelivery: (data: Delivery) => set({ delivery: data }),
+
     resetDelivery: () =>
       set({
         delivery: {
@@ -88,9 +93,7 @@ export const useDeliveryStore = create<DeliveryStore>()(
           driver_id: null,
           vehicle_id: null,
           load_type: "",
-          load: "",
-          quantity: "",
-          weight: "",
+          total_item: 0,
           pickup_address: "",
           pickup_address_lat: null,
           pickup_address_lang: null,
@@ -102,8 +105,8 @@ export const useDeliveryStore = create<DeliveryStore>()(
           delivery_status: "menunggu persetujuan",
           delivery_cost: 0,
           approved_at: null,
+          items: [],
         },
       }),
-      
   }))
 );

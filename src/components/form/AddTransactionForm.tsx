@@ -180,6 +180,11 @@ const AddTransactionForm = () => {
     setDelivery(deliveryToEdit);
     goToAddDeliveryForm();
   };
+  
+  useEffect(() => {
+    // Setiap kali deliveryList berubah, update transaction.deliveries
+    setTransaction({ deliveries: deliveryList });
+  }, [deliveryList]);
 
   return (
     <form className="space-y-2" onSubmit={handleSubmit}>
