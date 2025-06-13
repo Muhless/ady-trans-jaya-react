@@ -23,3 +23,4 @@ export const formatDateNumeric = (dateString: string) => {
     year: "numeric",
   });
 };
+

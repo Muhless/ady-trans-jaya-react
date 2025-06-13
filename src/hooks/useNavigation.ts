@@ -20,7 +20,7 @@ const useNavigationHooks = () => {
     // transaction
     goToTransactionPages: () => navigate("/transaction"),
     goToAddTransaction: () => {
-      useTransactionStore.getState().resetTransaction();
+      useTransactionStore.getState();
       navigate("/transaction/add");
     },
     goToDetailTransaction: (id: number) => () => {

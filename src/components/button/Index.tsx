@@ -42,7 +42,7 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
     "transition focus:outline-none flex justify-center items-center gap-2 text-sm p-2 text-white";
 
   const roundedStyle =
-    variant === "edit" || variant === "delete" ? "rounded-full" : "rounded-md";
+    variant === "edit" && "delete" ? "rounded-full" : "rounded-md";
   const variants = {
     default: "bg-gray-600 hover:bg-gray-700",
     add: "bg-sky-600 hover:bg-sky-700 ",

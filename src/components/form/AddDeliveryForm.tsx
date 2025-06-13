@@ -16,17 +16,16 @@ import { useFetchOptions } from "../../hooks/useFetchOptions";
 import mapboxgl from "mapbox-gl";
 import { useDeliveryCalculation } from "../../hooks/useDeliveryCost";
 import axios from "axios";
-import { useMutation } from "@tanstack/react-query";
 import { Delivery, useDeliveryStore } from "../../stores/deliveryStore";
 import SearchLocationInput from "../input/SearchLocation";
 import { InputLatLang } from "../input/InputLatLang";
 import { ArrowLeft, MapPin } from "lucide-react";
 import { useTransactionStore } from "../../stores/transactionStore";
-import Swal from "sweetalert2";
 import { API_BASE_URL } from "../../apiConfig";
 import ConfirmDialog from "../common/ConfirmDialog";
 import { Button } from "../ui/button";
 import { useDeliveryItemStore } from "@/stores/deliveryItemStore";
+import DatePickerComponent from "../common/DatePicker";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -275,24 +274,16 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const { delivery, setDelivery, setAllDelivery, resetDelivery } =
     useDeliveryStore();
   const items = useDeliveryItemStore((state) => state.items);
+  const totalWeight = items.reduce((sum, item) => sum + (item.weight || 0), 0);
 
   const [formData, setFormData] = [delivery, setAllDelivery];
   const state = useDeliveryStore.getState();
-
-  // FIXME:
-  // console.log(state.delivery);
 
   const { deliveryPrice, loading } = useDeliveryCalculation(
     distance,
     formData.vehicle_id
   );
   const { addDeliveryToTransaction } = useTransactionStore();
-  // const updateDriverStatus = useTransactionStore(
-  //   (state) => state.updateDriverStatus
-  // );
-  // const updateVehicleStatus = useTransactionStore(
-  //   (state) => state.updateVehicleStatus
-  // );
 
   const handleSubmitDelivery = (e: React.FormEvent) => {
     e.preventDefault();
@@ -307,12 +298,12 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     }
 
     const defaultDate = new Date().toISOString();
-    const formattedDeliveryDate = delivery.delivery_date
-      ? new Date(delivery.delivery_date).toISOString()
+    const formattedDeliveryDate = deliveryDate
+      ? deliveryDate.toISOString()
       : defaultDate;
 
-    const formattedDeliveryDeadlineDate = delivery.delivery_deadline_date
-      ? new Date(delivery.delivery_deadline_date).toISOString()
+    const formattedDeliveryDeadlineDate = deliveryDeadlineDate
+      ? deliveryDeadlineDate.toISOString()
       : defaultDate;
 
     const items = useDeliveryItemStore.getState().items;
@@ -329,12 +320,32 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       items: items,
     };
 
-    console.log("Items:", items);
-    console.log("Payload to submit:", payload);
-
+    console.log("=== DEBUG START ===");
+    console.log("1. Payload to submit:", payload);
+    console.log(
+      "2. Transaction BEFORE addDeliveryToTransaction:",
+      useTransactionStore.getState().transaction
+    );
     addDeliveryToTransaction(payload);
-    // updateDriverStatus(payload.driver_id, "tidak tersedia");
-    // updateVehicleStatus(payload.vehicle_id, "tidak tersedia");
+    useDeliveryStore
+      .getState()
+      .updateDriverStatus(delivery.driver_id!, "tidak tersedia");
+
+    useDeliveryStore
+      .getState()
+      .updateVehicleStatus(delivery.vehicle_id!, "tidak tersedia");
+
+    setTimeout(() => {
+      console.log(
+        "3. Transaction AFTER addDeliveryToTransaction:",
+        useTransactionStore.getState().transaction
+      );
+      console.log(
+        "4. Deliveries length:",
+        useTransactionStore.getState().transaction.deliveries.length
+      );
+      console.log("=== DEBUG END ===");
+    }, 100);
 
     goToAddTransaction();
   };
@@ -400,6 +411,12 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const handlePlaceSelect = (place: Place) => {
     setStartLocation(place.place_name);
   };
+
+  const [deliveryDate, setDeliveryDate] = useState<Date | undefined>();
+  const [deliveryDeadlineDate, setDeliveryDeadlineDate] = useState<
+    Date | undefined
+  >();
+
   return (
     <form
       onSubmit={handleSubmitDelivery}
@@ -432,6 +449,14 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           { value: "Lainnya", label: "Lainnya" },
         ]}
       />
+      <InputComponent
+        label="Total Berat"
+        disabled={true}
+        name="total_weight"
+        value={totalWeight}
+        onChange={() => {}}
+      />
+
       <InputComponent
         label="Jumlah Barang"
         disabled={true}
@@ -535,20 +560,31 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           value={duration ?? ""}
         />
       </div>
-      <InputComponent
+
+      <DatePickerComponent
         label="Tanggal Pengiriman"
-        type="date"
-        name="delivery_date"
-        value={formData.delivery_date}
-        onChange={handleChange}
+        selectedDate={deliveryDate}
+        onDateChange={(date) => {
+          setDeliveryDate(date);
+          setFormData({
+            ...formData,
+            delivery_date: date ? date.toISOString() : "",
+          });
+        }}
       />
-      <InputComponent
-        label="Batas Pengiriman"
-        type="date"
-        name="delivery_deadline_date"
-        value={formData.delivery_deadline_date}
-        onChange={handleChange}
+
+      <DatePickerComponent
+        label="Batas Waktu Pengiriman"
+        selectedDate={deliveryDeadlineDate}
+        onDateChange={(date) => {
+          setDeliveryDeadlineDate(date);
+          setFormData({
+            ...formData,
+            delivery_deadline_date: date ? date.toISOString() : "",
+          });
+        }}
       />
+
       <InputComponent
         className="w-60"
         label="Biaya Pengiriman"

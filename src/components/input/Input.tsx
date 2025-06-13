@@ -39,11 +39,12 @@ export const InputComponent: React.FC<InputComponentProps> = ({
 }) => {
   const { goToAddDeliveryItemPages } = useNavigationHooks();
   const isLocationField = label?.toLowerCase().includes("lokasi");
-  const listItem = label?.toLowerCase().includes("jumlah");
+  const listItem = label?.toLowerCase().includes("jumlah barang");
+  const isTotalWeightField = label?.toLowerCase().includes("total berat");
   const stringValue = value === null ? "" : String(value);
 
   const inputClass = `p-2 rounded-md ${
-    isLocationField ? "w-[245px]" : "w-72"
+    isLocationField || isTotalWeightField ? "w-[245px]" : "w-72"
   } focus:ring-biru focus:ring-2 focus:outline-none ${
     disabled ? "bg-gray-300" : "bg-bg"
   } ${listItem ? "w-[245px]" : ""} ${className || ""}`;
@@ -95,6 +96,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
             <Plus size={20} />
           </button>
         )}
+        {isTotalWeightField && <h1 className="p-2">Kg</h1>}
       </div>
     </div>
   );

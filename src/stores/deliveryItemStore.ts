@@ -2,8 +2,8 @@ import { create } from "zustand";
 
 export type DeliveryItem = {
   item_name: string;
-  quantity: string;
-  weight: string;
+  quantity: number;
+  weight: number;
 };
 
 type DeliveryItemStore = {

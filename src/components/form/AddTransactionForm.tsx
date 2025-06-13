@@ -130,7 +130,7 @@ const AddTransactionForm = () => {
           status: "tidak tersedia",
         });
       }
-
+      resetDelivery();
       resetTransaction();
       goToTransactionPages();
     } catch (error: any) {
@@ -180,11 +180,12 @@ const AddTransactionForm = () => {
     setDelivery(deliveryToEdit);
     goToAddDeliveryForm();
   };
-  
+
   useEffect(() => {
-    // Setiap kali deliveryList berubah, update transaction.deliveries
-    setTransaction({ deliveries: deliveryList });
-  }, [deliveryList]);
+    console.log("AddTransactionForm rendered");
+    console.log("Current transaction:", transaction);
+    console.log("Deliveries count:", transaction.deliveries?.length || 0);
+  });
 
   return (
     <form className="space-y-2" onSubmit={handleSubmit}>

@@ -2,6 +2,18 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { DeliveryItem } from "./deliveryItemStore";
 
+type Driver = {
+  id: number;
+  name: string;
+  status: string;
+};
+
+type Vehicle = {
+  id: number;
+  plate_number: string;
+  status: string;
+};
+
 export type Delivery = {
   driver: any;
   vehicle: any;
@@ -9,6 +21,7 @@ export type Delivery = {
   driver_id: number | null;
   vehicle_id: number | null;
   load_type: string;
+  total_weight: number;
   total_item: number;
   pickup_address: string;
   pickup_address_lat: number | null;
@@ -33,21 +46,74 @@ type DeliveryStore = {
   addDelivery: (newDelivery: Delivery) => void;
   removeDelivery: (id: number) => void;
   updateDelivery: (id: string, updatedDelivery: Partial<Delivery>) => void;
+
+  drivers: Driver[];
+  vehicles: Vehicle[];
+  setDrivers: (data: Driver[]) => void;
+  setVehicles: (data: Vehicle[]) => void;
+  updateDriverStatus: (driverId: number, status: string) => void;
+  updateVehicleStatus: (vehicleId: number, status: string) => void;
 };
 
 export const useDeliveryStore = create<DeliveryStore>()(
   devtools((set) => ({
+    drivers: [],
+    vehicles: [],
+
+    setDrivers: (data) => set({ drivers: data }),
+    setVehicles: (data) => set({ vehicles: data }),
+
+    updateDriverStatus: (driverId, status) =>
+      set((state) => ({
+        drivers: state.drivers.map((driver) =>
+          driver.id === driverId ? { ...driver, status } : driver
+        ),
+      })),
+
+    updateVehicleStatus: (vehicleId, status) =>
+      set((state) => ({
+        vehicles: state.vehicles.map((vehicle) =>
+          vehicle.id === vehicleId ? { ...vehicle, status } : vehicle
+        ),
+      })),
+
     deliveryList: [],
+
     addDelivery: (newDelivery: Delivery) =>
       set((state) => ({
         deliveryList: [...state.deliveryList, newDelivery],
       })),
+
     removeDelivery: (id: number) =>
-      set((state) => ({
-        deliveryList: state.deliveryList.filter(
-          (delivery) => delivery.id !== id
-        ),
-      })),
+      set((state) => {
+        const deliveryToRemove = state.deliveryList.find((d) => d.id === id);
+
+        let updatedDrivers = state.drivers;
+        let updatedVehicles = state.vehicles;
+
+        if (deliveryToRemove) {
+          updatedDrivers = state.drivers.map((driver) =>
+            driver.id === deliveryToRemove.driver_id
+              ? { ...driver, status: "tersedia" }
+              : driver
+          );
+
+          updatedVehicles = state.vehicles.map((vehicle) =>
+            vehicle.id === deliveryToRemove.vehicle_id
+              ? { ...vehicle, status: "tersedia" }
+              : vehicle
+          );
+        }
+
+        return {
+          deliveryList: state.deliveryList.filter(
+            (delivery) => delivery.id !== id
+          ),
+          drivers: updatedDrivers,
+          vehicles: updatedVehicles,
+        };
+      }),
+
     updateDelivery: (id: number, updatedDelivery: Partial<Delivery>) =>
       set((state) => ({
         deliveryList: state.deliveryList.map((delivery) =>
@@ -59,6 +125,7 @@ export const useDeliveryStore = create<DeliveryStore>()(
       driver_id: null,
       vehicle_id: null,
       load_type: "",
+      total_weight: 0,
       total_item: 0,
       pickup_address: "",
       pickup_address_lat: null,
@@ -93,6 +160,7 @@ export const useDeliveryStore = create<DeliveryStore>()(
           driver_id: null,
           vehicle_id: null,
           load_type: "",
+          total_weight: 0,
           total_item: 0,
           pickup_address: "",
           pickup_address_lat: null,
