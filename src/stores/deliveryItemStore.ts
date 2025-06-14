@@ -2,18 +2,18 @@ import { create } from "zustand";
 
 export type DeliveryItem = {
   item_name: string;
-  quantity: number;
+  quantity: string;
   weight: number;
 };
 
 type DeliveryItemStore = {
   items: DeliveryItem[];
   addItems: (newItems: DeliveryItem[]) => void;
-  resetItems: () => void;
+  resetDeliveryItems: () => void;
 };
 
 export const useDeliveryItemStore = create<DeliveryItemStore>((set) => ({
   items: [],
   addItems: (newItems) => set({ items: newItems }),
-  resetItems: () => set({ items: [] }),
+  resetDeliveryItems: () => set({ items: [] }),
 }));

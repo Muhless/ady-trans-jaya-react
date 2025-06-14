@@ -17,6 +17,15 @@ export type Transaction = {
   deliveries: Delivery[];
 };
 
+type Customer = {
+  id: number;
+  name: string;
+  company: string;
+  email: string;
+  phone: string;
+  address: string;
+};
+
 type TransactionStore = {
   transaction: Transaction;
   setTransaction: (data: Partial<Transaction>) => void;
@@ -25,7 +34,14 @@ type TransactionStore = {
   addAllDeliveriesFromStore: () => void;
   syncSelectedDeliveries: (deliveryIds: number[]) => void;
   resetTransaction: () => void;
+  editingDelivery: Delivery | null;
+  setEditingDelivery: (delivery: Delivery) => void;
+  updateDeliveryInTransaction: (updatedDelivery: Delivery) => void;
+  clearEditingDelivery: () => void;
   removeDeliveryFromTransaction: (deliveryId: number) => void;
+  selectedCustomer: Customer | null;
+  setSelectedCustomer: (customer: Customer) => void;
+  clearSelectedCustomer: () => void;
 };
 
 export const initialTransaction: Transaction = {
@@ -46,6 +62,12 @@ export const initialTransaction: Transaction = {
 export const useTransactionStore = create<TransactionStore>((set, get) => ({
   transaction: initialTransaction,
 
+  selectedCustomer: null,
+  editingDelivery: null,
+
+  setSelectedCustomer: (customer) => set({ selectedCustomer: customer }),
+  clearSelectedCustomer: () => set({ selectedCustomer: null }),
+
   setTransaction: (data) =>
     set((state) => ({
       transaction: { ...state.transaction, ...data },
@@ -61,7 +83,6 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
       },
     })),
 
-  // Tambahkan delivery dari store berdasarkan ID
   addDeliveryFromStoreById: (deliveryId) => {
     const deliveryStore = useDeliveryStore.getState();
     const delivery = deliveryStore.deliveryList.find(
@@ -70,7 +91,6 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
 
     if (delivery) {
       const currentState = get();
-      // Cek apakah delivery sudah ada di transaction
       const exists = currentState.transaction.deliveries.some(
         (d) => d.id === delivery.id
       );
@@ -88,7 +108,6 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
     }
   },
 
-  // Tambahkan semua delivery dari store
   addAllDeliveriesFromStore: () => {
     const deliveryStore = useDeliveryStore.getState();
     const totalCost = deliveryStore.deliveryList.reduce(
@@ -106,7 +125,6 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
     }));
   },
 
-  // Sync delivery yang dipilih berdasarkan array ID
   syncSelectedDeliveries: (deliveryIds) => {
     const deliveryStore = useDeliveryStore.getState();
     const selectedDeliveries = deliveryStore.deliveryList.filter((delivery) =>
@@ -128,26 +146,47 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
   },
 
   resetTransaction: () => {
-    console.log("🔥 RESET TRANSACTION CALLED!");
-    console.trace(); // Ini akan show stack trace siapa yang memanggil reset
     set({ transaction: initialTransaction });
   },
 
-  removeDeliveryFromTransaction: (deliveryId) =>
+  setEditingDelivery: (delivery) => set({ editingDelivery: delivery }),
+
+  clearEditingDelivery: () => set({ editingDelivery: null }),
+
+  updateDeliveryInTransaction: (updatedDelivery: Delivery) =>
     set((state) => {
-      const filteredDeliveries = state.transaction.deliveries.filter(
-        (delivery) => delivery.id !== deliveryId
+      const updatedDeliveries = state.transaction.deliveries.map((d) =>
+        d.id === updatedDelivery.id ? updatedDelivery : d
       );
-      const newCost = filteredDeliveries.reduce(
-        (sum, delivery) => sum + (delivery.delivery_cost || 0),
+
+      const newCost = updatedDeliveries.reduce(
+        (sum, d) => sum + (d.delivery_cost || 0),
         0
       );
 
       return {
         transaction: {
           ...state.transaction,
-          deliveries: filteredDeliveries,
-          total_delivery: filteredDeliveries.length,
+          deliveries: updatedDeliveries,
+          cost: newCost,
+        },
+      };
+    }),
+
+  removeDeliveryFromTransaction: (deliveryId: number) =>
+    set((state) => {
+      const filtered = state.transaction.deliveries.filter(
+        (d) => d.id !== deliveryId
+      );
+      const newCost = filtered.reduce(
+        (sum, d) => sum + (d.delivery_cost || 0),
+        0
+      );
+      return {
+        transaction: {
+          ...state.transaction,
+          deliveries: filtered,
+          total_delivery: filtered.length,
           cost: newCost,
         },
       };

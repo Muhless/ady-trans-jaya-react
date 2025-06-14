@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { DeliveryItem } from "./deliveryItemStore";
+import { DeliveryItem, useDeliveryItemStore } from "./deliveryItemStore";
 
 type Driver = {
   id: number;
@@ -20,6 +20,7 @@ export type Delivery = {
   id: number;
   driver_id: number | null;
   vehicle_id: number | null;
+  delivery_code: string;
   load_type: string;
   total_weight: number;
   total_item: number;
@@ -151,7 +152,8 @@ export const useDeliveryStore = create<DeliveryStore>()(
 
     setAllDelivery: (data: Delivery) => set({ delivery: data }),
 
-    resetDelivery: () =>
+    resetDelivery: () => {
+      useDeliveryItemStore.getState().resetDeliveryItems();
       set({
         delivery: {
           id: 0,
@@ -159,6 +161,7 @@ export const useDeliveryStore = create<DeliveryStore>()(
           vehicle: null,
           driver_id: null,
           vehicle_id: null,
+          delivery_code: "",
           load_type: "",
           total_weight: 0,
           total_item: 0,
@@ -175,6 +178,7 @@ export const useDeliveryStore = create<DeliveryStore>()(
           approved_at: null,
           items: [],
         },
-      }),
+      });
+    },
   }))
 );

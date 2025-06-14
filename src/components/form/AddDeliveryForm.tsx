@@ -274,16 +274,27 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const { delivery, setDelivery, setAllDelivery, resetDelivery } =
     useDeliveryStore();
   const items = useDeliveryItemStore((state) => state.items);
+
   const totalWeight = items.reduce((sum, item) => sum + (item.weight || 0), 0);
 
   const [formData, setFormData] = [delivery, setAllDelivery];
-  const state = useDeliveryStore.getState();
 
   const { deliveryPrice, loading } = useDeliveryCalculation(
     distance,
     formData.vehicle_id
   );
-  const { addDeliveryToTransaction } = useTransactionStore();
+  const {
+    addDeliveryToTransaction,
+    editingDelivery,
+    clearEditingDelivery,
+    updateDeliveryInTransaction,
+  } = useTransactionStore();
+
+  const generateDeliveryCode = (): string => {
+    const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const randomPart = Math.floor(100 + Math.random() * 900);
+    return `DEL-${datePart}-${randomPart}`;
+  };
 
   const handleSubmitDelivery = (e: React.FormEvent) => {
     e.preventDefault();
@@ -317,15 +328,10 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       delivery_deadline_date: formattedDeliveryDeadlineDate,
       delivery_status: "menunggu persetujuan",
       total_item: items.length,
+      delivery_code: generateDeliveryCode(),
       items: items,
     };
 
-    console.log("=== DEBUG START ===");
-    console.log("1. Payload to submit:", payload);
-    console.log(
-      "2. Transaction BEFORE addDeliveryToTransaction:",
-      useTransactionStore.getState().transaction
-    );
     addDeliveryToTransaction(payload);
     useDeliveryStore
       .getState()
@@ -335,18 +341,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       .getState()
       .updateVehicleStatus(delivery.vehicle_id!, "tidak tersedia");
 
-    setTimeout(() => {
-      console.log(
-        "3. Transaction AFTER addDeliveryToTransaction:",
-        useTransactionStore.getState().transaction
-      );
-      console.log(
-        "4. Deliveries length:",
-        useTransactionStore.getState().transaction.deliveries.length
-      );
-      console.log("=== DEBUG END ===");
-    }, 100);
-
+    resetDelivery();
     goToAddTransaction();
   };
 
@@ -388,6 +383,9 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     setDuration(null);
     setPickupLocation("");
     setDestination("");
+    setDeliveryDate(null);
+    setDeliveryDeadlineDate(null);
+    resetDelivery();
 
     if (markerRef.current.start) markerRef.current.start.remove();
     if (markerRef.current.end) markerRef.current.end.remove();
@@ -399,13 +397,15 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  useEffect(() => {
+    if (editingDelivery) {
+      setFormData(editingDelivery);
+    }
+  }, [editingDelivery]);
+
   const handleCancel = async () => {
-    resetDelivery();
+    clearEditingDelivery();
     goBack();
-    console.log(
-      "Transaction state after reset:",
-      useDeliveryStore.getState().delivery
-    );
   };
 
   const handlePlaceSelect = (place: Place) => {
@@ -424,7 +424,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     >
       <SubTitle
         subTitle="Form Tambah Pengiriman"
-        className="text-center mt-6"
+        className="text-center mt-6 text-2xl"
       />
       <SelectComponent
         label="Jenis Barang"
@@ -449,13 +449,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           { value: "Lainnya", label: "Lainnya" },
         ]}
       />
-      <InputComponent
-        label="Total Berat"
-        disabled={true}
-        name="total_weight"
-        value={totalWeight}
-        onChange={() => {}}
-      />
 
       <InputComponent
         label="Jumlah Barang"
@@ -464,7 +457,13 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         value={items.length}
         onChange={() => {}}
       />
-
+      <InputComponent
+        label="Total Berat"
+        disabled={true}
+        name="total_weight"
+        value={totalWeight}
+        onChange={() => {}}
+      />
       <SelectComponent
         label="Pengemudi"
         placeholder="Pilih pengemudi yang akan ditugaskan"

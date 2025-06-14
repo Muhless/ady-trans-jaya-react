@@ -4,11 +4,10 @@ import TitleComponent from "../Title";
 import { useDeliveryItemStore } from "@/stores/deliveryItemStore";
 import useNavigationHooks from "@/hooks/useNavigation";
 import { useDeliveryStore } from "@/stores/deliveryStore";
-import Card from "../card";
 
 interface DeliveryItem {
   item_name: string;
-  quantity: number;
+  quantity: string;
   weight: number;
 }
 
@@ -17,7 +16,7 @@ const AddDeliveryItemForm: React.FC = () => {
 
   const items = useDeliveryItemStore((state) => state.items);
   const addItems = useDeliveryItemStore((state) => state.addItems);
-  const resetItems = useDeliveryItemStore((state) => state.resetItems);
+  const resetDeliveryItems = useDeliveryItemStore((state) => state.resetDeliveryItems);
 
   const handleChange = (
     index: number,
@@ -28,21 +27,18 @@ const AddDeliveryItemForm: React.FC = () => {
 
     let parsedValue: string | number;
 
-    if (field === "quantity" || field === "weight") {
-      // Handle empty string untuk numeric fields
-      if (value === "" || value === "0") {
+    if (field === "weight") {
+      if (value === "0") {
         parsedValue = 0;
       } else {
         const numValue = Number(value);
-        // Validasi input numeric
         if (isNaN(numValue) || numValue < 0) {
-          return; // Ignore invalid input
+          return;
         }
-        // Baik weight maupun quantity harus integer
         parsedValue = Math.floor(numValue);
       }
     } else {
-      parsedValue = value.trim();
+      parsedValue = value;
     }
 
     updatedItems[index] = {
@@ -56,7 +52,7 @@ const AddDeliveryItemForm: React.FC = () => {
   const handleAddItem = () => {
     const newItems: DeliveryItem[] = [
       ...items,
-      { item_name: "", quantity: 0, weight: 0 },
+      { item_name: "", quantity: "", weight: 0 },
     ];
     addItems(newItems);
   };
@@ -68,7 +64,7 @@ const AddDeliveryItemForm: React.FC = () => {
 
   const handleReset = () => {
     if (window.confirm("Apakah Anda yakin ingin menghapus semua barang?")) {
-      resetItems();
+      resetDeliveryItems();
     }
   };
 
@@ -84,7 +80,7 @@ const AddDeliveryItemForm: React.FC = () => {
       if (!item.item_name.trim()) {
         errors.push(`Nama barang item ke-${index + 1} tidak boleh kosong.`);
       }
-      if (item.quantity <= 0) {
+      if (!item.quantity.trim()) {
         errors.push(`Jumlah item ke-${index + 1} harus lebih dari 0.`);
       }
       if (item.weight <= 0) {
@@ -101,7 +97,6 @@ const AddDeliveryItemForm: React.FC = () => {
     const validation = validateItems();
 
     if (!validation.isValid) {
-      // Show first error only
       alert(validation.errors[0]);
       return;
     }
@@ -149,16 +144,14 @@ const AddDeliveryItemForm: React.FC = () => {
                 required
               />
               <input
-                type="number"
+                type="text"
                 placeholder="Jumlah"
-                value={item.quantity || ""}
+                value={item.quantity}
                 onChange={(e) =>
                   handleChange(index, "quantity", e.target.value)
                 }
                 className="border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
-                min="1"
-                step="1"
               />
               <input
                 type="number"
@@ -215,7 +208,7 @@ const AddDeliveryItemForm: React.FC = () => {
             className="w-full sm:w-32"
           />
           <ButtonComponent
-            label="Reset"
+            label="Ulangi"
             variant="undo"
             type="button"
             onClick={handleReset}

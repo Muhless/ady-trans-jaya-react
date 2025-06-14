@@ -39,10 +39,11 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
   disabled = false,
 }) => {
   const baseStyle =
-    "transition focus:outline-none flex justify-center items-center gap-2 text-sm p-2 text-white";
+    "transition focus:outline-none flex justify-center items-center gap-2 text-sm p-2 text-white rounded-md";
 
-  const roundedStyle =
-    variant === "edit" && "delete" ? "rounded-full" : "rounded-md";
+  // const roundedStyle =
+  //   variant === "edit" && "delete" ? "rounded-full" : "rounded-md";
+
   const variants = {
     default: "bg-gray-600 hover:bg-gray-700",
     add: "bg-sky-600 hover:bg-sky-700 ",
@@ -80,7 +81,7 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
   };
   return (
     <button
-      className={`${baseStyle} ${roundedStyle} ${variants[variant]} ${className}`}
+      className={`${baseStyle} ${variants[variant]} ${className}`}
       onClick={type !== "submit" ? handleClick : undefined}
       type={type}
       disabled={disabled}

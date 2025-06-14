@@ -4,7 +4,7 @@ import { useTransactionStore } from "../../stores/transactionStore";
 import SelectComponent from "../input/Select";
 import ButtonComponent from "../button/Index";
 import { InputComponent } from "../input/Input";
-import { useDeliveryStore } from "../../stores/deliveryStore";
+import { Delivery, useDeliveryStore } from "../../stores/deliveryStore";
 import { API_BASE_URL } from "../../apiConfig";
 import { fetchCustomers } from "../../api/customer";
 import ConfirmDialog from "../common/ConfirmDialog";
@@ -21,13 +21,22 @@ const AddTransactionForm = () => {
   } = useNavigationHooks();
   const { deliveryList, removeDelivery, setDelivery, resetDelivery } =
     useDeliveryStore();
-  const { transaction, setTransaction, resetTransaction } =
-    useTransactionStore();
-  const state = useTransactionStore.getState();
-  console.log(state.transaction);
+  const {
+    transaction,
+    setTransaction,
+    resetTransaction,
+    selectedCustomer,
+    setSelectedCustomer,
+    updateDeliveryInTransaction,
+    setEditingDelivery,
+    removeDeliveryFromTransaction,
+  } = useTransactionStore();
+
+  const deliveries = useTransactionStore(
+    (state) => state.transaction.deliveries
+  );
 
   const [customers, setCustomers] = useState<any[]>([]);
-  const [selectedCustomer, setSelectedCustomer] = useState<any | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,10 +51,10 @@ const AddTransactionForm = () => {
     fetchData();
   }, []);
 
-  // Create customer options for the select component
   const customerOptions = customers.map((customer) => ({
     value: customer.id.toString(),
     label: customer.name,
+    ...customer,
   }));
 
   const handleCustomerSelect = (customerId: string) => {
@@ -63,9 +72,19 @@ const AddTransactionForm = () => {
     const { name, value } = event.target;
     setTransaction({ [name]: value });
 
-    // If the customer_id changed, update the selected customer
     if (name === "customer_id") {
       handleCustomerSelect(value);
+    }
+    const selected = customerOptions.find((c) => c.value === value);
+    if (selected) {
+      setSelectedCustomer({
+        id: Number(selected.value),
+        name: selected.name,
+        company: selected.company,
+        email: selected.email,
+        phone: selected.phone,
+        address: selected.address,
+      });
     }
   };
 
@@ -176,16 +195,17 @@ const AddTransactionForm = () => {
     }
   };
 
-  const handleEditDelivery = (deliveryToEdit) => {
-    setDelivery(deliveryToEdit);
+  const handleEdit = (delivery: Delivery) => {
+    console.log("Edit delivery:", delivery);
+    setEditingDelivery(delivery);
     goToAddDeliveryForm();
   };
 
-  useEffect(() => {
-    console.log("AddTransactionForm rendered");
-    console.log("Current transaction:", transaction);
-    console.log("Deliveries count:", transaction.deliveries?.length || 0);
-  });
+  const handleDelete = (deliveryId: number) => {
+    if (confirm("Yakin ingin menghapus pengiriman ini?")) {
+      removeDeliveryFromTransaction(deliveryId);
+    }
+  };
 
   return (
     <form className="space-y-2" onSubmit={handleSubmit}>
@@ -197,7 +217,7 @@ const AddTransactionForm = () => {
         onChange={handleChange}
         options={customerOptions}
       />
-      {selectedCustomer && (
+      {transaction.customer_id && selectedCustomer && (
         <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm w-full text-sm mt-2">
           <h3 className="font-medium text-gray-800 mb-2 border-b pb-1">
             Detail Pelanggan
@@ -232,46 +252,46 @@ const AddTransactionForm = () => {
       >
         + Tambah Pelanggan Baru
       </p>
-      <div className="flex justify-between gap-5">
+      <div className="flex justify-between py-5">
         <h1>Pengiriman</h1>
         <div>
-          {deliveryList && deliveryList.length > 0 ? (
-            <div>
-              {deliveryList.map((deliveryItem, index) => (
+          <div className="flex justify-center flex-col gap-3 border p-2 rounded-md">
+            {deliveries.length === 0 ? (
+              <p className="text-gray-500 text-center text-sm">
+                Belum ada pengiriman
+              </p>
+            ) : (
+              deliveries.map((delivery, index) => (
                 <div
-                  key={deliveryItem.id}
-                  className="flex justify-between items-center p-2 transition rounded-md duration-300 hover:bg-biru cursor-pointer bg-background border w-96"
+                  key={`${delivery.id ?? `fallback-${index}`}`}
+                  className="p-2 w-full rounded-md flex justify-between items-center bg-bg"
                 >
-                  <h1>Pengiriman {index + 1}</h1>
-                  <div className="flex space-x-1">
+                  <p>Pengiriman {index + 1}</p>
+                  <div className="flex gap-1">
                     <ButtonComponent
                       variant="edit"
-                      className="hover:text-text"
-                      onClick={() => handleEditDelivery(deliveryItem)}
+                      onClick={() => handleEdit(delivery)}
                     />
                     <ButtonComponent
                       variant="delete"
-                      onClick={() => removeDelivery(deliveryItem.id)}
+                      onClick={() => handleDelete(delivery.id)}
                     />
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="flex justify-center items-center p-2 text-gray-500">
-              <p>Tidak ada pengiriman saat ini.</p>
-            </div>
-          )}
-          <ButtonComponent
-            label="Tambah Pengiriman"
-            variant="add"
-            className="w-96 mt-3"
-            onClick={handleAddDelivery}
-            type="button"
-          />
+              ))
+            )}
+          </div>
+          <div>
+            <ButtonComponent
+              label="Tambah Pengiriman"
+              variant="add"
+              className="w-96 mt-3"
+              onClick={handleAddDelivery}
+              type="button"
+            />
+          </div>
         </div>
       </div>
-
       <InputComponent
         label="Jumlah Pengiriman"
         className="w-96"
