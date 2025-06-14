@@ -6,6 +6,7 @@ import axios from "axios";
 import { API_BASE_URL } from "../../apiConfig";
 import { formatCurrency, formatDateNumeric } from "../../../utils/Formatters";
 import PaginationControls from "../common/PaginationController";
+import { fetchTransactions } from "@/api/transaction";
 
 interface Transaction {
   id: number;
@@ -43,11 +44,6 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
   const { goToDetailTransaction } = useNavigationHooks();
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = limit;
-
-  const fetchTransactions = async () => {
-    const res = await axios.get(`${API_BASE_URL}/transactions`);
-    return res.data.data;
-  };
 
   const { data: transactions } = useQuery({
     queryKey: ["transactions"],

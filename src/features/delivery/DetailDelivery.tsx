@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import useNavigationHooks from "../../hooks/useNavigation";
-import ButtonComponent from "../../components/button/Index";
 import {
   MapPin,
   Package,
@@ -21,45 +20,41 @@ import { API_BASE_URL } from "../../apiConfig";
 import { useAuthStore } from "@/stores/AuthStore";
 import { formatDate, formatCurrency } from "../../../utils/Formatters";
 import { Button } from "@/components/ui/button";
+import { fetchDeliveries, fetchDeliveryById } from "@/api/delivery";
+import { useQuery } from "@tanstack/react-query";
 
 const DetailDeliveryPage = () => {
   const { id } = useParams();
-  const [delivery, setDelivery] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const { goBack } = useNavigationHooks();
   const role = useAuthStore((state) => state.role);
 
-  useEffect(() => {
-    const fetchDeliveryDetails = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/deliveries/${id}`);
-        setDelivery(response.data.data);
-        setLoading(false);
-      } catch (err) {
-        setError("Gagal memuat data pengiriman");
-        setLoading(false);
-      }
-    };
+  const {
+    data: delivery,
+    isError,
+    isLoading,
+  } = useQuery({
+    queryKey: ["delivery", id],
+    queryFn: () => fetchDeliveryById(Number(id)),
+    enabled: !!id,
+  });
 
-    fetchDeliveryDetails();
-  }, [id]);
-
-  if (loading)
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
+  }
 
-  if (error)
+  if (isError || !delivery) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <p>{error}</p>
+          <p>Gagal memuat detail pengiriman.</p>
         </div>
       </div>
     );
+  }
 
   return (
     <div className="bg-gray-50 py-3 px-6">

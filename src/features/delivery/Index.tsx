@@ -6,13 +6,9 @@ import { API_BASE_URL } from "@/apiConfig";
 import DeliveryStatCard from "@/components/card/stat/DeliveryStatCard";
 import TableComponent from "@/components/table";
 import useNavigationHooks from "@/hooks/useNavigation";
-import { Title } from "chart.js";
 import TitleComponent from "@/components/Title";
+import { fetchDeliveries } from "@/api/delivery";
 
-const fetchDelivery = async () => {
-  const res = await axios.get(`${API_BASE_URL}/deliveries`);
-  return res.data.data;
-};
 
 function DeliveryPages() {
   const { goToDetailDelivery } = useNavigationHooks();
@@ -23,7 +19,7 @@ function DeliveryPages() {
     isError,
   } = useQuery({
     queryKey: ["delivery"],
-    queryFn: fetchDelivery,
+    queryFn: fetchDeliveries,
   });
 
   const columns = [

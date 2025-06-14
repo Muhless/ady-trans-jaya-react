@@ -6,12 +6,20 @@ export const fetchDeliveries = async () => {
   return response.data.data;
 };
 
+export const fetchDeliveryById = async (id: number) => {
+  const response = await axios.get(`${API_BASE_URL}/delivery/${id}`);
+  return response.data.data;
+};
+
 export const addDeliveries = async (data: Record<string, any>) => {
   const response = await axios.post(`${API_BASE_URL}/delivery`, data);
   return response.data.data;
 };
 
-export const updateDeliveries = async (id: number, data: Record<string, any>) => {
+export const updateDeliveries = async (
+  id: number,
+  data: Record<string, any>
+) => {
   const response = await axios.put(`${API_BASE_URL}/delivery/${id}`, data);
   return response.data.data;
 };
