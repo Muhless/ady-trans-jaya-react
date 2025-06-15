@@ -15,13 +15,26 @@ import {
   Check,
   UserCog2Icon,
   ArrowLeft,
+  BookCheckIcon,
 } from "lucide-react";
 import { API_BASE_URL } from "../../apiConfig";
 import { useAuthStore } from "@/stores/AuthStore";
 import { formatDate, formatCurrency } from "../../../utils/Formatters";
 import { Button } from "@/components/ui/button";
-import { fetchDeliveries, fetchDeliveryById } from "@/api/delivery";
+import {
+  fetchDeliveries,
+  fetchDeliveryById,
+  updateDeliveryStatus,
+} from "@/api/delivery";
 import { useQuery } from "@tanstack/react-query";
+import TitleComponent from "@/components/Title";
+import DeliveryInfoCard from "./DeliveryInfoCard";
+import DeliveryInfoComponent from "@/components/card/delivery/DeliveryInfoCard";
+import VehicleInfoComponent from "@/components/card/delivery/VehicleInfoCard";
+import DriverInfoComponent from "@/components/card/delivery/DriverInfoCard";
+import CustomerInfoCard from "../customer/CustomerInfoCard";
+import CustomerInfoComponent from "@/components/card/delivery/CustomerInfoCard";
+import ButtonComponent from "@/components/button/Index";
 
 const DetailDeliveryPage = () => {
   const { id } = useParams();
@@ -32,6 +45,7 @@ const DetailDeliveryPage = () => {
     data: delivery,
     isError,
     isLoading,
+    refetch,
   } = useQuery({
     queryKey: ["delivery", id],
     queryFn: () => fetchDeliveryById(Number(id)),
@@ -56,243 +70,70 @@ const DetailDeliveryPage = () => {
     );
   }
 
+  const handleApprove = async (id: number) => {
+    try {
+      await updateDeliveryStatus(id, "disetujui");
+      await refetch();
+    } catch (err) {
+      console.error("Gagal menyetujui", err);
+    }
+  };
+
+  const handleReject = async (id: number) => {
+    try {
+      await updateDeliveryStatus(id, "ditolak");
+      await refetch();
+    } catch (err) {
+      console.error("Gagal menolak", err);
+    }
+  };
+
   return (
-    <div className="bg-gray-50 py-3 px-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-3">
-          <h1 className="text-2xl font-bold text-gray-800">
-            Detail Pengiriman
-          </h1>
+    <>
+      <TitleComponent title="Detail Pengiriman" />
+
+      <div className="grid grid-cols-3 gap-6">
+        <div className="flex flex-col col-span-1 space-y-6">
+          <CustomerInfoComponent delivery={delivery} />
+
+          <DriverInfoComponent delivery={delivery} />
+
+          <VehicleInfoComponent
+            delivery={delivery}
+            formatCurrency={formatCurrency}
+          />
         </div>
-
-        <div className="mb-3">
-          <span
-            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-              delivery.delivery_status === "menunggu persetujuan"
-                ? "bg-yellow-100 text-yellow-800"
-                : delivery.delivery_status === "disetujui"
-                ? "bg-green-100 text-green-800"
-                : delivery.delivery_status === "dalam perjalanan"
-                ? "bg-blue-100 text-blue-800"
-                : delivery.delivery_status === "selesai"
-                ? "bg-indigo-100 text-indigo-800"
-                : delivery.delivery_status === "dibatalkan"
-                ? "bg-red-100 text-red-800"
-                : "bg-gray-100 text-gray-800"
-            }`}
-          >
-            {delivery.delivery_status}
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center border-b pb-2">
-              <User className="mr-2 text-blue-500" size={20} />
-              Informasi Pelanggan
-            </h2>
-            <div className="space-y-3">
-              <div>
-                <p className="text-sm text-gray-500">Nama</p>
-                <p className="font-medium">
-                  {delivery.transaction?.customer?.name}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Perusahaan</p>
-                <div className="flex items-center">
-                  <Building className="mr-2 text-gray-400" size={16} />
-                  <p>{delivery.transaction?.customer?.company}</p>
-                </div>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Email</p>
-                <div className="flex items-center">
-                  <Mail className="mr-2 text-gray-400" size={16} />
-                  <p>{delivery.transaction?.customer?.email}</p>
-                </div>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Telepon</p>
-                <div className="flex items-center">
-                  <Phone className="mr-2 text-gray-400" size={16} />
-                  <p>{delivery.transaction?.customer?.phone}</p>
-                </div>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Alamat</p>
-                <p className="text-sm">
-                  {delivery.transaction?.customer?.address}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center border-b pb-2">
-              <Package className="mr-2 text-blue-500" size={20} />
-              Informasi Pengiriman
-            </h2>
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Jenis Muatan</p>
-                  <p className="font-medium">{delivery.load_type}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Isi Muatan</p>
-                  <p className="font-medium">{delivery.load}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Jumlah</p>
-                  <p className="font-medium">{delivery.quantity}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Berat</p>
-                  <p className="font-medium">{delivery.weight}</p>
-                </div>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Alamat Jemput</p>
-                <div className="flex items-start mt-1">
-                  <MapPin
-                    className="mr-2 text-red-500 flex-shrink-0"
-                    size={16}
-                  />
-                  <p className="text-sm">{delivery.pickup_address}</p>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Lat: {delivery.pickup_address_lat}, Long:{" "}
-                  {delivery.pickup_address_lang}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Alamat Tujuan</p>
-                <div className="flex items-start mt-1">
-                  <MapPin
-                    className="mr-2 text-green-500 flex-shrink-0"
-                    size={16}
-                  />
-                  <p className="text-sm">{delivery.destination_address}</p>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Lat: {delivery.destination_address_lat}, Long:{" "}
-                  {delivery.destination_address_lang}
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Tanggal Kirim</p>
-                  <div className="flex items-center">
-                    <Calendar className="mr-2 text-gray-400" size={16} />
-                    <p>{formatDate(delivery.delivery_date)}</p>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Batas Pengiriman</p>
-                  <div className="flex items-center">
-                    <Clock className="mr-2 text-gray-400" size={16} />
-                    <p>{formatDate(delivery.delivery_deadline_date)}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-lg font-semibold mb-4 flex items-center border-b pb-2">
-                <UserCog2Icon className="mr-2 text-blue-500" size={20} />
-                Informasi Pengemudi
-              </h2>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-gray-500">Nama Pengemudi</p>
-                  <p className="font-medium">{delivery.driver?.name}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Nomor Telepon</p>
-                  <p className="font-medium">{delivery.driver?.phone}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Alamat</p>
-                  <p className="font-medium text-sm">
-                    {delivery.driver?.address}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-lg font-semibold mb-4 flex items-center border-b pb-2">
-                <Truck className="mr-2 text-blue-500" size={20} />
-                Informasi Kendaraan
-              </h2>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-gray-500">Kendaraan</p>
-                  <p className="font-medium">{delivery.vehicle?.name}</p>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Tipe</p>
-                    <p>{delivery.vehicle?.type}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Plat Nomor</p>
-                    <p>{delivery.vehicle?.license_plate || "-"}</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Kapasitas</p>
-                    <p>{delivery.vehicle?.capacity}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Tarif per KM</p>
-                    <p>{formatCurrency(delivery.vehicle?.rate_per_km)}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-8 flex justify-end space-x-4">
-          <Button variant="default" onClick={() => goBack()}>
-            <ArrowLeft /> Kembali
-          </Button>
-          {delivery.delivery_status === "disetujui" && (
-            <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-md">
-              Mulai Pengiriman
-            </button>
-          )}
-          {delivery.delivery_status === "dalam perjalanan" && (
-            <button className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 rounded-md">
-              Selesaikan Pengiriman
-            </button>
-          )}
-          {delivery.delivery_status === "disetujui" && (
-            <button className="border border-gray-300 text-gray-700 px-4 rounded-md hover:bg-gray-50">
-              Cetak Surat Jalan
-            </button>
-          )}
-          {role === "owner" &&
-            delivery.delivery_status === "menunggu persetujuan" && (
-              <>
-                <button className="bg-red-500 hover:bg-red-600 text-white px-4 rounded-md">
-                  Tolak Pengiriman
-                </button>
-                <button className="bg-green-600 hover:bg-green-700 text-white px-4 rounded-md flex items-center">
-                  <Check size={18} className="mr-2" /> Setujui Pengiriman
-                </button>
-              </>
-            )}
+        <div className="col-span-2">
+          <DeliveryInfoComponent
+            delivery={delivery}
+            onApprove={() => handleApprove(delivery.id)}
+            onReject={() => handleReject(delivery.id)}
+          />
         </div>
       </div>
-    </div>
+      <div className="mt-4 flex justify-end space-x-4">
+        <ButtonComponent
+          label="Kembali"
+          variant="back"
+          className="h-full w-48"
+        />
+        {delivery.delivery_status === "disetujui" && (
+          <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-md">
+            Mulai Pengiriman
+          </button>
+        )}
+        {delivery.delivery_status === "dalam perjalanan" && (
+          <button className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 rounded-md">
+            Selesaikan Pengiriman
+          </button>
+        )}
+        {delivery.delivery_status === "disetujui" && (
+          <button className="border border-gray-300 text-gray-700 px-4 rounded-md hover:bg-gray-50">
+            Cetak Surat Jalan
+          </button>
+        )}
+      </div>
+    </>
   );
 };
 

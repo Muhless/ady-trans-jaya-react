@@ -93,7 +93,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
               key: "formattedPaymentDeadline",
               label: "Batas Waktu Pembayaran",
             },
-            { key: "transaction_status", label: "Status Transaksi" },
+            { key: "transaction_status", label: "Status" },
           ]
         }
         showActions={showActions ?? true}

@@ -1,5 +1,6 @@
 import {
   ArrowRightIcon,
+  Check,
   Edit,
   LucideRepeat2,
   MapPinPlus,
@@ -7,6 +8,7 @@ import {
   Save,
   Trash2,
   Undo2,
+  X,
 } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +25,9 @@ type ButtonComponentProps = {
     | "back"
     | "map"
     | "undo"
-    | "next";
+    | "next"
+    | "approve"
+    | "reject";
   icon?: React.ReactNode;
   className?: string;
   type?: "button" | "submit" | "reset";
@@ -41,9 +45,6 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
   const baseStyle =
     "transition focus:outline-none flex justify-center items-center gap-2 text-sm p-2 text-white rounded-md";
 
-  // const roundedStyle =
-  //   variant === "edit" && "delete" ? "rounded-full" : "rounded-md";
-
   const variants = {
     default: "bg-gray-600 hover:bg-gray-700",
     add: "bg-sky-600 hover:bg-sky-700 ",
@@ -54,6 +55,8 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
     map: "bg-sky-600 hover:bg-sky-700",
     undo: "bg-red-600 hover:bg-red-700",
     next: "bg-green-600 hover:bg-green-700",
+    approve: "bg-green-600 hover:bg-green-700",
+    reject: "bg-red-600 hover:bg-red-700",
   };
 
   const icons = {
@@ -65,6 +68,8 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
     map: <MapPinPlus size={18} />,
     undo: <LucideRepeat2 size={18} />,
     next: <ArrowRightIcon size={18} />,
+    approve: <Check size={18} />,
+    reject: <X size={18} />,
   };
 
   const navigate = useNavigate();

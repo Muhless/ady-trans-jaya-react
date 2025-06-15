@@ -24,6 +24,13 @@ export const updateDeliveries = async (
   return response.data.data;
 };
 
+export const updateDeliveryStatus = async (id: number, status: string) => {
+  const response = await axios.patch(`${API_BASE_URL}/delivery/${id}/status`, {
+    delivery_status: status,
+  });
+  return response.data.data;
+};
+
 export const deleteDeliveries = async (id: number) => {
   const response = await axios.delete(`${API_BASE_URL}/delivery/${id}`);
   return response.data.message;

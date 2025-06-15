@@ -6,8 +6,6 @@ import {
   XCircle,
   ClockFading,
 } from "lucide-react";
-import axios from "axios";
-import { API_BASE_URL } from "../../../apiConfig";
 import { fetchDeliveries } from "../../../api/delivery";
 
 const DeliveryStatCard = () => {

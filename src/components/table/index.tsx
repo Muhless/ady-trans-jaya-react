@@ -81,11 +81,35 @@ const TableComponent: React.FC<TableProps> = ({
                 {displayHeaders.map(({ key }, colIndex) => (
                   <td
                     key={colIndex}
-                    className={`${classNameTD}  border-b break-words max-w-[200px]`}
+                    className={`${classNameTD} border-b break-words max-w-[200px]`}
                   >
-                    {row[key]}
+                    {row[key] ? (
+                      ["transaction_status", "delivery_status"].includes(
+                        key
+                      ) ? (
+                   <span
+  className={`px-3 py-1 rounded-full text-xs font-medium border ${
+    row[key] === "disetujui"
+      ? "bg-green-100 text-green-800 border-green-300"
+      : row[key] === "ditolak"
+      ? "bg-red-100 text-red-800 border-red-300"
+      : row[key] === "dibatalkan"
+      ? "bg-gray-100 text-gray-800 border-gray-300"
+      : "bg-yellow-100 text-yellow-800 border-yellow-300"
+  }`}
+>
+                          {row[key]?.charAt(0).toUpperCase() +
+                            row[key]?.slice(1)}
+                        </span>
+                      ) : (
+                        row[key]
+                      )
+                    ) : (
+                      ""
+                    )}
                   </td>
                 ))}
+
                 {showActions && (
                   <td className={`${classNameTD} border-b text-center`}>
                     <div className="flex justify-center gap-2">

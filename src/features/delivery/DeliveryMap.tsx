@@ -22,7 +22,7 @@ const DeliveryMap: React.FC = () => {
     const fetchDelivery = async () => {
       try {
         const res = await fetch(
-          `${API_BASE_URL}/deliveries/${id}`
+          `${API_BASE_URL}/delivery/${id}`
         );
         if (!res.ok) throw new Error(`HTTP ${res.status} - ${res.statusText}`);
         const json = await res.json();

@@ -1,11 +1,10 @@
-import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchDeliveries } from "../../api/delivery";
 import SubTitle from "../SubTitle";
 import useNavigationHooks from "../../hooks/useNavigation";
 import Card from ".";
-import { formatCurrency, formatDate } from "../../../utils/Formatters";
-import { MapPin, MapPinnedIcon } from "lucide-react";
+import { formatDate } from "../../../utils/Formatters";
+import { MapPin } from "lucide-react";
 
 const WaitingDeliveryCard = () => {
   const { goToDeliveryPages, goToDetailDelivery, goToDeliveryMapPages } =

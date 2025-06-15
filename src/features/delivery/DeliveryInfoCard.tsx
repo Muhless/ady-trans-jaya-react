@@ -37,7 +37,7 @@ const DeliveryInfoCard = ({ deliveries }: { deliveries: Delivery[] }) => {
           <div
             key={item.id}
             onClick={goToDetailDelivery(item.id)}
-            className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:cursor-pointer"
+            className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:cursor-pointer hover:bg-bg"
           >
             <div className="flex justify-between items-start mb-4">
               <div>
