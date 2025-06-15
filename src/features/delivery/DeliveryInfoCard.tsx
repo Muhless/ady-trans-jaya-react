@@ -44,9 +44,7 @@ const DeliveryInfoCard = ({ deliveries }: { deliveries: Delivery[] }) => {
                 <h3 className="text-xl font-semibold">
                   Pengiriman {index + 1}
                 </h3>
-                <p className="text-gray-500">
-                  Kode Pengiriman {item.delivery_code}
-                </p>
+                <p className="text-gray-500">{item.delivery_code}</p>
               </div>
               <div
                 className={`px-3 py-1 rounded-full text-sm font-bold ${getStatusColor(
@@ -62,44 +60,27 @@ const DeliveryInfoCard = ({ deliveries }: { deliveries: Delivery[] }) => {
                 <h4 className="font-bold text-gray-700 mb-1">
                   Tanggal Pengiriman
                 </h4>
-                <p className="text-gray-500">{formatDateNumeric(item.delivery_date) || "-"}</p>
+                <p className="text-gray-500">
+                  {formatDateNumeric(item.delivery_date) || "-"}
+                </p>
               </div>
               <div>
                 <h4 className="font-bold text-gray-700 mb-1">
                   Batas Pengiriman
                 </h4>
-                <p className="text-gray-500">{formatDateNumeric(item.delivery_deadline_date) || "-"}</p>
+                <p className="text-gray-500">
+                  {formatDateNumeric(item.delivery_deadline_date) || "-"}
+                </p>
               </div>
               <div>
                 <h4 className="font-bold text-gray-700 mb-1">
                   Biaya Pengiriman
                 </h4>
-                <p className="text-gray-500">{formatCurrency(item.delivery_cost)}</p>
+                <p className="text-gray-500">
+                  {formatCurrency(item.delivery_cost)}
+                </p>
               </div>
             </div>
-
-            {(item.pickup_address || item.destination_address) && (
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {item.pickup_address && (
-                    <div>
-                      <h4 className="font-bold text-gray-700 mb-1">
-                        Alamat Penjemputan
-                      </h4>
-                      <p>{item.pickup_address}</p>
-                    </div>
-                  )}
-                  {item.destination_address && (
-                    <div>
-                      <h4 className="font-bold text-gray-700 mb-1">
-                        Alamat Tujuan
-                      </h4>
-                      <p>{item.destination_address}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
         ))}
       </div>

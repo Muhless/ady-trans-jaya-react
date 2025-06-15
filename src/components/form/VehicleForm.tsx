@@ -30,7 +30,6 @@ const VehicleForm: React.FC<Props> = ({
   onSubmit,
   defaultValues = {},
   onReset,
-  mode = "add",
 }) => {
   const {
     register,
@@ -83,12 +82,11 @@ const VehicleForm: React.FC<Props> = ({
       <div>
         <label>Jenis Kendaraan</label>
         <select {...register("type")} className="w-full border rounded p-2">
-          <option value="" >Pilih jenis kendaraan</option>
+          <option value="">Pilih jenis kendaraan</option>
           <option value="pick up">Pick up</option>
           <option value="cde">CDE</option>
           <option value="cdd">CDD</option>
           <option value="fuso">Fuso</option>
-          <option value="wingbox">Wingbox</option>
         </select>
         {errors.type && (
           <p className="text-red-500 text-sm">{errors.type.message}</p>

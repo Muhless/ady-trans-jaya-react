@@ -341,6 +341,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       .getState()
       .updateVehicleStatus(delivery.vehicle_id!, "tidak tersedia");
 
+    console.log(useDeliveryStore.getState().delivery);
     resetDelivery();
     goToAddTransaction();
   };

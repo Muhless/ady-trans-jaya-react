@@ -63,26 +63,36 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     }));
   }, [transactions]);
 
+  React.useEffect(() => {
+    if (
+      transformedData.length === 0 ||
+      currentPage > Math.ceil(transformedData.length / itemsPerPage)
+    ) {
+      setCurrentPage(1);
+    }
+  }, [transformedData.length, itemsPerPage, currentPage]);
+
   const totalPages = Math.ceil(transformedData.length / itemsPerPage);
+
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
   };
 
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  const paginatedData = Array.isArray(transformedData)
+    ? transformedData.slice(startIndex, endIndex)
+    : [];
+
   return (
     <>
       <TableComponent
         classNameTH={classNameTH}
         classNameTD={classNameTD}
-        data={
-          Array.isArray(transformedData)
-            ? transformedData.slice(
-                (currentPage - 1) * itemsPerPage,
-                currentPage * itemsPerPage
-              )
-            : []
-        }
+        data={paginatedData}
         onRowClick={(row) => goToDetailTransaction(row.id)()}
         columns={
           columns ?? [
@@ -97,12 +107,16 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
           ]
         }
         showActions={showActions ?? true}
-      />
-      <PaginationControls
         currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
+        itemsPerPage={itemsPerPage}
       />
+      {totalPages > 1 && (
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </>
   );
 };

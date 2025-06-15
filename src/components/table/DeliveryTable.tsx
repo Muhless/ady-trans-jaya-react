@@ -37,58 +37,81 @@ const DeliveryTable: React.FC<DeliveryTableProps> = ({
     queryFn: fetchDeliveries,
   });
 
-  const formattedData = delivery?.map((item) => ({
-    id: item.id,
-    customer_name: item.transaction?.customer?.name || "-",
-    driver_name: item.driver?.name || "-",
-    vehicle_name: item.vehicle?.name || "-",
-    load: item.load,
-    delivery_date: new Date(item.delivery_date).toLocaleDateString("id-ID", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }),
-    delivery_status: item.delivery_status,
-  }));
+  const formattedData = React.useMemo(() => {
+    if (!delivery) return [];
+
+    return delivery.map((item) => ({
+      id: item.id,
+      customer_name: item.transaction?.customer?.name || "-",
+      driver_name: item.driver?.name || "-",
+      vehicle_name: item.vehicle?.name || "-",
+      load: item.load,
+      delivery_date: new Date(item.delivery_date).toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }),
+       delivery_deadline_date: new Date(item.delivery_deadline_date).toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }),
+      delivery_status: item.delivery_status,
+    }));
+  }, [delivery]);
+
+  React.useEffect(() => {
+    if (
+      formattedData.length === 0 ||
+      currentPage > Math.ceil(formattedData.length / itemsPerPage)
+    ) {
+      setCurrentPage(1);
+    }
+  }, [formattedData.length, itemsPerPage, currentPage]);
 
   const totalPages = Math.ceil(formattedData.length / itemsPerPage);
+
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
   };
 
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  const paginatedData = Array.isArray(formattedData)
+    ? formattedData.slice(startIndex, endIndex)
+    : [];
+
   return (
     <>
       <TableComponent
         classNameTH={classNameTH}
         classNameTD={classNameTD}
-        data={
-          Array.isArray(formattedData)
-            ? formattedData.slice(
-                (currentPage - 1) * itemsPerPage,
-                currentPage * itemsPerPage
-              )
-            : []
-        }
+        data={paginatedData}
         onRowClick={(row) => goToDetailDelivery(row.id)()}
         columns={
           columns ?? [
-            { key: "customer_name", label: "Nama Pelanggan" },
-            { key: "load", label: "Muatan" },
+            { key: "customer_name", label: "Pelanggan" },
             { key: "driver_name", label: "Pengemudi" },
             { key: "vehicle_name", label: "Kendaraan" },
             { key: "delivery_date", label: "Tanggal Pengiriman" },
+            { key: "delivery_deadline_date", label: "Batas Pengiriman" },
             { key: "delivery_status", label: "Status" },
           ]
         }
         showActions={showActions ?? true}
-      />
-      <PaginationControls
         currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
+        itemsPerPage={itemsPerPage}
       />
+      {totalPages > 1 && (
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </>
   );
 };

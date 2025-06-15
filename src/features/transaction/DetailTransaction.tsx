@@ -5,7 +5,7 @@ import {
   formatDateNumeric,
   getStatusColor,
 } from "../../../utils/Formatters";
-import { fetchTransactionById } from "@/api/transaction";
+import { deleteTransaction, fetchTransactionById } from "@/api/transaction";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import TitleComponent from "@/components/Title";
@@ -77,18 +77,32 @@ const DetailTransactionPages = () => {
 
       <DeliveryInfoCard deliveries={transaction.delivery} />
 
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-3">
         <ButtonComponent
           label="Kembali"
           variant="back"
           className="w-48"
           onClick={() => window.history.back()}
         />
-        {/* <ButtonComponent
-          label="Cetak Detail Pengiriman"
-          variant="add"
+        <ButtonComponent
+          label="Hapus"
+          variant="delete"
           className="w-48"
-        /> */}
+          onClick={async () => {
+            const confirmDelete = window.confirm(
+              "Apakah Anda yakin ingin menghapus transaksi ini?"
+            );
+            if (!confirmDelete || !id) return;
+
+            try {
+              await deleteTransaction(Number(id));
+              alert("Transaksi berhasil dihapus.");
+              window.history.back();
+            } catch (err) {
+              alert(err.message);
+            }
+          }}
+        />
       </div>
     </div>
   );

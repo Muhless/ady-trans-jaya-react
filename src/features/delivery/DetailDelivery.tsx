@@ -1,45 +1,17 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import useNavigationHooks from "../../hooks/useNavigation";
-import {
-  MapPin,
-  Package,
-  Calendar,
-  Clock,
-  Truck,
-  User,
-  Building,
-  Phone,
-  Mail,
-  Check,
-  UserCog2Icon,
-  ArrowLeft,
-  BookCheckIcon,
-} from "lucide-react";
-import { API_BASE_URL } from "../../apiConfig";
-import { useAuthStore } from "@/stores/AuthStore";
-import { formatDate, formatCurrency } from "../../../utils/Formatters";
-import { Button } from "@/components/ui/button";
-import {
-  fetchDeliveries,
-  fetchDeliveryById,
-  updateDeliveryStatus,
-} from "@/api/delivery";
+import { formatCurrency } from "../../../utils/Formatters";
+import { fetchDeliveryById, updateDeliveryStatus } from "@/api/delivery";
 import { useQuery } from "@tanstack/react-query";
 import TitleComponent from "@/components/Title";
-import DeliveryInfoCard from "./DeliveryInfoCard";
 import DeliveryInfoComponent from "@/components/card/delivery/DeliveryInfoCard";
 import VehicleInfoComponent from "@/components/card/delivery/VehicleInfoCard";
 import DriverInfoComponent from "@/components/card/delivery/DriverInfoCard";
-import CustomerInfoCard from "../customer/CustomerInfoCard";
 import CustomerInfoComponent from "@/components/card/delivery/CustomerInfoCard";
 import ButtonComponent from "@/components/button/Index";
 
 const DetailDeliveryPage = () => {
   const { id } = useParams();
-  const { goBack } = useNavigationHooks();
-  const role = useAuthStore((state) => state.role);
 
   const {
     data: delivery,
@@ -117,21 +89,6 @@ const DetailDeliveryPage = () => {
           variant="back"
           className="h-full w-48"
         />
-        {delivery.delivery_status === "disetujui" && (
-          <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-md">
-            Mulai Pengiriman
-          </button>
-        )}
-        {delivery.delivery_status === "dalam perjalanan" && (
-          <button className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 rounded-md">
-            Selesaikan Pengiriman
-          </button>
-        )}
-        {delivery.delivery_status === "disetujui" && (
-          <button className="border border-gray-300 text-gray-700 px-4 rounded-md hover:bg-gray-50">
-            Cetak Surat Jalan
-          </button>
-        )}
       </div>
     </>
   );

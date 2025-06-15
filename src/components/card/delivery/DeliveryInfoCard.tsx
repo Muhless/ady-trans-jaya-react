@@ -89,6 +89,18 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
               />
             </div>
           )}
+        {delivery.delivery_status === "disetujui" && (
+          <ButtonComponent
+            label="Cetak Surat Jalan"
+            variant="add"
+            className="w-48 h-full"
+          />
+        )}
+        {/* {delivery.delivery_status === "dalam perjalanan" && (
+          <button className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 rounded-md">
+            Selesaikan Pengiriman
+          </button>
+        )} */}
       </div>
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">

@@ -140,15 +140,18 @@ const AddTransactionForm = () => {
       const result = await response.json();
       console.log("Transaksi berhasil disimpan:", result);
 
-      for (const d of transaction.deliveries) {
-        await axios.patch(`${API_BASE_URL}/driver/${d.driver_id}`, {
-          status: "tidak tersedia",
-        });
+      await Promise.all(
+        transaction.deliveries.flatMap((d) => [
+          axios.patch(`${API_BASE_URL}/driver/${d.driver_id}`, {
+            status: "tidak tersedia",
+          }),
+          axios.patch(`${API_BASE_URL}/vehicle/${d.vehicle_id}`, {
+            status: "tidak tersedia",
+          }),
+        ])
+      );
 
-        await axios.patch(`${API_BASE_URL}/vehicle/${d.vehicle_id}`, {
-          status: "tidak tersedia",
-        });
-      }
+      console.log(useTransactionStore.getState().transaction);
       resetDelivery();
       resetTransaction();
       goToTransactionPages();
