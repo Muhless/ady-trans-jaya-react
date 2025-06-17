@@ -4,6 +4,10 @@ import DeliveryStatCard from "@/components/card/stat/DeliveryStatCard";
 import TitleComponent from "@/components/Title";
 import { fetchDeliveries } from "@/api/delivery";
 import DeliveryTable from "@/components/table/DeliveryTable";
+import DateRangePicker from "@/components/common/DateRangePicker";
+import { useFilterHandlers } from "@/handlers/transactionHandlers";
+import { useMemo } from "react";
+import useSorting from "@/hooks/useSorting";
 
 function DeliveryPages() {
   const {
@@ -15,12 +19,90 @@ function DeliveryPages() {
     queryFn: fetchDeliveries,
   });
 
+  const {
+    dateRange,
+    searchTerm,
+    quickFilter,
+    handleSearchChange,
+    handleStartDateChange,
+    handleEndDateChange,
+    clearDateFilter,
+  } = useFilterHandlers();
+
+  const getDeliveryDate = (delivery) => {
+    const dateField =
+      delivery.createdAt ||
+      delivery.date ||
+      delivery.timestamp ||
+      delivery.created_at ||
+      delivery.delivery_date ||
+      delivery.delivery_deadline_date;
+    return dateField ? new Date(dateField) : null;
+  };
+
+  const dateFilteredDeliveries = useMemo(() => {
+    if (!delivery) return [];
+
+    if (!dateRange.startDate && !dateRange.endDate) {
+      return delivery;
+    }
+
+    return delivery.filter((delivery) => {
+      const deliveryDate = getDeliveryDate(delivery);
+      if (!deliveryDate) return false;
+
+      const startDate = dateRange.startDate
+        ? new Date(dateRange.startDate)
+        : null;
+      const endDate = dateRange.endDate
+        ? new Date(dateRange.endDate + "T23:59:59")
+        : null;
+
+      if (startDate && deliveryDate < startDate) return false;
+      if (endDate && deliveryDate > endDate) return false;
+
+      return true;
+    });
+  }, [delivery, dateRange]);
+
+  const { sortedData: sortedDeliveries } = useSorting(
+    dateFilteredDeliveries,
+    "desc",
+    getDeliveryDate
+  );
+
+  const filteredDelivery = useMemo(() => {
+    if (!searchTerm) return sortedDeliveries;
+
+    return sortedDeliveries.filter(
+      (delivery) =>
+        delivery.description
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        delivery.amount?.toString().includes(searchTerm) ||
+        delivery.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        delivery.type?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [sortedDeliveries, searchTerm]);
+
   return (
     <div>
       <TitleComponent title={"Pengiriman"} />
-      <DeliveryStatCard />
-      <div className="flex justify-end py-5">
-        <SearchInput placeholder={"pengiriman"} />
+      <DeliveryStatCard
+        deliveries={sortedDeliveries}
+        loading={isLoading}
+        error={isError}
+      />
+      <div className="flex justify-between pt-10 pb-5">
+        <DateRangePicker
+          startDate={dateRange.startDate}
+          endDate={dateRange.endDate}
+          onStartDateChange={handleStartDateChange}
+          onEndDateChange={handleEndDateChange}
+          onClear={clearDateFilter}
+          buttonWidth="w-44"
+        />
+        <SearchInput placeholder={"pengiriman"} onChange={handleSearchChange} />
       </div>
       {isLoading ? (
         <div className="text-center p-5">Loading...</div>
@@ -28,6 +110,9 @@ function DeliveryPages() {
         <div className="text-center text-red-600 p-5">Error loading data</div>
       ) : (
         <DeliveryTable
+          deliveries={filteredDelivery}
+          loading={isLoading}
+          error={isError}
           classNameTH="p-3"
           classNameTD="p-5"
           showActions={false}

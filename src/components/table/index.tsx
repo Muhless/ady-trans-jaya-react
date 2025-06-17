@@ -1,6 +1,7 @@
 import React from "react";
 import ButtonComponent from "../button/Index";
 import Card from "../card";
+import { getStatusClass } from "../../../utils/Formatters";
 
 export type ColumnConfig = {
   key: string;
@@ -31,7 +32,7 @@ const TableComponent: React.FC<TableProps> = ({
   classNameTD,
   currentPage = 1,
   itemsPerPage = 5,
-  startIndex, // Jika ingin langsung pass startIndex
+  startIndex, 
 }) => {
   const headers = data.length > 0 ? Object.keys(data[0]) : [];
   const displayHeaders =
@@ -106,17 +107,8 @@ const TableComponent: React.FC<TableProps> = ({
                         key
                       ) ? (
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium border ${
-                            row[key] === "disetujui"
-                              ? "bg-green-100 text-green-800 border-green-300"
-                              : row[key] === "ditolak"
-                              ? "bg-red-100 text-red-800 border-red-300"
-                               : row[key] === "diproses"
-                              ? "bg-blue-100 text-blue-800 border-blue-300"
-                              : row[key] === "dibatalkan"
-                              ? "bg-gray-100 text-gray-800 border-gray-300"
-                              : "bg-yellow-100 text-yellow-800 border-yellow-300"
-                          }`}
+                          className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusClass(
+                            row[key])}`}
                         >
                           {row[key]?.charAt(0).toUpperCase() +
                             row[key]?.slice(1)}

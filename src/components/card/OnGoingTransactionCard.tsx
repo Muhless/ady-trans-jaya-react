@@ -5,7 +5,7 @@ import useNavigationHooks from "../../hooks/useNavigation";
 import TableComponent from "../table";
 import TransactionTable from "../table/TransactionTable";
 
-type TransactionCardProps = {
+type OnGoingTransactionCardProps = {
   icon?: React.ReactNode;
 };
 
@@ -16,12 +16,12 @@ const columns = [
   { key: "status", label: "Status" },
 ];
 
-const TransactionCard: React.FC<TransactionCardProps> = ({}) => {
+const OnGoingTransactionCard: React.FC<OnGoingTransactionCardProps> = ({}) => {
   const { goToTransactionPages } = useNavigationHooks();
   return (
     <Card className="rounded-md h-[25rem]">
       <div className="flex justify-between items-center p-2">
-        <SubTitle subTitle="Daftar Transaksi" />
+        <SubTitle subTitle="Transaksi Berlangsung" />
         <p
           className="underline text-blue-600 text-sm cursor-pointer hover:text-blue-800"
           onClick={goToTransactionPages}
@@ -45,4 +45,4 @@ const TransactionCard: React.FC<TransactionCardProps> = ({}) => {
   );
 };
 
-export default TransactionCard;
+export default OnGoingTransactionCard;

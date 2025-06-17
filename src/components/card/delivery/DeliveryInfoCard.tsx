@@ -12,13 +12,11 @@ import {
 import {
   formatCurrency,
   formatDateNumeric,
-  getStatusStyle,
 } from "../../../../utils/Formatters";
 import DeliveryTrackingInfo from "./DeliveryTrackingInfo";
 import { useAuthStore } from "@/stores/AuthStore";
 import ButtonComponent from "@/components/button/Index";
-import { updateDeliveryStatus } from "@/api/delivery";
-import { useQueryClient } from "@tanstack/react-query";
+import ConfirmDialog from "@/components/common/ConfirmDialog";
 
 interface DeliveryItem {
   id: number;
@@ -75,17 +73,29 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
         {role === "owner" &&
           delivery.delivery_status === "menunggu persetujuan" && (
             <div className="flex gap-2">
-              <ButtonComponent
-                label="Tolak Pengiriman"
-                variant="reject"
-                className="w-48 h-full"
-                onClick={onReject}
+              <ConfirmDialog
+                trigger={
+                  <ButtonComponent
+                    label="Tolak Pengiriman"
+                    variant="reject"
+                    className="w-48 h-full"
+                  />
+                }
+                title="Tolak Pengiriman"
+                description="Yakin ingin menolak pengiriman ini ?"
+                onConfirm={onReject}
               />
-              <ButtonComponent
-                label="Setujui Pengiriman"
-                variant="approve"
-                className="w-48 h-full"
-                onClick={onApprove}
+              <ConfirmDialog
+                trigger={
+                  <ButtonComponent
+                    label="Setujui Pengiriman"
+                    variant="approve"
+                    className="w-48 h-full"
+                  />
+                }
+                title="Setujui Pengiriman"
+                description="Yakin ingin menyetujui pengiriman ini ?"
+                onConfirm={onApprove}
               />
             </div>
           )}

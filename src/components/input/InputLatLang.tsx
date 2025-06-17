@@ -9,6 +9,7 @@ type InputLatLangProps = {
   placeholder?: string;
   value?: string | number | undefined | null;
   disabled?: boolean;
+  required?: boolean;
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -28,6 +29,7 @@ export const InputLatLang: React.FC<InputLatLangProps> = ({
   value,
   disabled,
   onChange,
+  required = true,
 }) => {
   const stringValue = value === null ? "" : String(value);
 
@@ -45,6 +47,7 @@ export const InputLatLang: React.FC<InputLatLangProps> = ({
         className={inputClass}
         placeholder={placeholder}
         onChange={onChange}
+        required={required}
       />
     </div>
   );

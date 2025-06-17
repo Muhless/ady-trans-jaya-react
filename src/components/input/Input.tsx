@@ -35,7 +35,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   onChange,
   pointType,
   setSelectingPoint,
-  required,
+  required = true,
 }) => {
   const { goToAddDeliveryItemPages } = useNavigationHooks();
   const isLocationField = label?.toLowerCase().includes("lokasi");
@@ -53,7 +53,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
     <div
       className={`flex items-center ${label ? "gap-5 justify-between" : ""}`}
     >
-      <label className="text-gray-600">{label}</label>
+      <label>{label}</label>
       <div className="flex items-center gap-2">
         {type === "textarea" ? (
           <textarea
@@ -74,6 +74,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
             placeholder={placeholder}
             onChange={onChange}
             disabled={disabled}
+            required={required}
           />
         )}
 

@@ -10,6 +10,7 @@ type InputDatePickerProps = {
   value?: Date | null;
   disabled?: boolean;
   onChange?: (date: Date | null) => void;
+  required?: boolean;
 };
 
 export const InputDatePicker: React.FC<InputDatePickerProps> = ({
@@ -20,6 +21,7 @@ export const InputDatePicker: React.FC<InputDatePickerProps> = ({
   value,
   disabled,
   onChange,
+  required = true,
 }) => {
   const handleDateChange = (date: Date | null) => {
     if (onChange) {
@@ -36,6 +38,7 @@ export const InputDatePicker: React.FC<InputDatePickerProps> = ({
         dateFormat="dd/MM/yyyy"
         placeholderText={placeholder}
         disabled={disabled}
+        required={required}
         className="p-2 rounded-md w-72 focus:ring-biru focus:ring-2 focus:outline-none bg-bg"
       />
     </div>

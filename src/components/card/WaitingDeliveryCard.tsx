@@ -14,9 +14,7 @@ const WaitingDeliveryCard = () => {
   });
 
   const waitingDeliveries = deliveries.filter(
-    (item) =>
-      item.delivery_status?.toLowerCase() === "menunggu persetujuan" ||
-      item.delivery_status?.toLowerCase() === "pending"
+    (item) => item.delivery_status?.toLowerCase() === "menunggu persetujuan"
   );
 
   const handleRowClick = (id) => {

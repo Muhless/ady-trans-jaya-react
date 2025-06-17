@@ -3,6 +3,7 @@ import {
   formatCurrency,
   formatDate,
   formatDateNumeric,
+  getStatusClass,
   getStatusColor,
 } from "../../../utils/Formatters";
 import { deleteTransaction, fetchTransactionById } from "@/api/transaction";
@@ -11,6 +12,7 @@ import { useParams } from "react-router-dom";
 import TitleComponent from "@/components/Title";
 import CustomerInfoCard from "../customer/CustomerInfoCard";
 import DeliveryInfoCard from "../delivery/DeliveryInfoCard";
+import ConfirmDialog from "@/components/common/ConfirmDialog";
 
 const DetailTransactionPages = () => {
   const { id } = useParams();
@@ -64,7 +66,7 @@ const DetailTransactionPages = () => {
             <p className="text-gray-500">ID Transaksi : {transaction?.id}</p>
           </div>
           <div
-            className={`px-4 py-2 rounded-full text-sm font-bold ${getStatusColor(
+            className={`px-4 py-2 rounded-full text-sm font-bold ${getStatusClass(
               transaction?.transaction_status
             )}`}
           >
@@ -84,21 +86,20 @@ const DetailTransactionPages = () => {
           className="w-48"
           onClick={() => window.history.back()}
         />
-        <ButtonComponent
-          label="Hapus"
-          variant="delete"
-          className="w-48"
-          onClick={async () => {
-            const confirmDelete = window.confirm(
-              "Apakah Anda yakin ingin menghapus transaksi ini?"
-            );
-            if (!confirmDelete || !id) return;
+        <ConfirmDialog
+          trigger={
+            <ButtonComponent label="Hapus" variant="delete" className="w-48" />
+          }
+          title="Hapus Transaksi"
+          description="Apakah Anda yakin ingin menghapus transaksi ini?"
+          onConfirm={async () => {
+            if (!id) return;
 
             try {
               await deleteTransaction(Number(id));
               alert("Transaksi berhasil dihapus.");
               window.history.back();
-            } catch (err) {
+            } catch (err: any) {
               alert(err.message);
             }
           }}

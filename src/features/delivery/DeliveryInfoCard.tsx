@@ -2,6 +2,7 @@ import useNavigationHooks from "@/hooks/useNavigation";
 import {
   formatCurrency,
   formatDateNumeric,
+  getStatusClass,
   getStatusColor,
 } from "../../../utils/Formatters";
 
@@ -47,7 +48,7 @@ const DeliveryInfoCard = ({ deliveries }: { deliveries: Delivery[] }) => {
                 <p className="text-gray-500">{item.delivery_code}</p>
               </div>
               <div
-                className={`px-3 py-1 rounded-full text-sm font-bold ${getStatusColor(
+                className={`px-6 flex justify-center py-2 rounded-full text-sm font-bold ${getStatusClass(
                   item.delivery_status
                 )}`}
               >

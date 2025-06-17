@@ -283,30 +283,17 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     distance,
     formData.vehicle_id
   );
-  const {
-    addDeliveryToTransaction,
-    editingDelivery,
-    clearEditingDelivery,
-    updateDeliveryInTransaction,
-  } = useTransactionStore();
+  const { addDeliveryToTransaction, editingDelivery, clearEditingDelivery } =
+    useTransactionStore();
 
   const generateDeliveryCode = (): string => {
     const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, "");
     const randomPart = Math.floor(100 + Math.random() * 900);
-    return `DEL-${datePart}-${randomPart}`;
+    return `ATJ-${datePart}-${randomPart}`;
   };
 
   const handleSubmitDelivery = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!delivery.driver_id) {
-      alert("Silahkan pilih pengemudi terlebih dahulu.");
-      return;
-    }
-    if (!delivery.vehicle_id) {
-      alert("Silahkan pilih Kendaraan terlebih dahulu.");
-      return;
-    }
 
     const defaultDate = new Date().toISOString();
     const formattedDeliveryDate = deliveryDate
@@ -420,6 +407,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
 
   return (
     <form
+      id="delivery-form"
       onSubmit={handleSubmitDelivery}
       className="px-5 space-y-5 text-sm flex flex-col justify-center rounded-none shadow-none"
     >
@@ -472,7 +460,9 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         options={driverOptions}
         value={formData.driver_id}
         onChange={handleChange}
+        required={true}
       />
+
       <SelectComponent
         label="Kendaraan"
         placeholder="Pilih kendaraan yang tersedia"
@@ -563,6 +553,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
 
       <DatePickerComponent
         label="Tanggal Pengiriman"
+        buttonWidth="w-72"
         selectedDate={deliveryDate}
         onDateChange={(date) => {
           setDeliveryDate(date);
@@ -575,6 +566,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
 
       <DatePickerComponent
         label="Batas Waktu Pengiriman"
+        buttonWidth="w-72"
         selectedDate={deliveryDeadlineDate}
         onDateChange={(date) => {
           setDeliveryDeadlineDate(date);
@@ -616,11 +608,20 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           className="w-full"
           onClick={clearForm}
         />
-        <ButtonComponent
-          variant="save"
-          label="Simpan"
-          type="submit"
-          className="w-full"
+        <ConfirmDialog
+          trigger={
+            <ButtonComponent
+              variant="save"
+              label="Simpan"
+              type="button"
+              className="w-full"
+            />
+          }
+          title="Simpan ?"
+          description="Apakah anda yakin ingin meyimpan pengiriman ?"
+          onConfirm={() => {
+            (document.getElementById("delivery-form") as HTMLFormElement).requestSubmit();
+          }}
         />
       </div>
     </form>

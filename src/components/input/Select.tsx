@@ -9,6 +9,7 @@ type SelectComponentProps = {
   className?: string;
   options: { value: string | number; label: string }[];
   onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  required?: boolean;
 };
 
 const SelectComponent: React.FC<SelectComponentProps> = ({
@@ -19,15 +20,17 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
   className,
   options,
   onChange,
+  required = true,
 }) => {
   const stringValue = value === null ? "" : String(value);
   return (
     <div className="flex items-center gap-5 justify-between">
-      {label && <label className="text-gray-600">{label}</label>}
+      {label && <label>{label}</label>}
       <div className="flex gap-2 items-center">
         <select
           name={name}
           value={stringValue}
+          required={required}
           className={`bg-bg p-2 w-72 cursor-pointer rounded-md focus:ring-biru focus:ring-2 focus:outline-none ${className}`}
           onChange={onChange}
         >

@@ -19,6 +19,12 @@ interface Transaction {
   payment_deadline: string;
   total_delivery: number;
   transaction_status: string;
+  // Add common timestamp fields
+  createdAt?: string;
+  created_at?: string;
+  date?: string;
+  timestamp?: string;
+  transaction_date?: string;
 }
 
 type ColumnConfig = {
@@ -32,6 +38,9 @@ type TransactionTableProps = {
   limit?: number;
   columns?: ColumnConfig[];
   showActions?: boolean;
+  transactions?: Transaction[];
+  loading?: boolean;
+  error?: boolean;
 };
 
 const TransactionTable: React.FC<TransactionTableProps> = ({
@@ -40,15 +49,28 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
   limit = 5,
   columns,
   showActions,
+  transactions: externalTransactions,
+  loading: externalLoading,
+  error: externalError,
 }) => {
   const { goToDetailTransaction } = useNavigationHooks();
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = limit;
 
-  const { data: transactions } = useQuery({
+  const {
+    data: internalTransactions,
+    isLoading: internalLoading,
+    isError: internalError,
+  } = useQuery({
     queryKey: ["transactions"],
     queryFn: fetchTransactions,
+    enabled: !externalTransactions,
   });
+
+  const transactions = externalTransactions || internalTransactions;
+  const isLoading =
+    externalLoading !== undefined ? externalLoading : internalLoading;
+  const isError = externalError !== undefined ? externalError : internalError;
 
   const transformedData = React.useMemo(() => {
     if (!transactions) return [];
@@ -60,6 +82,14 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
       customerPhone: transaction.customer?.phone || "-",
       formattedCost: formatCurrency(transaction.cost),
       formattedPaymentDeadline: formatDateNumeric(transaction.payment_deadline),
+      formattedDate: formatDateNumeric(
+        transaction.createdAt ||
+          transaction.created_at ||
+          transaction.date ||
+          transaction.timestamp ||
+          transaction.transaction_date ||
+          transaction.payment_deadline
+      ),
     }));
   }, [transactions]);
 
@@ -87,6 +117,36 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     ? transformedData.slice(startIndex, endIndex)
     : [];
 
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="text-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+        <p className="mt-2 text-gray-600">Memuat data transaksi...</p>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (isError) {
+    return (
+      <div className="text-center p-8">
+        <div className="text-red-500 mb-2">❌</div>
+        <p className="text-red-600">Gagal memuat data transaksi</p>
+        <p className="text-sm text-gray-500 mt-1">Silakan coba lagi nanti</p>
+      </div>
+    );
+  }
+
+  // Show empty state
+  if (!transactions || transactions.length === 0) {
+    return (
+      <div className="text-center p-8">
+        <p className="text-gray-600">Tidak ada data transaksi</p>
+      </div>
+    );
+  }
+
   return (
     <>
       <TableComponent
@@ -104,6 +164,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
               label: "Batas Waktu Pembayaran",
             },
             { key: "transaction_status", label: "Status" },
+            { key: "formattedDate", label: "Tanggal Transaksi" },
           ]
         }
         showActions={showActions ?? true}

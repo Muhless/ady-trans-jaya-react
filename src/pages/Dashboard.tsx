@@ -4,9 +4,11 @@ import Spinner from "../components/Spinner";
 import { useAuthStore } from "../stores/AuthStore.js";
 import DashboardStatCard from "@/components/card/stat/DashboardStatCard";
 import TransactionGraphic from "@/components/card/TransactionGraphic";
-import TransactionCard from "@/components/card/TransactionCard";
+import TransactionCard from "@/components/card/OnGoingTransactionCard";
 import OnGoingDeliveryCard from "@/components/card/OnGoingDeliveryCard";
 import WaitingDeliveryCard from "@/components/card/WaitingDeliveryCard";
+import OngoingTransactionCard from "@/components/card/OnGoingTransactionCard";
+import OnGoingTransactionCard from "@/components/card/OnGoingTransactionCard";
 
 const DashboardPages = () => {
   const user = useAuthStore((state) => state.user);
@@ -46,7 +48,7 @@ const DashboardPages = () => {
           <TransactionGraphic />
         </div>
         <div className="col-span-2">
-          <TransactionCard />
+          <OnGoingTransactionCard />
         </div>
       </div>
       <div className="grid grid-cols-2 gap-5">

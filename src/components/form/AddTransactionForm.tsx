@@ -11,6 +11,8 @@ import ConfirmDialog from "../common/ConfirmDialog";
 import { Button } from "../ui/button";
 import { ArrowLeft } from "lucide-react";
 import axios from "axios";
+import DatePickerComponent from "../common/DatePicker";
+import { formatCurrency } from "../../../utils/Formatters";
 
 const AddTransactionForm = () => {
   const {
@@ -37,6 +39,8 @@ const AddTransactionForm = () => {
   );
 
   const [customers, setCustomers] = useState<any[]>([]);
+  const [paymentDeadline, setPaymentDeadline] = useState<Date | undefined>();
+  const [formData, setFormData] = [transaction, setTransaction];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -211,7 +215,7 @@ const AddTransactionForm = () => {
   };
 
   return (
-    <form className="space-y-2" onSubmit={handleSubmit}>
+    <form id="transaction-form" className="space-y-2 py" onSubmit={handleSubmit}>
       <SelectComponent
         label="Pelanggan"
         className="w-96"
@@ -303,24 +307,23 @@ const AddTransactionForm = () => {
         onChange={handleChange}
         disabled
       />
-      <InputComponent
+      <DatePickerComponent
         label="Batas Pembayaran"
-        type="date"
-        name="payment_deadline"
-        value={transaction.payment_deadline}
-        className="w-96"
-        onChange={handleChange}
+        selectedDate={paymentDeadline}
+        onDateChange={(date) => {
+          setPaymentDeadline(date);
+          setFormData({
+            ...formData,
+            payment_deadline: date ? date.toISOString() : "",
+          });
+        }}
       />
       <InputComponent
         label="Total"
         disabled
         className="w-96"
         name="cost"
-        value={new Intl.NumberFormat("id-ID", {
-          style: "currency",
-          currency: "IDR",
-          minimumFractionDigits: 0,
-        }).format(transaction.cost)}
+        value={formatCurrency(transaction.cost)}
         onChange={handleChange}
       />
       <div className="flex w-full gap-3 py-4">
@@ -343,11 +346,21 @@ const AddTransactionForm = () => {
           onClick={handleReset}
         />
 
-        <ButtonComponent
-          label="Simpan"
-          type="submit"
-          variant="next"
-          className="w-full"
+      
+             <ConfirmDialog
+          trigger={
+            <ButtonComponent
+              variant="save"
+              label="Simpan"
+              type="button"
+              className="w-full"
+            />
+          }
+          title="Simpan ?"
+          description="Apakah anda yakin ingin meyimpan transaksi ini ?"
+          onConfirm={() => {
+            (document.getElementById("transaction-form") as HTMLFormElement).requestSubmit();
+          }}
         />
       </div>
     </form>

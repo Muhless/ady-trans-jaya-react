@@ -26,7 +26,7 @@ function AddTransactionPages() {
           subTitle="Tambah Transaksi"
           className="flex justify-center mt-5 text-3xl mb-3"
         />
-        <AddTransactionForm />
+          <AddTransactionForm />
       </Card>
     </div>
   );

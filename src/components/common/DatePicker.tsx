@@ -8,7 +8,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils"; // pastikan util ini tersedia
+import { cn } from "@/lib/utils";
+import { CalendarIcon, X } from "lucide-react";
+import ButtonComponent from "../button/Index";
 
 type DatePickerComponentProps = {
   label?: string;
@@ -17,38 +19,50 @@ type DatePickerComponentProps = {
   placeholder?: string;
   required?: boolean;
   className?: string;
+  disabled?: boolean;
+  showClearButton?: boolean;
+  buttonWidth?: string;
 };
 
-const DatePickerComponent: React.FC<DatePickerComponentProps> = ({
+export const DatePickerComponent: React.FC<DatePickerComponentProps> = ({
   label,
   selectedDate,
   onDateChange,
   placeholder = "Pilih tanggal",
   required = false,
   className = "",
+  disabled = false,
+  buttonWidth = "w-96",
 }) => {
   return (
-    <div className={cn("flex flex-row items-center justify-between", className)}>
-      {label && (
-        <label className="text-sm text-gray-600">
-          {label} {required && <span className="text-red-500">*</span>}
-        </label>
-      )}
+    <div
+      className={cn("flex flex-row items-center justify-between", className)}
+    >
+      <div>
+        {label && (
+          <label>
+            {label} {required && <span className="text-red-500">*</span>}
+          </label>
+        )}
+      </div>
       <Popover>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
+            disabled={disabled}
             className={cn(
-              "w-72 p-2 rounded-md font-normal",
+              buttonWidth,
+              "p-2 rounded-md font-normal",
               !selectedDate && "text-muted-foreground"
             )}
           >
+            <CalendarIcon className="mr-2 h-4 w-4" />
             {selectedDate
               ? format(selectedDate, "dd MMMM yyyy", { locale: id })
               : placeholder}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0">
+        <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             mode="single"
             selected={selectedDate}

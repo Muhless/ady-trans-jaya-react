@@ -15,7 +15,7 @@ const WaitingDeliveryCard = () => {
   });
 
   const onGoingDelivery = deliveries.filter(
-    (item) => item.delivery_status?.toLowerCase() === "menunggu persetujuan"
+    (item) => item.delivery_status?.toLowerCase() === "dalam pengiriman"
   );
 
   const handleRowClick = (id) => {
