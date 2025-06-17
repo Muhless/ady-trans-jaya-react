@@ -13,6 +13,7 @@ import TitleComponent from "@/components/Title";
 import CustomerInfoCard from "../customer/CustomerInfoCard";
 import DeliveryInfoCard from "../delivery/DeliveryInfoCard";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
+import DownPaymentForm from "@/components/card/transaction/DownPaymentForm";
 
 const DetailTransactionPages = () => {
   const { id } = useParams();
@@ -59,21 +60,26 @@ const DetailTransactionPages = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white">
-      <div className="mb-8">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <TitleComponent title="Detail Transaksi" />
-            <p className="text-gray-500">ID Transaksi : {transaction?.id}</p>
-          </div>
-          <div
-            className={`px-4 py-2 rounded-full text-sm font-bold ${getStatusClass(
-              transaction?.transaction_status
-            )}`}
-          >
-            {transaction?.transaction_status}
-          </div>
+      <div className="flex justify-between items-start">
+        <TitleComponent title="Detail Transaksi" />
+        <div
+          className={`w-32 text-center py-2 rounded-md text-sm font-bold ${getStatusClass(
+            transaction?.transaction_status
+          )}`}
+        >
+          {transaction?.transaction_status}
         </div>
       </div>
+
+      {transaction.transaction_status === "diproses" && (
+        <DownPaymentForm
+          transaction={{ cost: transaction.cost }}
+          onSubmit={(data) => {
+            console.log("Data DP disubmit:", data);
+            alert("DP berhasil disimpan");
+          }}
+        />
+      )}
 
       <CustomerInfoCard customer={transaction.customer} />
 

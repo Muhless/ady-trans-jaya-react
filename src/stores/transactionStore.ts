@@ -3,6 +3,7 @@ import { Delivery } from "./deliveryStore";
 import { useDeliveryStore } from "./deliveryStore";
 
 export type Transaction = {
+  id?: number; // Tambahkan id untuk transaction
   customer_id: number | null;
   total_delivery: number;
   cost: number;
@@ -28,7 +29,9 @@ type Customer = {
 
 type TransactionStore = {
   transaction: Transaction;
+  transactionIdCounter: number; // Counter untuk auto increment transaction ID
   setTransaction: (data: Partial<Transaction>) => void;
+  generateTransactionId: () => number; // Method untuk generate ID baru
   addDeliveryToTransaction: (delivery: Delivery) => void;
   addDeliveryFromStoreById: (deliveryId: number) => void;
   addAllDeliveriesFromStore: () => void;
@@ -42,9 +45,15 @@ type TransactionStore = {
   selectedCustomer: Customer | null;
   setSelectedCustomer: (customer: Customer) => void;
   clearSelectedCustomer: () => void;
+  // Helper methods untuk check availability
+  getUsedDriverIds: () => number[];
+  getUsedVehicleIds: () => number[];
+  isDriverUsed: (driverId: number, excludeDeliveryId?: number) => boolean;
+  isVehicleUsed: (vehicleId: number, excludeDeliveryId?: number) => boolean;
 };
 
 export const initialTransaction: Transaction = {
+  id: undefined, // ID akan di-generate saat dibutuhkan
   customer_id: null,
   total_delivery: 0,
   cost: 0,
@@ -61,27 +70,51 @@ export const initialTransaction: Transaction = {
 
 export const useTransactionStore = create<TransactionStore>((set, get) => ({
   transaction: initialTransaction,
+  transactionIdCounter: 1, // Mulai dari 1
 
   selectedCustomer: null,
   editingDelivery: null,
+
+  // Method untuk generate ID baru
+  generateTransactionId: () => {
+    const currentCounter = get().transactionIdCounter;
+    set((state) => ({
+      transactionIdCounter: state.transactionIdCounter + 1,
+    }));
+    return currentCounter;
+  },
 
   setSelectedCustomer: (customer) => set({ selectedCustomer: customer }),
   clearSelectedCustomer: () => set({ selectedCustomer: null }),
 
   setTransaction: (data) =>
-    set((state) => ({
-      transaction: { ...state.transaction, ...data },
-    })),
+    set((state) => {
+      // Jika data tidak memiliki ID dan transaction belum memiliki ID, generate ID baru
+      const updatedData = { ...data };
+      if (!updatedData.id && !state.transaction.id) {
+        updatedData.id = get().generateTransactionId();
+      }
+      
+      return {
+        transaction: { ...state.transaction, ...updatedData },
+      };
+    }),
 
   addDeliveryToTransaction: (delivery) =>
-    set((state) => ({
-      transaction: {
-        ...state.transaction,
-        deliveries: [...state.transaction.deliveries, delivery],
-        total_delivery: state.transaction.total_delivery + 1,
-        cost: state.transaction.cost + (delivery.delivery_cost || 0),
-      },
-    })),
+    set((state) => {
+      // Generate transaction ID jika belum ada
+      const transactionId = state.transaction.id || get().generateTransactionId();
+      
+      return {
+        transaction: {
+          ...state.transaction,
+          id: transactionId,
+          deliveries: [...state.transaction.deliveries, delivery],
+          total_delivery: state.transaction.total_delivery + 1,
+          cost: state.transaction.cost + (delivery.delivery_cost || 0),
+        },
+      };
+    }),
 
   addDeliveryFromStoreById: (deliveryId) => {
     const deliveryStore = useDeliveryStore.getState();
@@ -96,14 +129,20 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
       );
 
       if (!exists) {
-        set((state) => ({
-          transaction: {
-            ...state.transaction,
-            deliveries: [...state.transaction.deliveries, delivery],
-            total_delivery: state.transaction.total_delivery + 1,
-            cost: state.transaction.cost + (delivery.delivery_cost || 0),
-          },
-        }));
+        set((state) => {
+          // Generate transaction ID jika belum ada
+          const transactionId = state.transaction.id || get().generateTransactionId();
+          
+          return {
+            transaction: {
+              ...state.transaction,
+              id: transactionId,
+              deliveries: [...state.transaction.deliveries, delivery],
+              total_delivery: state.transaction.total_delivery + 1,
+              cost: state.transaction.cost + (delivery.delivery_cost || 0),
+            },
+          };
+        });
       }
     }
   },
@@ -115,14 +154,20 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
       0
     );
 
-    set((state) => ({
-      transaction: {
-        ...state.transaction,
-        deliveries: deliveryStore.deliveryList,
-        total_delivery: deliveryStore.deliveryList.length,
-        cost: totalCost,
-      },
-    }));
+    set((state) => {
+      // Generate transaction ID jika belum ada
+      const transactionId = state.transaction.id || get().generateTransactionId();
+      
+      return {
+        transaction: {
+          ...state.transaction,
+          id: transactionId,
+          deliveries: deliveryStore.deliveryList,
+          total_delivery: deliveryStore.deliveryList.length,
+          cost: totalCost,
+        },
+      };
+    });
   },
 
   syncSelectedDeliveries: (deliveryIds) => {
@@ -135,14 +180,20 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
       0
     );
 
-    set((state) => ({
-      transaction: {
-        ...state.transaction,
-        deliveries: selectedDeliveries,
-        total_delivery: selectedDeliveries.length,
-        cost: totalCost,
-      },
-    }));
+    set((state) => {
+      // Generate transaction ID jika belum ada
+      const transactionId = state.transaction.id || get().generateTransactionId();
+      
+      return {
+        transaction: {
+          ...state.transaction,
+          id: transactionId,
+          deliveries: selectedDeliveries,
+          total_delivery: selectedDeliveries.length,
+          cost: totalCost,
+        },
+      };
+    });
   },
 
   resetTransaction: () => {
@@ -191,4 +242,35 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
         },
       };
     }),
+
+  // Helper methods untuk check availability dalam transaksi
+  getUsedDriverIds: () => {
+    const { transaction } = get();
+    return transaction.deliveries
+      .map(d => d.driver_id)
+      .filter((id): id is number => id !== null);
+  },
+
+  getUsedVehicleIds: () => {
+    const { transaction } = get();
+    return transaction.deliveries
+      .map(d => d.vehicle_id)
+      .filter((id): id is number => id !== null);
+  },
+
+  isDriverUsed: (driverId: number, excludeDeliveryId?: number) => {
+    const { transaction } = get();
+    return transaction.deliveries.some(d => 
+      d.driver_id === driverId && 
+      (excludeDeliveryId ? d.id !== excludeDeliveryId : true)
+    );
+  },
+
+  isVehicleUsed: (vehicleId: number, excludeDeliveryId?: number) => {
+    const { transaction } = get();
+    return transaction.deliveries.some(d => 
+      d.vehicle_id === vehicleId && 
+      (excludeDeliveryId ? d.id !== excludeDeliveryId : true)
+    );
+  },
 }));

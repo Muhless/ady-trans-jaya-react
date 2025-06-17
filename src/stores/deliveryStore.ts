@@ -15,8 +15,6 @@ type Vehicle = {
 };
 
 export type Delivery = {
-  driver: any;
-  vehicle: any;
   id: number;
   driver_id: number | null;
   vehicle_id: number | null;
@@ -40,13 +38,15 @@ export type Delivery = {
 
 type DeliveryStore = {
   delivery: Delivery;
+  deliveryIdCounter: number; // Counter untuk auto increment delivery ID
+  generateDeliveryId: () => number; // Method untuk generate ID baru
   setDelivery: (data: Partial<Delivery>) => void;
   setAllDelivery: (data: Delivery) => void;
   resetDelivery: () => void;
   deliveryList: Delivery[];
   addDelivery: (newDelivery: Delivery) => void;
   removeDelivery: (id: number) => void;
-  updateDelivery: (id: string, updatedDelivery: Partial<Delivery>) => void;
+  updateDelivery: (id: number, updatedDelivery: Partial<Delivery>) => void;
 
   drivers: Driver[];
   vehicles: Vehicle[];
@@ -57,9 +57,19 @@ type DeliveryStore = {
 };
 
 export const useDeliveryStore = create<DeliveryStore>()(
-  devtools((set) => ({
+  devtools((set, get) => ({
+    deliveryIdCounter: 1, // Mulai dari 1
     drivers: [],
     vehicles: [],
+
+    // Method untuk generate ID baru
+    generateDeliveryId: () => {
+      const currentCounter = get().deliveryIdCounter;
+      set((state) => ({
+        deliveryIdCounter: state.deliveryIdCounter + 1,
+      }));
+      return currentCounter;
+    },
 
     setDrivers: (data) => set({ drivers: data }),
     setVehicles: (data) => set({ vehicles: data }),
@@ -81,9 +91,33 @@ export const useDeliveryStore = create<DeliveryStore>()(
     deliveryList: [],
 
     addDelivery: (newDelivery: Delivery) =>
-      set((state) => ({
-        deliveryList: [...state.deliveryList, newDelivery],
-      })),
+      set((state) => {
+        const deliveryWithId = {
+          ...newDelivery,
+          id:
+            newDelivery.id && newDelivery.id !== 0
+              ? newDelivery.id
+              : get().generateDeliveryId(),
+        };
+
+        const updatedDrivers = state.drivers.map((driver) =>
+          driver.id === deliveryWithId.driver_id
+            ? { ...driver, status: "digunakan" }
+            : driver
+        );
+
+        const updatedVehicles = state.vehicles.map((vehicle) =>
+          vehicle.id === deliveryWithId.vehicle_id
+            ? { ...vehicle, status: "digunakan" }
+            : vehicle
+        );
+
+        return {
+          deliveryList: [...state.deliveryList, deliveryWithId],
+          drivers: updatedDrivers,
+          vehicles: updatedVehicles,
+        };
+      }),
 
     removeDelivery: (id: number) =>
       set((state) => {
@@ -121,10 +155,14 @@ export const useDeliveryStore = create<DeliveryStore>()(
           delivery.id === id ? { ...delivery, ...updatedDelivery } : delivery
         ),
       })),
+
     delivery: {
-      id: null,
+      id: 0, // Default ID 0, akan di-generate saat dibutuhkan
+      driver: null,
+      vehicle: null,
       driver_id: null,
       vehicle_id: null,
+      delivery_code: "",
       load_type: "",
       total_weight: 0,
       total_item: 0,
@@ -150,15 +188,20 @@ export const useDeliveryStore = create<DeliveryStore>()(
         },
       })),
 
-    setAllDelivery: (data: Delivery) => set({ delivery: data }),
+    setAllDelivery: (data: Delivery) => {
+      // Generate ID baru jika data tidak memiliki ID atau ID = 0
+      const deliveryWithId = {
+        ...data,
+        id: data.id && data.id !== 0 ? data.id : get().generateDeliveryId(),
+      };
+      set({ delivery: deliveryWithId });
+    },
 
     resetDelivery: () => {
       useDeliveryItemStore.getState().resetDeliveryItems();
       set({
         delivery: {
           id: 0,
-          driver: null,
-          vehicle: null,
           driver_id: null,
           vehicle_id: null,
           delivery_code: "",

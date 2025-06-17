@@ -54,6 +54,7 @@ type Vehicle = {
 };
 
 const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
+  console.log(useDeliveryStore.getState().delivery);
   const { goBack, goToAddTransaction } = useNavigationHooks();
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<{
@@ -79,6 +80,24 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const [driverOptions, setDriverOptions] = useState([]);
   const [vehicleOptions, setVehicleOptions] = useState([]);
 
+  const deliveryList = useDeliveryStore((state) => state.deliveryList);
+  const drivers = useDeliveryStore((state) => state.drivers);
+  const vehicles = useDeliveryStore((state) => state.vehicles);
+
+  // Ambil semua ID driver & vehicle yang sedang dipakai
+  const usedDriverIds = deliveryList
+    .map((d) => d.driver_id)
+    .filter((id) => id !== null);
+  const usedVehicleIds = deliveryList
+    .map((d) => d.vehicle_id)
+    .filter((id) => id !== null);
+
+  // Filter hanya yang belum dipakai
+  const availableDrivers = drivers.filter((d) => !usedDriverIds.includes(d.id));
+  const availableVehicles = vehicles.filter(
+    (v) => !usedVehicleIds.includes(v.id)
+  );
+
   const formatVehicleLabel = useCallback(
     (vehicle: Vehicle) =>
       `${
@@ -88,17 +107,24 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   );
 
   useEffect(() => {
+    const deliveryList = useDeliveryStore.getState().deliveryList;
+    const usedDriverIds = deliveryList.map((d) => d.driver_id).filter(Boolean);
+    const usedVehicleIds = deliveryList
+      .map((d) => d.vehicle_id)
+      .filter(Boolean);
+
     axios
       .get(`${API_BASE_URL}/drivers`)
       .then((res) => {
         const options = res.data.data
           .filter((driver) => driver.status === "tersedia")
+          .filter((driver) => !usedDriverIds.includes(driver.id))
           .map((driver) => ({
             label: driver.name,
             value: driver.id,
           }));
+
         setDriverOptions(options);
-        // useTransactionStore.getState().setDrivers(res.data.data);
       })
       .catch((err) => {
         console.error("Failed to fetch drivers", err);
@@ -107,15 +133,15 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     axios
       .get(`${API_BASE_URL}/vehicles`)
       .then((res) => {
-        console.log("Data kendaraan:", res.data);
         const options = res.data.data
           .filter((vehicle) => vehicle.status === "tersedia")
+          .filter((vehicle) => !usedVehicleIds.includes(vehicle.id))
           .map((vehicle) => ({
             label: formatVehicleLabel(vehicle),
             value: vehicle.id,
           }));
+
         setVehicleOptions(options);
-        // useTransactionStore.getState().setVehicles(res.data.data);
       })
       .catch((err) => {
         console.error("Failed to fetch vehicles", err);
@@ -276,6 +302,15 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const items = useDeliveryItemStore((state) => state.items);
 
   const totalWeight = items.reduce((sum, item) => sum + (item.weight || 0), 0);
+  useEffect(() => {
+    const totalWeight = items.reduce(
+      (sum, item) => sum + (item.weight || 0),
+      0
+    );
+    setDelivery({
+      total_weight: totalWeight,
+    });
+  }, [items]);
 
   const [formData, setFormData] = [delivery, setAllDelivery];
 
@@ -305,16 +340,17 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       : defaultDate;
 
     const items = useDeliveryItemStore.getState().items;
-
+    const deliveryStore = useDeliveryStore.getState();
     const payload: Delivery = {
       ...delivery,
-      id: Number(delivery.id),
+      id: deliveryStore.generateDeliveryId(),
       driver_id: Number(delivery.driver_id),
       vehicle_id: Number(delivery.vehicle_id),
       delivery_date: formattedDeliveryDate,
       delivery_deadline_date: formattedDeliveryDeadlineDate,
       delivery_status: "menunggu persetujuan",
       total_item: items.length,
+      total_weight: totalWeight,
       delivery_code: generateDeliveryCode(),
       items: items,
     };
@@ -328,7 +364,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       .getState()
       .updateVehicleStatus(delivery.vehicle_id!, "tidak tersedia");
 
-    console.log(useDeliveryStore.getState().delivery);
     resetDelivery();
     goToAddTransaction();
   };
@@ -451,7 +486,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         disabled={true}
         name="total_weight"
         value={totalWeight}
-        onChange={() => {}}
+        onChange={handleChange}
       />
       <SelectComponent
         label="Pengemudi"
@@ -620,7 +655,9 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           title="Simpan ?"
           description="Apakah anda yakin ingin meyimpan pengiriman ?"
           onConfirm={() => {
-            (document.getElementById("delivery-form") as HTMLFormElement).requestSubmit();
+            (
+              document.getElementById("delivery-form") as HTMLFormElement
+            ).requestSubmit();
           }}
         />
       </div>

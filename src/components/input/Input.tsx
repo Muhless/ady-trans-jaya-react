@@ -35,7 +35,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   onChange,
   pointType,
   setSelectingPoint,
-  required = true,
+  required = false,
 }) => {
   const { goToAddDeliveryItemPages } = useNavigationHooks();
   const isLocationField = label?.toLowerCase().includes("lokasi");

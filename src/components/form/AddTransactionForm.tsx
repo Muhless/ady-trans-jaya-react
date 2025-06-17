@@ -15,6 +15,8 @@ import DatePickerComponent from "../common/DatePicker";
 import { formatCurrency } from "../../../utils/Formatters";
 
 const AddTransactionForm = () => {
+      console.log(useTransactionStore.getState().transaction);
+  
   const {
     goToAddDeliveryForm,
     goToCustomerPages,
@@ -215,7 +217,11 @@ const AddTransactionForm = () => {
   };
 
   return (
-    <form id="transaction-form" className="space-y-2 py" onSubmit={handleSubmit}>
+    <form
+      id="transaction-form"
+      className="space-y-2 py"
+      onSubmit={handleSubmit}
+    >
       <SelectComponent
         label="Pelanggan"
         className="w-96"
@@ -270,15 +276,11 @@ const AddTransactionForm = () => {
             ) : (
               deliveries.map((delivery, index) => (
                 <div
-                  key={`${delivery.id ?? `fallback-${index}`}`}
+                  key={`delivery-${delivery.id || "no-id"}-${index}`}
                   className="p-2 w-full rounded-md flex justify-between items-center bg-bg"
                 >
                   <p>Pengiriman {index + 1}</p>
                   <div className="flex gap-1">
-                    <ButtonComponent
-                      variant="edit"
-                      onClick={() => handleEdit(delivery)}
-                    />
                     <ButtonComponent
                       variant="delete"
                       onClick={() => handleDelete(delivery.id)}
@@ -346,8 +348,7 @@ const AddTransactionForm = () => {
           onClick={handleReset}
         />
 
-      
-             <ConfirmDialog
+        <ConfirmDialog
           trigger={
             <ButtonComponent
               variant="save"
@@ -359,7 +360,9 @@ const AddTransactionForm = () => {
           title="Simpan ?"
           description="Apakah anda yakin ingin meyimpan transaksi ini ?"
           onConfirm={() => {
-            (document.getElementById("transaction-form") as HTMLFormElement).requestSubmit();
+            (
+              document.getElementById("transaction-form") as HTMLFormElement
+            ).requestSubmit();
           }}
         />
       </div>
