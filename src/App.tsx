@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import AppRoutes from "./routes/AppRoutes";
 import { useAuthStore } from "./stores/AuthStore";
-import { Toaster } from "@/components/toaster";
+import { Toaster } from "sonner";
 
 function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
@@ -12,7 +12,7 @@ function App() {
 
   return (
     <>
-      <Toaster />
+      <Toaster richColors position="top-center" />
       <AppRoutes />
     </>
   );

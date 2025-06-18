@@ -45,7 +45,6 @@ type TransactionStore = {
   selectedCustomer: Customer | null;
   setSelectedCustomer: (customer: Customer) => void;
   clearSelectedCustomer: () => void;
-  // Helper methods untuk check availability
   getUsedDriverIds: () => number[];
   getUsedVehicleIds: () => number[];
   isDriverUsed: (driverId: number, excludeDeliveryId?: number) => boolean;
@@ -53,7 +52,7 @@ type TransactionStore = {
 };
 
 export const initialTransaction: Transaction = {
-  id: undefined, // ID akan di-generate saat dibutuhkan
+  id: undefined,
   customer_id: null,
   total_delivery: 0,
   cost: 0,
@@ -94,7 +93,7 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
       if (!updatedData.id && !state.transaction.id) {
         updatedData.id = get().generateTransactionId();
       }
-      
+
       return {
         transaction: { ...state.transaction, ...updatedData },
       };
@@ -103,8 +102,9 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
   addDeliveryToTransaction: (delivery) =>
     set((state) => {
       // Generate transaction ID jika belum ada
-      const transactionId = state.transaction.id || get().generateTransactionId();
-      
+      const transactionId =
+        state.transaction.id || get().generateTransactionId();
+
       return {
         transaction: {
           ...state.transaction,
@@ -131,8 +131,9 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
       if (!exists) {
         set((state) => {
           // Generate transaction ID jika belum ada
-          const transactionId = state.transaction.id || get().generateTransactionId();
-          
+          const transactionId =
+            state.transaction.id || get().generateTransactionId();
+
           return {
             transaction: {
               ...state.transaction,
@@ -156,8 +157,9 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
 
     set((state) => {
       // Generate transaction ID jika belum ada
-      const transactionId = state.transaction.id || get().generateTransactionId();
-      
+      const transactionId =
+        state.transaction.id || get().generateTransactionId();
+
       return {
         transaction: {
           ...state.transaction,
@@ -182,8 +184,9 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
 
     set((state) => {
       // Generate transaction ID jika belum ada
-      const transactionId = state.transaction.id || get().generateTransactionId();
-      
+      const transactionId =
+        state.transaction.id || get().generateTransactionId();
+
       return {
         transaction: {
           ...state.transaction,
@@ -243,34 +246,35 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
       };
     }),
 
-  // Helper methods untuk check availability dalam transaksi
   getUsedDriverIds: () => {
     const { transaction } = get();
     return transaction.deliveries
-      .map(d => d.driver_id)
+      .map((d) => d.driver_id)
       .filter((id): id is number => id !== null);
   },
 
   getUsedVehicleIds: () => {
     const { transaction } = get();
     return transaction.deliveries
-      .map(d => d.vehicle_id)
+      .map((d) => d.vehicle_id)
       .filter((id): id is number => id !== null);
   },
 
   isDriverUsed: (driverId: number, excludeDeliveryId?: number) => {
     const { transaction } = get();
-    return transaction.deliveries.some(d => 
-      d.driver_id === driverId && 
-      (excludeDeliveryId ? d.id !== excludeDeliveryId : true)
+    return transaction.deliveries.some(
+      (d) =>
+        d.driver_id === driverId &&
+        (excludeDeliveryId ? d.id !== excludeDeliveryId : true)
     );
   },
 
   isVehicleUsed: (vehicleId: number, excludeDeliveryId?: number) => {
     const { transaction } = get();
-    return transaction.deliveries.some(d => 
-      d.vehicle_id === vehicleId && 
-      (excludeDeliveryId ? d.id !== excludeDeliveryId : true)
+    return transaction.deliveries.some(
+      (d) =>
+        d.vehicle_id === vehicleId &&
+        (excludeDeliveryId ? d.id !== excludeDeliveryId : true)
     );
   },
 }));

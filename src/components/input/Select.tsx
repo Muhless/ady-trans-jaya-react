@@ -34,7 +34,7 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
           className={`bg-bg p-2 w-72 cursor-pointer rounded-md focus:ring-biru focus:ring-2 focus:outline-none ${className}`}
           onChange={onChange}
         >
-          <option value="" disabled hidden className="text-gray-500">
+          <option value="" className="text-gray-500">
             {placeholder}
           </option>
           {options.map((option) => (

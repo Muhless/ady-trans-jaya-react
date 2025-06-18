@@ -10,10 +10,7 @@ export const useDeliveryCalculation = (distance, vehicleId) => {
 
   useEffect(() => {
     const calculateDeliveryCost = async () => {
-      console.log("Calculating delivery cost with:", { distance, vehicleId });
-      
       if (!distance || !vehicleId) {
-        console.log("Missing required data, setting price to 0");
         setDeliveryPrice(0);
         return;
       }
@@ -24,31 +21,31 @@ export const useDeliveryCalculation = (distance, vehicleId) => {
       try {
         console.log("Fetching vehicle data for ID:", vehicleId);
         const response = await fetch(`${API_BASE_URL}/vehicle/${vehicleId}`);
-        
+
         if (!response.ok) {
           throw new Error(`Failed to fetch vehicle data: ${response.status}`);
         }
-        
+
         const responseData = await response.json();
         console.log("Vehicle data received:", responseData);
 
         const vehicleData = responseData.data || responseData;
-        
+
         const rate = vehicleData.rate_per_km;
         console.log("Rate per KM:", rate, typeof rate);
-        
-        if (typeof rate !== 'number' || isNaN(rate)) {
+
+        if (typeof rate !== "number" || isNaN(rate)) {
           throw new Error("Invalid rate_per_km value received from API");
         }
-        
+
         setRatePerKm(rate);
-        
+
         const calculatedPrice = rate * distance;
         console.log("Calculated price:", calculatedPrice);
-        
+
         setDeliveryPrice(Math.round(calculatedPrice));
         useDeliveryStore.getState().setDelivery({
-          delivery_cost: Math.round(calculatedPrice)
+          delivery_cost: Math.round(calculatedPrice),
         });
       } catch (err) {
         console.error("Error calculating delivery cost:", err);

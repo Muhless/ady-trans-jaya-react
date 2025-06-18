@@ -13,10 +13,11 @@ import { ArrowLeft } from "lucide-react";
 import axios from "axios";
 import DatePickerComponent from "../common/DatePicker";
 import { formatCurrency } from "../../../utils/Formatters";
+import { toast } from "sonner";
 
 const AddTransactionForm = () => {
-      console.log(useTransactionStore.getState().transaction);
-  
+  console.log(useTransactionStore.getState().transaction);
+
   const {
     goToAddDeliveryForm,
     goToCustomerPages,
@@ -98,18 +99,27 @@ const AddTransactionForm = () => {
     e.preventDefault();
 
     if (!transaction.customer_id) {
-      alert("Silakan pilih pelanggan terlebih dahulu.");
+      toast.error("Silakan pilih pelanggan terlebih dahulu!");
       return;
     }
 
     if (!transaction.deliveries || transaction.deliveries.length === 0) {
-      alert("Silakan tambahkan minimal 1 pengiriman.");
+      toast.error("Silakan tambahkan minimal 1 pengiriman.");
+      return;
+    }
+
+    const invalidDelivery = transaction.deliveries.find(
+      (d) => !d.driver_id || !d.vehicle_id
+    );
+    if (invalidDelivery) {
+      toast.error("Pastikan semua pengiriman memiliki driver dan kendaraan!");
       return;
     }
 
     try {
-      const payload: any = {
-        ...transaction,
+      const { id, ...cleanTransaction } = transaction;
+      const payload = {
+        ...cleanTransaction,
         customer_id: Number(transaction.customer_id),
         total_delivery: transaction.deliveries.length,
         deliveries: transaction.deliveries.map((d) => ({
@@ -118,17 +128,16 @@ const AddTransactionForm = () => {
           driver_id: Number(d.driver_id),
           vehicle_id: Number(d.vehicle_id),
         })),
+        payment_deadline: null as string | null,
       };
 
       if (transaction.payment_deadline?.trim()) {
         const paymentDeadlineDate = new Date(transaction.payment_deadline);
         if (isNaN(paymentDeadlineDate.getTime())) {
-          alert("Tanggal jatuh tempo pembayaran tidak valid.");
+          toast.error("Tanggal jatuh tempo pembayaran tidak valid.");
           return;
         }
         payload.payment_deadline = paymentDeadlineDate.toISOString();
-      } else {
-        payload.payment_deadline = null;
       }
 
       const response = await fetch(`${API_BASE_URL}/transactions`, {
@@ -138,32 +147,72 @@ const AddTransactionForm = () => {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Gagal menyimpan transaksi. Server response:", errorText);
-        throw new Error("Gagal menyimpan transaksi.");
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: "Unknown error" }));
+        const errorMessage =
+          errorData.message ||
+          `HTTP ${response.status}: ${response.statusText}`;
+        throw new Error(errorMessage);
       }
 
       const result = await response.json();
       console.log("Transaksi berhasil disimpan:", result);
 
-      await Promise.all(
-        transaction.deliveries.flatMap((d) => [
+      try {
+        const updatePromises = transaction.deliveries.flatMap((d) => [
           axios.patch(`${API_BASE_URL}/driver/${d.driver_id}`, {
             status: "tidak tersedia",
           }),
           axios.patch(`${API_BASE_URL}/vehicle/${d.vehicle_id}`, {
             status: "tidak tersedia",
           }),
-        ])
-      );
+        ]);
 
-      console.log(useTransactionStore.getState().transaction);
+        await Promise.all(updatePromises);
+        console.log("Status driver dan kendaraan berhasil diupdate");
+      } catch (updateError) {
+        console.warn(
+          "Transaksi berhasil disimpan, tetapi gagal mengupdate status:",
+          updateError
+        );
+        // Tidak throw error karena transaksi sudah berhasil
+        toast.error(
+          "Transaksi berhasil disimpan, tetapi gagal mengupdate status driver/kendaraan.",
+          {
+            description: "Silakan periksa status secara manual.",
+            duration: 5000,
+          }
+        );
+      }
+
       resetDelivery();
       resetTransaction();
+
+      toast.success("Transaksi berhasil disimpan!", {
+        description: "Data transaksi telah tersimpan dengan baik.",
+        duration: 3000,
+      });
+
       goToTransactionPages();
     } catch (error: any) {
       console.error("Terjadi kesalahan saat mengirim data:", error);
-      alert(`Error: ${error.message}`);
+
+      let errorMessage = "Gagal menyimpan transaksi.";
+      let errorDescription =
+        "Periksa koneksi atau hubungi admin jika masalah berlanjut.";
+
+      if (error.name === "TypeError" && error.message.includes("fetch")) {
+        errorMessage = "Tidak dapat terhubung ke server.";
+        errorDescription = "Periksa koneksi internet Anda.";
+      } else if (error.message) {
+        errorDescription = error.message;
+      }
+
+      toast.error(errorMessage, {
+        description: errorDescription,
+        duration: 5000,
+      });
     }
   };
 
@@ -187,7 +236,7 @@ const AddTransactionForm = () => {
     e.preventDefault();
 
     if (!transaction.customer_id) {
-      alert("Silakan pilih pelanggan terlebih dahulu.");
+      toast.error("Silakan pilih pelanggan terlebih dahulu!");
       return;
     }
 
@@ -200,14 +249,8 @@ const AddTransactionForm = () => {
       goToAddDeliveryForm();
     } catch (error: any) {
       console.error("Gagal menyimpan transaksi:", error);
-      alert("Terjadi kesalahan saat menyimpan transaksi.");
+      toast.error("Terjadi kesalahan");
     }
-  };
-
-  const handleEdit = (delivery: Delivery) => {
-    console.log("Edit delivery:", delivery);
-    setEditingDelivery(delivery);
-    goToAddDeliveryForm();
   };
 
   const handleDelete = (deliveryId: number) => {
@@ -348,22 +391,11 @@ const AddTransactionForm = () => {
           onClick={handleReset}
         />
 
-        <ConfirmDialog
-          trigger={
-            <ButtonComponent
-              variant="save"
-              label="Simpan"
-              type="button"
-              className="w-full"
-            />
-          }
-          title="Simpan ?"
-          description="Apakah anda yakin ingin meyimpan transaksi ini ?"
-          onConfirm={() => {
-            (
-              document.getElementById("transaction-form") as HTMLFormElement
-            ).requestSubmit();
-          }}
+        <ButtonComponent
+          label="Simpan"
+          variant="save"
+          className="w-full"
+          onClick={handleSubmit}
         />
       </div>
     </form>

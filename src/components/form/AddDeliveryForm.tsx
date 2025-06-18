@@ -16,7 +16,11 @@ import { useFetchOptions } from "../../hooks/useFetchOptions";
 import mapboxgl from "mapbox-gl";
 import { useDeliveryCalculation } from "../../hooks/useDeliveryCost";
 import axios from "axios";
-import { Delivery, useDeliveryStore } from "../../stores/deliveryStore";
+import {
+  Delivery,
+  useDeliveryStore,
+  Vehicle,
+} from "../../stores/deliveryStore";
 import SearchLocationInput from "../input/SearchLocation";
 import { InputLatLang } from "../input/InputLatLang";
 import { ArrowLeft, MapPin } from "lucide-react";
@@ -26,6 +30,8 @@ import ConfirmDialog from "../common/ConfirmDialog";
 import { Button } from "../ui/button";
 import { useDeliveryItemStore } from "@/stores/deliveryItemStore";
 import DatePickerComponent from "../common/DatePicker";
+import { toast } from "sonner";
+import { useAvailableOptions } from "@/hooks/useFetchOptionData";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -39,22 +45,9 @@ interface Place {
   };
 }
 
-type Driver = {
-  id: number;
-  name: string;
-  status: string;
-};
-
-type Vehicle = {
-  id: number;
-  name: string;
-  status: string;
-  type: string;
-  rate_per_km: number;
-};
-
 const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
-  console.log(useDeliveryStore.getState().delivery);
+  // TODO:
+  // console.log(useDeliveryStore.getState().delivery);
   const { goBack, goToAddTransaction } = useNavigationHooks();
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<{
@@ -77,76 +70,8 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     "start"
   );
   const [startLocation, setStartLocation] = React.useState<string>("");
-  const [driverOptions, setDriverOptions] = useState([]);
-  const [vehicleOptions, setVehicleOptions] = useState([]);
 
-  const deliveryList = useDeliveryStore((state) => state.deliveryList);
-  const drivers = useDeliveryStore((state) => state.drivers);
-  const vehicles = useDeliveryStore((state) => state.vehicles);
-
-  // Ambil semua ID driver & vehicle yang sedang dipakai
-  const usedDriverIds = deliveryList
-    .map((d) => d.driver_id)
-    .filter((id) => id !== null);
-  const usedVehicleIds = deliveryList
-    .map((d) => d.vehicle_id)
-    .filter((id) => id !== null);
-
-  // Filter hanya yang belum dipakai
-  const availableDrivers = drivers.filter((d) => !usedDriverIds.includes(d.id));
-  const availableVehicles = vehicles.filter(
-    (v) => !usedVehicleIds.includes(v.id)
-  );
-
-  const formatVehicleLabel = useCallback(
-    (vehicle: Vehicle) =>
-      `${
-        vehicle.name
-      } (${vehicle.type.toUpperCase()}) - Rp.${vehicle.rate_per_km.toLocaleString()}/km`,
-    []
-  );
-
-  useEffect(() => {
-    const deliveryList = useDeliveryStore.getState().deliveryList;
-    const usedDriverIds = deliveryList.map((d) => d.driver_id).filter(Boolean);
-    const usedVehicleIds = deliveryList
-      .map((d) => d.vehicle_id)
-      .filter(Boolean);
-
-    axios
-      .get(`${API_BASE_URL}/drivers`)
-      .then((res) => {
-        const options = res.data.data
-          .filter((driver) => driver.status === "tersedia")
-          .filter((driver) => !usedDriverIds.includes(driver.id))
-          .map((driver) => ({
-            label: driver.name,
-            value: driver.id,
-          }));
-
-        setDriverOptions(options);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch drivers", err);
-      });
-
-    axios
-      .get(`${API_BASE_URL}/vehicles`)
-      .then((res) => {
-        const options = res.data.data
-          .filter((vehicle) => vehicle.status === "tersedia")
-          .filter((vehicle) => !usedVehicleIds.includes(vehicle.id))
-          .map((vehicle) => ({
-            label: formatVehicleLabel(vehicle),
-            value: vehicle.id,
-          }));
-
-        setVehicleOptions(options);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch vehicles", err);
-      });
-  }, []);
+  const { driverOptions, vehicleOptions } = useAvailableOptions();
 
   useEffect(() => {
     if (
@@ -313,7 +238,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   }, [items]);
 
   const [formData, setFormData] = [delivery, setAllDelivery];
-
   const { deliveryPrice, loading } = useDeliveryCalculation(
     distance,
     formData.vehicle_id
@@ -330,42 +254,93 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const handleSubmitDelivery = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const defaultDate = new Date().toISOString();
-    const formattedDeliveryDate = deliveryDate
-      ? deliveryDate.toISOString()
-      : defaultDate;
+    try {
+      const deliveryStore = useDeliveryStore.getState();
+      const drivers = deliveryStore.drivers;
+      const vehicles = deliveryStore.vehicles;
 
-    const formattedDeliveryDeadlineDate = deliveryDeadlineDate
-      ? deliveryDeadlineDate.toISOString()
-      : defaultDate;
+      const selectedDriver = drivers.find(
+        (d) => d.id === Number(delivery.driver_id)
+      );
+      const selectedVehicle = vehicles.find(
+        (v) => v.id === Number(delivery.vehicle_id)
+      );
 
-    const items = useDeliveryItemStore.getState().items;
-    const deliveryStore = useDeliveryStore.getState();
-    const payload: Delivery = {
-      ...delivery,
-      id: deliveryStore.generateDeliveryId(),
-      driver_id: Number(delivery.driver_id),
-      vehicle_id: Number(delivery.vehicle_id),
-      delivery_date: formattedDeliveryDate,
-      delivery_deadline_date: formattedDeliveryDeadlineDate,
-      delivery_status: "menunggu persetujuan",
-      total_item: items.length,
-      total_weight: totalWeight,
-      delivery_code: generateDeliveryCode(),
-      items: items,
-    };
+      if (!delivery.driver_id) {
+        toast.error("Silakan pilih pengemudi terlebih dahulu!");
+        return;
+      }
 
-    addDeliveryToTransaction(payload);
-    useDeliveryStore
-      .getState()
-      .updateDriverStatus(delivery.driver_id!, "tidak tersedia");
+      if (!delivery.vehicle_id) {
+        toast.error("Silakan pilih kendaraan terlebih dahulu!");
+        return;
+      }
 
-    useDeliveryStore
-      .getState()
-      .updateVehicleStatus(delivery.vehicle_id!, "tidak tersedia");
+      const items = useDeliveryItemStore.getState().items;
+      if (!items || items.length === 0) {
+        toast.error("Silakan tambahkan minimal 1 item pengiriman!");
+        return;
+      }
 
-    resetDelivery();
-    goToAddTransaction();
+      if (deliveryDate && deliveryDeadlineDate) {
+        if (deliveryDate > deliveryDeadlineDate) {
+          toast.error(
+            "Tanggal pengiriman tidak boleh lebih dari batas waktu pengiriman!"
+          );
+          return;
+        }
+      }
+
+      const defaultDate = new Date().toISOString();
+      const formattedDeliveryDate = deliveryDate
+        ? deliveryDate.toISOString()
+        : defaultDate;
+
+      const formattedDeliveryDeadlineDate = deliveryDeadlineDate
+        ? deliveryDeadlineDate.toISOString()
+        : defaultDate;
+
+      const payload: Delivery = {
+        ...delivery,
+        id: deliveryStore.generateDeliveryId(),
+        driver_id: Number(delivery.driver_id),
+        vehicle_id: Number(delivery.vehicle_id),
+        driver: selectedDriver,
+        vehicle: selectedVehicle,
+        delivery_date: formattedDeliveryDate,
+        delivery_deadline_date: formattedDeliveryDeadlineDate,
+        delivery_status: "menunggu persetujuan",
+        total_item: items.length,
+        total_weight: totalWeight,
+        delivery_code: generateDeliveryCode(),
+        items: items,
+      };
+
+      addDeliveryToTransaction(payload);
+
+      deliveryStore.updateDriverStatus(payload.driver_id, "tidak tersedia");
+      deliveryStore.updateVehicleStatus(payload.vehicle_id, "tidak tersedia");
+
+      const updatedStore = useDeliveryStore.getState();
+
+      resetDelivery();
+
+      toast.success("Pengiriman berhasil ditambahkan!", {
+        description: `Pengiriman dengan kode ${payload.delivery_code} telah ditambahkan ke transaksi.`,
+        duration: 3000,
+      });
+
+      goToAddTransaction();
+    } catch (error: any) {
+      console.error("Terjadi kesalahan saat menambahkan pengiriman:", error);
+
+      toast.error("Gagal menambahkan pengiriman!", {
+        description:
+          error.message ||
+          "Terjadi kesalahan tidak terduga. Silakan coba lagi.",
+        duration: 5000,
+      });
+    }
   };
 
   const handleChange = (
@@ -399,15 +374,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const clearForm = () => {
     setFormData(formData);
 
-    setStartPoint(null);
-    setEndPoint(null);
-    setRoute(null);
-    setDistance(null);
-    setDuration(null);
-    setPickupLocation("");
-    setDestination("");
-    setDeliveryDate(null);
-    setDeliveryDeadlineDate(null);
     resetDelivery();
 
     if (markerRef.current.start) markerRef.current.start.remove();
@@ -643,22 +609,11 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           className="w-full"
           onClick={clearForm}
         />
-        <ConfirmDialog
-          trigger={
-            <ButtonComponent
-              variant="save"
-              label="Simpan"
-              type="button"
-              className="w-full"
-            />
-          }
-          title="Simpan ?"
-          description="Apakah anda yakin ingin meyimpan pengiriman ?"
-          onConfirm={() => {
-            (
-              document.getElementById("delivery-form") as HTMLFormElement
-            ).requestSubmit();
-          }}
+        <ButtonComponent
+          label="Simpan"
+          variant="save"
+          className="w-full"
+          onClick={handleSubmitDelivery}
         />
       </div>
     </form>

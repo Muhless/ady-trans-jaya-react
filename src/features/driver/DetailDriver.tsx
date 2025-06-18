@@ -24,7 +24,7 @@ import Modal from "@/components/modal/Modal";
 import { addDriver, updateDriver } from "@/api/driver";
 import { Driver, useDrivers } from "@/hooks/useDrivers";
 import DriverForm, { DriverFormData } from "@/components/form/DriverForm";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface DeliveryHistory {
   id: string;
@@ -95,12 +95,6 @@ function DriverDetailPage() {
       setIsModalOpen(false);
       setSelectedDriver(null);
 
-      toast({
-        title: "Berhasil",
-        description: "Data pengemudi berhasil diperbarui",
-        variant: "default",
-      });
-
       setTimeout(() => {
         window.location.reload();
       }, 1000);
@@ -111,11 +105,7 @@ function DriverDetailPage() {
         "Gagal memperbarui data pengemudi";
       setError(message);
       console.error("Gagal mengedit driver:", message);
-      toast({
-        title: "Gagal",
-        description: message,
-        variant: "destructive",
-      });
+      toast.error("Gagal mengubah data pengemudi");
     }
   };
 

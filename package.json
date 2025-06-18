@@ -46,6 +46,7 @@
     "react-toastify": "^11.0.3",
     "recharts": "^2.15.3",
     "slick-carousel": "^1.8.1",
+    "sonner": "^2.0.5",
     "sweetalert2": "^11.20.0",
     "tailwind-merge": "^3.3.0",
     "tailwindcss-animate": "^1.0.7",

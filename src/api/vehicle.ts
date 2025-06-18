@@ -12,7 +12,7 @@ export const addVehicle = async (data: Record<string, any>) => {
 };
 
 export const updateVehicle = async (id: number, data: Record<string, any>) => {
-  const response = await axios.put(`${API_BASE_URL}/vehicle/${id}`, data);
+  const response = await axios.patch(`${API_BASE_URL}/vehicle/${id}`, data);
   return response.data.data;
 };
 
