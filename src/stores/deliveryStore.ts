@@ -42,8 +42,6 @@ export type Delivery = {
 
 type DeliveryStore = {
   delivery: Delivery;
-  deliveryIdCounter: number; 
-  generateDeliveryId: () => number; 
   setDelivery: (data: Partial<Delivery>) => void;
   setAllDelivery: (data: Delivery) => void;
   resetDelivery: () => void;
@@ -62,48 +60,25 @@ type DeliveryStore = {
 
 export const useDeliveryStore = create<DeliveryStore>()(
   devtools((set, get) => ({
-    deliveryIdCounter: 1,
     drivers: [],
     vehicles: [],
-
-    generateDeliveryId: () => {
-      const currentCounter = get().deliveryIdCounter;
-      set((state) => ({
-        deliveryIdCounter: state.deliveryIdCounter + 1,
-      }));
-      return currentCounter;
-    },
 
     setDrivers: (data) => set({ drivers: data }),
     setVehicles: (data) => set({ vehicles: data }),
 
-    updateDriverStatus: (driverId: number, status: string) =>
-      set((state) => {
-        console.log("Updating driver status:", driverId, status);
-        const updatedDrivers = state.drivers.map((driver) => {
-          if (driver.id === driverId) {
-            console.log("Found driver to update:", driver);
-            return { ...driver, status };
-          }
-          return driver;
-        });
-        console.log("Updated drivers:", updatedDrivers);
-        return { drivers: updatedDrivers };
-      }),
+    updateDriverStatus: (driverId, status) =>
+      set((state) => ({
+        drivers: state.drivers.map((driver) =>
+          driver.id === driverId ? { ...driver, status } : driver
+        ),
+      })),
 
-    updateVehicleStatus: (vehicleId: number, status: string) =>
-      set((state) => {
-        console.log("Updating vehicle status:", vehicleId, status);
-        const updatedVehicles = state.vehicles.map((vehicle) => {
-          if (vehicle.id === vehicleId) {
-            console.log("Found vehicle to update:", vehicle);
-            return { ...vehicle, status };
-          }
-          return vehicle;
-        });
-        console.log("Updated vehicles:", updatedVehicles);
-        return { vehicles: updatedVehicles };
-      }),
+    updateVehicleStatus: (vehicleId, status) =>
+      set((state) => ({
+        vehicles: state.vehicles.map((vehicle) =>
+          vehicle.id === vehicleId ? { ...vehicle, status } : vehicle
+        ),
+      })),
 
     deliveryList: [],
 
@@ -114,7 +89,7 @@ export const useDeliveryStore = create<DeliveryStore>()(
           id:
             newDelivery.id && newDelivery.id !== 0
               ? newDelivery.id
-              : get().generateDeliveryId(),
+              : Date.now(),
         };
 
         const updatedDrivers = state.drivers.map((driver) =>
@@ -136,7 +111,7 @@ export const useDeliveryStore = create<DeliveryStore>()(
         };
       }),
 
-    removeDelivery: (id: number) =>
+    removeDelivery: (id) =>
       set((state) => {
         const deliveryToRemove = state.deliveryList.find((d) => d.id === id);
 
@@ -149,7 +124,6 @@ export const useDeliveryStore = create<DeliveryStore>()(
               ? { ...driver, status: "tersedia" }
               : driver
           );
-
           updatedVehicles = state.vehicles.map((vehicle) =>
             vehicle.id === deliveryToRemove.vehicle_id
               ? { ...vehicle, status: "tersedia" }
@@ -166,7 +140,7 @@ export const useDeliveryStore = create<DeliveryStore>()(
         };
       }),
 
-    updateDelivery: (id: number, updatedDelivery: Partial<Delivery>) =>
+    updateDelivery: (id, updatedDelivery) =>
       set((state) => ({
         deliveryList: state.deliveryList.map((delivery) =>
           delivery.id === id ? { ...delivery, ...updatedDelivery } : delivery
@@ -198,17 +172,21 @@ export const useDeliveryStore = create<DeliveryStore>()(
     },
 
     setDelivery: (data: Partial<Delivery>) =>
-      set((state) => ({
-        delivery: {
-          ...state.delivery,
-          ...data,
-        },
-      })),
+      set((state) => {
+        const isNewId = data.id === 0 || data.id === undefined;
+        return {
+          delivery: {
+            ...state.delivery,
+            ...data,
+            id: isNewId ? Date.now() : data.id ?? state.delivery.id,
+          },
+        };
+      }),
 
     setAllDelivery: (data: Delivery) => {
       const deliveryWithId = {
         ...data,
-        id: data.id && data.id !== 0 ? data.id : get().generateDeliveryId(),
+        id: data.id === 0 || data.id === undefined ? Date.now() : data.id,
       };
       set({ delivery: deliveryWithId });
     },

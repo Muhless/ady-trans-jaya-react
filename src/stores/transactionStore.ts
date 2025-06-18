@@ -3,10 +3,10 @@ import { Delivery } from "./deliveryStore";
 import { useDeliveryStore } from "./deliveryStore";
 
 export type Transaction = {
-  id?: number; // Tambahkan id untuk transaction
+  id?: number;
   customer_id: number | null;
   total_delivery: number;
-  cost: number;
+  cost: number | null;
   payment_deadline: string | null;
   down_payment: number | null;
   down_payment_status: string;
@@ -29,9 +29,9 @@ type Customer = {
 
 type TransactionStore = {
   transaction: Transaction;
-  transactionIdCounter: number; // Counter untuk auto increment transaction ID
+  transactionIdCounter: number;
   setTransaction: (data: Partial<Transaction>) => void;
-  generateTransactionId: () => number; // Method untuk generate ID baru
+  generateTransactionId: () => number;
   addDeliveryToTransaction: (delivery: Delivery) => void;
   addDeliveryFromStoreById: (deliveryId: number) => void;
   addAllDeliveriesFromStore: () => void;
@@ -58,10 +58,10 @@ export const initialTransaction: Transaction = {
   cost: 0,
   payment_deadline: null,
   down_payment: null,
-  down_payment_status: "",
+  down_payment_status: "belum dibayar",
   down_payment_time: null,
   full_payment: null,
-  full_payment_status: "",
+  full_payment_status: "belum ditentukan",
   full_payment_time: null,
   transaction_status: "tertunda",
   deliveries: [],
@@ -69,12 +69,11 @@ export const initialTransaction: Transaction = {
 
 export const useTransactionStore = create<TransactionStore>((set, get) => ({
   transaction: initialTransaction,
-  transactionIdCounter: 1, // Mulai dari 1
+  transactionIdCounter: 1,
 
   selectedCustomer: null,
   editingDelivery: null,
 
-  // Method untuk generate ID baru
   generateTransactionId: () => {
     const currentCounter = get().transactionIdCounter;
     set((state) => ({
@@ -88,7 +87,6 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
 
   setTransaction: (data) =>
     set((state) => {
-      // Jika data tidak memiliki ID dan transaction belum memiliki ID, generate ID baru
       const updatedData = { ...data };
       if (!updatedData.id && !state.transaction.id) {
         updatedData.id = get().generateTransactionId();

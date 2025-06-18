@@ -23,7 +23,7 @@ const DriverInfoComponent: React.FC<DriverInfoComponentProps> = ({
   // Handle case where driver might not exist
   if (!delivery.driver) {
     return (
-      <div className={`bg-white rounded-lg shadow-md p-6 ${className}`}>
+      <div className={`bg-white rounded-lg shadow-md p-6  ${className}`}>
         <h2 className="text-lg font-semibold mb-4 flex items-center border-b pb-2">
           <UserCog2Icon className="mr-2 text-blue-500" size={20} />
           Informasi Pengemudi
@@ -36,29 +36,26 @@ const DriverInfoComponent: React.FC<DriverInfoComponentProps> = ({
   }
 
   return (
-    <div className={`bg-white rounded-lg shadow-md p-6 ${className}`}>
+    <div className={`bg-white rounded-lg shadow-md p-6 text-sm ${className}`}>
       <h2 className="text-lg font-semibold mb-4 flex items-center border-b pb-2">
         <UserCog2Icon className="mr-2 text-blue-500" size={20} />
         Informasi Pengemudi
       </h2>
 
       <div className="space-y-3">
-        {/* Nama Pengemudi */}
         <div>
-          <p className="text-sm text-gray-500">Nama Pengemudi</p>
+          <p className=" text-gray-500">Nama Pengemudi</p>
           <p className="font-medium">{delivery.driver.name}</p>
         </div>
 
-        {/* Nomor Telepon */}
         <div>
-          <p className="text-sm text-gray-500">Nomor Telepon</p>
+          <p className=" text-gray-500">Nomor Telepon</p>
           <p className="font-medium">{delivery.driver.phone}</p>
         </div>
 
-        {/* Alamat */}
         <div>
-          <p className="text-sm text-gray-500">Alamat</p>
-          <p className="font-medium text-sm">{delivery.driver.address}</p>
+          <p className=" text-gray-500">Alamat</p>
+          <p className="font-medium ">{delivery.driver.address}</p>
         </div>
       </div>
     </div>

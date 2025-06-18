@@ -35,6 +35,7 @@ const TransactionsStatCard: React.FC<TransactionsStatCardProps> = ({
     total: 0,
     pending: 0,
     onProcess: 0,
+    running: 0,
     completed: 0,
     failed: 0,
     totalCost: 0,
@@ -42,7 +43,6 @@ const TransactionsStatCard: React.FC<TransactionsStatCardProps> = ({
   const [internalLoading, setInternalLoading] = useState(false);
   const [internalError, setInternalError] = useState(false);
 
-  // Calculate stats from external transactions (memoized for performance)
   const externalStats = useMemo(() => {
     if (!externalTransactions) return null;
 
@@ -52,6 +52,9 @@ const TransactionsStatCard: React.FC<TransactionsStatCardProps> = ({
     ).length;
     const onProcess = externalTransactions.filter(
       (tx) => tx.transaction_status === "diproses"
+    ).length;
+    const running = externalTransactions.filter(
+      (tx) => tx.transaction_status === "berjalan"
     ).length;
     const completed = externalTransactions.filter(
       (tx) => tx.transaction_status === "selesai"
@@ -68,15 +71,15 @@ const TransactionsStatCard: React.FC<TransactionsStatCardProps> = ({
       total,
       pending,
       onProcess,
+      running,
       completed,
       failed,
       totalCost,
     };
   }, [externalTransactions]);
 
-  // Internal data fetching (fallback when no external data)
   useEffect(() => {
-    if (externalTransactions) return; // Skip internal fetch if external data exists
+    if (externalTransactions) return;
 
     const loadData = async () => {
       setInternalLoading(true);
@@ -91,6 +94,9 @@ const TransactionsStatCard: React.FC<TransactionsStatCardProps> = ({
         ).length;
         const onProcess = transactions.filter(
           (tx: any) => tx.transaction_status === "diproses"
+        ).length;
+        const running = transactions.filter(
+          (tx: any) => tx.transaction_status === "berjalan"
         ).length;
         const completed = transactions.filter(
           (tx: any) => tx.transaction_status === "selesai"
@@ -107,6 +113,7 @@ const TransactionsStatCard: React.FC<TransactionsStatCardProps> = ({
           total,
           pending,
           onProcess,
+          running,
           completed,
           failed,
           totalCost,
@@ -122,7 +129,6 @@ const TransactionsStatCard: React.FC<TransactionsStatCardProps> = ({
     loadData();
   }, [externalTransactions]);
 
-  // Determine which data source to use
   const stats = externalStats || internalStats;
   const isLoading =
     externalLoading !== undefined ? externalLoading : internalLoading;
@@ -145,6 +151,11 @@ const TransactionsStatCard: React.FC<TransactionsStatCardProps> = ({
       icon: <CircleArrowRightIcon className="w-6 h-6 text-sky-500" />,
     },
     {
+      label: "Berjalan",
+      value: stats.onProcess,
+      icon: <CircleArrowRightIcon className="w-6 h-6 text-teal-500" />,
+    },
+    {
       label: "Selesai",
       value: stats.completed,
       icon: <CheckCircle className="w-6 h-6 text-green-500" />,
@@ -154,14 +165,13 @@ const TransactionsStatCard: React.FC<TransactionsStatCardProps> = ({
       value: stats.failed,
       icon: <XCircle className="w-6 h-6 text-red-500" />,
     },
-    {
-      label: "Total Pendapatan",
-      value: `Rp ${stats.totalCost.toLocaleString("id-ID")}`,
-      icon: <Wallet className="w-6 h-6 text-purple-500" />,
-    },
+    // {
+    //   label: "Total Pendapatan",
+    //   value: `Rp ${stats.totalCost.toLocaleString("id-ID")}`,
+    //   icon: <Wallet className="w-6 h-6 text-purple-500" />,
+    // },
   ];
 
-  // Loading state
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
@@ -181,7 +191,6 @@ const TransactionsStatCard: React.FC<TransactionsStatCardProps> = ({
     );
   }
 
-  // Error state
   if (isError) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
@@ -201,7 +210,6 @@ const TransactionsStatCard: React.FC<TransactionsStatCardProps> = ({
     );
   }
 
-  // Normal state
   return (
     <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
       {cards.map((item, idx) => (

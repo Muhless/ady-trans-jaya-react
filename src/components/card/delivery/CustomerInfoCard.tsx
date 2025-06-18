@@ -43,7 +43,7 @@ const CustomerInfoComponent: React.FC<CustomerInfoComponentProps> = ({
   }
 
   return (
-    <div className={`bg-white rounded-lg shadow-md p-6 ${className}`}>
+    <div className={`bg-white rounded-lg shadow-md p-6 text-sm${className}`}>
       <h2 className="text-lg font-semibold mb-4 flex items-center border-b pb-2">
         <User className="mr-2 text-blue-500" size={20} />
         Informasi Pelanggan
@@ -51,38 +51,38 @@ const CustomerInfoComponent: React.FC<CustomerInfoComponentProps> = ({
 
       <div className="space-y-3">
         <div>
-          <p className="text-sm text-gray-500">Nama</p>
+          <p className="text-gray-500">Nama</p>
           <p className="font-medium">{customer.name}</p>
         </div>
 
         <div>
-          <p className="text-sm text-gray-500">Perusahaan</p>
+          <p className="text-gray-500">Perusahaan</p>
           <div className="flex items-center">
             <Building className="mr-2 text-gray-400" size={16} />
-            <p>{customer.company}</p>
+            <p className="font-medium">{customer.company}</p>
           </div>
         </div>
 
         <div>
-          <p className="text-sm text-gray-500">Email</p>
+          <p className="text-gray-500">Email</p>
           <div className="flex items-center">
             <Mail className="mr-2 text-gray-400" size={16} />
-            <p>{customer.email}</p>
+            <p className="font-medium">{customer.email}</p>
           </div>
         </div>
 
         <div>
-          <p className="text-sm text-gray-500">Telepon</p>
+          <p className="text-gray-500">Telepon</p>
           <div className="flex items-center">
             <Phone className="mr-2 text-gray-400" size={16} />
-            <p>{customer.phone}</p>
+            <p className="font-medium">{customer.phone}</p>
           </div>
         </div>
 
         {/* Alamat */}
         <div>
-          <p className="text-sm text-gray-500">Alamat</p>
-          <p className="text-sm">{customer.address}</p>
+          <p className="text-gray-500">Alamat</p>
+          <p className="font-medium">{customer.address}</p>
         </div>
       </div>
     </div>

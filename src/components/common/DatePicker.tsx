@@ -1,5 +1,5 @@
 import * as React from "react";
-import { format } from "date-fns";
+import { format, isBefore, startOfDay } from "date-fns";
 import { id } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -22,6 +22,7 @@ type DatePickerComponentProps = {
   disabled?: boolean;
   showClearButton?: boolean;
   buttonWidth?: string;
+  disablePastDate?: boolean;
 };
 
 export const DatePickerComponent: React.FC<DatePickerComponentProps> = ({
@@ -33,6 +34,7 @@ export const DatePickerComponent: React.FC<DatePickerComponentProps> = ({
   className = "",
   disabled = false,
   buttonWidth = "w-96",
+  disablePastDate = false,
 }) => {
   return (
     <div
@@ -40,7 +42,7 @@ export const DatePickerComponent: React.FC<DatePickerComponentProps> = ({
     >
       <div>
         {label && (
-          <label>
+          <label className="text-gray-600">
             {label} {required && <span className="text-red-500">*</span>}
           </label>
         )}
@@ -69,6 +71,11 @@ export const DatePickerComponent: React.FC<DatePickerComponentProps> = ({
             onSelect={onDateChange}
             initialFocus
             locale={id}
+            disabled={
+              disablePastDate
+                ? (date) => isBefore(startOfDay(date), startOfDay(new Date()))
+                : undefined
+            }
           />
         </PopoverContent>
       </Popover>

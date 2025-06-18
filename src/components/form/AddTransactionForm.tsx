@@ -42,7 +42,11 @@ const AddTransactionForm = () => {
   );
 
   const [customers, setCustomers] = useState<any[]>([]);
-  const [paymentDeadline, setPaymentDeadline] = useState<Date | undefined>();
+  const [paymentDeadline, setPaymentDeadline] = useState<Date | undefined>(
+    transaction.payment_deadline
+      ? new Date(transaction.payment_deadline)
+      : undefined
+  );
   const [formData, setFormData] = [transaction, setTransaction];
 
   useEffect(() => {
@@ -108,6 +112,11 @@ const AddTransactionForm = () => {
       return;
     }
 
+    if (!paymentDeadline) {
+      toast.error("Silakan tentukan batas pembayaran terlebih dahulu");
+      return;
+    }
+
     const invalidDelivery = transaction.deliveries.find(
       (d) => !d.driver_id || !d.vehicle_id
     );
@@ -122,23 +131,15 @@ const AddTransactionForm = () => {
         ...cleanTransaction,
         customer_id: Number(transaction.customer_id),
         total_delivery: transaction.deliveries.length,
-        deliveries: transaction.deliveries.map((d) => ({
-          ...d,
-          id: Number(d.id),
-          driver_id: Number(d.driver_id),
-          vehicle_id: Number(d.vehicle_id),
-        })),
-        payment_deadline: null as string | null,
+       deliveries: transaction.deliveries.map(
+  ({ id, driver_id, vehicle_id, ...rest }) => ({
+    ...rest,
+    driver_id: Number(driver_id),
+    vehicle_id: Number(vehicle_id),
+  })
+),
+        payment_deadline: paymentDeadline.toISOString(),
       };
-
-      if (transaction.payment_deadline?.trim()) {
-        const paymentDeadlineDate = new Date(transaction.payment_deadline);
-        if (isNaN(paymentDeadlineDate.getTime())) {
-          toast.error("Tanggal jatuh tempo pembayaran tidak valid.");
-          return;
-        }
-        payload.payment_deadline = paymentDeadlineDate.toISOString();
-      }
 
       const response = await fetch(`${API_BASE_URL}/transactions`, {
         method: "POST",
@@ -176,7 +177,6 @@ const AddTransactionForm = () => {
           "Transaksi berhasil disimpan, tetapi gagal mengupdate status:",
           updateError
         );
-        // Tidak throw error karena transaksi sudah berhasil
         toast.error(
           "Transaksi berhasil disimpan, tetapi gagal mengupdate status driver/kendaraan.",
           {
@@ -190,7 +190,7 @@ const AddTransactionForm = () => {
       resetTransaction();
 
       toast.success("Transaksi berhasil disimpan!", {
-        description: "Data transaksi telah tersimpan dengan baik.",
+        description: "Transaksi berhasil disimpan",
         duration: 3000,
       });
 
@@ -254,9 +254,8 @@ const AddTransactionForm = () => {
   };
 
   const handleDelete = (deliveryId: number) => {
-    if (confirm("Yakin ingin menghapus pengiriman ini?")) {
-      removeDeliveryFromTransaction(deliveryId);
-    }
+    removeDeliveryFromTransaction(deliveryId);
+    toast.success("Pengiriman berhasil dihapus!");
   };
 
   return (
@@ -324,9 +323,11 @@ const AddTransactionForm = () => {
                 >
                   <p>Pengiriman {index + 1}</p>
                   <div className="flex gap-1">
-                    <ButtonComponent
-                      variant="delete"
-                      onClick={() => handleDelete(delivery.id)}
+                    <ConfirmDialog
+                      trigger={<ButtonComponent variant="delete" />}
+                      title="Hapus Pengiriman"
+                      description="Yakin ingin menghapus pengiriman ini?"
+                      onConfirm={() => handleDelete(delivery.id)}
                     />
                   </div>
                 </div>
@@ -355,6 +356,7 @@ const AddTransactionForm = () => {
       <DatePickerComponent
         label="Batas Pembayaran"
         selectedDate={paymentDeadline}
+        disablePastDate={true}
         onDateChange={(date) => {
           setPaymentDeadline(date);
           setFormData({

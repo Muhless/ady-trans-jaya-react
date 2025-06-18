@@ -19,37 +19,33 @@ const DownPaymentForm = ({ transaction, onSubmit }: DownPaymentFormProps) => {
   };
 
   return (
-    <div className="mb-8">
-      <h2 className="text-xl font-semibold mb-4">Pembayaran</h2>
-      <div className="p-4 border rounded bg-gray-50">
-        <form onSubmit={handleSubmit} className="space-y-2">
-          <div>
-            <label className="text-sm text-gray-600">Total Transaksi</label>
-            <p className="text-lg font-bold text-gray-800">
-              {formatCurrency(transaction.cost)}
-            </p>
-          </div>
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-5 p-4 border rounded-md bg-white"
+    >
+      <h2 className="text-2xl font-semibold text-center">Pembayaran</h2>
+      <div className="flex justify-evenly">
+        <div>
+          <label className="text-gray-600 text-sm">Total Biaya Transaksi</label>
+          <p className="text-xl font-bold">
+            {formatCurrency(transaction.cost)}
+          </p>
+        </div>
 
-          <InputComponent
-            label="Pembayaran Awal"
-            type="number"
-            name="dp_amount"
-            value={dpAmount}
-            onChange={(e) => setDpAmount(Number(e.target.value))}
-            placeholder="Masukkan nominal pembayaran"
-          />
-
-          <div className="flex justify-end">
-            <ButtonComponent
-              label="Simpan"
-              type="submit"
-              variant="save"
-              className="w-32"
-            />
-          </div>
-        </form>
+        <div>
+          <label className=" text-gray-600 text-sm">Pembayaran Awal</label>
+          <p className="text-xl font-bold">{formatCurrency(dpAmount)}</p>
+        </div>
       </div>
-    </div>
+      <div className="flex justify-center">
+        <ButtonComponent
+          label="Simpan Pembayaran"
+          type="submit"
+          variant="save"
+          className="px-36"
+        />
+      </div>
+    </form>
   );
 };
 

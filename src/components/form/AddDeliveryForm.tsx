@@ -300,9 +300,9 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         ? deliveryDeadlineDate.toISOString()
         : defaultDate;
 
+        
       const payload: Delivery = {
         ...delivery,
-        id: deliveryStore.generateDeliveryId(),
         driver_id: Number(delivery.driver_id),
         vehicle_id: Number(delivery.vehicle_id),
         driver: selectedDriver,
@@ -556,6 +556,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         label="Tanggal Pengiriman"
         buttonWidth="w-72"
         selectedDate={deliveryDate}
+        disablePastDate={true}
         onDateChange={(date) => {
           setDeliveryDate(date);
           setFormData({
@@ -569,6 +570,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         label="Batas Waktu Pengiriman"
         buttonWidth="w-72"
         selectedDate={deliveryDeadlineDate}
+        disablePastDate={true}
         onDateChange={(date) => {
           setDeliveryDeadlineDate(date);
           setFormData({

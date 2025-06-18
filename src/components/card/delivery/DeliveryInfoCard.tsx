@@ -106,31 +106,24 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
             className="w-48 h-full"
           />
         )}
-        {/* {delivery.delivery_status === "dalam perjalanan" && (
-          <button className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 rounded-md">
-            Selesaikan Pengiriman
-          </button>
-        )} */}
       </div>
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-sm text-gray-500">ID Pengiriman</p>
+            <p className="font-medium">{delivery.id}</p>
+          </div>
           <div>
             <p className="text-sm text-gray-500">Kode Pengiriman</p>
             <p className="font-medium">
               {delivery.delivery_code || "Belum ada kode"}
             </p>
           </div>
-          <div>
-            <p className="text-sm text-gray-500">Biaya Pengiriman</p>
-            <p className="font-medium text-green-600">
-              {formatCurrency(delivery.delivery_cost)}
-            </p>
-          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-gray-500">Total Item</p>
+            <p className="text-sm text-gray-500">Total Barang</p>
             <div className="flex items-center">
               <Hash className="mr-1 text-gray-400" size={16} />
               <p className="font-medium">{delivery.total_item}</p>
@@ -146,7 +139,7 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
         </div>
 
         <div>
-          <p className="text-sm text-gray-500 mb-3">Daftar Item</p>
+          <p className="text-sm text-gray-500 ">Daftar Barang</p>
           <div className="space-y-3">
             {delivery.items && delivery.items.length > 0 ? (
               delivery.items.map((item, index) => (
@@ -189,66 +182,78 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
           </div>
         </div>
 
-        <div>
-          <p className="text-sm text-gray-500">Alamat Pengiriman</p>
-          <div className="flex items-center mt-1">
-            <div>
-              <div className="flex items-center">
-                <MapPin
-                  className="mr-2 text-gray-400 flex-shrink-0"
-                  size={16}
-                />
-                <p>
-                  {delivery.pickup_address ||
-                    "Alamat pengiriman tidak tersedia"}
+        <div className="grid grid-cols-2">
+          <div>
+            <p className="text-sm text-gray-500">Alamat Pengiriman</p>
+            <div className="flex items-center mt-1">
+              <div>
+                <div className="flex items-center">
+                  <MapPin
+                    className="mr-2 text-gray-400 flex-shrink-0"
+                    size={16}
+                  />
+                  <p>
+                    {delivery.pickup_address ||
+                      "Alamat pengiriman tidak tersedia"}
+                  </p>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Lat: {delivery.pickup_address_lat}
+                </p>
+                <p className="text-xs text-gray-500">
+                  Long:{delivery.pickup_address_lang}
                 </p>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Lat: {delivery.pickup_address_lat}
-              </p>
-              <p className="text-xs text-gray-500">
-                Long:{delivery.pickup_address_lang}
-              </p>
+            </div>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Alamat Tujuan</p>
+            <div className="flex items-center mt-1">
+              <div>
+                <div className="flex items-center">
+                  <MapPin
+                    className="mr-2 text-gray-400 flex-shrink-0"
+                    size={16}
+                  />
+                  <p>
+                    {delivery.destination_address ||
+                      "Alamat tujuan tidak tersedia"}
+                  </p>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Lat: {delivery.destination_address_lat}
+                </p>
+                <p className="text-xs text-gray-500">
+                  Long:{delivery.destination_address_lang}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2">
+          <div>
+            <p className="text-sm text-gray-500">Tanggal Pengiriman</p>
+            <div className="flex items-center">
+              <Calendar className="mr-2 text-gray-400" size={16} />
+              <p>{formatDateNumeric(delivery.delivery_date)}</p>
+            </div>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Batas Pengiriman</p>
+            <div className="flex items-center">
+              <Clock className="mr-2 text-gray-400" size={16} />
+              <p>{formatDateNumeric(delivery.delivery_deadline_date)}</p>
             </div>
           </div>
         </div>
 
         <div>
-          <p className="text-sm text-gray-500">Alamat Tujuan</p>
-          <div className="flex items-center mt-1">
-            <div>
-              <div className="flex items-center">
-                <MapPin
-                  className="mr-2 text-gray-400 flex-shrink-0"
-                  size={16}
-                />
-                <p>
-                  {delivery.destination_address ||
-                    "Alamat tujuan tidak tersedia"}
-                </p>
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Lat: {delivery.destination_address_lat}
-              </p>
-              <p className="text-xs text-gray-500">
-                Long:{delivery.destination_address_lang}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <p className="text-sm text-gray-500">Tanggal Pengiriman</p>
-          <div className="flex items-center">
-            <Calendar className="mr-2 text-gray-400" size={16} />
-            <p>{formatDateNumeric(delivery.delivery_date)}</p>
-          </div>
-        </div>
-        <div>
-          <p className="text-sm text-gray-500">Batas Pengiriman</p>
-          <div className="flex items-center">
-            <Clock className="mr-2 text-gray-400" size={16} />
-            <p>{formatDateNumeric(delivery.delivery_deadline_date)}</p>
+          <div>
+            <p className="text-sm text-gray-500">Biaya Pengiriman</p>
+            <p className="font-medium text-green-600">
+              {formatCurrency(delivery.delivery_cost)}
+            </p>
           </div>
         </div>
 

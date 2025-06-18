@@ -1,4 +1,3 @@
-// api/transaction.js
 import { API_BASE_URL } from "@/apiConfig";
 import axios from "axios";
 
@@ -59,19 +58,25 @@ export const createTransaction = async (transactionData) => {
   }
 };
 
-// Function untuk update transaksi
-export const updateTransaction = async (id, transactionData) => {
-  try {
-    if (!id) {
-      throw new Error("Transaction ID is required");
-    }
+type UpdateTransactionPayload = {
+  cost?: number;
+  down_payment?: number;
+  down_payment_time?: string;
+  payment_deadline?: string;
+  transaction_status?: string;
+};
 
-    const response = await axios.put(
+export const updateTransaction = async (
+  id: number,
+  data: UpdateTransactionPayload
+) => {
+  try {
+    const response = await axios.patch(
       `${API_BASE_URL}/transactions/${id}`,
-      transactionData
+      data
     );
     return response.data.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error updating transaction:", error);
     throw new Error(
       error.response?.data?.message || "Failed to update transaction"

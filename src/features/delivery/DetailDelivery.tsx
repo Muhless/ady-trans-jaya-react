@@ -9,6 +9,7 @@ import VehicleInfoComponent from "@/components/card/delivery/VehicleInfoCard";
 import DriverInfoComponent from "@/components/card/delivery/DriverInfoCard";
 import CustomerInfoComponent from "@/components/card/delivery/CustomerInfoCard";
 import ButtonComponent from "@/components/button/Index";
+import { toast } from "sonner";
 
 const DetailDeliveryPage = () => {
   const { id } = useParams();
@@ -45,9 +46,11 @@ const DetailDeliveryPage = () => {
   const handleApprove = async (id: number) => {
     try {
       await updateDeliveryStatus(id, "disetujui");
+      toast.success("Pengiriman disetujui!");
+
       await refetch();
     } catch (err) {
-      console.error("Gagal menyetujui", err);
+      toast.success("Pengiriman ditolak!");
     }
   };
 
