@@ -1,4 +1,3 @@
-import React from "react";
 import Card from ".";
 import ChartComponent from "../Chart";
 import SubTitle from "../SubTitle";
@@ -6,11 +5,11 @@ import SubTitle from "../SubTitle";
 const TransactionGraphic = () => {
   return (
     <Card className="h-[25rem] rounded-md">
-      <div className="flex justify-between items-center mb-2 p-3 border-b">
-        <SubTitle subTitle="Transaksi" />
-       {/* sort by date */}
+      <div className="flex justify-between items-center p-2 ">
+        <SubTitle subTitle="Grafik Transaksi" />
       </div>
-      <div className="p-4 h-[calc(100%-64px)]">
+      <hr />
+      <div className="px-2 h-[calc(100%-64px)]">
         <ChartComponent />
       </div>
     </Card>

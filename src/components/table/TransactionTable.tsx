@@ -41,6 +41,12 @@ type TransactionTableProps = {
   transactions?: Transaction[];
   loading?: boolean;
   error?: boolean;
+  filters?: {
+    transaction_status?: string;
+    customer_id?: number;
+    date_from?: string;
+    date_to?: string;
+  };
 };
 
 const TransactionTable: React.FC<TransactionTableProps> = ({
@@ -52,6 +58,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
   transactions: externalTransactions,
   loading: externalLoading,
   error: externalError,
+  filters,
 }) => {
   const { goToDetailTransaction } = useNavigationHooks();
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -93,16 +100,65 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     }));
   }, [transactions]);
 
+  const filteredData = React.useMemo(() => {
+    if (!transformedData) return [];
+
+    return transformedData.filter((transaction) => {
+      if (
+        filters?.transaction_status &&
+        transaction.transaction_status !== filters.transaction_status
+      ) {
+        return false;
+      }
+
+      if (
+        filters?.customer_id &&
+        transaction.customer_id !== filters.customer_id
+      ) {
+        return false;
+      }
+
+      if (filters?.date_from || filters?.date_to) {
+        const transactionDate = new Date(
+          transaction.createdAt ||
+            transaction.created_at ||
+            transaction.date ||
+            transaction.timestamp ||
+            transaction.transaction_date ||
+            transaction.payment_deadline
+        );
+
+        if (
+          filters.date_from &&
+          transactionDate < new Date(filters.date_from)
+        ) {
+          return false;
+        }
+
+        if (filters.date_to && transactionDate > new Date(filters.date_to)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [transformedData, filters]);
+
   React.useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
+
+  React.useEffect(() => {
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
     if (
-      transformedData.length === 0 ||
-      currentPage > Math.ceil(transformedData.length / itemsPerPage)
+      filteredData.length === 0 ||
+      (currentPage > totalPages && totalPages > 0)
     ) {
       setCurrentPage(1);
     }
-  }, [transformedData.length, itemsPerPage, currentPage]);
+  }, [filteredData.length, itemsPerPage, currentPage]);
 
-  const totalPages = Math.ceil(transformedData.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -112,12 +168,8 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
+  const paginatedData = filteredData.slice(startIndex, endIndex);
 
-  const paginatedData = Array.isArray(transformedData)
-    ? transformedData.slice(startIndex, endIndex)
-    : [];
-
-  // Show loading state
   if (isLoading) {
     return (
       <div className="text-center p-8">
@@ -127,7 +179,6 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     );
   }
 
-  // Show error state
   if (isError) {
     return (
       <div className="text-center p-8">
@@ -138,11 +189,18 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     );
   }
 
-  // Show empty state
   if (!transactions || transactions.length === 0) {
     return (
       <div className="text-center p-8">
         <p className="text-gray-600">Tidak ada data transaksi</p>
+      </div>
+    );
+  }
+
+  if (filteredData.length === 0) {
+    return (
+      <div className="text-center text-sm p-8">
+        <p className="text-gray-500">Tidak ada data transaksi berlangsung</p>
       </div>
     );
   }

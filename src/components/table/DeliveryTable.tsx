@@ -2,8 +2,6 @@ import React from "react";
 import TableComponent from ".";
 import useNavigationHooks from "../../hooks/useNavigation";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { API_BASE_URL } from "../../apiConfig";
 import { formatCurrency, formatDateNumeric } from "../../../utils/Formatters";
 import PaginationControls from "../common/PaginationController";
 import { fetchDeliveries } from "@/api/delivery";
@@ -50,6 +48,14 @@ type DeliveryTableProps = {
   deliveries?: Delivery[];
   loading?: boolean;
   error?: boolean;
+  filters?: {
+    delivery_status?: string;
+    transaction_id?: number;
+    driver_id?: number;
+    vehicle_id?: number;
+    date_from?: string;
+    date_to?: string;
+  };
 };
 
 const DeliveryTable: React.FC<DeliveryTableProps> = ({
@@ -61,6 +67,7 @@ const DeliveryTable: React.FC<DeliveryTableProps> = ({
   deliveries: externalDeliveries,
   loading: externalLoading,
   error: externalError,
+  filters,
 }) => {
   const { goToDetailDelivery } = useNavigationHooks();
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -87,11 +94,14 @@ const DeliveryTable: React.FC<DeliveryTableProps> = ({
     return deliveries.map((delivery: Delivery) => ({
       ...delivery,
       customerName:
-        delivery.transaction?.customer?.name || `Transaction ID: ${delivery.transaction_id}`,
+        delivery.transaction?.customer?.name ||
+        `Transaction ID: ${delivery.transaction_id}`,
       driverName: delivery.driver?.name || "-",
       vehicleName: delivery.vehicle?.name || "-",
       formattedDeliveryDate: formatDateNumeric(delivery.delivery_date),
-      formattedDeliveryDeadlineDate: formatDateNumeric(delivery.delivery_deadline_date),
+      formattedDeliveryDeadlineDate: formatDateNumeric(
+        delivery.delivery_deadline_date
+      ),
       formattedDate: formatDateNumeric(
         delivery.createdAt ||
           delivery.created_at ||
@@ -102,16 +112,69 @@ const DeliveryTable: React.FC<DeliveryTableProps> = ({
     }));
   }, [deliveries]);
 
+  const filteredData = React.useMemo(() => {
+    if (!transformedData) return [];
+
+    return transformedData.filter((delivery) => {
+      if (
+        filters?.delivery_status &&
+        delivery.delivery_status !== filters.delivery_status
+      ) {
+        return false;
+      }
+
+      if (
+        filters?.transaction_id &&
+        delivery.transaction_id !== filters.transaction_id
+      ) {
+        return false;
+      }
+
+      if (filters?.driver_id && delivery.driver_id !== filters.driver_id) {
+        return false;
+      }
+
+      if (filters?.vehicle_id && delivery.vehicle_id !== filters.vehicle_id) {
+        return false;
+      }
+
+      if (filters?.date_from || filters?.date_to) {
+        const deliveryDate = new Date(
+          delivery.createdAt ||
+            delivery.created_at ||
+            delivery.date ||
+            delivery.timestamp ||
+            delivery.delivery_date
+        );
+
+        if (filters.date_from && deliveryDate < new Date(filters.date_from)) {
+          return false;
+        }
+
+        if (filters.date_to && deliveryDate > new Date(filters.date_to)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [transformedData, filters]);
+
   React.useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
+
+  React.useEffect(() => {
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
     if (
-      transformedData.length === 0 ||
-      currentPage > Math.ceil(transformedData.length / itemsPerPage)
+      filteredData.length === 0 ||
+      (currentPage > totalPages && totalPages > 0)
     ) {
       setCurrentPage(1);
     }
-  }, [transformedData.length, itemsPerPage, currentPage]);
+  }, [filteredData.length, itemsPerPage, currentPage]);
 
-  const totalPages = Math.ceil(transformedData.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -121,12 +184,8 @@ const DeliveryTable: React.FC<DeliveryTableProps> = ({
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
+  const paginatedData = filteredData.slice(startIndex, endIndex);
 
-  const paginatedData = Array.isArray(transformedData)
-    ? transformedData.slice(startIndex, endIndex)
-    : [];
-
-  // Show loading state
   if (isLoading) {
     return (
       <div className="text-center p-8">
@@ -136,7 +195,6 @@ const DeliveryTable: React.FC<DeliveryTableProps> = ({
     );
   }
 
-  // Show error state
   if (isError) {
     return (
       <div className="text-center p-8">
@@ -147,11 +205,20 @@ const DeliveryTable: React.FC<DeliveryTableProps> = ({
     );
   }
 
-  // Show empty state
   if (!deliveries || deliveries.length === 0) {
     return (
+      <div className="text-center p-8 text-sm">
+        <p className="text-gray-600">Tidak ada pengiriman yang sedang berlangsung</p>
+      </div>
+    );
+  }
+
+  if (filteredData.length === 0) {
+    return (
       <div className="text-center p-8">
-        <p className="text-gray-600">Tidak ada data pengiriman</p>
+        <p className="text-gray-600">
+          Tidak ada data pengiriman yang sesuai dengan filter
+        </p>
       </div>
     );
   }
