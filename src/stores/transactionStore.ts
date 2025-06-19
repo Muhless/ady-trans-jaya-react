@@ -154,7 +154,6 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
     );
 
     set((state) => {
-      // Generate transaction ID jika belum ada
       const transactionId =
         state.transaction.id || get().generateTransactionId();
 

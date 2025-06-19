@@ -22,6 +22,7 @@ const DetailTransactionPages = () => {
     isLoading,
     isError,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["transaction", id],
     queryFn: () => fetchTransactionById(Number(id)),
@@ -67,17 +68,28 @@ const DetailTransactionPages = () => {
     dp_amount: number;
   }) => {
     try {
-      await updateTransaction(transaction.id, {
-        cost: approvedCost,
-        transaction_status: "berjalan",
+      const updatePayload = {
         down_payment: dp_amount,
+        down_payment_status: "sudah dibayar",
         down_payment_time: new Date().toISOString(),
-        // full_payment:
-      });
-      window.location.reload();
-      toast.success("Pembayaran disimpan!");
+
+        full_payment: approvedCost,
+        full_payment_status: "belum lunas",
+        full_payment_time: null,
+
+        transaction_status: "berjalan",
+      };
+
+      await updateTransaction(transaction.id, updatePayload);
+
+      toast.success("Pembayaran berhasil disimpan!");
+      await refetch();
     } catch (err: any) {
-      toast.error(err.message);
+      console.error("Error updating transaction:", err);
+      toast.error("Terjadi kesalahan saat menyimpan pembayaran", {
+        description:
+          err?.response?.data?.message || err.message || "Unknown error",
+      });
     }
   };
 

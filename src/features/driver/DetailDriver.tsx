@@ -51,7 +51,7 @@ function DriverDetailPage() {
 
   const fetchDriverDeliveries = async (id: string) => {
     const response = await fetch(
-      `${API_BASE_URL}/deliveries/search?driver_id=${id}`
+      `${API_BASE_URL}/delivery/search?driver_id=${id}`
     );
     if (!response.ok) {
       throw new Error("Gagal mengambil riwayat pengiriman");

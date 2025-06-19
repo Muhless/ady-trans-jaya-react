@@ -2,6 +2,7 @@ import ButtonComponent from "@/components/button/Index";
 import { InputComponent } from "@/components/input/Input";
 import { useState } from "react";
 import { formatCurrency } from "../../../../utils/Formatters";
+import ConfirmDialog from "@/components/common/ConfirmDialog";
 
 type DownPaymentFormProps = {
   transaction: {
@@ -14,12 +15,13 @@ const DownPaymentForm = ({ transaction, onSubmit }: DownPaymentFormProps) => {
   const [dpAmount, setDpAmount] = useState<number>(transaction.cost / 2);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e?.preventDefault();
     onSubmit({ dp_amount: dpAmount });
   };
 
   return (
     <form
+      id="payment-form"
       onSubmit={handleSubmit}
       className="space-y-5 p-4 border rounded-md bg-white"
     >
@@ -38,11 +40,22 @@ const DownPaymentForm = ({ transaction, onSubmit }: DownPaymentFormProps) => {
         </div>
       </div>
       <div className="flex justify-center">
-        <ButtonComponent
-          label="Simpan Pembayaran"
-          type="submit"
-          variant="save"
-          className="px-36"
+        <ConfirmDialog
+          trigger={
+            <ButtonComponent
+              label="Simpan Pembayaran"
+              variant="save"
+              className="px-36"
+              type="button"
+            />
+          }
+          confirmText="Simpan Pembayaran ?"
+          onConfirm={() => {
+            const form = document.getElementById(
+              "payment-form"
+            ) as HTMLFormElement;
+            form?.requestSubmit(); 
+          }}
         />
       </div>
     </form>

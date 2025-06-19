@@ -1,14 +1,15 @@
-import DownPaymentForm from "@/components/card/transaction/DownPaymentForm";
 import {
   formatCurrency,
   formatDateNumeric,
 } from "../../../../utils/Formatters";
+import PaymentForm from "./DownPaymentForm";
 
 type TransactionInfoCardProps = {
   transaction: {
     id: number;
     total_delivery: number;
     payment_deadline?: string;
+    cost?: number;
     down_payment?: number;
     down_payment_status?: string;
     down_payment_time: string;
@@ -54,23 +55,49 @@ const TransactionInfoCard = ({
             {formatDateNumeric(transaction.payment_deadline)}
           </p>
         </div>
-        {(transaction.transaction_status === "tertunda" ||
-          transaction.transaction_status === "berjalan") && (
+        {transaction.transaction_status === "tertunda" && (
           <div className="space-y-2">
             <div>
               <p className="text-muted-foreground">Pembayaran Awal</p>
               <p className="font-bold text-base">
-                {transaction.transaction_status === "berjalan"
-                  ? formatCurrency(transaction.down_payment || 0)
-                  : transaction.down_payment_status}
+                {transaction.down_payment_status}
               </p>
             </div>
             <div>
               <p className="text-muted-foreground">Biaya Transaksi</p>
               <p className="font-bold text-base">
-                {transaction.transaction_status === "berjalan"
-                  ? formatCurrency(transaction.full_payment || 0)
-                  : transaction.full_payment_status}
+                {transaction.full_payment_status}
+              </p>
+            </div>
+          </div>
+        )}
+        {transaction.transaction_status === "berjalan" && (
+          <div className="space-y-2">
+            <div>
+              <p className="text-muted-foreground">Pembayaran Awal</p>
+              <p className="font-bold text-base">
+                {formatCurrency(transaction.down_payment)}
+              </p>
+            </div>
+            <div>
+              <p className="text-muted-foreground bg-or">
+                Status Pembayaran Awal
+              </p>
+              <p className="font-bold text-base">
+                {transaction.down_payment_status}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-muted-foreground">Total Biaya Transaksi</p>
+              <p className="font-bold text-base">
+                {formatCurrency(transaction.full_payment)}
+              </p>
+            </div>
+            <div>
+              <p className="text-muted-foreground">Status Biaya Transaksi</p>
+              <p className="font-bold text-base">
+                {transaction.full_payment_status}
               </p>
             </div>
           </div>
@@ -79,7 +106,7 @@ const TransactionInfoCard = ({
 
       {transaction.transaction_status === "diproses" && (
         <div className="mt-3">
-          <DownPaymentForm
+          <PaymentForm
             transaction={{ cost: approvedCost }}
             onSubmit={onDownPaymentSubmit}
           />

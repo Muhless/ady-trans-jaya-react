@@ -15,11 +15,12 @@ interface Transaction {
     name: string;
     phone: string;
   };
-  cost: number;
+  full_payment: number;
+  full_payment_status: string;
+
   payment_deadline: string;
   total_delivery: number;
   transaction_status: string;
-  // Add common timestamp fields
   createdAt?: string;
   created_at?: string;
   date?: string;
@@ -85,17 +86,24 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     return transactions.map((transaction: Transaction) => ({
       ...transaction,
       customerName:
-        transaction.customer?.name || `Customer ID: ${transaction.customer_id}`,
+        transaction.customer?.name ||
+        `Customer ID: ${transaction.customer_id ?? "-"}`,
       customerPhone: transaction.customer?.phone || "-",
-      formattedCost: formatCurrency(transaction.cost),
-      formattedPaymentDeadline: formatDateNumeric(transaction.payment_deadline),
+      formattedCost:
+        transaction.full_payment && transaction.full_payment > 0
+          ? formatCurrency(transaction.full_payment)
+          : transaction.full_payment_status || "Belum ditentukan",
+      formattedPaymentDeadline: transaction.payment_deadline
+        ? formatDateNumeric(transaction.payment_deadline)
+        : "-",
       formattedDate: formatDateNumeric(
         transaction.createdAt ||
           transaction.created_at ||
           transaction.date ||
           transaction.timestamp ||
           transaction.transaction_date ||
-          transaction.payment_deadline
+          transaction.payment_deadline ||
+          ""
       ),
     }));
   }, [transactions]);
@@ -214,15 +222,11 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
         onRowClick={(row) => goToDetailTransaction(row.id)()}
         columns={
           columns ?? [
+            { key: "formattedDate", label: "Tanggal Transaksi" },
             { key: "customerName", label: "Pelanggan" },
             { key: "total_delivery", label: "Jumlah Pengiriman" },
             { key: "formattedCost", label: "Total Biaya" },
-            {
-              key: "formattedPaymentDeadline",
-              label: "Batas Waktu Pembayaran",
-            },
             { key: "transaction_status", label: "Status" },
-            { key: "formattedDate", label: "Tanggal Transaksi" },
           ]
         }
         showActions={showActions ?? true}

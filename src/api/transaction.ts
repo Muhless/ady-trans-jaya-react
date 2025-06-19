@@ -60,8 +60,15 @@ export const createTransaction = async (transactionData) => {
 
 type UpdateTransactionPayload = {
   cost?: number;
+
   down_payment?: number;
+  down_payment_status?: string;
   down_payment_time?: string;
+
+  full_payment?: number;
+  full_payment_status: string;
+  full_payment_time?: string;
+
   payment_deadline?: string;
   transaction_status?: string;
 };

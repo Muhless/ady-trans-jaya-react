@@ -24,16 +24,13 @@ const AddTransactionForm = () => {
     goBack,
     goToTransactionPages,
   } = useNavigationHooks();
-  const { deliveryList, removeDelivery, setDelivery, resetDelivery } =
-    useDeliveryStore();
+  const { resetDelivery } = useDeliveryStore();
   const {
     transaction,
     setTransaction,
     resetTransaction,
     selectedCustomer,
     setSelectedCustomer,
-    updateDeliveryInTransaction,
-    setEditingDelivery,
     removeDeliveryFromTransaction,
   } = useTransactionStore();
 
@@ -99,7 +96,7 @@ const AddTransactionForm = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmitTransaction = async (e: React.FormEvent) => {
     e?.preventDefault();
 
     if (!transaction.customer_id) {
@@ -118,7 +115,7 @@ const AddTransactionForm = () => {
     }
 
     try {
-      const { id, ...cleanTransaction } = transaction;
+      const { id, cost, ...cleanTransaction } = transaction;
       const payload = {
         ...cleanTransaction,
         customer_id: Number(transaction.customer_id),
@@ -181,10 +178,7 @@ const AddTransactionForm = () => {
       resetDelivery();
       resetTransaction();
 
-      toast.success("Transaksi berhasil disimpan!", {
-        description: "Transaksi berhasil disimpan",
-        duration: 3000,
-      });
+      toast.success("Transaksi berhasil disimpan!");
 
       goToTransactionPages();
     } catch (error: any) {
@@ -260,7 +254,7 @@ const AddTransactionForm = () => {
     <form
       id="transaction-form"
       className="space-y-2 py"
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmitTransaction}
     >
       <SelectComponent
         label="Pelanggan"
@@ -397,7 +391,7 @@ const AddTransactionForm = () => {
           }
           title="Konfirmasi Simpan"
           description="Apakah Anda yakin ingin menyimpan transaksi ini?"
-          onConfirm={(e) => handleSubmit(e)}
+          onConfirm={(e) => handleSubmitTransaction(e)}
         />
       </div>
     </form>

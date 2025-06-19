@@ -1,21 +1,7 @@
-import React from "react";
 import { Calendar, MapPin, Award } from "lucide-react";
-import { formatDate } from "../../../utils/Formatters";
+import { formatDate, getStatusClass } from "../../../utils/Formatters";
 
 const DeliveryCard = ({ delivery }) => {
-  const getStatusClass = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "selesai":
-        return "bg-green-100 text-green-800";
-      case "dalam perjalanan":
-        return "bg-blue-100 text-blue-800";
-      case "menunggu persetujuan":
-        return "bg-yellow-100 text-yellow-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
   return (
     <div className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
       <div className="flex justify-between items-start">
