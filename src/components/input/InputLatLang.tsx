@@ -2,7 +2,6 @@ import { MapPin } from "lucide-react";
 import React from "react";
 
 type InputLatLangProps = {
-  label?: string;
   type?: "text" | "number" | "email" | "password" | "date" | "textarea";
   name?: string;
   className?: string;
@@ -14,6 +13,7 @@ type InputLatLangProps = {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
   pointType?: "start" | "end";
+  isSelected?: boolean;
 
   setSelectingPoint?: React.Dispatch<
     React.SetStateAction<"start" | "end" | null>
@@ -21,7 +21,6 @@ type InputLatLangProps = {
 };
 
 export const InputLatLang: React.FC<InputLatLangProps> = ({
-  label,
   type = "number",
   name,
   className,
@@ -30,12 +29,13 @@ export const InputLatLang: React.FC<InputLatLangProps> = ({
   disabled,
   onChange,
   required = true,
+  isSelected,
 }) => {
-  const stringValue = value === null ? "" : String(value);
+  const stringValue = value == null ? "" : String(value);
 
-  const inputClass = `p-2 rounded-md focus:ring-biru focus:ring-2 focus:outline-none ${
-    disabled ? "bg-gray-300" : "bg-background"
-  } ${className || ""}`;
+  const inputClass = `p-2 rounded-md focus:ring-biru focus:ring-2 focus:outline-none border w-full
+  ${isSelected ? "bg-blue-50 border-blue-500" : "bg-gray-300 border-gray-300"}
+  ${className || ""}`;
 
   return (
     <div className="flex items-center gap-5 justify-between">

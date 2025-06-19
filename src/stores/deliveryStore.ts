@@ -84,24 +84,30 @@ export const useDeliveryStore = create<DeliveryStore>()(
 
     addDelivery: (newDelivery: Delivery) =>
       set((state) => {
-        const deliveryWithId = {
-          ...newDelivery,
-          id:
-            newDelivery.id && newDelivery.id !== 0
-              ? newDelivery.id
-              : Date.now(),
-        };
-
-        const updatedDrivers = state.drivers.map((driver) =>
-          driver.id === deliveryWithId.driver_id
-            ? { ...driver, status: "digunakan" }
-            : driver
+        const driver = state.drivers.find(
+          (d) => d.id === newDelivery.driver_id
+        );
+        const vehicle = state.vehicles.find(
+          (v) => v.id === newDelivery.vehicle_id
         );
 
-        const updatedVehicles = state.vehicles.map((vehicle) =>
-          vehicle.id === deliveryWithId.vehicle_id
-            ? { ...vehicle, status: "digunakan" }
-            : vehicle
+        const deliveryWithId = {
+          ...newDelivery,
+          id: newDelivery.id || Date.now(),
+          driver: driver ? { ...driver, status: "tidak tersedia" } : null,
+          vehicle: vehicle ? { ...vehicle, status: "tidak tersedia" } : null,
+        };
+
+        const updatedDrivers = state.drivers.map((d) =>
+          d.id === deliveryWithId.driver_id
+            ? { ...d, status: "tidak tersedia" }
+            : d
+        );
+
+        const updatedVehicles = state.vehicles.map((v) =>
+          v.id === deliveryWithId.vehicle_id
+            ? { ...v, status: "tidak tersedia" }
+            : v
         );
 
         return {

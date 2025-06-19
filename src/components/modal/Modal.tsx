@@ -16,7 +16,7 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   children,
   mode = "add",
-  width
+  width,
 }) => {
   if (!isOpen) return null;
 

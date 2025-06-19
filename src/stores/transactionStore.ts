@@ -181,7 +181,6 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
     );
 
     set((state) => {
-      // Generate transaction ID jika belum ada
       const transactionId =
         state.transaction.id || get().generateTransactionId();
 
@@ -225,24 +224,43 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
       };
     }),
 
-  removeDeliveryFromTransaction: (deliveryId: number) =>
-    set((state) => {
-      const filtered = state.transaction.deliveries.filter(
-        (d) => d.id !== deliveryId
+  removeDeliveryFromTransaction: (deliveryId: number) => {
+    const deliveryStore = useDeliveryStore.getState();
+
+    const stateBefore = get();
+    const deliveryToRemove = stateBefore.transaction.deliveries.find(
+      (d) => d.id === deliveryId
+    );
+
+    const filtered = stateBefore.transaction.deliveries.filter(
+      (d) => d.id !== deliveryId
+    );
+    const newCost = filtered.reduce(
+      (sum, d) => sum + (d.delivery_cost || 0),
+      0
+    );
+
+    if (deliveryToRemove) {
+      deliveryStore.updateDriverStatus(deliveryToRemove.driver_id, "tersedia");
+      deliveryStore.updateVehicleStatus(
+        deliveryToRemove.vehicle_id,
+        "tersedia"
       );
-      const newCost = filtered.reduce(
-        (sum, d) => sum + (d.delivery_cost || 0),
-        0
-      );
-      return {
-        transaction: {
-          ...state.transaction,
-          deliveries: filtered,
-          total_delivery: filtered.length,
-          cost: newCost,
-        },
-      };
-    }),
+      deliveryStore.removeDelivery(deliveryToRemove.id);
+      console.log("Setelah remove:");
+      console.log("Delivery list:", deliveryStore.deliveryList);
+      console.log("Drivers:", deliveryStore.drivers);
+    }
+
+    set({
+      transaction: {
+        ...stateBefore.transaction,
+        deliveries: filtered,
+        total_delivery: filtered.length,
+        cost: newCost,
+      },
+    });
+  },
 
   getUsedDriverIds: () => {
     const { transaction } = get();

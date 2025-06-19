@@ -6,7 +6,7 @@ interface ConfirmDialogProps {
   description?: string;
   confirmText?: string;
   cancelText?: string;
-  onConfirm: () => void;
+   onConfirm: (e?: React.FormEvent) => void | Promise<void>;
 }
 
 export default function ConfirmDialog({

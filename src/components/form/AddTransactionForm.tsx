@@ -100,7 +100,7 @@ const AddTransactionForm = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e?.preventDefault();
 
     if (!transaction.customer_id) {
       toast.error("Silakan pilih pelanggan terlebih dahulu!");
@@ -108,20 +108,12 @@ const AddTransactionForm = () => {
     }
 
     if (!transaction.deliveries || transaction.deliveries.length === 0) {
-      toast.error("Silakan tambahkan minimal 1 pengiriman.");
+      toast.error("Minimal 1 pengiriman ditambahkan!");
       return;
     }
 
     if (!paymentDeadline) {
       toast.error("Silakan tentukan batas pembayaran terlebih dahulu");
-      return;
-    }
-
-    const invalidDelivery = transaction.deliveries.find(
-      (d) => !d.driver_id || !d.vehicle_id
-    );
-    if (invalidDelivery) {
-      toast.error("Pastikan semua pengiriman memiliki driver dan kendaraan!");
       return;
     }
 
@@ -131,13 +123,13 @@ const AddTransactionForm = () => {
         ...cleanTransaction,
         customer_id: Number(transaction.customer_id),
         total_delivery: transaction.deliveries.length,
-       deliveries: transaction.deliveries.map(
-  ({ id, driver_id, vehicle_id, ...rest }) => ({
-    ...rest,
-    driver_id: Number(driver_id),
-    vehicle_id: Number(vehicle_id),
-  })
-),
+        deliveries: transaction.deliveries.map(
+          ({ id, driver_id, vehicle_id, ...rest }) => ({
+            ...rest,
+            driver_id: Number(driver_id),
+            vehicle_id: Number(vehicle_id),
+          })
+        ),
         payment_deadline: paymentDeadline.toISOString(),
       };
 
@@ -217,6 +209,12 @@ const AddTransactionForm = () => {
   };
 
   const handleReset = () => {
+    setFormData({
+      ...formData,
+      payment_deadline: "",
+    });
+
+    setPaymentDeadline(null);
     resetTransaction();
     resetDelivery();
     setSelectedCustomer(null);
@@ -393,11 +391,13 @@ const AddTransactionForm = () => {
           onClick={handleReset}
         />
 
-        <ButtonComponent
-          label="Simpan"
-          variant="save"
-          className="w-full"
-          onClick={handleSubmit}
+        <ConfirmDialog
+          trigger={
+            <ButtonComponent label="Simpan" variant="save" className="w-full" />
+          }
+          title="Konfirmasi Simpan"
+          description="Apakah Anda yakin ingin menyimpan transaksi ini?"
+          onConfirm={(e) => handleSubmit(e)}
         />
       </div>
     </form>

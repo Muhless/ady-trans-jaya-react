@@ -1,37 +1,23 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 import { InputComponent } from "../input/Input";
 import ButtonComponent from "../button/Index";
 import SubTitle from "../SubTitle";
 import SelectComponent from "../input/Select";
 import useNavigationHooks from "../../hooks/useNavigation";
-import Card from "../card";
-import { useFetchOptions } from "../../hooks/useFetchOptions";
 import mapboxgl from "mapbox-gl";
 import { useDeliveryCalculation } from "../../hooks/useDeliveryCost";
-import axios from "axios";
-import {
-  Delivery,
-  useDeliveryStore,
-  Vehicle,
-} from "../../stores/deliveryStore";
+import { Delivery, useDeliveryStore } from "../../stores/deliveryStore";
 import SearchLocationInput from "../input/SearchLocation";
 import { InputLatLang } from "../input/InputLatLang";
 import { ArrowLeft, MapPin } from "lucide-react";
 import { useTransactionStore } from "../../stores/transactionStore";
-import { API_BASE_URL } from "../../apiConfig";
 import ConfirmDialog from "../common/ConfirmDialog";
 import { Button } from "../ui/button";
 import { useDeliveryItemStore } from "@/stores/deliveryItemStore";
 import DatePickerComponent from "../common/DatePicker";
 import { toast } from "sonner";
-import { useAvailableOptions } from "@/hooks/useFetchOptionData";
+import { useAvailableOptions } from "@/hooks/useAvailableOptionData";
+import { CoordinateInput } from "../input/CoordinatInput";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -70,7 +56,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     "start"
   );
   const [startLocation, setStartLocation] = React.useState<string>("");
-
+  const [endLocation, setEndLocation] = React.useState<string>("");
   const { driverOptions, vehicleOptions } = useAvailableOptions();
 
   useEffect(() => {
@@ -238,6 +224,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   }, [items]);
 
   const [formData, setFormData] = [delivery, setAllDelivery];
+
   const { deliveryPrice, loading } = useDeliveryCalculation(
     distance,
     formData.vehicle_id
@@ -252,19 +239,21 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   };
 
   const handleSubmitDelivery = (e: React.FormEvent) => {
-    e.preventDefault();
+    e?.preventDefault();
 
     try {
-      const deliveryStore = useDeliveryStore.getState();
-      const drivers = deliveryStore.drivers;
-      const vehicles = deliveryStore.vehicles;
+      if (!delivery.load_type) {
+        toast.error("Silakan pilih jenis barang terlebih dahulu!");
+        return;
+      }
 
-      const selectedDriver = drivers.find(
-        (d) => d.id === Number(delivery.driver_id)
-      );
-      const selectedVehicle = vehicles.find(
-        (v) => v.id === Number(delivery.vehicle_id)
-      );
+      const items = useDeliveryItemStore.getState().items;
+      if (!items || items.length === 0) {
+        toast.error(
+          "Silakan tambahkan minimal 1 barang pengiriman terlebih dahulu!"
+        );
+        return;
+      }
 
       if (!delivery.driver_id) {
         toast.error("Silakan pilih pengemudi terlebih dahulu!");
@@ -276,19 +265,48 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         return;
       }
 
-      const items = useDeliveryItemStore.getState().items;
-      if (!items || items.length === 0) {
-        toast.error("Silakan tambahkan minimal 1 item pengiriman!");
+      if (!delivery.pickup_address || delivery.pickup_address.trim() === "") {
+        toast.error("Silakan isi alamat penjemputan terlebih dahulu!");
         return;
       }
 
-      if (deliveryDate && deliveryDeadlineDate) {
-        if (deliveryDate > deliveryDeadlineDate) {
-          toast.error(
-            "Tanggal pengiriman tidak boleh lebih dari batas waktu pengiriman!"
-          );
-          return;
-        }
+      if (
+        !delivery.destination_address ||
+        delivery.destination_address.trim() === ""
+      ) {
+        toast.error("Silakan isi alamat tujuan terlebih dahulu!");
+        return;
+      }
+
+      if (
+        delivery.pickup_address_lang == null ||
+        delivery.pickup_address_lat == null
+      ) {
+        toast.error("Silakan tentukan koordinat pengambilan terlebih dahulu!");
+        return;
+      }
+
+      if (
+        delivery.destination_address_lang == null ||
+        delivery.destination_address_lat == null
+      ) {
+        toast.error("Silakan tentukan koordinat tujuan terlebih dahulu!");
+        return;
+      }
+
+      if (!delivery.vehicle_id) {
+        toast.error("Silakan pilih kendaraan terlebih dahulu!");
+        return;
+      }
+
+      if (!deliveryDate) {
+        toast.error("Silakan pilih tanggal pengiriman terlebih dahulu!");
+        return;
+      }
+
+      if (!deliveryDeadlineDate) {
+        toast.error("Silakan pilih tanggal batas pengiriman terlebih dahulu!");
+        return;
       }
 
       const defaultDate = new Date().toISOString();
@@ -300,13 +318,10 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         ? deliveryDeadlineDate.toISOString()
         : defaultDate;
 
-        
       const payload: Delivery = {
         ...delivery,
         driver_id: Number(delivery.driver_id),
         vehicle_id: Number(delivery.vehicle_id),
-        driver: selectedDriver,
-        vehicle: selectedVehicle,
         delivery_date: formattedDeliveryDate,
         delivery_deadline_date: formattedDeliveryDeadlineDate,
         delivery_status: "menunggu persetujuan",
@@ -316,12 +331,25 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         items: items,
       };
 
+      useDeliveryStore.getState().addDelivery(payload);
       addDeliveryToTransaction(payload);
 
-      deliveryStore.updateDriverStatus(payload.driver_id, "tidak tersedia");
-      deliveryStore.updateVehicleStatus(payload.vehicle_id, "tidak tersedia");
-
-      const updatedStore = useDeliveryStore.getState();
+      console.log(
+        "Current deliveryList:",
+        useDeliveryStore.getState().deliveryList
+      );
+      console.log(
+        "Driver list after update:",
+        useDeliveryStore.getState().drivers
+      );
+      console.log(
+        "Current vehicleList:",
+        useDeliveryStore.getState().deliveryList
+      );
+      console.log(
+        "Vehicle list after update:",
+        useDeliveryStore.getState().vehicles
+      );
 
       resetDelivery();
 
@@ -371,8 +399,27 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     });
   };
 
-  const clearForm = () => {
-    setFormData(formData);
+  const handleReset = () => {
+    setFormData({
+      ...formData,
+      pickup_address: "",
+      destination_address: "",
+      pickup_address_lat: null,
+      pickup_address_lang: null,
+      destination_address_lat: null,
+      destination_address_lang: null,
+      delivery_date: "",
+      delivery_deadline_date: "",
+      delivery_cost: 0,
+    });
+
+    setDeliveryDate(null);
+    setDeliveryDeadlineDate(null);
+
+    setStartPoint(null);
+    setEndPoint(null);
+    setStartLocation("");
+    setEndLocation("");
 
     resetDelivery();
 
@@ -383,14 +430,9 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       mapRef.current.removeLayer("route");
       mapRef.current.removeSource("route");
     }
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-  useEffect(() => {
-    if (editingDelivery) {
-      setFormData(editingDelivery);
-    }
-  }, [editingDelivery]);
 
   const handleCancel = async () => {
     clearEditingDelivery();
@@ -490,6 +532,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         value={formData.destination_address}
         onChange={handleChange}
       />
+
       <div>
         <SearchLocationInput
           placeholder={`Cari alamat ${
@@ -501,44 +544,22 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         />
         <div id="map" className="h-full"></div>
       </div>
-      <div className="flex w-full gap-3">
-        <InputLatLang
-          placeholder="latitude"
-          disabled={true}
-          value={startPoint ? startPoint.lat.toString() : ""}
-        />
-        <InputLatLang
-          placeholder="langitude"
-          disabled={true}
-          value={startPoint ? startPoint.lng.toString() : ""}
-        />
-        <button
-          type="button"
-          onClick={() => setSelectingPoint("start")}
-          className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-        >
-          <MapPin size={20} />
-        </button>
-      </div>
-      <div className="flex w-full gap-3">
-        <InputLatLang
-          placeholder="latitude"
-          disabled={true}
-          value={formData.destination_address_lat}
-        />
-        <InputLatLang
-          placeholder="langitude"
-          disabled={true}
-          value={formData.destination_address_lang}
-        />
-        <button
-          type="button"
-          onClick={() => setSelectingPoint("end")}
-          className="p-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-        >
-          <MapPin size={20} />
-        </button>
-      </div>
+      <CoordinateInput
+        pointLabel="start"
+        latitude={formData.pickup_address_lat}
+        longitude={formData.pickup_address_lang}
+        onSelectPoint={() => setSelectingPoint("start")}
+        isSelected={selectingPoint === "start"}
+      />
+
+      <CoordinateInput
+        pointLabel="end"
+        latitude={formData.destination_address_lat}
+        longitude={formData.destination_address_lang}
+        onSelectPoint={() => setSelectingPoint("end")}
+        isSelected={selectingPoint === "end"}
+      />
+
       <div className="space-y-4">
         <InputComponent
           label="Jarak"
@@ -609,13 +630,15 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           label="Ulangi"
           type="reset"
           className="w-full"
-          onClick={clearForm}
+          onClick={handleReset}
         />
-        <ButtonComponent
-          label="Simpan"
-          variant="save"
-          className="w-full"
-          onClick={handleSubmitDelivery}
+        <ConfirmDialog
+          trigger={
+            <ButtonComponent label="Simpan" variant="save" className="w-full" />
+          }
+          title="Konfirmasi Simpan"
+          description="Apakah Anda yakin ingin menyimpan transaksi ini?"
+          onConfirm={(e) => handleSubmitDelivery(e)}
         />
       </div>
     </form>

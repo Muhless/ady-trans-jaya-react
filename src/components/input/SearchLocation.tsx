@@ -76,7 +76,7 @@ const SearchLocationInput: React.FC<Props> = ({
     }
   };
 
-  const handleReset = () => {
+  const handleResetSearch = () => {
     setInputValue("");
     setSuggestions([]);
   };
@@ -96,7 +96,7 @@ const SearchLocationInput: React.FC<Props> = ({
       <ButtonComponent
         variant="delete"
         className="rounded-md"
-        onClick={handleReset}
+        onClick={handleResetSearch}
       />
       {suggestions.length > 0 && (
         <ul className="absolute z-10 bg-white border border-gray-300 w-full mt-10 rounded shadow max-h-48 overflow-y-auto">

@@ -31,7 +31,7 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
           name={name}
           value={stringValue}
           required={required}
-          className={`bg-bg p-2 w-72 cursor-pointer rounded-md focus:ring-biru focus:ring-2 focus:outline-none ${className}`}
+          className={`bg-blue-50 border-blue-500 p-2 w-72 cursor-pointer rounded-md focus:ring-biru focus:ring-2 focus:outline-none ${className}`}
           onChange={onChange}
         >
           <option value="" className="text-gray-500">
@@ -43,11 +43,6 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
             </option>
           ))}
         </select>
-        {/* {isCustomer && (
-          <div className="rounded-md bg-green-400 text-white p-2 cursor-pointer">
-            <Plus size={22} onClick={goToCustomerPages} />
-          </div>
-        )} */}
       </div>
     </div>
   );

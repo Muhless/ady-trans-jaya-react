@@ -46,7 +46,7 @@ export const InputComponent: React.FC<InputComponentProps> = ({
   const inputClass = `p-2 rounded-md ${
     isLocationField || isTotalWeightField ? "w-[245px]" : "w-72"
   } focus:ring-biru focus:ring-2 focus:outline-none ${
-    disabled ? "bg-gray-300" : "bg-bg"
+    disabled ? "bg-blue-50 border-blue-500" : "bg-blue-50 border-blue-500"
   } ${listItem ? "w-[245px]" : ""} ${className || ""}`;
 
   return (

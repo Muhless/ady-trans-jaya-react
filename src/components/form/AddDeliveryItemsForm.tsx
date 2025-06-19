@@ -4,6 +4,7 @@ import TitleComponent from "../Title";
 import { useDeliveryItemStore } from "@/stores/deliveryItemStore";
 import useNavigationHooks from "@/hooks/useNavigation";
 import { useDeliveryStore } from "@/stores/deliveryStore";
+import { toast } from "sonner";
 
 interface DeliveryItem {
   item_name: string;
@@ -16,7 +17,9 @@ const AddDeliveryItemForm: React.FC = () => {
 
   const items = useDeliveryItemStore((state) => state.items);
   const addItems = useDeliveryItemStore((state) => state.addItems);
-  const resetDeliveryItems = useDeliveryItemStore((state) => state.resetDeliveryItems);
+  const resetDeliveryItems = useDeliveryItemStore(
+    (state) => state.resetDeliveryItems
+  );
 
   const handleChange = (
     index: number,
@@ -63,9 +66,8 @@ const AddDeliveryItemForm: React.FC = () => {
   };
 
   const handleReset = () => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus semua barang?")) {
-      resetDeliveryItems();
-    }
+    resetDeliveryItems();
+    toast.success("Data barang berhasil direset");
   };
 
   const validateItems = (): { isValid: boolean; errors: string[] } => {
@@ -113,7 +115,7 @@ const AddDeliveryItemForm: React.FC = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 bg-white p-6 rounded-lg shadow-sm"
+      className="space-y-6 bg-white p-6 rounded-md shadow-sm"
     >
       <div className="grid grid-cols-4 gap-4 pb-3 border-b border-gray-200 font-semibold text-gray-700">
         <div>Nama Barang</div>
@@ -131,7 +133,7 @@ const AddDeliveryItemForm: React.FC = () => {
           items.map((item, index) => (
             <div
               key={index}
-              className="grid grid-cols-4 gap-4 items-center p-4 bg-gray-50 rounded-lg"
+              className="grid grid-cols-4 gap-4 items-center p-4 bg-gray-50 rounded-md"
             >
               <input
                 type="text"
@@ -140,7 +142,7 @@ const AddDeliveryItemForm: React.FC = () => {
                 onChange={(e) =>
                   handleChange(index, "item_name", e.target.value)
                 }
-                className="border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="border border-gray-300 p-2 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               />
               <input
@@ -150,7 +152,7 @@ const AddDeliveryItemForm: React.FC = () => {
                 onChange={(e) =>
                   handleChange(index, "quantity", e.target.value)
                 }
-                className="border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="border border-gray-300 p-2 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               />
               <input
@@ -158,7 +160,7 @@ const AddDeliveryItemForm: React.FC = () => {
                 placeholder="Berat dalam kg"
                 value={item.weight || ""}
                 onChange={(e) => handleChange(index, "weight", e.target.value)}
-                className="border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="border border-gray-300 p-2 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
                 min="1"
                 step="1"
@@ -167,7 +169,7 @@ const AddDeliveryItemForm: React.FC = () => {
                 variant="delete"
                 type="button"
                 onClick={() => handleRemoveItem(index)}
-                className="p-3"
+                className="p-2"
               />
             </div>
           ))
@@ -185,7 +187,7 @@ const AddDeliveryItemForm: React.FC = () => {
       </div>
 
       {items.length > 0 && (
-        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+        <div className="bg-blue-50 p-4 rounded-md border border-blue-200">
           <div className="flex justify-between items-center text-sm">
             <span className="font-medium text-blue-800">
               Total Barang: {items.length} item
