@@ -6,13 +6,15 @@ import ConfirmDialog from "@/components/common/ConfirmDialog";
 
 type DownPaymentFormProps = {
   transaction: {
-    cost: number;
+    full_payment: number;
   };
   onSubmit: (data: { dp_amount: number }) => void;
 };
 
 const DownPaymentForm = ({ transaction, onSubmit }: DownPaymentFormProps) => {
-  const [dpAmount, setDpAmount] = useState<number>(transaction.cost / 2);
+  const [dpAmount, setDpAmount] = useState<number>(
+    transaction.full_payment / 2
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e?.preventDefault();
@@ -23,18 +25,20 @@ const DownPaymentForm = ({ transaction, onSubmit }: DownPaymentFormProps) => {
     <form
       id="payment-form"
       onSubmit={handleSubmit}
-      className="space-y-5 p-4 border rounded-md bg-white"
+      className="p-4 border rounded-xl bg-white space-y-5"
     >
-      <h2 className="text-2xl font-semibold text-center">Pembayaran</h2>
+      <h2 className="text-xl font-semibold text-center">Konfirmasi Pembayaran</h2>
       <div className="flex justify-evenly">
-        <div>
-          <label className="text-gray-600 text-sm">Total Biaya Transaksi</label>
+        <div className="flex flex-col items-center">
+          <label className="text-gray-600 text-sm">
+            Total Biaya Keseluruhan
+          </label>
           <p className="text-xl font-bold">
-            {formatCurrency(transaction.cost)}
+            {formatCurrency(transaction.full_payment)}
           </p>
         </div>
 
-        <div>
+        <div className="flex flex-col items-center">
           <label className=" text-gray-600 text-sm">Pembayaran Awal</label>
           <p className="text-xl font-bold">{formatCurrency(dpAmount)}</p>
         </div>
@@ -54,7 +58,7 @@ const DownPaymentForm = ({ transaction, onSubmit }: DownPaymentFormProps) => {
             const form = document.getElementById(
               "payment-form"
             ) as HTMLFormElement;
-            form?.requestSubmit(); 
+            form?.requestSubmit();
           }}
         />
       </div>

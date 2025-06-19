@@ -4,6 +4,7 @@ import {
   deleteTransaction,
   fetchTransactionById,
   updateTransaction,
+  updateTransactionStatus,
 } from "@/api/transaction";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
@@ -81,6 +82,7 @@ const DetailTransactionPages = () => {
       };
 
       await updateTransaction(transaction.id, updatePayload);
+      await updateTransactionStatus(transaction.id, "berjalan");
 
       toast.success("Pembayaran berhasil disimpan!");
       await refetch();
@@ -94,16 +96,9 @@ const DetailTransactionPages = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white">
-      <div className="flex justify-between items-start">
+    <div className="max-w-4xl mx-auto p-6">
+      <div className="text-center bg-white border mb-5 rounded-xl">
         <TitleComponent title="Detail Transaksi" />
-        <div
-          className={`w-32 text-center py-2 rounded-md text-sm font-bold ${getStatusClass(
-            transaction?.transaction_status
-          )}`}
-        >
-          {transaction?.transaction_status}
-        </div>
       </div>
 
       <TransactionInfoCard

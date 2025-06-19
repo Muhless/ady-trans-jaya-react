@@ -4,6 +4,7 @@ import {
   formatDateNumeric,
   getStatusClass,
 } from "../../../utils/Formatters";
+import { BoxIcon } from "lucide-react";
 
 type Delivery = {
   id: number;
@@ -30,14 +31,17 @@ const DeliveryInfoCard = ({ deliveries }: { deliveries: Delivery[] }) => {
   }
 
   return (
-    <div className="mb-8">
-      <h2 className="text-xl font-semibold mb-4">Daftar Pengiriman</h2>
+    <div className="bg-white rounded-xl border p-6 mb-8">
+      <div className="flex items-center gap-3 mb-4 border-b py-3">
+        <BoxIcon size={20} className="text-red-500" />
+        <h2 className="text-lg font-semibold">Daftar Pengiriman</h2>
+      </div>
       <div className="space-y-4">
         {deliveries.map((item, index) => (
           <div
             key={item.id}
             onClick={goToDetailDelivery(item.id)}
-            className="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm hover:cursor-pointer hover:bg-gray-200"
+            className="bg-gray-50 border rounded-lg p-4 shadow-sm hover:cursor-pointer hover:bg-gray-200"
           >
             <div className="flex justify-between items-start mb-4">
               <div>
@@ -47,7 +51,7 @@ const DeliveryInfoCard = ({ deliveries }: { deliveries: Delivery[] }) => {
                 <p className="font-bold">{item.delivery_code}</p>
               </div>
               <div
-                className={`px-6 flex justify-center py-2 rounded-full text-sm font-bold ${getStatusClass(
+                className={`px-10 flex justify-center py-2 rounded-md text-sm font-bold ${getStatusClass(
                   item.delivery_status
                 )}`}
               >
@@ -57,19 +61,25 @@ const DeliveryInfoCard = ({ deliveries }: { deliveries: Delivery[] }) => {
 
             <div className="grid grid-cols-3">
               <div>
-                <h4 className="text-muted-foreground text-sm">Tanggal Pengiriman</h4>
+                <h4 className="text-muted-foreground text-sm">
+                  Tanggal Pengiriman
+                </h4>
                 <p className="font-bold">
                   {formatDateNumeric(item.delivery_date) || "-"}
                 </p>
               </div>
               <div>
-                <h4 className="text-muted-foreground text-sm">Batas Pengiriman</h4>
+                <h4 className="text-muted-foreground text-sm">
+                  Batas Pengiriman
+                </h4>
                 <p className="font-bold">
                   {formatDateNumeric(item.delivery_deadline_date) || "-"}
                 </p>
               </div>
               <div>
-                <h4 className="text-muted-foreground text-sm">Biaya Pengiriman</h4>
+                <h4 className="text-muted-foreground text-sm">
+                  Biaya Pengiriman
+                </h4>
                 <p className="font-bold">
                   {formatCurrency(item.delivery_cost)}
                 </p>

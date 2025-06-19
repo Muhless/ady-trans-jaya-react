@@ -26,18 +26,29 @@ export const formatDateNumeric = (dateString: string) => {
   });
 };
 
-const statusClassMap: Record<string, string> = {
-  disetujui: "bg-green-100 text-green-800 border-green-300",
-  ditolak: "bg-red-100 text-red-800 border-red-300",
-  "menunggu konfirmasi pengemudi": "bg-orange-100 text-orange-800 border-orange-300",
-  "dalam pengiriman": "bg-blue-100 text-blue-800 border-blue-300",
-  "sampai tujuan": "bg-green-100 text-green-800 border-green-300",
-  diproses: "bg-orange-100 text-orange-800 border-orange-300",
-  berjalan: "bg-blue-100 text-blue-800 border-blue-300",
-  selesai: "bg-green-100 text-green-800 border-green-300",
-  dibatalkan: "bg-red-100 text-red-800 border-red-300",
+export const getStatusClass = (status: string): string => {
+  switch (status) {
+    case "disetujui":
+      return "bg-green-100 text-green-800 border-green-300";
+    case "ditolak":
+      return "bg-red-100 text-red-800 border-red-300";
+    case "menunggu konfirmasi pengemudi":
+      return "bg-orange-100 text-orange-800 border-orange-300";
+    case "dalam pengiriman":
+      return "bg-purple-100 text-purple-800 border-purple-300";
+    case "sampai tujuan":
+      return "bg-green-100 text-green-800 border-green-300";
+    case "tertunda":
+      return "bg-yellow-100 text-yellow-800 border-yellow-300";
+    case "diproses":
+      return "bg-purple-100 text-purple-800 border-purple-300";
+    case "berjalan":
+      return "bg-blue-100 text-blue-800 border-blue-300";
+    case "selesai":
+      return "bg-green-100 text-green-800 border-green-300";
+    case "dibatalkan":
+      return "bg-red-100 text-red-800 border-red-300";
+    default:
+      return "bg-yellow-100 text-yellow-800 border-yellow-300";
+  }
 };
-
-export const getStatusClass = (status: string): string =>
-  statusClassMap[status] || "bg-yellow-100 text-yellow-800 border-yellow-300";
-

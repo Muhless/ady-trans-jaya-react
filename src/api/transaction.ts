@@ -59,14 +59,12 @@ export const createTransaction = async (transactionData) => {
 };
 
 type UpdateTransactionPayload = {
-  cost?: number;
-
   down_payment?: number;
   down_payment_status?: string;
   down_payment_time?: string;
 
   full_payment?: number;
-  full_payment_status: string;
+  full_payment_status?: string;
   full_payment_time?: string;
 
   payment_deadline?: string;
@@ -89,6 +87,16 @@ export const updateTransaction = async (
       error.response?.data?.message || "Failed to update transaction"
     );
   }
+};
+
+export const updateTransactionStatus = async (id: number, status: string) => {
+  const response = await axios.patch(
+    `${API_BASE_URL}/transactions/${id}/status`,
+    {
+      transaction_status: status,
+    }
+  );
+  return response.data.data;
 };
 
 export const deleteTransaction = async (id) => {
