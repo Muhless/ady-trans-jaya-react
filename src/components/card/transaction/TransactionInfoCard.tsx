@@ -5,7 +5,6 @@ import {
   getStatusClass,
 } from "../../../../utils/Formatters";
 import PaymentForm from "./DownPaymentForm";
-import FullPaymentCard from "./FullPaymentForm";
 import FullPaymentForm from "./FullPaymentForm";
 
 type TransactionInfoCardProps = {
