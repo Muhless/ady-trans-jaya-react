@@ -12,19 +12,20 @@ type TableProps = {
   data?: { id: string | number; [key: string]: any }[];
   onRowClick?: (row: any) => void;
   onDelete?: (id: number) => void;
+  onEdit?: (id: number) => void;
   showActions?: boolean;
   columns?: ColumnConfig[];
   classNameTH?: string;
   classNameTD?: string;
-  // Tambahkan props untuk pagination
   currentPage?: number;
   itemsPerPage?: number;
-  startIndex?: number; // Alternatif: langsung pass startIndex
+  startIndex?: number;
 };
 
 const TableComponent: React.FC<TableProps> = ({
   data = [],
   onRowClick,
+  onEdit,
   onDelete,
   showActions = false,
   columns,
@@ -32,7 +33,7 @@ const TableComponent: React.FC<TableProps> = ({
   classNameTD,
   currentPage = 1,
   itemsPerPage = 5,
-  startIndex, 
+  startIndex,
 }) => {
   const headers = data.length > 0 ? Object.keys(data[0]) : [];
   const displayHeaders =
@@ -45,7 +46,6 @@ const TableComponent: React.FC<TableProps> = ({
             label: key.charAt(0).toUpperCase() + key.slice(1),
           }));
 
-  // Hitung starting number untuk kolom "No"
   const getRowNumber = (rowIndex: number) => {
     if (startIndex !== undefined) {
       return startIndex + rowIndex + 1;
@@ -59,15 +59,15 @@ const TableComponent: React.FC<TableProps> = ({
         <thead>
           <tr className="text-center border-b">
             {displayHeaders.length > 0 && (
-              <th className={`${classNameTH} text-base`}>No</th>
+              <th className={`${classNameTH} text-base bg-gray-50`}>No</th>
             )}
             {displayHeaders.map(({ label }, index) => (
-              <th key={index} className={`${classNameTH} text-base`}>
+              <th key={index} className={`${classNameTH} text-base bg-gray-50`}>
                 {label}
               </th>
             ))}
             {showActions && (
-              <th className={`${classNameTH} text-base`}>Aksi</th>
+              <th className={`${classNameTH} text-base bg-gray-50`}>Aksi</th>
             )}
           </tr>
         </thead>
@@ -93,7 +93,6 @@ const TableComponent: React.FC<TableProps> = ({
                 onClick={() => onRowClick?.(row)}
                 className="transition-all duration-200 hover:bg-sky-100 cursor-pointer text-center"
               >
-                {/* FIX: Gunakan getRowNumber untuk menghitung nomor yang benar */}
                 <td className={`${classNameTD} border-b`}>
                   {getRowNumber(rowIndex)}
                 </td>
@@ -108,7 +107,8 @@ const TableComponent: React.FC<TableProps> = ({
                       ) ? (
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusClass(
-                            row[key])}`}
+                            row[key]
+                          )}`}
                         >
                           {row[key]?.charAt(0).toUpperCase() +
                             row[key]?.slice(1)}
@@ -129,7 +129,7 @@ const TableComponent: React.FC<TableProps> = ({
                         variant="edit"
                         onClick={(e) => {
                           e.stopPropagation();
-                          onRowClick?.(row);
+                          onEdit?.(Number(row.id));
                         }}
                       />
                       <ButtonComponent

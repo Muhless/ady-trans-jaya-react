@@ -37,8 +37,8 @@ const OnGoingDeliveryCard = () => {
         <DeliveryTable
           deliveries={onGoingDelivery}
           loading={isLoading}
-          classNameTH="text-sm py-2"
-          classNameTD="py-4"
+          classNameTH="text-sm border-t p-3 bg-gray-100"
+        classNameTD="p-3"
           error={isError}
           limit={5}
           columns={[

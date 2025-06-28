@@ -36,16 +36,14 @@ const WaitingDeliveryCard = () => {
       <div className="p-3 flex-1 overflow-hidden">
         <DeliveryTable
           deliveries={onGoingDelivery}
-          classNameTH="text-sm py-2"
-          classNameTD="py-4"
+        classNameTH="text-sm border-t p-3 bg-gray-100"
+        classNameTD="p-3"
           loading={isLoading}
           error={isError}
           limit={5}
           columns={[
             { key: "pickup_address", label: "Alamat" },
-            { key: "formattedDeliveryDate", label: "Tanggal Pengiriman" },
             { key: "destination_address", label: "Tujuan" },
-            { key: "formattedDeliveryDeadlineDate", label: "Batas Pengiriman" },
             { key: "delivery_status", label: "Status" },
           ]}
           showActions={false}

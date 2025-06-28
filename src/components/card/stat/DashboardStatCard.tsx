@@ -31,12 +31,27 @@ const DashboardStats = () => {
         const deliveries = await fetchDeliveries();
         const transactions = await fetchTransactions();
 
+        const availableDrivers = drivers.filter((d) => d.status === "tersedia");
+        const availableVehicles = vehicles.filter(
+          (v) => v.status === "tersedia"
+        );
+
+        const activeDeliveries = deliveries.filter(
+          (d) =>
+            d.delivery_status === "dalam pengiriman" ||
+            d.delivery_status === "menunggu pengemudi"
+        );
+
+        const activeTransactions = transactions.filter(
+          (t) => t.transaction_status === "berjalan"
+        );
+
         setCounts({
-          drivers: drivers.length,
+          drivers: availableDrivers.length,
           customers: customers.length,
-          vehicles: vehicles.length,
-          deliveries: deliveries.length,
-          transactions: transactions.length,
+          vehicles: availableVehicles.length,
+          deliveries: activeDeliveries.length,
+          transactions: activeTransactions.length,
         });
       } catch (error) {
         console.error("Gagal memuat data:", error);
@@ -76,9 +91,6 @@ const DashboardStats = () => {
 
   return (
     <>
-      {/* <div className="flex justify-end">
-        <Filter size={20} />
-      </div> */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {stats.map((item, idx) => (
           <div

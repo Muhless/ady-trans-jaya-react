@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from "react";
-import SearchInput from "../../components/input/Search.tsx";
 import Title from "../../components/Title.js";
-import ButtonComponent from "../../components/button/Index.tsx";
-import TableComponent from "../../components/table/index.tsx";
-import Card from "../../components/card/index.tsx";
-import Modal from "../../components/modal/Modal.tsx";
+import ButtonComponent from "../../components/button/Index";
+import TableComponent from "../../components/table/index";
+import Card from "../../components/card/index";
+import Modal from "../../components/modal/Modal";
 import axios from "axios";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { API_BASE_URL } from "../../apiConfig.ts";
-import Spinner from "../../components/Spinner.tsx";
 import {
   addCustomer,
   deleteCustomer,
   fetchCustomers,
-} from "../../api/customer.ts";
-import AddCustomerForm from "../../components/form/AddCustomerForm.tsx";
+} from "../../api/customer";
+import Spinner from "@/components/Spinner.js";
+import SearchInput from "@/components/input/Search.js";
+import AddCustomerForm from "@/components/form/AddCustomerForm.js";
+import useNavigationHooks from "@/hooks/useNavigation.js";
+import { id } from "date-fns/locale";
 
 const modalInput = [
   { name: "name", label: "Nama", type: "text" },
@@ -38,10 +39,7 @@ function CustomerPages() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const handleRowClick = (row: any) => {
-    console.log("Row Clicked", row);
-  };
+  const { goToCustomerDetailPages } = useNavigationHooks();
 
   useEffect(() => {
     const fetchCustomersData = async () => {
@@ -70,18 +68,6 @@ function CustomerPages() {
     } catch (error: any) {
       console.error("Gagal menyimpan data:", error);
       setError(error.message || "Gagal menyimpan data pelanggan");
-    }
-  };
-
-  const handleDelete = async (id: number) => {
-    if (!confirm("Yakin ingin menghapus data pelanggan ini ?")) return;
-
-    try {
-      await deleteCustomer(id);
-      setCustomers((prev) => prev.filter((v) => v.id !== id));
-    } catch (error) {
-      console.error("Gagal hapus data pelanggan:", error);
-      setError("Gagal menghapus data pelanggan");
     }
   };
 
@@ -119,8 +105,8 @@ function CustomerPages() {
         <div className="text-center text-red-600 p-5">Error loading data</div>
       ) : (
         <TableComponent
-        classNameTH="p-3"
-        classNameTD="p-3"
+          classNameTH="p-3"
+          classNameTD="p-4"
           data={customers}
           columns={[
             { key: "name", label: "Nama" },
@@ -129,9 +115,7 @@ function CustomerPages() {
             { key: "phone", label: "Nomor Telepon" },
             { key: "address", label: "Alamat" },
           ]}
-          onRowClick={handleRowClick}
-          showActions={true}
-          onDelete={handleDelete}
+          onRowClick={(row) => goToCustomerDetailPages(row.id)}
         />
       )}
       <Modal

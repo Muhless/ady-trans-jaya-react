@@ -15,7 +15,16 @@ const useNavigationHooks = () => {
         console.warn("ID tidak tersedia");
       }
     },
+    // customer
     goToCustomerPages: () => navigate("/customer"),
+    goToCustomerDetailPages: (id:number) => {
+      if (id) {
+        navigate(`/customer/${id}`);
+      } else {
+        console.warn("ID tidak ditemukan");
+      }
+    },
+    // vehicle
     goToVehiclePages: () => navigate("/vehicle"),
     // transaction
     goToTransactionPages: () => navigate("/transaction"),

@@ -17,6 +17,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import DriverDetailPage from "../features/driver/DetailDriver";
 import DeliveryMap from "../features/delivery/DeliveryMap";
 import AddDeliveryItemPages from "@/features/delivery/AddDeliveryItemPages";
+import CustomerDetailPages from "@/features/customer/CustomerDetails";
 
 export default function AppRoutes() {
   return (
@@ -43,14 +44,16 @@ export default function AppRoutes() {
             path="driver/:id"
             element={<ProtectedRoute element={<DriverDetailPage />} />}
           />
+          {/* customer */}
           <Route
             path="customer"
             element={<ProtectedRoute element={<CustomerPages />} />}
           />
           <Route
-            path="rent"
-            element={<ProtectedRoute element={<RentalPages />} />}
+            path="customer/:id"
+            element={<ProtectedRoute element={<CustomerDetailPages />} />}
           />
+          {/* end customer */}
           <Route
             path="delivery"
             element={<ProtectedRoute element={<DeliveryPages />} />}

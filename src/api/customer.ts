@@ -6,6 +6,11 @@ export const fetchCustomers = async () => {
   return response.data.data;
 };
 
+export const fetchCustomerById = async (id: number) => {
+  const response = await axios.get(`${API_BASE_URL}/customer/${id}`);
+  return response.data.data;
+};
+
 export const searchCustomer = async (query: string) => {
   const response = await axios.get(`${API_BASE_URL}/customers`, {
     params: { search: query },
