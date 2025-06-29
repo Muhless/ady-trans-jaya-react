@@ -24,7 +24,7 @@ export const addCustomer = async (data: Record<string, any>) => {
 };
 
 export const updateCustomer = async (id: number, data: Record<string, any>) => {
-  const response = await axios.put(`${API_BASE_URL}/customer/${id}`, data);
+  const response = await axios.patch(`${API_BASE_URL}/customer/${id}`, data);
   return response.data.data;
 };
 

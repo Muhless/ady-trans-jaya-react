@@ -1,4 +1,4 @@
-import { fetchCustomerById } from "@/api/customer";
+import { fetchCustomerById, updateCustomer } from "@/api/customer";
 import TransactionTable from "@/components/table/TransactionTable";
 import TitleComponent from "@/components/Title";
 import { useQuery } from "@tanstack/react-query";
@@ -14,18 +14,30 @@ import {
   AlertCircle,
 } from "lucide-react";
 import ButtonComponent from "@/components/button/Index";
-
-type Customer = {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  company?: string;
-  address?: string;
-};
+import { Customer, useCustomers } from "@/hooks/useCustomers";
+import { API_BASE_URL } from "@/apiConfig";
+import useNavigationHooks from "@/hooks/useNavigation";
+import ConfirmDialog from "@/components/common/ConfirmDialog";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import Modal from "@/components/modal/Modal";
+import CustomerForm, {
+  CustomerFormData,
+} from "@/components/form/CustomerModalForm";
+import { toast } from "sonner";
 
 const CustomerDetailPages = () => {
   const { id } = useParams();
+  const customerId = parseInt(id || "0");
+  const { goBack } = useNavigationHooks();
+  const {
+    customers,
+    error,
+    deleteCustomerById,
+    setError,
+    setLoading,
+    setCustomers,
+  } = useCustomers();
 
   const {
     data: customer,
@@ -37,7 +49,80 @@ const CustomerDetailPages = () => {
     enabled: !!id,
   });
 
-  const customerId = parseInt(id || "0");
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
+    null
+  );
+  const [mode, setMode] = useState<"add" | "edit">("add");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleEditCustomer = () => {
+    if (customer) {
+      setSelectedCustomer(customer);
+      setMode("edit");
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleSubmitEdit = async (formData: CustomerFormData) => {
+    if (!selectedCustomer) {
+      toast.error("Customer tidak ditemukan");
+      return;
+    }
+
+    try {
+      setLoading?.(true);
+      setError?.(null);
+
+      const updatedCustomer = await updateCustomer(
+        selectedCustomer.id,
+        formData
+      );
+
+      setCustomers((prev) =>
+        prev.map((customer) =>
+          customer.id === selectedCustomer.id ? updatedCustomer : customer
+        )
+      );
+
+      setIsModalOpen(false);
+      setSelectedCustomer(null);
+
+      toast.success("Data customer berhasil diperbarui");
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error: any) {
+      const message =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        error.message ||
+        "Gagal memperbarui data customer";
+
+      setError?.(message);
+      console.error("Gagal mengedit customer:", message);
+      toast.error(message);
+    } finally {
+      setLoading?.(false);
+    }
+  };
+
+  const handleDeleteCustomer = async (id: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/customer/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Gagal menghapus data pelanggan");
+      }
+
+      goBack();
+    } catch (error) {
+      console.error(error);
+      alert("Terjadi kesalahan saat menghapus data pelanggan.");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -118,9 +203,22 @@ const CustomerDetailPages = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex space-x-2"> 
-                    <ButtonComponent variant="edit" className="p-3"/>
-                    <ButtonComponent variant="delete" className="p-3"/>
+                  <div className="flex space-x-2">
+                    <ButtonComponent
+                      variant="edit"
+                      className="p-3"
+                      onClick={handleEditCustomer}
+                    />
+                    <ConfirmDialog
+                      trigger={
+                        <ButtonComponent variant="delete" className="p-3" />
+                      }
+                      title="Hapus Data Pelanggan?"
+                      description="Yakin ingin menghapus data pelanggan ini?"
+                      confirmText="Ya, Hapus"
+                      cancelText="Batal"
+                      onConfirm={() => customer?.id && handleDeleteCustomer(id)}
+                    />
                   </div>
                 </div>
 
@@ -227,6 +325,22 @@ const CustomerDetailPages = () => {
           </div>
         )}
       </div>
+      <Modal
+        title="Customer"
+        isOpen={isModalOpen}
+        mode="edit"
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedCustomer(null);
+        }}
+      >
+        <CustomerForm
+          onSubmit={handleSubmitEdit}
+          defaultValues={selectedCustomer || {}}
+          onReset={() => setSelectedCustomer(null)}
+          mode={mode}
+        />
+      </Modal>
     </div>
   );
 };

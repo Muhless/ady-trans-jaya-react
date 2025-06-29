@@ -1,16 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import {
-  User,
-  MapPin,
-  Calendar,
-  Award,
-  CheckCircle,
-  XCircle,
-  ArrowLeft,
-  Trash2,
-} from "lucide-react";
+import { CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import ButtonComponent from "../../components/button/Index";
 import useNavigationHooks from "../../hooks/useNavigation";
 import { API_BASE_URL } from "../../apiConfig";
@@ -19,7 +10,6 @@ import UserIconComponent from "../../components/UserIcon";
 import { getFullImageUrl } from "../../../utils/imageHelper";
 import DeliveryHistoryCard from "../../components/card/DeliveryHistoryCard";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
-import { Button } from "@/components/ui/button";
 import Modal from "@/components/modal/Modal";
 import { addDriver, updateDriver } from "@/api/driver";
 import { Driver, useDrivers } from "@/hooks/useDrivers";
@@ -37,7 +27,7 @@ interface DeliveryHistory {
 
 function DriverDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { goBack } = useNavigationHooks();
+  const { goBack, goToDetailDelivery } = useNavigationHooks();
   const { drivers, setDrivers, loading, error, setError } = useDrivers();
 
   const fetchDriverDetails = async (id: string) => {
@@ -145,27 +135,6 @@ function DriverDetailPage() {
           <ArrowLeft size={20} />
         </button>
         <h1 className="text-2xl font-bold text-gray-800">Detail Pengemudi</h1>
-
-        <div className="ml-auto flex space-x-2">
-          <ButtonComponent
-            label="Ubah"
-            variant="edit"
-            className="rounded-md w-32"
-            onClick={handleEdit}
-          />
-          <ConfirmDialog
-            trigger={
-              <Button variant="destructive" className="w-32">
-                <Trash2 /> Hapus
-              </Button>
-            }
-            title="Hapus Data Pengemudi?"
-            description="Yakin ingin menghapus data pengemudi ini?"
-            confirmText="Ya, Hapus"
-            cancelText="Batal"
-            onConfirm={() => driver?.id && deleteDriver(driver.id.toString())}
-          />
-        </div>
       </div>
 
       <div className="grid grid-cols-3 bg-white rounded-md border">
@@ -187,9 +156,28 @@ function DriverDetailPage() {
         <div className="p-10 col-span-2">
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold mb-4 pb-2 border-b border-gray-100">
-                Informasi Driver
-              </h3>
+              <div className="flex border-b justify-between items-center pb-2 mb-2">
+                <h3 className="text-lg font-semibold">Informasi Driver</h3>
+                <div className="ml-auto flex space-x-2">
+                  <ButtonComponent
+                    variant="edit"
+                    className="p-3"
+                    onClick={handleEdit}
+                  />
+                  <ConfirmDialog
+                    trigger={
+                      <ButtonComponent variant="delete" className="p-3" />
+                    }
+                    title="Hapus Data Pengemudi?"
+                    description="Yakin ingin menghapus data pengemudi ini?"
+                    confirmText="Ya, Hapus"
+                    cancelText="Batal"
+                    onConfirm={() =>
+                      driver?.id && deleteDriver(driver.id.toString())
+                    }
+                  />
+                </div>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2">
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Nama Lengkap</p>
@@ -243,6 +231,7 @@ function DriverDetailPage() {
                 deliveries={deliveries}
                 isLoading={isLoadingDeliveries}
                 isError={isErrorDeliveries}
+                onClick={goToDetailDelivery}
               />
             </div>
           </div>

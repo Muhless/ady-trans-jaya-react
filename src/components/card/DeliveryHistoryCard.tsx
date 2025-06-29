@@ -1,36 +1,7 @@
-import { Calendar, MapPin, Award } from "lucide-react";
-import { formatDate, getStatusClass } from "../../../utils/Formatters";
+import { Award } from "lucide-react";
+import DriverHistoryCard from "./driver/DriverHistoryCard";
 
-const DeliveryCard = ({ delivery }) => {
-  return (
-    <div className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="text-lg font-medium">
-            {delivery.load_type}: {delivery.load}
-          </p>
-          <div className="flex items-center mt-1 text-sm text-gray-500">
-            <MapPin size={14} className="mr-1" />
-            {delivery.destination_address}
-          </div>
-          <div className="flex items-center mt-1 text-sm text-gray-500">
-            <Calendar size={14} className="mr-1" />
-            {formatDate(delivery.delivery_date)}
-          </div>
-        </div>
-        <span
-          className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusClass(
-            delivery.delivery_status
-          )}`}
-        >
-          {delivery.delivery_status}
-        </span>
-      </div>
-    </div>
-  );
-};
-
-const DeliveryHistoryCard = ({ deliveries, isLoading, isError }) => {
+const DeliveryHistoryCard = ({ deliveries, isLoading, isError, onClick }) => {
   if (isError) {
     return (
       <div className="bg-red-50 p-4 rounded-lg text-red-600">
@@ -41,12 +12,12 @@ const DeliveryHistoryCard = ({ deliveries, isLoading, isError }) => {
 
   if (isLoading) return null;
 
-  const filteredDeliveries = deliveries?.filter(
-    (d) => d.delivery_status.toLowerCase() !== "menunggu persetujuan"
-  );
+  const filteredDeliveries =
+    deliveries?.filter(
+      (d) => d.delivery_status?.toLowerCase() !== "menunggu persetujuan"
+    ) || [];
 
-  const noData =
-    !deliveries || deliveries.length === 0 || filteredDeliveries.length === 0;
+  const noData = filteredDeliveries.length === 0;
 
   return (
     <div>
@@ -62,9 +33,13 @@ const DeliveryHistoryCard = ({ deliveries, isLoading, isError }) => {
           </div>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-1">
           {filteredDeliveries.map((delivery) => (
-            <DeliveryCard key={delivery.id} delivery={delivery} />
+            <DriverHistoryCard
+              key={delivery.id}
+              delivery={delivery}
+              onClick={onClick?.(delivery.id)}
+            />
           ))}
         </div>
       )}
