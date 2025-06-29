@@ -72,6 +72,16 @@ export default {
       },
     },
   },
-  safelist: ["bg-yellow-100", "text-yellow-800", "border-yellow-300", "bg-purple-100", "text-purple-800", "border-purple-300"],
+  safelist: [
+    "bg-yellow-100",
+    "text-yellow-800",
+    "border-yellow-300",
+    "bg-purple-100",
+    "text-purple-800",
+    "border-purple-300",
+    "bg-lime-100",
+    "text-lime-800",
+    "border-lime-300",
+  ],
   plugins: [import("tailwindcss-animate")],
 };

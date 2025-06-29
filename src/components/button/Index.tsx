@@ -2,9 +2,11 @@ import {
   ArrowRightIcon,
   Check,
   Edit,
+  Eye,
   LucideRepeat2,
   MapPinPlus,
   Plus,
+  Printer,
   Save,
   Trash2,
   Undo2,
@@ -27,7 +29,9 @@ type ButtonComponentProps = {
     | "undo"
     | "next"
     | "approve"
-    | "reject";
+    | "reject"
+    | "print"
+    | "preview";
   icon?: React.ReactNode;
   className?: string;
   type?: "button" | "submit" | "reset";
@@ -62,6 +66,8 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonComponentProps>(
       next: "bg-green-600 hover:bg-green-700",
       approve: "bg-green-600 hover:bg-green-700",
       reject: "bg-red-600 hover:bg-red-700",
+      print: "bg-sky-600 hover:bg-sky-700 ",
+      preview: "bg-yellow-500 hover:bg-yellow-600",
     };
 
     const icons = {
@@ -75,6 +81,8 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonComponentProps>(
       next: <ArrowRightIcon size={18} />,
       approve: <Check size={18} />,
       reject: <X size={18} />,
+      print: <Printer size={18} />,
+      preview: <Eye size={18} />,
     };
 
     const navigate = useNavigate();

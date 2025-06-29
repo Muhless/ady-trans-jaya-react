@@ -322,11 +322,12 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         ...delivery,
         driver_id: Number(delivery.driver_id),
         vehicle_id: Number(delivery.vehicle_id),
+        load_type: delivery.load_type,
+        total_item: items.length,
+        total_weight: totalWeight,
         delivery_date: formattedDeliveryDate,
         delivery_deadline_date: formattedDeliveryDeadlineDate,
         delivery_status: "menunggu persetujuan",
-        total_item: items.length,
-        total_weight: totalWeight,
         delivery_code: generateDeliveryCode(),
         items: items,
       };
@@ -465,20 +466,17 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         value={formData.load_type}
         onChange={handleChange}
         options={[
-          {
-            value: "Barang Konsumen",
-            label: "Barang Konsumen",
-          },
-          { value: "Material Bangunan", label: "Material Bangunan" },
-          { value: "Barang Industri", label: "Barang Industri" },
-          { value: "Hasil Pertanian", label: "Hasil Pertanian" },
-          { value: "Ternak", label: "Ternak" },
-          { value: "Bahan Kimia", label: "Bahan Kimia" },
-          { value: "Elektronik", label: "Elektronik" },
-          { value: "Furniture", label: "Furniture" },
-          { value: "Suku Cadang Otomotif", label: "Suku Cadang Otomotif" },
-          { value: "Limbah / Barang Bekas", label: "Limbah / Barang Bekas" },
-          { value: "Lainnya", label: "Lainnya" },
+          { value: "barang konsumen", label: "Barang Konsumen" },
+          { value: "material bangunan", label: "Material Bangunan" },
+          { value: "barang industri", label: "Barang Industri" },
+          { value: "hasil Pertanian", label: "Hasil Pertanian" },
+          { value: "ternak", label: "Ternak" },
+          { value: "bahan kimia", label: "Bahan Kimia" },
+          { value: "elektronik", label: "Elektronik" },
+          { value: "furniture", label: "Furniture" },
+          { value: "suku cadang otomotif", label: "Suku Cadang Otomotif" },
+          { value: "limbah / barang bekas", label: "Limbah / Barang Bekas" },
+          { value: "lainnya", label: "Lainnya" },
         ]}
       />
 

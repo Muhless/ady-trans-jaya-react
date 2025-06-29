@@ -6,7 +6,6 @@ export type Transaction = {
   id?: number;
   customer_id: number | null;
   total_delivery: number;
-  cost: number | null;
   payment_deadline: string | null;
   down_payment: number | null;
   down_payment_status: string;
@@ -55,7 +54,6 @@ export const initialTransaction: Transaction = {
   id: undefined,
   customer_id: null,
   total_delivery: 0,
-  cost: 0,
   payment_deadline: null,
   down_payment: null,
   down_payment_status: "belum dibayar",
@@ -99,7 +97,6 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
 
   addDeliveryToTransaction: (delivery) =>
     set((state) => {
-      // Generate transaction ID jika belum ada
       const transactionId =
         state.transaction.id || get().generateTransactionId();
 
@@ -109,7 +106,6 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
           id: transactionId,
           deliveries: [...state.transaction.deliveries, delivery],
           total_delivery: state.transaction.total_delivery + 1,
-          cost: state.transaction.cost + (delivery.delivery_cost || 0),
         },
       };
     }),
@@ -138,7 +134,6 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
               id: transactionId,
               deliveries: [...state.transaction.deliveries, delivery],
               total_delivery: state.transaction.total_delivery + 1,
-              cost: state.transaction.cost + (delivery.delivery_cost || 0),
             },
           };
         });
@@ -256,7 +251,6 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
         ...stateBefore.transaction,
         deliveries: filtered,
         total_delivery: filtered.length,
-        cost: newCost,
       },
     });
   },

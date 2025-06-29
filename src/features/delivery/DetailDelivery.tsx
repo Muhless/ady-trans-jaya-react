@@ -86,13 +86,6 @@ const DetailDeliveryPage = () => {
           />
         </div>
       </div>
-      <div className="mt-4 flex justify-end space-x-4">
-        <ButtonComponent
-          label="Kembali"
-          variant="back"
-          className="h-full w-48"
-        />
-      </div>
     </>
   );
 };

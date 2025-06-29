@@ -6,7 +6,7 @@ const useNavigationHooks = () => {
   return {
     goBack: () => navigate(-1),
     goToHome: () => navigate("/"),
-    goToLginPage: () => navigate("/login"),
+    goToLoginPage: () => navigate("/login"),
     goToDriverPages: () => navigate("/driver"),
     goToDriverDetails: (id: number) => () => {
       if (id) {

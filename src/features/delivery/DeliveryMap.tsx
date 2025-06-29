@@ -21,9 +21,7 @@ const DeliveryMap: React.FC = () => {
   useEffect(() => {
     const fetchDelivery = async () => {
       try {
-        const res = await fetch(
-          `${API_BASE_URL}/delivery/${id}`
-        );
+        const res = await fetch(`${API_BASE_URL}/delivery/${id}`);
         if (!res.ok) throw new Error(`HTTP ${res.status} - ${res.statusText}`);
         const json = await res.json();
         const delivery = json.data;
@@ -46,12 +44,15 @@ const DeliveryMap: React.FC = () => {
 
   useEffect(() => {
     if (!pickupCoords || !destinationCoords || !mapContainerRef.current) return;
-
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/streets-v11",
       center: pickupCoords,
       zoom: 12,
+      maxBounds: [
+        [95.0, -11.0],
+        [141.0, 6.1],
+      ],
     });
 
     mapRef.current = map;
@@ -69,9 +70,9 @@ const DeliveryMap: React.FC = () => {
 
       const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${pickupCoords.join(
         ","
-      )};${destinationCoords.join(",")}?geometries=geojson&overview=full&access_token=${
-        mapboxgl.accessToken
-      }`;
+      )};${destinationCoords.join(
+        ","
+      )}?geometries=geojson&overview=full&access_token=${mapboxgl.accessToken}`;
 
       try {
         const response = await fetch(directionsUrl);
@@ -83,7 +84,7 @@ const DeliveryMap: React.FC = () => {
           data: {
             type: "Feature",
             geometry: route,
-            properties:{}
+            properties: {},
           },
         });
 
@@ -101,7 +102,6 @@ const DeliveryMap: React.FC = () => {
           },
         });
 
-        // Fit map to route
         const coordinates = route.coordinates;
         const bounds = coordinates.reduce(
           (b, coord) => b.extend(coord),
@@ -121,10 +121,9 @@ const DeliveryMap: React.FC = () => {
   return (
     <div
       ref={mapContainerRef}
-      className="absolute z-0 w-full"
+      className="absolute z-0 w-full flex items-center h-full"
       style={{
-        height: "100vh",
-        width: "100%",
+        height: "90vh",
         borderRadius: "10px",
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
       }}

@@ -15,6 +15,8 @@ import { addDriver, updateDriver } from "@/api/driver";
 import { Driver, useDrivers } from "@/hooks/useDrivers";
 import DriverForm, { DriverFormData } from "@/components/form/DriverForm";
 import { toast } from "sonner";
+import ButtonBack from "@/components/button/ButtonBack";
+import TitleComponent from "@/components/Title";
 
 interface DeliveryHistory {
   id: string;
@@ -126,16 +128,8 @@ function DriverDetailPage() {
   const photoUrl = getFullImageUrl(driver?.photo);
 
   return (
-    <div className="py-5">
-      <div className="flex items-center mb-6">
-        <button
-          onClick={() => goBack()}
-          className="mr-4 rounded-full hover:bg-gray-200 transition-colors"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <h1 className="text-2xl font-bold text-gray-800">Detail Pengemudi</h1>
-      </div>
+    <div>
+      <TitleComponent title="Detail Pengemudi" />
 
       <div className="grid grid-cols-3 bg-white rounded-md border">
         <div className="col-span-1 p-10 border-r">
