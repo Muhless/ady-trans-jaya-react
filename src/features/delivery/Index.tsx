@@ -8,6 +8,9 @@ import DateRangePicker from "@/components/common/DateRangePicker";
 import { useFilterHandlers } from "@/handlers/transactionHandlers";
 import { useMemo } from "react";
 import useSorting from "@/hooks/useSorting";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
+import { formatDateNumeric } from "../../../utils/Formatters";
 
 function DeliveryPages() {
   const {
@@ -74,15 +77,26 @@ function DeliveryPages() {
   const filteredDelivery = useMemo(() => {
     if (!searchTerm) return sortedDeliveries;
 
-    return sortedDeliveries.filter(
-      (delivery) =>
-        delivery.description
-          ?.toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        delivery.amount?.toString().includes(searchTerm) ||
-        delivery.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        delivery.type?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const term = searchTerm.toLowerCase();
+
+    return sortedDeliveries.filter((delivery) => {
+      const formattedDeliveryDate = formatDateNumeric(
+        delivery.delivery_date || ""
+      ).toLowerCase();
+      const formattedDeadlineDate = formatDateNumeric(
+        delivery.delivery_deadline_date || ""
+      ).toLowerCase();
+      return sortedDeliveries.filter(
+        (delivery) =>
+          delivery.transaction.customer.name?.toLowerCase().includes(term) ||
+          delivery.destination_address?.toLowerCase().includes(term) ||
+          delivery.driver?.name?.toLowerCase().includes(term) ||
+          delivery.vehicle.name?.toLowerCase().includes(term) ||
+          formattedDeliveryDate.includes(term) ||
+          formattedDeadlineDate.includes(term) ||
+          delivery.delivery_status?.toLowerCase().includes(term)
+      );
+    });
   }, [sortedDeliveries, searchTerm]);
 
   return (
@@ -102,7 +116,10 @@ function DeliveryPages() {
           onClear={clearDateFilter}
           buttonWidth="w-44"
         />
-        <SearchInput placeholder={"pengiriman"} onChange={handleSearchChange} />
+        <SearchInput
+          placeholder={"pengiriman"}
+          onChange={(e) => handleSearchChange(e.target.value)}
+        />
       </div>
       {isLoading ? (
         <div className="text-center p-5">Loading...</div>

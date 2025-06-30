@@ -357,14 +357,14 @@ const AddTransactionForm = () => {
           });
         }}
       />
-      <InputComponent
+      {/* <InputComponent
         label="Total"
         disabled
         className="w-96"
         name="cost"
         value={formatCurrency(transaction.cost)}
         onChange={handleChange}
-      />
+      /> */}
       <div className="flex w-full gap-3 py-4">
         <ConfirmDialog
           trigger={

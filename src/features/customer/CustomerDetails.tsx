@@ -43,6 +43,7 @@ const CustomerDetailPages = () => {
     data: customer,
     isLoading,
     isError,
+    refetch,
   } = useQuery({
     queryKey: ["customer", id],
     queryFn: () => fetchCustomerById(Number(id)),
@@ -86,12 +87,8 @@ const CustomerDetailPages = () => {
 
       setIsModalOpen(false);
       setSelectedCustomer(null);
-
+      refetch;
       toast.success("Data customer berhasil diperbarui");
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
     } catch (error: any) {
       const message =
         error.response?.data?.error ||

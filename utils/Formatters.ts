@@ -38,12 +38,12 @@ export const getStatusClass = (status: string): string => {
       return "bg-purple-100 text-purple-800 border-purple-300";
     case "berjalan":
       return "bg-blue-100 text-blue-800 border-blue-300";
+    case "menunggu pelunasan":
+      return "bg-lime-100 text-lime-800 border-lime-300";
     case "menunggu pengemudi":
       return "bg-purple-100 text-purple-800 border-purple-300";
     case "dalam pengiriman":
       return "bg-blue-100 text-blue-800 border-blue-300";
-    case "sampai tujuan":
-      return "bg-green-100 text-green-800 border-green-300";
     case "selesai":
       return "bg-green-100 text-green-800 border-green-300";
     case "dibatalkan":

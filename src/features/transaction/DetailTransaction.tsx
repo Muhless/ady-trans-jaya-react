@@ -95,9 +95,29 @@ const DetailTransactionPages = () => {
     }
   };
 
+  const handleFullPaymentSubmit = async () => {
+    try {
+      const updatePayload = {
+        full_payment_status: "lunas",
+        full_payment_time: new Date().toISOString(),
+        transaction_status: "selesai",
+      };
+
+      await updateTransaction(transaction.id, updatePayload);
+      toast.success("Pelunasan berhasil disimpan!");
+      await refetch();
+    } catch (err: any) {
+      console.error("Error updating full payment:", err);
+      toast.error("Gagal menyimpan pelunasan", {
+        description:
+          err?.response?.data?.message || err.message || "Unknown error",
+      });
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <div className="text-center bg-white border mb-5 rounded-xl">
+      <div className="text-center bg-white border mb-5 rounded-xl flex items-center justify-center">
         <TitleComponent title="Detail Transaksi" />
       </div>
 
@@ -105,23 +125,17 @@ const DetailTransactionPages = () => {
         transaction={transaction}
         approvedCost={approvedCost}
         onDownPaymentSubmit={handleDownPaymentSubmit}
+        fullPaymentHandleSubmit={handleFullPaymentSubmit}
       />
 
       <CustomerInfoCard customer={transaction.customer} />
 
       <DeliveryInfoCard deliveries={transaction.delivery} />
 
+      {/* TODO: To Be deleted  */}
       <div className="flex justify-end gap-3">
-        <ButtonComponent
-          label="Kembali"
-          variant="back"
-          className="w-48"
-          onClick={() => window.history.back()}
-        />
         <ConfirmDialog
-          trigger={
-            <ButtonComponent label="Hapus" variant="delete" className="w-48" />
-          }
+          trigger={<ButtonComponent variant="delete" />}
           title="Hapus Transaksi"
           description="Apakah Anda yakin ingin menghapus transaksi ini?"
           onConfirm={async () => {

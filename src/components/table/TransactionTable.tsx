@@ -222,8 +222,8 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
         onRowClick={(row) => goToDetailTransaction(row.id)()}
         columns={
           columns ?? [
-            { key: "formattedDate", label: "Tanggal Transaksi" },
             { key: "customerName", label: "Pelanggan" },
+            { key: "formattedDate", label: "Tanggal Transaksi" },
             { key: "total_delivery", label: "Jumlah Pengiriman" },
             { key: "formattedCost", label: "Total Biaya" },
             { key: "transaction_status", label: "Status" },

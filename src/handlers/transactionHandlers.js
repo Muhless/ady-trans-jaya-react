@@ -1,4 +1,3 @@
-// hooks/useFilterHandlers.js
 import { useState } from "react";
 
 export const useFilterHandlers = () => {

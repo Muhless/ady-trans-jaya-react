@@ -77,25 +77,28 @@ function TransactionPages() {
   );
 
   const filteredTransactions = useMemo(() => {
-    if (!searchTerm) return sortedTransactions;
+    if (
+      !searchTerm ||
+      typeof searchTerm !== "string" ||
+      searchTerm.trim() === ""
+    ) {
+      return sortedTransactions;
+    }
+
+    const term = searchTerm.toLowerCase().trim();
 
     return sortedTransactions.filter(
       (transaction) =>
-        transaction.description
-          ?.toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        transaction.amount?.toString().includes(searchTerm) ||
-        transaction.category
-          ?.toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        transaction.type?.toLowerCase().includes(searchTerm.toLowerCase())
+        transaction.customer.name?.toLowerCase().includes(term) ||
+        transaction.created_at?.toLowerCase().includes(term) ||
+        transaction.total_delivery?.toString().includes(term) ||
+        transaction.transaction_status?.toLowerCase().includes(term)
     );
   }, [sortedTransactions, searchTerm]);
 
   return (
     <div>
       <Title title="Transaksi" />
-
       <TransactionsStatCard
         transactions={sortedTransactions}
         loading={isLoading}
@@ -123,7 +126,7 @@ function TransactionPages() {
 
           <SearchInput
             placeholder={"Transaksi..."}
-            onChange={handleSearchChange}
+            onChange={(e) => handleSearchChange(e.target.value)}
           />
         </div>
       </div>

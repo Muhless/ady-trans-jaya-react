@@ -11,7 +11,7 @@ import { getFullImageUrl } from "../../../utils/imageHelper";
 import DeliveryHistoryCard from "../../components/card/DeliveryHistoryCard";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import Modal from "@/components/modal/Modal";
-import { addDriver, updateDriver } from "@/api/driver";
+import { addDriver, fetchDriverById, updateDriver } from "@/api/driver";
 import { Driver, useDrivers } from "@/hooks/useDrivers";
 import DriverForm, { DriverFormData } from "@/components/form/DriverForm";
 import { toast } from "sonner";
@@ -32,14 +32,16 @@ function DriverDetailPage() {
   const { goBack, goToDetailDelivery } = useNavigationHooks();
   const { drivers, setDrivers, loading, error, setError } = useDrivers();
 
-  const fetchDriverDetails = async (id: string) => {
-    const response = await fetch(`${API_BASE_URL}/driver/${id}`);
-    if (!response.ok) {
-      throw new Error("Gagal mengambil data driver");
-    }
-    const data = await response.json();
-    return data.data;
-  };
+  const {
+    data: customer,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["customer", id],
+    queryFn: () => fetchDriverById(Number(id)),
+    enabled: !!id,
+  });
 
   const fetchDriverDeliveries = async (id: string) => {
     const response = await fetch(
@@ -87,9 +89,8 @@ function DriverDetailPage() {
       setIsModalOpen(false);
       setSelectedDriver(null);
 
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      refetch;
+      toast.success("Data kendaraan berhasil diperbarui");
     } catch (error: any) {
       const message =
         error.response?.data?.error ||
@@ -112,7 +113,7 @@ function DriverDetailPage() {
 
   const { data: driver } = useQuery<Driver, Error>({
     queryKey: ["driverDetails", id],
-    queryFn: () => fetchDriverDetails(id!),
+    queryFn: () => fetchDriverById(Number(id)),
     enabled: !!id,
   });
 

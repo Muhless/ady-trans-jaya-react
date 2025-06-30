@@ -106,7 +106,7 @@ const TableComponent: React.FC<TableProps> = ({
                         key
                       ) ? (
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusClass(
+                          className={`px-5 py-1 rounded-full text-xs font-medium border ${getStatusClass(
                             row[key]
                           )}`}
                         >

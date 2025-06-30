@@ -6,6 +6,15 @@ export const fetchDrivers = async () => {
   return response.data.data;
 };
 
+export const fetchDriverById = async (id: number) => {
+  const response = await fetch(`${API_BASE_URL}/driver/${id}`);
+  if (!response.ok) {
+    throw new Error("Gagal mengambil data driver");
+  }
+  const data = await response.json();
+  return data.data;
+};
+
 export const searchDriver = async (query: string) => {
   const response = await axios.get(`${API_BASE_URL}/drivers`, {
     params: { search: query },

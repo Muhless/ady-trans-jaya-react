@@ -51,7 +51,7 @@ const DeliveryInfoCard = ({ deliveries }: { deliveries: Delivery[] }) => {
                 <p className="font-bold">{item.delivery_code}</p>
               </div>
               <div
-                className={`px-10 flex justify-center py-2 rounded-md text-sm font-bold ${getStatusClass(
+                className={`w-64 flex justify-center py-2 rounded-md text-sm font-bold ${getStatusClass(
                   item.delivery_status
                 )}`}
               >

@@ -11,7 +11,7 @@ interface Delivery {
   transaction_id: number;
   driver_id: number;
   vehicle_id: number;
-  load: number;
+  destination_address: string;
   delivery_date: string;
   delivery_deadline_date: string;
   delivery_status: string;
@@ -27,7 +27,6 @@ interface Delivery {
   vehicle?: {
     name: string;
   };
-  // Add common timestamp fields
   createdAt?: string;
   created_at?: string;
   date?: string;
@@ -98,6 +97,7 @@ const DeliveryTable: React.FC<DeliveryTableProps> = ({
         `Transaction ID: ${delivery.transaction_id}`,
       driverName: delivery.driver?.name || "-",
       vehicleName: delivery.vehicle?.name || "-",
+      destinationAddress: delivery.destination_address,
       formattedDeliveryDate: formatDateNumeric(delivery.delivery_date),
       formattedDeliveryDeadlineDate: formatDateNumeric(
         delivery.delivery_deadline_date
@@ -208,7 +208,9 @@ const DeliveryTable: React.FC<DeliveryTableProps> = ({
   if (!deliveries || deliveries.length === 0) {
     return (
       <div className="text-center p-8 text-sm">
-        <p className="text-gray-600">Tidak ada pengiriman yang sedang berlangsung</p>
+        <p className="text-gray-600">
+          Tidak ada pengiriman yang sedang berlangsung
+        </p>
       </div>
     );
   }
@@ -233,9 +235,9 @@ const DeliveryTable: React.FC<DeliveryTableProps> = ({
         columns={
           columns ?? [
             { key: "customerName", label: "Pelanggan" },
+            { key: "destinationAddress", label: "Tujuan Pengiriman" },
             { key: "driverName", label: "Pengemudi" },
             { key: "vehicleName", label: "Kendaraan" },
-            { key: "load", label: "Muatan" },
             { key: "formattedDeliveryDate", label: "Tanggal Pengiriman" },
             { key: "formattedDeliveryDeadlineDate", label: "Batas Pengiriman" },
             { key: "delivery_status", label: "Status" },

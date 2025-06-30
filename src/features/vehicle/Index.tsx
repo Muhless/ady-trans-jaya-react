@@ -12,6 +12,7 @@ import {
   updateVehicle,
 } from "../../api/vehicle";
 import VehicleForm from "../../components/form/VehicleForm";
+import { toast } from "sonner";
 
 const vehicleTypes = ["Semua", "Pick up", "CDE", "CDD", "Fuso", "Wingbox"];
 
@@ -71,6 +72,7 @@ function VehiclePages() {
         });
 
         setVehicle(updatedVehicles);
+        toast.success("Data kendaraan berhasil diperbarui")
       } else {
         const newVehicle = await addVehicle(transformed);
         setVehicle([...vehicles, newVehicle]);

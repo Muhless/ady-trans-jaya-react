@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
 import ButtonComponent from "@/components/button/Index";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
-import {
-  formatCurrency,
-  formatDateNumeric,
-} from "../../../../utils/Formatters";
+import { formatCurrency } from "../../../../utils/Formatters";
 
 type FullPaymentFormProps = {
   transaction: {
     down_payment: number;
     payment_deadline: string;
   };
-  onSubmit?: () => void;
+  onSubmit?: (data: any) => void;
   showButton?: boolean;
   showTimer?: boolean;
   buttonLabel?: string;
@@ -20,7 +17,6 @@ type FullPaymentFormProps = {
 const FullPaymentForm = ({
   transaction,
   onSubmit,
-  buttonLabel,
   showButton,
   showTimer,
 }: FullPaymentFormProps) => {
@@ -56,11 +52,16 @@ const FullPaymentForm = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (onSubmit) {
+      onSubmit({
+        isFullPayment: true,
+      });
+    }
   };
 
   return (
     <form
-      id="payment-form"
+      id="fullpayment-form"
       onSubmit={handleSubmit}
       className="p-4 border rounded-xl bg-white space-y-3"
     >
@@ -79,25 +80,25 @@ const FullPaymentForm = ({
           <ConfirmDialog
             trigger={
               <ButtonComponent
-                label={buttonLabel || "Konfirmasi Pelunasan"}
+                label={"Konfirmasi Pelunasan"}
                 variant="save"
                 className="px-36"
                 type="button"
               />
             }
-            confirmText="Simpan Pembayaran?"
+            confirmText="Konfirmasi Pelunasan?"
+            description="Transaksi akan diselesaikan."
             onConfirm={() => {
               const form = document.getElementById(
-                "payment-form"
+                "fullpayment-form"
               ) as HTMLFormElement;
               form?.requestSubmit();
             }}
           />
         </div>
       )}
-
       {showTimer && (
-        <p className="text-center text-sx text-red-500 font-medium">
+        <p className="text-center text-sm text-red-500 font-medium">
           {countdown}
         </p>
       )}

@@ -107,11 +107,10 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
 
-  // Signature
   signature: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 40,
+    marginTop: 100,
   },
   signatureBox: {
     textAlign: "center",

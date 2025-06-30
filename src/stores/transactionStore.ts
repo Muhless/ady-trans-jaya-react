@@ -5,6 +5,7 @@ import { useDeliveryStore } from "./deliveryStore";
 export type Transaction = {
   id?: number;
   customer_id: number | null;
+  cost: number;
   total_delivery: number;
   payment_deadline: string | null;
   down_payment: number | null;
@@ -53,6 +54,7 @@ type TransactionStore = {
 export const initialTransaction: Transaction = {
   id: undefined,
   customer_id: null,
+  cost: null,
   total_delivery: 0,
   payment_deadline: null,
   down_payment: null,

@@ -24,12 +24,14 @@ type TransactionInfoCardProps = {
   };
   approvedCost: number;
   onDownPaymentSubmit: (data: any) => void;
+  fullPaymentHandleSubmit: (data: any) => void;
 };
 
 const TransactionInfoCard = ({
   transaction,
   approvedCost,
   onDownPaymentSubmit,
+  fullPaymentHandleSubmit,
 }: TransactionInfoCardProps) => {
   return (
     <div className="bg-white border rounded-xl p-6 mb-10 text-sm shadow-sm">
@@ -39,7 +41,7 @@ const TransactionInfoCard = ({
           <h2 className="text-lg font-semibold">Informasi Transaksi</h2>
         </div>
         <div
-          className={`w-32 text-center py-2 rounded-md text-sm font-bold ${getStatusClass(
+          className={`w-64 text-center py-2 rounded-md text-sm font-bold ${getStatusClass(
             transaction?.transaction_status
           )}`}
         >
@@ -132,16 +134,26 @@ const TransactionInfoCard = ({
                 </p>
               </div>
             </div>
-            <hr />
-            <div className="py-5">
-              <FullPaymentForm
-                transaction={{
-                  down_payment: transaction.down_payment,
-                  payment_deadline: transaction.payment_deadline,
-                }}
-                onSubmit={null}
-              />
-            </div>
+          </div>
+        )}
+
+        {["berjalan", "menunggu pelunasan"].includes(
+          transaction.transaction_status
+        ) && (
+          <div className="py-5">
+            <FullPaymentForm
+              transaction={{
+                down_payment: transaction.down_payment,
+                payment_deadline: transaction.payment_deadline,
+              }}
+              showTimer={
+                transaction.transaction_status === "menunggu pelunasan"
+              }
+              showButton={
+                transaction.transaction_status === "menunggu pelunasan"
+              }
+              onSubmit={fullPaymentHandleSubmit}
+            />
           </div>
         )}
       </div>
