@@ -86,15 +86,16 @@ function DeliveryPages() {
       const formattedDeadlineDate = formatDateNumeric(
         delivery.delivery_deadline_date || ""
       ).toLowerCase();
-      return sortedDeliveries.filter(
-        (delivery) =>
-          delivery.transaction.customer.name?.toLowerCase().includes(term) ||
-          delivery.destination_address?.toLowerCase().includes(term) ||
-          delivery.driver?.name?.toLowerCase().includes(term) ||
-          delivery.vehicle.name?.toLowerCase().includes(term) ||
-          formattedDeliveryDate.includes(term) ||
-          formattedDeadlineDate.includes(term) ||
-          delivery.delivery_status?.toLowerCase().includes(term)
+      
+      // Fixed: Remove nested filter, directly check conditions
+      return (
+        delivery.transaction?.customer?.name?.toLowerCase().includes(term) ||
+        delivery.destination_address?.toLowerCase().includes(term) ||
+        delivery.driver?.name?.toLowerCase().includes(term) ||
+        delivery.vehicle?.name?.toLowerCase().includes(term) ||
+        formattedDeliveryDate.includes(term) ||
+        formattedDeadlineDate.includes(term) ||
+        delivery.delivery_status?.toLowerCase().includes(term)
       );
     });
   }, [sortedDeliveries, searchTerm]);

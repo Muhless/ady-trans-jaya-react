@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import SearchInput from "../../components/input/Search";
 import Title from "../../components/Title";
 import { VehicleTypeComponent } from "../../components/button/VehicleType";
@@ -13,36 +13,36 @@ import {
 } from "../../api/vehicle";
 import VehicleForm from "../../components/form/VehicleForm";
 import { toast } from "sonner";
+import { useFilterHandlers } from "@/handlers/transactionHandlers";
+import { useQuery } from "@tanstack/react-query";
 
-const vehicleTypes = ["Semua", "Pick up", "CDE", "CDD", "Fuso", "Wingbox"];
+const vehicleTypes = ["Semua", "Pick up", "CDE", "CDD", "Fuso"];
 
 function VehiclePages() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [vehicles, setVehicle] = useState<Vehicles[]>([]);
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicles | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<"add" | "edit">("add");
   const [selectedType, setSelectedType] = useState("Semua");
+  const { searchTerm, handleSearchChange } = useFilterHandlers();
 
+  const {
+    data: vehicleData,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["vehicles"],
+    queryFn: fetchVehicles,
+  });
+
+  // Sync React Query data with local state
   useEffect(() => {
-    const fetchVehicle = async () => {
-      try {
-        const data = await fetchVehicles();
-        if (!Array.isArray(data)) {
-          throw new Error("Gagal mengambil data kendaraan");
-        }
-        setVehicle(data);
-      } catch (err: any) {
-        setError(
-          err.message || "terjadi kesalahan saat mengambil data kendaraan"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchVehicle();
-  }, []);
+    if (vehicleData) {
+      setVehicle(vehicleData);
+    }
+  }, [vehicleData]);
 
   const handleSubmitVehicle = async (data: Record<string, any>) => {
     try {
@@ -60,34 +60,27 @@ function VehiclePages() {
 
       if (mode === "edit" && selectedVehicle) {
         await updateVehicle(selectedVehicle.id, transformed);
-
-        const updatedVehicles = vehicles.map((v) => {
-          if (v.id === selectedVehicle.id) {
-            return {
-              ...v,
-              ...transformed,
-            };
-          }
-          return v;
-        });
-
-        setVehicle(updatedVehicles);
-        toast.success("Data kendaraan berhasil diperbarui")
+        toast.success("Data kendaraan berhasil diperbarui");
       } else {
-        const newVehicle = await addVehicle(transformed);
-        setVehicle([...vehicles, newVehicle]);
+        await addVehicle(transformed);
+        toast.success("Data kendaraan berhasil ditambahkan");
       }
 
+      // Refresh data dari server
+      await refetch();
+
+      // Reset modal state
       setIsModalOpen(false);
       setSelectedVehicle(null);
       setMode("add");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Gagal menyimpan data:", error);
-      setError(
+      const errorMessage =
         error.response?.data?.message ||
-          error.message ||
-          "Terjadi kesalahan saat menyimpan data"
-      );
+        error.message ||
+        "Terjadi kesalahan saat menyimpan data";
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
@@ -96,21 +89,38 @@ function VehiclePages() {
 
     try {
       await deleteVehicle(id);
-      setVehicle((prev) => prev.filter((v) => v.id !== id));
-    } catch (error) {
+      toast.success("Kendaraan berhasil dihapus");
+
+      // Refresh data dari server
+      await refetch();
+    } catch (error: any) {
       console.error("Gagal hapus kendaraan:", error);
-      setError("Gagal menghapus kendaraan");
+      const errorMessage = "Gagal menghapus kendaraan";
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
+  };
+
+  const handleAddVehicle = () => {
+    setSelectedVehicle(null);
+    setMode("add");
+    setIsModalOpen(true);
   };
 
   const handleEdit = (vehicleId: number) => {
     const vehicleToEdit = vehicles.find((v) => v.id === vehicleId);
     if (vehicleToEdit) {
-      console.log("Vehicle to edit:", vehicleToEdit);
       setSelectedVehicle(vehicleToEdit);
       setMode("edit");
       setIsModalOpen(true);
     }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedVehicle(null);
+    setMode("add");
+    setError(null);
   };
 
   useEffect(() => {
@@ -121,12 +131,42 @@ function VehiclePages() {
     }
   }, [mode, selectedVehicle]);
 
-  const filteredVehicles =
-    selectedType === "Semua"
+  const typeFilteredVehicles = useMemo(() => {
+    return selectedType === "Semua"
       ? vehicles
       : vehicles.filter(
           (v) => v.type.toLowerCase() === selectedType.toLowerCase()
         );
+  }, [vehicles, selectedType]);
+
+  const filteredVehicles = useMemo(() => {
+    if (!searchTerm) return typeFilteredVehicles;
+
+    const term = searchTerm.toLowerCase();
+
+    return typeFilteredVehicles.filter((vehicle) => {
+      return (
+        vehicle.name?.toLowerCase().includes(term) ||
+        vehicle.type?.toLowerCase().includes(term) ||
+        vehicle.license_plate?.toLowerCase().includes(term) ||
+        vehicle.status?.toLowerCase().includes(term) ||
+        vehicle.capacity?.toString().includes(term) ||
+        vehicle.rate_per_km?.toString().includes(term)
+      );
+    });
+  }, [typeFilteredVehicles, searchTerm]);
+
+  // Handle error state
+  if (isError) {
+    return (
+      <div>
+        <Title title="Kendaraan" />
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          Gagal memuat data kendaraan. Silakan coba lagi.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -136,7 +176,7 @@ function VehiclePages() {
           label="Tambah Kendaraan"
           variant="add"
           className="w-48"
-          onClick={() => setIsModalOpen(true)}
+          onClick={handleAddVehicle}
         />
         <VehicleTypeComponent
           vehicleTypes={vehicleTypes}
@@ -145,12 +185,20 @@ function VehiclePages() {
           setSelectedType={setSelectedType}
         />
 
-        <SearchInput placeholder="kendaraan" />
+        <SearchInput
+          placeholder="kendaraan"
+          onChange={(e) => handleSearchChange(e.target.value)}
+        />
       </div>
-      {loading ? (
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
+
+      {isLoading ? (
         <div className="text-center">Loading...</div>
-      ) : error ? (
-        <div className="text-center">{error}</div>
       ) : (
         <>
           {filteredVehicles.length > 0 ? (
@@ -172,7 +220,9 @@ function VehiclePages() {
             </div>
           ) : (
             <div className="flex justify-center p-5 text-red-500 ">
-              Tidak ada kendaraan
+              {searchTerm || selectedType !== "Semua"
+                ? "Tidak ada kendaraan yang sesuai dengan pencarian"
+                : "Tidak ada kendaraan"}
             </div>
           )}
         </>
@@ -181,11 +231,8 @@ function VehiclePages() {
       <Modal
         title="Kendaraan"
         isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedVehicle(null);
-          setMode("add");
-        }}
+        onClose={handleCloseModal}
+        mode={mode}
       >
         <VehicleForm
           onSubmit={handleSubmitVehicle}

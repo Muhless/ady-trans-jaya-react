@@ -8,14 +8,25 @@ import {
   Play,
   CheckCircle,
   Ban,
+  Clock3Icon,
 } from "lucide-react";
 
 interface DeliveryTrackingProps {
   status: string;
   className?: string;
+  deliveryProgress?: {
+    id: number;
+    delivery_id: number;
+    delivery_start_time: string;
+    pickup_time: string | null;
+    pickup_photo_url: string;
+    arrival_time: string | null;
+    arrival_photo_url: string;
+    created_at: string;
+    updated_at: string;
+  }[];
 }
 
-// Define delivery tracking steps
 const deliverySteps = [
   {
     key: "menunggu persetujuan",
@@ -30,16 +41,16 @@ const deliverySteps = [
     description: "Pengiriman telah disetujui",
   },
   {
-    key: "mulai pengiriman",
-    label: "Mulai Pengiriman",
+    key: "menunggu pengemudi",
+    label: "Menunggu Pengemudi",
     icon: Package,
-    description: "Pengiriman telah diterima oleh pengemudi",
+    description: "Menunggu pengemudi memulai pengiriman",
   },
   {
-    key: "dalam perjalanan",
-    label: "Dalam Perjalanan",
+    key: "dalam pengiriman",
+    label: "Dalam Pengiriman",
     icon: Truck,
-    description: "Pengiriman sedang dalam perjalanan ke tujuan",
+    description: "Pengiriman sedang dalam pengiriman ke tujuan",
   },
   {
     key: "selesai",
@@ -61,21 +72,19 @@ const deliverySteps = [
   },
 ];
 
-// Function to get current step index based on status
 const getCurrentStepIndex = (status: string): number => {
   const statusMap: { [key: string]: number } = {
     "menunggu persetujuan": 0,
     disetujui: 1,
-    "mulai pengiriman": 2,
-    "dalam perjalanan": 3,
+    "menunggu pengemudi": 2,
+    "dalam pengiriman": 3,
     selesai: 4,
-    dibatalkan: -1, // Special case for cancelled
-    ditolak: -2, // Special case for rejected
+    dibatalkan: -1,
+    ditolak: -2,
   };
   return statusMap[status.toLowerCase()] ?? 0;
 };
 
-// Function to get step status (completed, current, upcoming, cancelled, rejected)
 const getStepStatus = (
   stepIndex: number,
   currentStepIndex: number,
@@ -83,10 +92,10 @@ const getStepStatus = (
   isRejected: boolean
 ) => {
   if (isCancelled) {
-    return stepIndex === 5 ? "cancelled" : "inactive"; // Only show cancelled step as active
+    return stepIndex === 5 ? "cancelled" : "inactive";
   }
   if (isRejected) {
-    return stepIndex === 6 ? "rejected" : "inactive"; // Only show rejected step as active
+    return stepIndex === 6 ? "rejected" : "inactive";
   }
   if (stepIndex < currentStepIndex) return "completed";
   if (stepIndex === currentStepIndex) return "current";
@@ -101,7 +110,6 @@ const DeliveryTracking: React.FC<DeliveryTrackingProps> = ({
   const isCancelled = status.toLowerCase() === "dibatalkan";
   const isRejected = status.toLowerCase() === "ditolak";
 
-  // Filter steps based on cancellation or rejection status
   let stepsToShow = deliverySteps.filter(
     (step) => step.key !== "dibatalkan" && step.key !== "ditolak"
   );
@@ -113,9 +121,9 @@ const DeliveryTracking: React.FC<DeliveryTrackingProps> = ({
   }
 
   return (
-    <div className={`bg-gray-50 rounded-lg p-4 ${className}`}>
+    <div className={`bg-gray-50 rounded-lg p-6 border ${className}`}>
       <h2 className="text-lg font-semibold mb-4 flex items-center border-b pb-2">
-        <Truck className="mr-2 text-blue-500" size={20} />
+        <Clock3Icon className="mr-2 text-blue-500" size={20} />
         Status Pengiriman
       </h2>
 
@@ -131,7 +139,6 @@ const DeliveryTracking: React.FC<DeliveryTrackingProps> = ({
 
           return (
             <div key={step.key} className="flex items-start">
-              {/* Icon and line */}
               <div className="flex flex-col items-center mr-4">
                 <div
                   className={`
@@ -171,7 +178,6 @@ const DeliveryTracking: React.FC<DeliveryTrackingProps> = ({
                   <IconComponent size={16} />
                 </div>
 
-                {/* Connecting line (don't show after last item) */}
                 {index < stepsToShow.length - 1 && (
                   <div
                     className={`
@@ -186,7 +192,6 @@ const DeliveryTracking: React.FC<DeliveryTrackingProps> = ({
                 )}
               </div>
 
-              {/* Content */}
               <div className="flex-1 pb-4">
                 <div className="flex items-center justify-between">
                   <h4

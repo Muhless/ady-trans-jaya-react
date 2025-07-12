@@ -21,7 +21,7 @@ const Modal: React.FC<ModalProps> = ({
   if (!isOpen) return null;
 
   const renderTitle = () => {
-    if (mode === "edit") return `Edit Data ${title}`;
+    if (mode === "edit") return `Ubah Data ${title}`;
     if (mode === "add") return `Tambah Data ${title}`;
     return title;
   };

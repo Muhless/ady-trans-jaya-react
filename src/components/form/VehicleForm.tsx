@@ -30,6 +30,7 @@ const VehicleForm: React.FC<Props> = ({
   onSubmit,
   defaultValues = {},
   onReset,
+  mode = "add",
 }) => {
   const {
     register,
@@ -113,6 +114,23 @@ const VehicleForm: React.FC<Props> = ({
           <p className="text-red-500 text-sm">{errors.rate_per_km.message}</p>
         )}
       </div>
+
+      {mode === "edit" && (
+        <div>
+          <label className="block font-medium mb-1">Status</label>
+          <select
+            {...register("status", { required: "Status wajib diisi" })}
+            className="w-full border p-2 rounded"
+          >
+            <option value="">Pilih status</option>
+            <option value="tersedia">Tersedia</option>
+            <option value="tidak tersedia">Tidak tersedia</option>
+          </select>
+          {errors.status && (
+            <p className="text-red-500 text-sm">{errors.status.message}</p>
+          )}
+        </div>
+      )}
 
       <div className="flex justify-end gap-2 mt-6">
         <ButtonComponent

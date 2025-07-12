@@ -59,9 +59,10 @@ const DetailTransactionPages = () => {
       </div>
     );
 
-  const approvedCost = transaction.delivery
-    .filter((d) => d.delivery_status === "disetujui")
-    .reduce((total, d) => total + (d.delivery_cost || 0), 0);
+ const approvedCost = (transaction.delivery || [])
+  .filter((d) => d.delivery_status === "disetujui")
+  .reduce((total, d) => total + (d.delivery_cost || 0), 0);
+
 
   const handleDownPaymentSubmit = async ({
     dp_amount,

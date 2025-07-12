@@ -322,7 +322,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         ...delivery,
         driver_id: Number(delivery.driver_id),
         vehicle_id: Number(delivery.vehicle_id),
-        load_type: delivery.load_type,
         total_item: items.length,
         total_weight: totalWeight,
         delivery_date: formattedDeliveryDate,
@@ -459,7 +458,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         subTitle="Form Tambah Pengiriman"
         className="text-center mt-6 text-2xl"
       />
-      <SelectComponent
+      {/* <SelectComponent
         label="Jenis Barang"
         placeholder="Pilih jenis barang"
         name="load_type"
@@ -478,7 +477,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           { value: "limbah / barang bekas", label: "Limbah / Barang Bekas" },
           { value: "lainnya", label: "Lainnya" },
         ]}
-      />
+      /> */}
 
       <InputComponent
         label="Jumlah Barang"

@@ -26,6 +26,26 @@ export const formatDateNumeric = (dateString: string) => {
   });
 };
 
+export const formatDateTime = (dateString: string) => {
+  if (!dateString) return "-";
+  const date = new Date(dateString);
+  const tanggal = date.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "Asia/Jakarta",
+  });
+  const jam = date.toLocaleTimeString("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Jakarta",
+  });
+  return `${tanggal}, pukul ${jam}`;
+};
+
+
+
 export const getStatusClass = (status: string): string => {
   switch (status) {
     case "tertunda":

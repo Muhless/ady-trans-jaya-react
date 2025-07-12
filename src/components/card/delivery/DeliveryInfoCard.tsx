@@ -21,6 +21,7 @@ import ConfirmDialog from "@/components/common/ConfirmDialog";
 import useNavigationHooks from "@/hooks/useNavigation";
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import { SuratJalanPDF } from "@/components/print/DeliveryPrintPages";
+import DeliveryProgressDetail from "./DeliveryProgress";
 
 interface DeliveryItem {
   id: number;
@@ -28,6 +29,18 @@ interface DeliveryItem {
   item_name: string;
   quantity: string;
   weight: string;
+}
+
+interface DeliveryProgress {
+  id: number;
+  delivery_id: number;
+  delivery_start_time: string;
+  pickup_time: string | null;
+  pickup_photo_url: string;
+  arrival_time: string | null;
+  arrival_photo_url: string;
+  created_at: string;
+  updated_at: string;
 }
 
 interface DeliveryInfo {
@@ -50,6 +63,7 @@ interface DeliveryInfo {
   created_at: string;
   updated_at: string;
   items: DeliveryItem[];
+   delivery_progress: DeliveryProgress[];
 }
 
 interface DeliveryInfoComponentProps {
@@ -106,7 +120,9 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
               />
             </div>
           )}
-        {delivery.delivery_status !== "menunggu persetujuan" && (
+        {!["menunggu persetujuan", "ditolak"].includes(
+          delivery.delivery_status
+        ) && (
           <div className="flex gap-1">
             <ButtonComponent
               variant="preview"
@@ -290,26 +306,20 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
         <div>
           <div>
             <p className="text-sm text-gray-500">Biaya Pengiriman</p>
-            <p className="font-medium text-green-600">
+            <p className="font-bold">
               {formatCurrency(delivery.delivery_cost)}
             </p>
           </div>
         </div>
 
-        {/* <div>
-          <p className="text-sm text-gray-500 mb-2">Status Pengiriman</p>
-          <div className="flex items-center">
-            <span
-              className={`px-3 py-2 rounded-md text-sm font-medium ${getStatusStyle(
-                delivery.delivery_status
-              )}`}
-            >
-              {delivery.delivery_status}
-            </span>
-          </div>
-        </div> */}
+        {delivery.delivery_progress?.[0] && (
+          <DeliveryProgressDetail progress={delivery.delivery_progress?.[0]} />
+        )}
 
-        <DeliveryTrackingInfo status={delivery.delivery_status} />
+        <DeliveryTrackingInfo
+          status={delivery.delivery_status}
+          deliveryProgress={delivery.delivery_progress}
+        />
 
         <div className="pt-4 border-t border-gray-200">
           <div className="grid grid-cols-3 text-center text-xs text-gray-500">

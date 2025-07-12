@@ -163,8 +163,6 @@ const DriverForm: React.FC<DriverFormProps> = ({
             </div>
           )}
 
-          {/*  */}
-
           {/* Foto */}
           <div>
             <label className="block font-medium mb-1">Foto</label>
