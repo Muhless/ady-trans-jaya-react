@@ -81,7 +81,6 @@ const DetailDeliveryPage = () => {
         <div className="col-span-2">
           <DeliveryInfoComponent
             delivery={delivery}
-
             onApprove={() => handleApprove(delivery.id)}
             onReject={() => handleReject(delivery.id)}
           />

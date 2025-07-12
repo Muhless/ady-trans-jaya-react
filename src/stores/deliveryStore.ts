@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { DeliveryItem, useDeliveryItemStore } from "./deliveryItemStore";
+import { DeliveryDestination } from "./deliveryDestinationStore";
 
 export type Driver = {
   id: number;
@@ -23,7 +24,6 @@ export type Delivery = {
   driver: Driver | null;
   vehicle: Vehicle | null;
   delivery_code: string;
-  load_type: string;
   total_weight: number;
   total_item: number;
   pickup_address: string;
@@ -33,11 +33,12 @@ export type Delivery = {
   destination_address_lat: number | null;
   destination_address_lang: number | null;
   delivery_date: string | null;
-  delivery_deadline_date: string | null;
   delivery_status: string;
   delivery_cost: number;
   approved_at: string | null;
+  note: string;
   items: DeliveryItem[];
+  delivery_destinations: DeliveryDestination[];
 };
 
 type DeliveryStore = {
@@ -160,7 +161,6 @@ export const useDeliveryStore = create<DeliveryStore>()(
       driver_id: null,
       vehicle_id: null,
       delivery_code: "",
-      load_type: "",
       total_weight: 0,
       total_item: 0,
       pickup_address: "",
@@ -170,9 +170,9 @@ export const useDeliveryStore = create<DeliveryStore>()(
       destination_address_lat: null,
       destination_address_lang: null,
       delivery_date: null,
-      delivery_deadline_date: null,
       delivery_status: "menunggu persetujuan",
       delivery_cost: 0,
+      note: "",
       approved_at: null,
       items: [],
     },
@@ -207,7 +207,6 @@ export const useDeliveryStore = create<DeliveryStore>()(
           driver: null,
           vehicle: null,
           delivery_code: "",
-          load_type: "",
           total_weight: 0,
           total_item: 0,
           pickup_address: "",
@@ -217,13 +216,15 @@ export const useDeliveryStore = create<DeliveryStore>()(
           destination_address_lat: null,
           destination_address_lang: null,
           delivery_date: null,
-          delivery_deadline_date: null,
           delivery_status: "menunggu persetujuan",
           delivery_cost: 0,
+          note: "",
           approved_at: null,
           items: [],
+          delivery_destinations: [],
         },
       });
     },
   }))
 );
+export type { DeliveryDestination };

@@ -1,16 +1,11 @@
 import React from "react";
 import ButtonComponent from "../button/Index";
 import TitleComponent from "../Title";
-import { useDeliveryItemStore } from "@/stores/deliveryItemStore";
+import { DeliveryItem, useDeliveryItemStore } from "@/stores/deliveryItemStore";
 import useNavigationHooks from "@/hooks/useNavigation";
 import { useDeliveryStore } from "@/stores/deliveryStore";
 import { toast } from "sonner";
-
-interface DeliveryItem {
-  item_name: string;
-  quantity: string;
-  weight: number;
-}
+import SelectComponent from "../input/Select";
 
 const AddDeliveryItemForm: React.FC = () => {
   const { goBack } = useNavigationHooks();
@@ -30,16 +25,12 @@ const AddDeliveryItemForm: React.FC = () => {
 
     let parsedValue: string | number;
 
-    if (field === "weight") {
-      if (value === "0") {
-        parsedValue = 0;
-      } else {
-        const numValue = Number(value);
-        if (isNaN(numValue) || numValue < 0) {
-          return;
-        }
-        parsedValue = Math.floor(numValue);
+    if (field === "weight" || field === "quantity") {
+      const numValue = Number(value);
+      if (isNaN(numValue) || numValue < 0) {
+        return;
       }
+      parsedValue = Math.floor(numValue);
     } else {
       parsedValue = value;
     }
@@ -55,7 +46,7 @@ const AddDeliveryItemForm: React.FC = () => {
   const handleAddItem = () => {
     const newItems: DeliveryItem[] = [
       ...items,
-      { item_name: "", quantity: "", weight: 0 },
+      { item_name: "", quantity: 0, unit: "", weight: 0 },
     ];
     addItems(newItems);
   };
@@ -82,7 +73,7 @@ const AddDeliveryItemForm: React.FC = () => {
       if (!item.item_name.trim()) {
         errors.push(`Nama barang item ke-${index + 1} tidak boleh kosong.`);
       }
-      if (!item.quantity.trim()) {
+      if (item.quantity <= 0) {
         errors.push(`Jumlah item ke-${index + 1} harus lebih dari 0.`);
       }
       if (item.weight <= 0) {
@@ -117,9 +108,10 @@ const AddDeliveryItemForm: React.FC = () => {
       onSubmit={handleSubmit}
       className="space-y-6 bg-white p-6 rounded-md shadow-sm"
     >
-      <div className="grid grid-cols-4 gap-4 pb-3 border-b border-gray-200 font-semibold text-gray-700">
+      <div className="grid grid-cols-5 gap-4 pb-3 border-b border-gray-200 font-semibold text-gray-700">
         <div>Nama Barang</div>
         <div>Jumlah</div>
+        <div>Satuan</div>
         <div>Berat (kg)</div>
       </div>
 
@@ -133,7 +125,7 @@ const AddDeliveryItemForm: React.FC = () => {
           items.map((item, index) => (
             <div
               key={index}
-              className="grid grid-cols-4 gap-4 items-center p-4 bg-gray-50 rounded-md"
+              className="grid grid-cols-5 gap-4 items-center p-4 bg-gray-50 rounded-md"
             >
               <input
                 type="text"
@@ -146,15 +138,35 @@ const AddDeliveryItemForm: React.FC = () => {
                 required
               />
               <input
-                type="text"
+                type="number"
                 placeholder="Jumlah"
-                value={item.quantity}
+                value={item.quantity || ""}
                 onChange={(e) =>
                   handleChange(index, "quantity", e.target.value)
                 }
                 className="border border-gray-300 p-2 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               />
+              <select
+                value={item.unit}
+                onChange={(e) => handleChange(index, "unit", e.target.value)}
+                className="border border-gray-300 p-2 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              >
+                <option value="">Pilih satuan</option>
+                <option value="box">Box</option>
+                <option value="buah">Buah</option>
+                <option value="dus">Dus</option>
+                <option value="liter">Liter</option>
+                <option value="meter">Meter</option>
+                <option value="pcs">Pcs</option>
+                <option value="roll">Roll</option>
+                <option value="set">Set</option>
+                <option value="unit">Unit</option>
+                <option value="ekor">Ekor</option>
+                <option value="lainnya">Lainnya</option>
+              </select>
+
               <input
                 type="number"
                 placeholder="Berat dalam kg"

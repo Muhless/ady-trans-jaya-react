@@ -2,7 +2,8 @@ import { create } from "zustand";
 
 export type DeliveryItem = {
   item_name: string;
-  quantity: string;
+  quantity: number;
+  unit: string;
   weight: number;
 };
 

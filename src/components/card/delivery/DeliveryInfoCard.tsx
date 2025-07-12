@@ -22,6 +22,7 @@ import useNavigationHooks from "@/hooks/useNavigation";
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import { SuratJalanPDF } from "@/components/print/DeliveryPrintPages";
 import DeliveryProgressDetail from "./DeliveryProgress";
+import DeliveryDestinationCard from "./DeliveryDestination";
 
 interface DeliveryItem {
   id: number;
@@ -63,7 +64,7 @@ interface DeliveryInfo {
   created_at: string;
   updated_at: string;
   items: DeliveryItem[];
-   delivery_progress: DeliveryProgress[];
+  delivery_progress: DeliveryProgress[];
 }
 
 interface DeliveryInfoComponentProps {
@@ -243,7 +244,7 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
 
         <div className="grid grid-cols-2">
           <div>
-            <p className="text-sm text-gray-500">Alamat Pengiriman</p>
+            <p className="text-sm text-gray-500">Alamat Penjemputan Barang</p>
             <div className="flex items-center mt-1">
               <div>
                 <div className="flex items-center">
@@ -259,32 +260,18 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
               </div>
             </div>
           </div>
-          <div>
-            <p className="text-sm text-gray-500">Alamat Tujuan</p>
-            <div className="flex items-center mt-1">
-              <div>
-                <div className="flex items-center">
-                  <MapPin
-                    className="mr-2 text-gray-400 flex-shrink-0"
-                    size={16}
-                  />
-                  <p>
-                    {delivery.destination_address ||
-                      "Alamat tujuan tidak tersedia"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center hover:cursor-pointer">
+
+          {/* <div className="flex items-center hover:cursor-pointer">
             <p
               className="underline italic text-sm text-blue-500"
               onClick={() => goToDeliveryMapPages(delivery.id)}
             >
               lihat lokasi
             </p>
-          </div>
+          </div> */}
         </div>
+
+        {/* <DeliveryDestinationCard destination={delivery}/> */}
 
         <div className="grid grid-cols-2">
           <div>

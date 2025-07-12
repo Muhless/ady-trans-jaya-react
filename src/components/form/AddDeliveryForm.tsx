@@ -6,10 +6,14 @@ import SelectComponent from "../input/Select";
 import useNavigationHooks from "../../hooks/useNavigation";
 import mapboxgl from "mapbox-gl";
 import { useDeliveryCalculation } from "../../hooks/useDeliveryCost";
-import { Delivery, useDeliveryStore } from "../../stores/deliveryStore";
+import {
+  Delivery,
+  DeliveryDestination,
+  useDeliveryStore,
+} from "../../stores/deliveryStore";
 import SearchLocationInput from "../input/SearchLocation";
 import { InputLatLang } from "../input/InputLatLang";
-import { ArrowLeft, MapPin } from "lucide-react";
+import { ArrowLeft, MapPin, X } from "lucide-react";
 import { useTransactionStore } from "../../stores/transactionStore";
 import ConfirmDialog from "../common/ConfirmDialog";
 import { Button } from "../ui/button";
@@ -18,6 +22,8 @@ import DatePickerComponent from "../common/DatePicker";
 import { toast } from "sonner";
 import { useAvailableOptions } from "@/hooks/useAvailableOptionData";
 import { CoordinateInput } from "../input/CoordinatInput";
+import { useDeliveryForm } from "@/hooks/useDeliveryForm";
+import ItemsCardList from "../card/delivery/DeliveryItemCard";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -32,32 +38,50 @@ interface Place {
 }
 
 const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
-  // TODO:
-  // console.log(useDeliveryStore.getState().delivery);
   const { goBack, goToAddTransaction } = useNavigationHooks();
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<{
     start: mapboxgl.Marker | null;
-    end: mapboxgl.Marker | null;
-  }>({ start: null, end: null });
+    destinations: mapboxgl.Marker[];
+  }>({ start: null, destinations: [] });
+
   const [startPoint, setStartPoint] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
-  const [endPoint, setEndPoint] = useState<{ lat: number; lng: number } | null>(
-    null
-  );
+
+  const [destinations, setDestinations] = useState<DeliveryDestination[]>([
+    { address: "", lat: null, lng: null, sequence: 1 },
+  ]);
+
   const [route, setRoute] = useState<GeoJSON.LineString | null>(null);
   const [distance, setDistance] = useState<number | null>(null);
   const [duration, setDuration] = useState<number | string | null>(null);
   const [pickupLocation, setPickupLocation] = useState<string>("");
-  const [destination, setDestination] = useState<string>("");
-  const [selectingPoint, setSelectingPoint] = useState<"start" | "end">(
-    "start"
-  );
+  const [selectingPoint, setSelectingPoint] = useState<string>("start");
   const [startLocation, setStartLocation] = React.useState<string>("");
-  const [endLocation, setEndLocation] = React.useState<string>("");
+  const [destinationLocation, setDestinationLocation] =
+    React.useState<string>("");
   const { driverOptions, vehicleOptions } = useAvailableOptions();
+
+  const handleRemoveDestination = (index: number) => {
+    if (destinations.length > 1) {
+      const newDestinations = destinations.filter((_, i) => i !== index);
+      const updatedDestinations = newDestinations.map((dest, idx) => ({
+        ...dest,
+        sequence: idx + 1,
+      }));
+      setDestinations(updatedDestinations);
+
+      if (markerRef.current.destinations[index]) {
+        markerRef.current.destinations[index].remove();
+      }
+
+      markerRef.current.destinations = markerRef.current.destinations.filter(
+        (_, i) => i !== index
+      );
+    }
+  };
 
   useEffect(() => {
     if (
@@ -70,6 +94,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           .current as HTMLDivElement,
         style: "mapbox://styles/mapbox/streets-v11",
         center: [106.8456, -6.2088],
+        zoom: 12,
         maxBounds: [
           [95.0, -11.0],
           [141.0, 6.1],
@@ -81,23 +106,52 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
 
       const handleClick = (e: mapboxgl.MapMouseEvent) => {
         const { lng, lat } = e.lngLat;
-        const type = selectingPoint === "start" ? "start" : "end";
 
-        const markerColor = type === "start" ? "#3b82f6" : "#ef4444";
-
-        if (type === "start") {
+        if (selectingPoint === "start") {
           setStartPoint({ lng, lat });
           setPickupLocation(`Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`);
-        } else {
-          setEndPoint({ lng, lat });
-          setDestination(`Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`);
+
+          if (markerRef.current.start) markerRef.current.start.remove();
+          markerRef.current.start = new mapboxgl.Marker({ color: "#3b82f6" })
+            .setLngLat([lng, lat])
+            .addTo(mapRef.current!);
+        } else if (selectingPoint.startsWith("destination-")) {
+          const index = parseInt(selectingPoint.split("-")[1]);
+
+          // Update destinations state with new coordinates
+          setDestinations((prevDestinations) => {
+            const newDestinations = [...prevDestinations];
+            newDestinations[index] = {
+              ...newDestinations[index],
+              lat,
+              lng,
+            };
+            return newDestinations.map((dest, idx) => ({
+              ...dest,
+              sequence: idx + 1,
+            }));
+          });
+
+          // Remove existing marker if it exists
+          if (markerRef.current.destinations[index]) {
+            markerRef.current.destinations[index].remove();
+          }
+
+          // Add new marker with color
+          const colors = [
+            "#ef4444",
+            "#10b981",
+            "#f59e0b",
+            "#8b5cf6",
+            "#06b6d4",
+          ];
+          const markerColor = colors[index % colors.length];
+          markerRef.current.destinations[index] = new mapboxgl.Marker({
+            color: markerColor,
+          })
+            .setLngLat([lng, lat])
+            .addTo(mapRef.current!);
         }
-
-        if (markerRef.current[type]) markerRef.current[type]!.remove();
-
-        markerRef.current[type] = new mapboxgl.Marker({ color: markerColor })
-          .setLngLat([lng, lat])
-          .addTo(mapRef.current!);
 
         mapRef.current!.flyTo({
           center: [lng, lat],
@@ -115,104 +169,192 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     }
   }, [ref, selectingPoint]);
 
-  const fetchRoute = async () => {
-    if (!startPoint || !endPoint) return;
+  const fetchMultiDestinationRoute = async () => {
+    if (!startPoint || destinations.length === 0) return;
+
+    const validDestinations = destinations.filter(
+      (dest) => dest.lat !== null && dest.lng !== null
+    );
+    if (validDestinations.length === 0) return;
+
     try {
+      const waypoints = [
+        `${startPoint.lng},${startPoint.lat}`,
+        ...validDestinations.map((dest) => `${dest.lng},${dest.lat}`),
+      ].join(";");
+
       const response = await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${startPoint.lng},${startPoint.lat};${endPoint.lng},${endPoint.lat}?geometries=geojson&overview=full&access_token=${MAPBOX_ACCESS_TOKEN}`
+        `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${waypoints}?geometries=geojson&overview=full&access_token=${MAPBOX_ACCESS_TOKEN}`
       );
       const data = await response.json();
 
-      if (data.routes.length > 0) {
-        const newRoute: GeoJSON.LineString = data.routes[0].geometry;
-        const distanceInKm = parseFloat(
-          (data.routes[0].distance / 1000).toFixed(2)
+      if (data.routes && data.routes.length > 0) {
+        const route = data.routes[0];
+        const newRoute = route.geometry;
+
+        // PERBAIKAN: Menggunakan total distance dari seluruh rute
+        const totalDistanceInKm = parseFloat(
+          (route.distance / 1000).toFixed(2)
         );
 
-        const estimatedHours = distanceInKm / 40;
-        const estimatedMinutes = Math.ceil(estimatedHours * 60);
-        // const durationInMinutes = Math.ceil(data.routes[0].duration / 60);
-        const hours = Math.floor(estimatedMinutes / 60);
-        const minutes = estimatedMinutes % 60;
+        // PERBAIKAN: Menggunakan total duration dari API (dalam detik)
+        const totalDurationInSeconds = route.duration;
+        const totalDurationInMinutes = Math.ceil(totalDurationInSeconds / 60);
+
+        // Format durasi dengan lebih akurat
+        const hours = Math.floor(totalDurationInMinutes / 60);
+        const minutes = totalDurationInMinutes % 60;
         const formattedDuration =
           hours > 0 ? `${hours} jam ${minutes} menit` : `${minutes} menit`;
 
+        // PERBAIKAN: Set state dengan nilai yang benar
         setRoute(newRoute);
-        setDistance(distanceInKm);
+        setDistance(totalDistanceInKm);
         setDuration(formattedDuration);
 
-        const map = mapRef.current!;
-        if (map.getSource("route")) {
-          (map.getSource("route") as mapboxgl.GeoJSONSource).setData({
-            type: "Feature",
-            properties: {},
-            geometry: newRoute,
-          });
-        } else {
-          map.addSource("route", {
-            type: "geojson",
-            data: {
+        // Update map dengan route
+        const map = mapRef.current;
+        if (map) {
+          if (map.getSource("route")) {
+            (map.getSource("route") as mapboxgl.GeoJSONSource).setData({
               type: "Feature",
               properties: {},
               geometry: newRoute,
-            },
+            });
+          } else {
+            map.addSource("route", {
+              type: "geojson",
+              data: {
+                type: "Feature",
+                properties: {},
+                geometry: newRoute,
+              },
+            });
+
+            map.addLayer({
+              id: "route",
+              type: "line",
+              source: "route",
+              layout: { "line-join": "round", "line-cap": "round" },
+              paint: { "line-color": "#1E90FF", "line-width": 5 },
+            });
+          }
+
+          // Fit map to show all points
+          const bounds = new mapboxgl.LngLatBounds();
+          bounds.extend([startPoint.lng, startPoint.lat]);
+          validDestinations.forEach((dest) => {
+            bounds.extend([dest.lng, dest.lat]);
           });
 
-          map.addLayer({
-            id: "route",
-            type: "line",
-            source: "route",
-            layout: { "line-join": "round", "line-cap": "round" },
-            paint: { "line-color": "#1E90FF", "line-width": 5 },
-          });
+          if (map.isStyleLoaded()) {
+            map.fitBounds(bounds, { padding: 50, maxZoom: 18 });
+          }
         }
+
+        // TAMBAHAN: Console log untuk debugging
+        console.log("Route calculation:", {
+          totalDistance: totalDistanceInKm,
+          totalDuration: formattedDuration,
+          waypoints: waypoints.split(";").length,
+          rawDuration: totalDurationInSeconds,
+        });
+      } else {
+        console.error("No routes found in API response");
+        setDistance(null);
+        setDuration(null);
       }
     } catch (error) {
-      console.error("Error fetching route:", error);
+      console.error("Error fetching multi-destination route:", error);
+      setDistance(null);
+      setDuration(null);
     }
   };
 
-  useEffect(() => {
-    if (startPoint && endPoint) {
-      fetchRoute();
-    }
-  }, [startPoint, endPoint]);
+  const calculateManualDistance = () => {
+    if (!startPoint || destinations.length === 0) return;
+
+    const validDestinations = destinations.filter(
+      (dest) => dest.lat !== null && dest.lng !== null
+    );
+    if (validDestinations.length === 0) return;
+
+    // Fungsi untuk menghitung jarak antara dua titik (Haversine formula)
+    const getDistanceBetweenPoints = (lat1, lon1, lat2, lon2) => {
+      const R = 6371; // Radius bumi dalam km
+      const dLat = ((lat2 - lat1) * Math.PI) / 180;
+      const dLon = ((lon2 - lon1) * Math.PI) / 180;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((lat1 * Math.PI) / 180) *
+          Math.cos((lat2 * Math.PI) / 180) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    };
+
+    let totalDistance = 0;
+    let currentLat = startPoint.lat;
+    let currentLng = startPoint.lng;
+
+    // Hitung jarak dari start ke setiap destination secara berurutan
+    validDestinations.forEach((dest) => {
+      const distance = getDistanceBetweenPoints(
+        currentLat,
+        currentLng,
+        dest.lat,
+        dest.lng
+      );
+      totalDistance += distance;
+      currentLat = dest.lat;
+      currentLng = dest.lng;
+    });
+
+    // Estimasi waktu berdasarkan kecepatan rata-rata 40 km/jam
+    const estimatedHours = totalDistance / 40;
+    const estimatedMinutes = Math.ceil(estimatedHours * 60);
+    const hours = Math.floor(estimatedMinutes / 60);
+    const minutes = estimatedMinutes % 60;
+    const formattedDuration =
+      hours > 0 ? `${hours} jam ${minutes} menit` : `${minutes} menit`;
+
+    setDistance(parseFloat(totalDistance.toFixed(2)));
+    setDuration(formattedDuration);
+
+    console.log("Manual calculation:", {
+      totalDistance: totalDistance.toFixed(2),
+      estimatedDuration: formattedDuration,
+    });
+  };
 
   useEffect(() => {
-    if (startPoint && endPoint && mapRef.current) {
-      const bounds = new mapboxgl.LngLatBounds();
-      bounds.extend([startPoint.lng, startPoint.lat]);
-      bounds.extend([endPoint.lng, endPoint.lat]);
+    const validDestinations = destinations.filter(
+      (dest) => dest.lat !== null && dest.lng !== null
+    );
 
-      if (mapRef.current.isStyleLoaded()) {
-        mapRef.current.fitBounds(bounds, { padding: 200, maxZoom: 18 });
-      }
-    }
-  }, [startPoint, endPoint]);
-
-  useEffect(() => {
-    if (startPoint) {
-      setDelivery({
-        pickup_address_lat: startPoint.lat,
-        pickup_address_lang: startPoint.lng,
+    if (startPoint && validDestinations.length > 0) {
+      fetchMultiDestinationRoute().catch((error) => {
+        console.warn("Mapbox API failed, using manual calculation:", error);
+        calculateManualDistance();
       });
+    } else {
+      setDistance(null);
+      setDuration(null);
     }
-  }, [startPoint]);
+  }, [startPoint, destinations]);
 
-  useEffect(() => {
-    if (endPoint) {
-      setDelivery({
-        destination_address_lat: endPoint.lat,
-        destination_address_lang: endPoint.lng,
-      });
-    }
-  }, [endPoint]);
+  const displayDistance =
+    distance !== null && !isNaN(distance) ? `${distance} Km` : "0 Km";
+  const displayDuration =
+    duration && duration !== "NaN menit" ? duration : "0 Menit";
 
   const { delivery, setDelivery, setAllDelivery, resetDelivery } =
     useDeliveryStore();
   const items = useDeliveryItemStore((state) => state.items);
 
   const totalWeight = items.reduce((sum, item) => sum + (item.weight || 0), 0);
+
   useEffect(() => {
     const totalWeight = items.reduce(
       (sum, item) => sum + (item.weight || 0),
@@ -238,15 +380,33 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     return `ATJ-${datePart}-${randomPart}`;
   };
 
+  const handleAddDestination = () => {
+    const newSequence = destinations.length + 1;
+    setDestinations([
+      ...destinations,
+      {
+        address: "",
+        lat: null,
+        lng: null,
+        sequence: newSequence,
+      },
+    ]);
+  };
+
+  const handleDestinationChange = (
+    index: number,
+    field: keyof DeliveryDestination,
+    value: string
+  ) => {
+    const newDestinations = [...destinations];
+    newDestinations[index] = { ...newDestinations[index], [field]: value };
+    setDestinations(newDestinations);
+  };
+
   const handleSubmitDelivery = (e: React.FormEvent) => {
     e?.preventDefault();
 
     try {
-      if (!delivery.load_type) {
-        toast.error("Silakan pilih jenis barang terlebih dahulu!");
-        return;
-      }
-
       const items = useDeliveryItemStore.getState().items;
       if (!items || items.length === 0) {
         toast.error(
@@ -270,32 +430,18 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         return;
       }
 
-      if (
-        !delivery.destination_address ||
-        delivery.destination_address.trim() === ""
-      ) {
-        toast.error("Silakan isi alamat tujuan terlebih dahulu!");
-        return;
-      }
-
-      if (
-        delivery.pickup_address_lang == null ||
-        delivery.pickup_address_lat == null
-      ) {
+      if (!startPoint) {
         toast.error("Silakan tentukan koordinat pengambilan terlebih dahulu!");
         return;
       }
 
-      if (
-        delivery.destination_address_lang == null ||
-        delivery.destination_address_lat == null
-      ) {
-        toast.error("Silakan tentukan koordinat tujuan terlebih dahulu!");
-        return;
-      }
+      const validDestinations = destinations.filter(
+        (dest) =>
+          dest.address.trim() !== "" && dest.lat !== null && dest.lng !== null
+      );
 
-      if (!delivery.vehicle_id) {
-        toast.error("Silakan pilih kendaraan terlebih dahulu!");
+      if (validDestinations.length === 0) {
+        toast.error("Silakan isi minimal satu tujuan dengan koordinat!");
         return;
       }
 
@@ -304,18 +450,9 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         return;
       }
 
-      if (!deliveryDeadlineDate) {
-        toast.error("Silakan pilih tanggal batas pengiriman terlebih dahulu!");
-        return;
-      }
-
       const defaultDate = new Date().toISOString();
       const formattedDeliveryDate = deliveryDate
         ? deliveryDate.toISOString()
-        : defaultDate;
-
-      const formattedDeliveryDeadlineDate = deliveryDeadlineDate
-        ? deliveryDeadlineDate.toISOString()
         : defaultDate;
 
       const payload: Delivery = {
@@ -325,31 +462,19 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         total_item: items.length,
         total_weight: totalWeight,
         delivery_date: formattedDeliveryDate,
-        delivery_deadline_date: formattedDeliveryDeadlineDate,
         delivery_status: "menunggu persetujuan",
         delivery_code: generateDeliveryCode(),
         items: items,
+        delivery_destinations: destinations,
+        pickup_address_lat: startPoint.lat,
+        pickup_address_lang: startPoint.lng,
+        destination_address: validDestinations[0].address,
+        destination_address_lat: validDestinations[0].lat,
+        destination_address_lang: validDestinations[0].lng,
       };
 
       useDeliveryStore.getState().addDelivery(payload);
       addDeliveryToTransaction(payload);
-
-      console.log(
-        "Current deliveryList:",
-        useDeliveryStore.getState().deliveryList
-      );
-      console.log(
-        "Driver list after update:",
-        useDeliveryStore.getState().drivers
-      );
-      console.log(
-        "Current vehicleList:",
-        useDeliveryStore.getState().deliveryList
-      );
-      console.log(
-        "Vehicle list after update:",
-        useDeliveryStore.getState().vehicles
-      );
 
       resetDelivery();
 
@@ -406,25 +531,20 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       destination_address: "",
       pickup_address_lat: null,
       pickup_address_lang: null,
-      destination_address_lat: null,
-      destination_address_lang: null,
       delivery_date: "",
-      delivery_deadline_date: "",
       delivery_cost: 0,
     });
 
     setDeliveryDate(null);
-    setDeliveryDeadlineDate(null);
-
     setStartPoint(null);
-    setEndPoint(null);
+    setDestinations([{ address: "", lat: null, lng: null, sequence: 1 }]);
     setStartLocation("");
-    setEndLocation("");
 
     resetDelivery();
 
     if (markerRef.current.start) markerRef.current.start.remove();
-    if (markerRef.current.end) markerRef.current.end.remove();
+    markerRef.current.destinations.forEach((marker) => marker.remove());
+    markerRef.current.destinations = [];
 
     if (mapRef.current?.getSource("route")) {
       mapRef.current.removeLayer("route");
@@ -439,14 +559,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     goBack();
   };
 
-  const handlePlaceSelect = (place: Place) => {
-    setStartLocation(place.place_name);
-  };
-
   const [deliveryDate, setDeliveryDate] = useState<Date | undefined>();
-  const [deliveryDeadlineDate, setDeliveryDeadlineDate] = useState<
-    Date | undefined
-  >();
 
   return (
     <form
@@ -458,26 +571,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         subTitle="Form Tambah Pengiriman"
         className="text-center mt-6 text-2xl"
       />
-      {/* <SelectComponent
-        label="Jenis Barang"
-        placeholder="Pilih jenis barang"
-        name="load_type"
-        value={formData.load_type}
-        onChange={handleChange}
-        options={[
-          { value: "barang konsumen", label: "Barang Konsumen" },
-          { value: "material bangunan", label: "Material Bangunan" },
-          { value: "barang industri", label: "Barang Industri" },
-          { value: "hasil Pertanian", label: "Hasil Pertanian" },
-          { value: "ternak", label: "Ternak" },
-          { value: "bahan kimia", label: "Bahan Kimia" },
-          { value: "elektronik", label: "Elektronik" },
-          { value: "furniture", label: "Furniture" },
-          { value: "suku cadang otomotif", label: "Suku Cadang Otomotif" },
-          { value: "limbah / barang bekas", label: "Limbah / Barang Bekas" },
-          { value: "lainnya", label: "Lainnya" },
-        ]}
-      /> */}
 
       <InputComponent
         label="Jumlah Barang"
@@ -493,6 +586,9 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         value={totalWeight}
         onChange={handleChange}
       />
+
+      <ItemsCardList items={items} />
+
       <SelectComponent
         label="Pengemudi"
         placeholder="Pilih pengemudi yang akan ditugaskan"
@@ -512,6 +608,13 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         onChange={handleChange}
       />
 
+      <SearchLocationInput
+        placeholder="Cari alamat"
+        value={startLocation}
+        onSelectPlace={(place) => setStartLocation(place.place_name)}
+        mapRef={mapRef}
+      />
+
       <InputComponent
         label="Alamat Penjemputan"
         placeholder="Jl. ABC No.10, Jakarta Pusat"
@@ -520,53 +623,77 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         value={formData.pickup_address}
         onChange={handleChange}
       />
-
-      <InputComponent
-        label="Alamat Tujuan"
-        placeholder="Pergudangan ABC, Bekasi Timur"
-        type="textarea"
-        name="destination_address"
-        value={formData.destination_address}
-        onChange={handleChange}
-      />
-
-      <div>
-        <SearchLocationInput
-          placeholder={`Cari alamat ${
-            selectingPoint === "start" ? "penjemputan" : "tujuan"
-          }`}
-          value={startLocation}
-          onSelectPlace={handlePlaceSelect}
-          mapRef={mapRef}
-        />
-        <div id="map" className="h-full"></div>
-      </div>
       <CoordinateInput
         pointLabel="start"
-        latitude={formData.pickup_address_lat}
-        longitude={formData.pickup_address_lang}
+        latitude={startPoint?.lat || null}
+        longitude={startPoint?.lng || null}
         onSelectPoint={() => setSelectingPoint("start")}
         isSelected={selectingPoint === "start"}
       />
 
-      <CoordinateInput
-        pointLabel="end"
-        latitude={formData.destination_address_lat}
-        longitude={formData.destination_address_lang}
-        onSelectPoint={() => setSelectingPoint("end")}
-        isSelected={selectingPoint === "end"}
-      />
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold">Alamat Tujuan</h3>
+          {destinations.length < 3 && (
+            <ButtonComponent
+              type="button"
+              onClick={handleAddDestination}
+              variant="add"
+            />
+          )}
+        </div>
+        <SearchLocationInput
+          placeholder="Cari alamat tujuan"
+          value={destinationLocation}
+          onSelectPlace={(place) => setDestinationLocation(place.place_name)}
+          mapRef={mapRef}
+        />
+        {destinations.map((dest, index) => (
+          <div key={index} className="border rounded-lg p-4 space-y-3">
+            <div className="flex justify-between items-center">
+              <h4 className="font-medium">Tujuan {index + 1}</h4>
+              {destinations.length > 1 && (
+                <ButtonComponent
+                  type="button"
+                  variant="reject"
+                  className="p-2"
+                  onClick={() => handleRemoveDestination(index)}
+                />
+              )}
+            </div>
+
+            <InputComponent
+              label={`Alamat Tujuan ${index + 1}`}
+              placeholder="Pergudangan ABC, Bekasi Timur"
+              type="textarea"
+              value={dest.address}
+              onChange={(e) =>
+                handleDestinationChange(index, "address", e.target.value)
+              }
+            />
+
+            <CoordinateInput
+              pointLabel={`destination-${index}`}
+              latitude={dest.lat}
+              longitude={dest.lng}
+              onSelectPoint={() => setSelectingPoint(`destination-${index}`)}
+              isSelected={selectingPoint === `destination-${index}`}
+              displayLabel={`Tujuan ${index + 1}`}
+            />
+          </div>
+        ))}
+      </div>
 
       <div className="space-y-4">
         <InputComponent
-          label="Jarak"
+          label="Total Jarak"
           disabled={true}
-          value={distance != null ? `${distance} Km` : ""}
+          value={displayDistance}
         />
         <InputComponent
           label="Perkiraan Waktu"
           disabled={true}
-          value={duration ?? ""}
+          value={displayDuration}
         />
       </div>
 
@@ -584,20 +711,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         }}
       />
 
-      <DatePickerComponent
-        label="Batas Waktu Pengiriman"
-        buttonWidth="w-72"
-        selectedDate={deliveryDeadlineDate}
-        disablePastDate={true}
-        onDateChange={(date) => {
-          setDeliveryDeadlineDate(date);
-          setFormData({
-            ...formData,
-            delivery_deadline_date: date ? date.toISOString() : "",
-          });
-        }}
-      />
-
       <InputComponent
         className="w-60"
         label="Biaya Pengiriman"
@@ -611,6 +724,15 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         }
         disabled={true}
       />
+      <InputComponent
+        label="Catatan"
+        placeholder="Berikan catatan pengiriman"
+        name="note"
+        type="textarea"
+        value={formData.note}
+        onChange={handleChange}
+      />
+
       <div className="flex justify-center w-full gap-3 py-5">
         <ConfirmDialog
           trigger={

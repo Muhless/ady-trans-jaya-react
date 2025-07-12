@@ -1,13 +1,14 @@
 import { MapPin, X } from "lucide-react";
 import { InputLatLang } from "./InputLatLang";
 
-type CoordinateInputProps = {
-  pointLabel: "start" | "end";
+interface CoordinateInputProps {
+  pointLabel: "start" | "end" | `destination-${number}`;
   latitude: number | null;
   longitude: number | null;
   onSelectPoint: () => void;
   isSelected: boolean;
-};
+  displayLabel?: string;
+}
 
 export const CoordinateInput: React.FC<CoordinateInputProps> = ({
   pointLabel,
