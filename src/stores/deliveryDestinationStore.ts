@@ -1,16 +1,16 @@
 import { create } from "zustand";
+import { DeliveryItem } from "./deliveryItemStore";
 
-export type DeliveryItem = {
-  id: number;
-  item_name: string;
-  quantity: number;
-  unit: string;
-  weight: number;
-  destination_id: number; // ✅ Add destination_id to match deliveryItemStore
-};
+let destinationIdCounter = 0;
+let itemIdCounter = 0;
+
+const generateDestinationId = () =>
+  Date.now() * 1000 + (destinationIdCounter++ % 1000);
+
+const generateItemId = () => Date.now() * 1000 + (itemIdCounter++ % 1000);
 
 export type DeliveryDestination = {
-  id?: number;
+  id: number;
   address: string;
   lat: number | null;
   lng: number | null;
@@ -18,12 +18,13 @@ export type DeliveryDestination = {
   arrival_time?: string;
   arrival_photo_url?: string;
   status?: string;
-  items?: DeliveryItem[];
+  items: DeliveryItem[];
 };
 
 type DeliveryDestinationStoreType = {
   pickup_address: string;
   destinations: DeliveryDestination[];
+
   setPickupAddress: (value: string) => void;
   setDestinations: (destinations: DeliveryDestination[]) => void;
   updateDestination: <K extends keyof DeliveryDestination>(
@@ -33,44 +34,48 @@ type DeliveryDestinationStoreType = {
   ) => void;
   addDestination: () => void;
   removeDestination: (index: number) => void;
-  addItemToDestination: (index: number, item: DeliveryItem) => void;
-  removeItemFromDestination: (index: number, itemIndex: number) => void;
+  addItemToDestination: (
+    destinationIndex: number,
+    item: Omit<DeliveryItem, "id" | "destination_id">
+  ) => void;
+  removeItemFromDestination: (
+    destinationIndex: number,
+    itemIndex: number
+  ) => void;
   resetDestinations: () => void;
 };
 
+// Zustand store
 export const DeliveryDestinationStore = create<DeliveryDestinationStoreType>(
-  (set) => ({
+  (set, get) => ({
     pickup_address: "",
-    destinations: [
-      {
-        address: "",
-        lat: null,
-        lng: null,
-        sequence: 1,
-        items: [],
-      },
-    ],
+    destinations: [],
+
     setPickupAddress: (value) => set({ pickup_address: value }),
+
     setDestinations: (destinations) => set({ destinations }),
+
     updateDestination: (index, field, value) =>
       set((state) => {
+        if (index < 0 || index >= state.destinations.length) return state;
         const updated = [...state.destinations];
         (updated[index] as any)[field] = value;
         return { destinations: updated };
       }),
+
     addDestination: () =>
-      set((state) => ({
-        destinations: [
-          ...state.destinations,
-          {
-            address: "",
-            lat: null,
-            lng: null,
-            sequence: state.destinations.length + 1,
-            items: [],
-          },
-        ],
-      })),
+      set((state) => {
+        const newDestination: DeliveryDestination = {
+          id: generateDestinationId(),
+          address: "",
+          lat: null,
+          lng: null,
+          sequence: state.destinations.length + 1,
+          items: [],
+        };
+        return { destinations: [...state.destinations, newDestination] };
+      }),
+
     removeDestination: (index) =>
       set((state) => {
         const filtered = state.destinations.filter((_, i) => i !== index);
@@ -80,40 +85,75 @@ export const DeliveryDestinationStore = create<DeliveryDestinationStoreType>(
         }));
         return { destinations: resequenced };
       }),
-    addItemToDestination: (index, item) =>
+
+    addItemToDestination: (destinationIndex, item) =>
       set((state) => {
-        const updated = [...state.destinations];
-        const dest = updated[index];
-        if (!dest.items) dest.items = [];
-        // ✅ Ensure destination_id is set correctly
-        const itemWithDestinationId = {
-          ...item,
-          destination_id: index
-        };
-        dest.items.push(itemWithDestinationId);
-        return { destinations: updated };
-      }),
-    removeItemFromDestination: (index, itemIndex) =>
-      set((state) => {
-        const updated = [...state.destinations];
-        const dest = updated[index];
-        if (dest.items) {
-          dest.items = dest.items.filter((_, i) => i !== itemIndex);
+        if (
+          destinationIndex < 0 ||
+          destinationIndex >= state.destinations.length
+        ) {
+          console.error(`Invalid destination index: ${destinationIndex}`);
+          return state;
         }
-        return { destinations: updated };
+
+        const targetDestination = state.destinations[destinationIndex];
+        const newItem: DeliveryItem = {
+          ...item,
+          id: generateItemId(),
+          destination_id: targetDestination.id,
+        };
+
+        const updatedDestinations = state.destinations.map((dest, index) =>
+          index === destinationIndex
+            ? {
+                ...dest,
+                items: [...(dest.items || []), newItem],
+              }
+            : dest
+        );
+
+        return { destinations: updatedDestinations };
       }),
+
+    removeItemFromDestination: (destinationIndex, itemIndex) =>
+      set((state) => {
+        if (
+          destinationIndex < 0 ||
+          destinationIndex >= state.destinations.length
+        ) {
+          return state;
+        }
+
+        const destination = state.destinations[destinationIndex];
+        if (
+          !destination?.items ||
+          itemIndex < 0 ||
+          itemIndex >= destination.items.length
+        ) {
+          return state;
+        }
+
+        const updatedDestinations = state.destinations.map((dest, index) =>
+          index === destinationIndex
+            ? {
+                ...dest,
+                items: dest.items.filter((_, i) => i !== itemIndex),
+              }
+            : dest
+        );
+
+        return { destinations: updatedDestinations };
+      }),
+
     resetDestinations: () =>
-      set(() => ({
-        pickup_address: "",
-        destinations: [
-          {
-            address: "",
-            lat: null,
-            lng: null,
-            sequence: 1,
-            items: [],
-          },
-        ],
-      })),
+      set(() => {
+        destinationIdCounter = 0;
+        itemIdCounter = 0;
+
+        return {
+          pickup_address: "",
+          destinations: [],
+        };
+      }),
   })
 );

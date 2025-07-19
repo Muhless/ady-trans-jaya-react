@@ -220,14 +220,10 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
       };
     }),
 
+  // ✅ FIXED: Tidak mengubah status driver dan vehicle
   removeDeliveryFromTransaction: (deliveryId: number) => {
-    const deliveryStore = useDeliveryStore.getState();
-
     const stateBefore = get();
-    const deliveryToRemove = stateBefore.transaction.deliveries.find(
-      (d) => d.id === deliveryId
-    );
-
+    
     const filtered = stateBefore.transaction.deliveries.filter(
       (d) => d.id !== deliveryId
     );
@@ -236,23 +232,14 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
       0
     );
 
-    if (deliveryToRemove) {
-      deliveryStore.updateDriverStatus(deliveryToRemove.driver_id, "tersedia");
-      deliveryStore.updateVehicleStatus(
-        deliveryToRemove.vehicle_id,
-        "tersedia"
-      );
-      deliveryStore.removeDelivery(deliveryToRemove.id);
-      console.log("Setelah remove:");
-      console.log("Delivery list:", deliveryStore.deliveryList);
-      console.log("Drivers:", deliveryStore.drivers);
-    }
-
+    // ✅ Hanya update transaction, tidak mengubah status driver/vehicle
+    // ✅ Juga tidak menghapus delivery dari deliveryStore
     set({
       transaction: {
         ...stateBefore.transaction,
         deliveries: filtered,
         total_delivery: filtered.length,
+        cost: newCost, // ✅ Update cost juga
       },
     });
   },

@@ -1,11 +1,9 @@
 import React from "react";
 import ButtonComponent from "../button/Index";
-import TitleComponent from "../Title";
 import { DeliveryItem, useDeliveryItemStore } from "@/stores/deliveryItemStore";
 import useNavigationHooks from "@/hooks/useNavigation";
 import { useDeliveryStore } from "@/stores/deliveryStore";
 import { toast } from "sonner";
-import SelectComponent from "../input/Select";
 
 const AddDeliveryItemForm: React.FC = () => {
   const { goBack } = useNavigationHooks();
@@ -93,8 +91,6 @@ const AddDeliveryItemForm: React.FC = () => {
       alert(validation.errors[0]);
       return;
     }
-
-    console.log("Items yang akan dikirim:", items);
 
     useDeliveryStore
       .getState()

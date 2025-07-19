@@ -6,6 +6,9 @@ import {
   DeliveryDestinationStore,
 } from "./deliveryDestinationStore";
 
+let destinationIdCounter = 0;
+const generateDestinationId = () => ++destinationIdCounter;
+
 export type Driver = {
   id: number;
   name: string;
@@ -40,8 +43,8 @@ export type Delivery = {
   delivery_cost: number;
   approved_at: string | null;
   note: string;
-  items: DeliveryItem[];
   delivery_destinations: DeliveryDestination[];
+  items: DeliveryItem[];
 };
 
 type DeliveryStore = {
@@ -54,8 +57,8 @@ type DeliveryStore = {
   removeDelivery: (id: number) => void;
   updateDelivery: (id: number, updatedDelivery: Partial<Delivery>) => void;
 
-  // ✅ Destination Management Methods
-  addDestination: (destination: Omit<DeliveryDestination, "id">) => void;
+  // ✅ Destination Management
+  addDestination: (destination: Partial<DeliveryDestination>) => void;
   removeDestination: (destinationIndex: number) => void;
   updateDestination: (
     destinationIndex: number,
@@ -119,55 +122,21 @@ export const useDeliveryStore = create<DeliveryStore>()(
         const deliveryWithId = {
           ...newDelivery,
           id: newDelivery.id || Date.now(),
-          driver: driver ? { ...driver, status: "tidak tersedia" } : null,
-          vehicle: vehicle ? { ...vehicle, status: "tidak tersedia" } : null,
+          driver: driver || null,
+          vehicle: vehicle || null,
         };
-
-        const updatedDrivers = state.drivers.map((d) =>
-          d.id === deliveryWithId.driver_id
-            ? { ...d, status: "tidak tersedia" }
-            : d
-        );
-
-        const updatedVehicles = state.vehicles.map((v) =>
-          v.id === deliveryWithId.vehicle_id
-            ? { ...v, status: "tidak tersedia" }
-            : v
-        );
 
         return {
           deliveryList: [...state.deliveryList, deliveryWithId],
-          drivers: updatedDrivers,
-          vehicles: updatedVehicles,
         };
       }),
 
     removeDelivery: (id) =>
       set((state) => {
-        const deliveryToRemove = state.deliveryList.find((d) => d.id === id);
-
-        let updatedDrivers = state.drivers;
-        let updatedVehicles = state.vehicles;
-
-        if (deliveryToRemove) {
-          updatedDrivers = state.drivers.map((driver) =>
-            driver.id === deliveryToRemove.driver_id
-              ? { ...driver, status: "tersedia" }
-              : driver
-          );
-          updatedVehicles = state.vehicles.map((vehicle) =>
-            vehicle.id === deliveryToRemove.vehicle_id
-              ? { ...vehicle, status: "tersedia" }
-              : vehicle
-          );
-        }
-
         return {
           deliveryList: state.deliveryList.filter(
             (delivery) => delivery.id !== id
           ),
-          drivers: updatedDrivers,
-          vehicles: updatedVehicles,
         };
       }),
 
@@ -205,10 +174,23 @@ export const useDeliveryStore = create<DeliveryStore>()(
     setDelivery: (data: Partial<Delivery>) =>
       set((state) => {
         const isNewId = data.id === 0 || data.id === undefined;
+
+        let updatedData = { ...data };
+
+        if (data.driver_id !== undefined) {
+          const driver = state.drivers.find((d) => d.id === data.driver_id);
+          updatedData.driver = driver || null;
+        }
+
+        if (data.vehicle_id !== undefined) {
+          const vehicle = state.vehicles.find((v) => v.id === data.vehicle_id);
+          updatedData.vehicle = vehicle || null;
+        }
+
         return {
           delivery: {
             ...state.delivery,
-            ...data,
+            ...updatedData,
             id: isNewId ? Date.now() : data.id ?? state.delivery.id,
           },
         };
@@ -252,14 +234,17 @@ export const useDeliveryStore = create<DeliveryStore>()(
       });
     },
 
-    // ✅ Destination Management Methods
+    // ✅ Fixed addDestination method
     addDestination: (destination) =>
       set((state) => {
         const newDestination: DeliveryDestination = {
           ...destination,
-          id: Date.now(),
+          id:
+            typeof destination.id === "number"
+              ? destination.id
+              : generateDestinationId(),
           items: destination.items || [],
-        };
+        } as DeliveryDestination;
 
         const updatedDelivery = {
           ...state.delivery,
@@ -268,6 +253,9 @@ export const useDeliveryStore = create<DeliveryStore>()(
             newDestination,
           ],
         };
+
+        // Update totals after adding destination
+        setTimeout(() => get().updateTotals(), 0);
 
         return { delivery: updatedDelivery };
       }),
@@ -283,8 +271,8 @@ export const useDeliveryStore = create<DeliveryStore>()(
           delivery_destinations: updatedDestinations,
         };
 
-        // Recalculate totals after removing destination
-        get().updateTotals();
+        // Update totals after removing destination
+        setTimeout(() => get().updateTotals(), 0);
 
         return { delivery: updatedDelivery };
       }),
@@ -304,7 +292,6 @@ export const useDeliveryStore = create<DeliveryStore>()(
         return { delivery: updatedDelivery };
       }),
 
-    // ✅ Items Management for Destinations
     updateDestinationItems: (destinationIndex, items) =>
       set((state) => {
         const updatedDestinations = state.delivery.delivery_destinations.map(
@@ -317,7 +304,6 @@ export const useDeliveryStore = create<DeliveryStore>()(
           delivery_destinations: updatedDestinations,
         };
 
-        // Auto-update totals when items change
         setTimeout(() => get().updateTotals(), 0);
 
         return { delivery: updatedDelivery };

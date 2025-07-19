@@ -14,6 +14,7 @@ import axios from "axios";
 import DatePickerComponent from "../common/DatePicker";
 import { formatCurrency } from "../../../utils/Formatters";
 import { toast } from "sonner";
+import { DeliveryDestinationStore } from "@/stores/deliveryDestinationStore";
 
 const AddTransactionForm = () => {
   console.log(useTransactionStore.getState().transaction);
@@ -96,6 +97,8 @@ const AddTransactionForm = () => {
     }
   };
 
+  const destinations = DeliveryDestinationStore.getState().destinations;
+
   const handleSubmitTransaction = async (e: React.FormEvent) => {
     e?.preventDefault();
 
@@ -120,13 +123,16 @@ const AddTransactionForm = () => {
         ...cleanTransaction,
         customer_id: Number(transaction.customer_id),
         total_delivery: transaction.deliveries.length,
-        deliveries: transaction.deliveries.map(
-          ({ id, driver_id, vehicle_id, ...rest }) => ({
-            ...rest,
-            driver_id: Number(driver_id),
-            vehicle_id: Number(vehicle_id),
-          })
-        ),
+        deliveries: transaction.deliveries.map((delivery, index) => {
+          const destination = destinations[index];
+          return {
+            ...delivery,
+            driver_id: Number(delivery.driver_id),
+            vehicle_id: Number(delivery.vehicle_id),
+            items: destination?.items || [],
+          };
+        }),
+
         payment_deadline: paymentDeadline.toISOString(),
       };
 
@@ -148,32 +154,6 @@ const AddTransactionForm = () => {
 
       const result = await response.json();
       console.log("Transaksi berhasil disimpan:", result);
-
-      try {
-        const updatePromises = transaction.deliveries.flatMap((d) => [
-          axios.patch(`${API_BASE_URL}/driver/${d.driver_id}`, {
-            status: "tidak tersedia",
-          }),
-          axios.patch(`${API_BASE_URL}/vehicle/${d.vehicle_id}`, {
-            status: "tidak tersedia",
-          }),
-        ]);
-
-        await Promise.all(updatePromises);
-        console.log("Status driver dan kendaraan berhasil diupdate");
-      } catch (updateError) {
-        console.warn(
-          "Transaksi berhasil disimpan, tetapi gagal mengupdate status:",
-          updateError
-        );
-        toast.error(
-          "Transaksi berhasil disimpan, tetapi gagal mengupdate status driver/kendaraan.",
-          {
-            description: "Silakan periksa status secara manual.",
-            duration: 5000,
-          }
-        );
-      }
 
       resetDelivery();
       resetTransaction();

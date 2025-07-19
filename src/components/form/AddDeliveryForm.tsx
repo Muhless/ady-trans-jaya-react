@@ -23,9 +23,10 @@ import { toast } from "sonner";
 import { useAvailableOptions } from "@/hooks/useAvailableOptionData";
 import { CoordinateInput } from "../input/CoordinatInput";
 import { useDeliveryForm } from "@/hooks/useDeliveryForm";
-import AddDeliveryItemForm from "./AddDeliveryItemsForm";
+// import AddDeliveryItemForm from "./AddDeliveryItemsForm";
 import DestinationItemForm from "./DestinationItemForm";
 import ItemsCardList from "../card/delivery/DeliveryItemCard";
+import { DeliveryDestinationStore } from "@/stores/deliveryDestinationStore";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -40,6 +41,8 @@ interface Place {
 }
 
 const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
+  console.log(useDeliveryStore.getState().delivery);
+
   const { goBack, goToAddTransaction } = useNavigationHooks();
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<{
@@ -53,7 +56,14 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   } | null>(null);
 
   const [destinations, setDestinations] = useState<DeliveryDestination[]>([
-    { address: "", lat: null, lng: null, sequence: 1 },
+    {
+      id: 1,
+      address: "",
+      lat: null,
+      lng: null,
+      sequence: 1,
+      items: [],
+    },
   ]);
 
   const [route, setRoute] = useState<GeoJSON.LineString | null>(null);
@@ -290,7 +300,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     let currentLat = startPoint.lat;
     let currentLng = startPoint.lng;
 
-    // Hitung jarak dari start ke setiap destination secara berurutan
     validDestinations.forEach((dest) => {
       const distance = getDistanceBetweenPoints(
         currentLat,
@@ -303,7 +312,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       currentLng = dest.lng;
     });
 
-    // Estimasi waktu berdasarkan kecepatan rata-rata 40 km/jam
     const estimatedHours = totalDistance / 40;
     const estimatedMinutes = Math.ceil(estimatedHours * 60);
     const hours = Math.floor(estimatedMinutes / 60);
@@ -372,17 +380,21 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     return `ATJ-${datePart}-${randomPart}`;
   };
 
+  const generateUniqueId = () =>
+    Date.now() * 1000 + Math.floor(Math.random() * 1000);
+
   const handleAddDestination = () => {
     const newSequence = destinations.length + 1;
-    setDestinations([
-      ...destinations,
-      {
-        address: "",
-        lat: null,
-        lng: null,
-        sequence: newSequence,
-      },
-    ]);
+    const newDestination = {
+      id: generateUniqueId(),
+      address: "",
+      lat: null,
+      lng: null,
+      sequence: newSequence,
+      items: [],
+    };
+
+    setDestinations([...destinations, newDestination]);
   };
 
   const handleDestinationChange = (
@@ -394,6 +406,23 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     newDestinations[index] = { ...newDestinations[index], [field]: value };
     setDestinations(newDestinations);
   };
+
+  useEffect(() => {
+    const validDestinations = destinations.filter(
+      (dest) =>
+        dest.address.trim() !== "" && dest.lat !== null && dest.lng !== null
+    );
+
+    if (validDestinations.length > 0) {
+      setDelivery({
+        delivery_destinations: validDestinations.map((dest, index) => ({
+          ...dest,
+          id: typeof dest.id === "number" ? dest.id : Date.now() + index,
+          sequence: index + 1,
+        })),
+      });
+    }
+  }, [destinations, setDelivery]);
 
   const handleSubmitDelivery = (e: React.FormEvent) => {
     e?.preventDefault();
@@ -434,45 +463,63 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         return;
       }
 
-      const items = useDeliveryItemStore.getState().items;
-      if (!items || items.length === 0) {
-        toast.error(
-          "Silakan tambahkan minimal 1 barang pengiriman terlebih dahulu!"
-        );
-        return;
-      }
-
       const defaultDate = new Date().toISOString();
       const formattedDeliveryDate = deliveryDate
         ? deliveryDate.toISOString()
         : defaultDate;
 
+      const destinationsWithId = validDestinations.map((dest, index) => ({
+        ...dest,
+        id: typeof dest.id === "number" ? dest.id : index + 1,
+        sequence: index + 1,
+        items: dest.items || [],
+      }));
+
+      const allItems = destinationsWithId.flatMap((dest) => dest.items || []);
+      const totalItems = allItems.length;
+      const totalWeightCalculated = allItems.reduce(
+        (sum, item) => sum + item.weight * item.quantity,
+        0
+      );
+
+      console.log("All destinations:", destinations);
+      console.log("Valid destinations with items:", destinationsWithId);
+      console.log("All items collected:", allItems);
+      console.log("Total items:", totalItems);
+      console.log("Total weight:", totalWeightCalculated);
+
       const payload: Delivery = {
         ...delivery,
+        id: undefined,
         driver_id: Number(delivery.driver_id),
         vehicle_id: Number(delivery.vehicle_id),
-        total_item: items.length,
-        total_weight: totalWeight,
+        total_item: totalItems,
+        total_weight: totalWeightCalculated,
         delivery_date: formattedDeliveryDate,
         delivery_status: "menunggu persetujuan",
         delivery_code: generateDeliveryCode(),
-        items: items,
+        items: allItems,
         pickup_address_lat: startPoint.lat,
         pickup_address_lang: startPoint.lng,
+
         destination_address: validDestinations[0].address,
         destination_address_lat: validDestinations[0].lat,
         destination_address_lang: validDestinations[0].lng,
+
+        delivery_destinations: destinationsWithId,
       };
+
+      console.log("Final payload:", payload);
 
       useDeliveryStore.getState().addDelivery(payload);
       addDeliveryToTransaction(payload);
-
       resetDelivery();
 
       toast.success("Pengiriman berhasil ditambahkan!", {
-        description: `Pengiriman dengan kode ${payload.delivery_code} telah ditambahkan ke transaksi.`,
+        description: `Pengiriman dengan kode ${payload.delivery_code} telah ditambahkan ke transaksi dengan ${destinationsWithId.length} tujuan dan ${totalItems} item.`,
         duration: 3000,
       });
+      console.log("Final payload:", JSON.stringify(payload, null, 2));
 
       goToAddTransaction();
     } catch (error: any) {
@@ -530,7 +577,16 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
 
     setDeliveryDate(null);
     setStartPoint(null);
-    setDestinations([{ address: "", lat: null, lng: null, sequence: 1 }]);
+    setDestinations([
+      {
+        id: Date.now(),
+        address: "",
+        lat: null,
+        lng: null,
+        sequence: 1,
+        items: [],
+      },
+    ]);
     setStartLocation("");
 
     resetDelivery();
@@ -565,6 +621,23 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         className="text-center mt-6 text-2xl"
       />
 
+      <InputComponent
+        label="Jumlah Barang"
+        disabled={true}
+        name="total_item"
+        value={items.length}
+        onChange={() => {}}
+      />
+      <InputComponent
+        label="Total Berat"
+        disabled={true}
+        name="total_weight"
+        value={totalWeight}
+        onChange={handleChange}
+      />
+
+      <ItemsCardList items={items} />
+
       <SelectComponent
         label="Pengemudi"
         placeholder="Pilih pengemudi yang akan ditugaskan"
@@ -584,13 +657,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         onChange={handleChange}
       />
 
-      <SearchLocationInput
-        placeholder="Cari alamat"
-        value={startLocation}
-        onSelectPlace={(place) => setStartLocation(place.place_name)}
-        mapRef={mapRef}
-      />
-
       <InputComponent
         label="Alamat Penjemputan"
         placeholder="Jl. ABC No.10, Jakarta Pusat"
@@ -598,6 +664,12 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         name="pickup_address"
         value={formData.pickup_address}
         onChange={handleChange}
+      />
+      <SearchLocationInput
+        placeholder="Cari alamat"
+        value={startLocation}
+        onSelectPlace={(place) => setStartLocation(place.place_name)}
+        mapRef={mapRef}
       />
       <CoordinateInput
         pointLabel="start"
@@ -661,18 +733,12 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
               isSelected={selectingPoint === `destination-${index}`}
               displayLabel={`Tujuan ${index + 1}`}
             />
-            <DestinationItemForm />
+
+            {/* <DestinationItemForm destinationIndex={index} /> */}
           </div>
         ))}
       </div>
 
-      <InputComponent
-        label="Total Berat"
-        disabled={true}
-        name="total_weight"
-        value={totalWeight}
-        onChange={handleChange}
-      />
       <div className="space-y-4">
         <InputComponent
           label="Total Jarak"
@@ -712,6 +778,14 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
             : `Rp ${deliveryPrice.toLocaleString("id-ID")}`
         }
         disabled={true}
+      />
+      <InputComponent
+        label="Keterangan"
+        type="textarea"
+        name="note"
+        onChange={handleChange}
+        value={formData.note}
+        placeholder="Tambahkan keterangan"
       />
 
       <div className="flex justify-center w-full gap-3 py-5">

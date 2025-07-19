@@ -1,26 +1,34 @@
 import React, { useState } from "react";
 import { InputComponent } from "../input/Input";
 import ButtonComponent from "../button/Index";
-import SubTitle from "../SubTitle";
 import SelectComponent from "../input/Select";
 import { toast } from "sonner";
+import { DeliveryDestinationStore } from "@/stores/deliveryDestinationStore";
 
-interface Item {
-  item_name: string;
-  quantity: number;
-  unit: string;
-  weight: number;
+const generateItemId = () => Math.floor(Math.random() * 1000000);
+
+interface DestinationItemFormProps {
+  destinationIndex: number;
 }
 
-const DestinationItemForm = () => {
+const DestinationItemForm: React.FC<DestinationItemFormProps> = ({
+  destinationIndex,
+}) => {
   const [form, setForm] = useState({
     item_name: "",
     quantity: "",
     unit: "",
     weight: "",
   });
+  const destinations = DeliveryDestinationStore((state) => state.destinations);
+  const addItemToDestination = DeliveryDestinationStore(
+    (state) => state.addItemToDestination
+  );
+  const removeItemFromDestination = DeliveryDestinationStore(
+    (state) => state.removeItemFromDestination
+  );
 
-  const [items, setItems] = useState<Item[]>([]);
+  const items = destinations[destinationIndex]?.items || [];
 
   const handleChange = (field: string, value: string | number) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -47,15 +55,16 @@ const DestinationItemForm = () => {
       return;
     }
 
-    const newItem: Item = {
+    const newItem = {
       item_name: form.item_name,
       quantity: Number(form.quantity),
       unit: form.unit,
       weight: Number(form.weight),
+      destination_id: destinations[destinationIndex]?.id || destinationIndex,
     };
 
-    setItems((prev) => [...prev, newItem]);
-    console.log("Item ditambahkan:", newItem);
+    addItemToDestination(destinationIndex, newItem);
+
     toast.success("Barang berhasil ditambahkan");
     setForm({
       item_name: "",
@@ -66,7 +75,7 @@ const DestinationItemForm = () => {
   };
 
   const handleRemoveItem = (index: number) => {
-    setItems((prev) => prev.filter((_, i) => i !== index));
+    removeItemFromDestination(destinationIndex, index);
   };
 
   return (
@@ -135,7 +144,7 @@ const DestinationItemForm = () => {
           <div className="space-y-2">
             {items.map((item, index) => (
               <div
-                key={index}
+                key={item.id || `item-${index}`} // ✅ PERBAIKAN: Fallback key jika id tidak ada
                 className="border rounded-lg px-3 py-2 bg-gray-50"
               >
                 <div className="flex justify-between items-center">

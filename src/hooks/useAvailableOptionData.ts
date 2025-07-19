@@ -41,11 +41,7 @@ export const useAvailableOptions = () => {
     );
   }, [drivers, vehicles, deliveryList]);
 
-  useEffect(() => {
-    console.log("=== Available Options ===");
-    console.log("Drivers in store:", drivers);
-    console.log("Filtered driver options:", driverOptions);
-  }, [drivers, driverOptions]);
+  useEffect(() => {}, [drivers, driverOptions]);
 
   return { driverOptions, vehicleOptions };
 };

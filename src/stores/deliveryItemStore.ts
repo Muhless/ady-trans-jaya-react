@@ -1,23 +1,23 @@
 import { create } from "zustand";
 
 export type DeliveryItem = {
-  id: number;
+  id?: number;
   item_name: string;
   quantity: number;
   unit: string;
   weight: number;
-  destination_id: number;
+  destination_id?: number; // opsional, karena tidak digunakan langsung di form
 };
 
 type DeliveryItemStore = {
   items: DeliveryItem[];
   addItem: (item: DeliveryItem) => void;
   addItems: (newItems: DeliveryItem[]) => void;
-  removeItem: (id: number) => void; // ✅ Tambah method untuk remove item
-  updateItem: (id: number, updates: Partial<DeliveryItem>) => void; // ✅ Tambah method untuk update
-  getItemsByDestination: (destinationId: number) => DeliveryItem[]; // ✅ Helper method
+  removeItem: (id: number) => void;
+  updateItem: (id: number, updates: Partial<DeliveryItem>) => void;
+  getItemsByDestination: (destinationId: number) => DeliveryItem[];
   resetDeliveryItems: () => void;
-  resetItemsByDestination: (destinationId: number) => void; // ✅ Reset per destination
+  resetItemsByDestination: (destinationId: number) => void;
 };
 
 export const useDeliveryItemStore = create<DeliveryItemStore>((set, get) => ({
@@ -29,8 +29,8 @@ export const useDeliveryItemStore = create<DeliveryItemStore>((set, get) => ({
     })),
 
   addItems: (newItems) =>
-    set((state) => ({
-      items: [...state.items, ...newItems],
+    set(() => ({
+      items: newItems,
     })),
 
   removeItem: (id) =>
