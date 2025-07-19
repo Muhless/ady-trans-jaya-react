@@ -16,7 +16,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
 
-  // Header
   header: {
     textAlign: "center",
     marginBottom: 25,
@@ -34,7 +33,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
 
-  // Info Section
   infoSection: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -60,9 +58,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  // Table
   table: {
-    marginBottom: 25,
+    marginBottom: 10,
     border: "1px solid #333",
   },
   tableHeader: {
@@ -153,24 +150,6 @@ export const SuratJalanPDF = ({ delivery }) => {
                 : {formatDateNumeric(delivery.created_at)}
               </Text>
             </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Pengemudi</Text>
-              <Text style={styles.infoValue}>
-                : {delivery.driver.name || "-"}
-              </Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>No. Kendaraan</Text>
-              <Text style={styles.infoValue}>
-                : {delivery.vehicle.license_plate || "-"}
-              </Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Jenis Kendaraan</Text>
-              <Text style={styles.infoValue}>
-                : {delivery.vehicle.type || "-"}
-              </Text>
-            </View>
           </View>
 
           <View style={styles.infoGroupRight}>
@@ -181,9 +160,9 @@ export const SuratJalanPDF = ({ delivery }) => {
               </Text>
             </View>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>No Telepon</Text>
+              <Text style={styles.infoLabel}>Email</Text>
               <Text style={styles.infoValue}>
-                : {delivery.transaction.customer.phone}
+                : {delivery.transaction.customer.email}
               </Text>
             </View>
             <View style={styles.infoRow}>
@@ -193,15 +172,16 @@ export const SuratJalanPDF = ({ delivery }) => {
               </Text>
             </View>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Alamat Penjemputan</Text>
+              <Text style={styles.infoLabel}>No Telepon</Text>
               <Text style={styles.infoValue}>
-                : {delivery.pickup_address || "-"}
+                : {delivery.transaction.customer.phone}
               </Text>
             </View>
+
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Alamat Tujuan</Text>
+              <Text style={styles.infoLabel}>Alamat</Text>
               <Text style={styles.infoValue}>
-                : {delivery.destination_address || "-"}
+                : {delivery.transaction.customer.address}
               </Text>
             </View>
           </View>
@@ -219,37 +199,50 @@ export const SuratJalanPDF = ({ delivery }) => {
             <Text style={{ fontSize: 9, width: 120, fontWeight: "bold" }}>
               Tanggal Pengiriman
             </Text>
-            <Text style={{ fontSize: 9 }}>
+            <Text style={styles.infoValue}>
               : {formatDateNumeric(delivery.delivery_date)}
             </Text>
           </View>
           <View style={{ flexDirection: "row", marginBottom: 5 }}>
             <Text style={{ fontSize: 9, width: 120, fontWeight: "bold" }}>
-              Batas Waktu Pengiriman
+              Alamat Penjemputan
             </Text>
-            <Text style={{ fontSize: 9 }}>
-              : {formatDateNumeric(delivery.delivery_deadline_date)}
+            <Text style={styles.infoValue}>
+              : {delivery.pickup_address || "-"}
             </Text>
           </View>
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginBottom: 10,
-            paddingTop: 10,
-          }}
-        >
-          <Text style={{ fontSize: 9, fontWeight: "bold" }}>
-            Jenis Muatan: {delivery.load_type}
-          </Text>
-          <Text style={{ fontSize: 9, fontWeight: "bold" }}>
-            Total Item: {delivery.total_item || 0}
-          </Text>
-          <Text style={{ fontSize: 9, fontWeight: "bold" }}>
-            Total Berat: {delivery.total_weight || totalWeight} Kg
-          </Text>
+          <View style={{ flexDirection: "row", marginBottom: 5 }}>
+            <Text style={{ fontSize: 9, width: 120, fontWeight: "bold" }}>
+              Alamat Tujuan
+            </Text>
+            <Text style={styles.infoValue}>
+              : {delivery.destination_address || "-"}
+            </Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={{ fontSize: 9, width: 120, fontWeight: "bold" }}>
+              Pengemudi
+            </Text>
+            <Text style={styles.infoValue}>
+              : {delivery.driver.name || "-"}
+            </Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={{ fontSize: 9, width: 120, fontWeight: "bold" }}>
+              No. Kendaraan
+            </Text>
+            <Text style={styles.infoValue}>
+              : {delivery.vehicle.license_plate || "-"}
+            </Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={{ fontSize: 9, width: 120, fontWeight: "bold" }}>
+              Jenis Kendaraan
+            </Text>
+            <Text style={styles.infoValue}>
+              : {delivery.vehicle.type || "-"}
+            </Text>
+          </View>
         </View>
 
         <View style={styles.table}>
@@ -294,6 +287,21 @@ export const SuratJalanPDF = ({ delivery }) => {
               </Text>
             </View>
           ))}
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginBottom: 10,
+          }}
+        >
+          <Text style={{ fontSize: 9, fontWeight: "bold" }}>
+            Total Item: {delivery.total_item || 0}
+          </Text>
+          <Text style={{ fontSize: 9, fontWeight: "bold" }}>
+            Total Berat: {delivery.total_weight || totalWeight} Kg
+          </Text>
         </View>
 
         <View style={styles.signature}>

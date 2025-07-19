@@ -129,7 +129,7 @@ const AddTransactionForm = () => {
             ...delivery,
             driver_id: Number(delivery.driver_id),
             vehicle_id: Number(delivery.vehicle_id),
-            items: destination?.items || [],
+            items: delivery.items || [],
           };
         }),
 

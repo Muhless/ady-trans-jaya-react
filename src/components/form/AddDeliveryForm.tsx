@@ -6,14 +6,9 @@ import SelectComponent from "../input/Select";
 import useNavigationHooks from "../../hooks/useNavigation";
 import mapboxgl from "mapbox-gl";
 import { useDeliveryCalculation } from "../../hooks/useDeliveryCost";
-import {
-  Delivery,
-  DeliveryDestination,
-  useDeliveryStore,
-} from "../../stores/deliveryStore";
+import { Delivery, useDeliveryStore } from "../../stores/deliveryStore";
 import SearchLocationInput from "../input/SearchLocation";
-import { InputLatLang } from "../input/InputLatLang";
-import { ArrowLeft, MapPin, X } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useTransactionStore } from "../../stores/transactionStore";
 import ConfirmDialog from "../common/ConfirmDialog";
 import { Button } from "../ui/button";
@@ -22,11 +17,7 @@ import DatePickerComponent from "../common/DatePicker";
 import { toast } from "sonner";
 import { useAvailableOptions } from "@/hooks/useAvailableOptionData";
 import { CoordinateInput } from "../input/CoordinatInput";
-import { useDeliveryForm } from "@/hooks/useDeliveryForm";
-// import AddDeliveryItemForm from "./AddDeliveryItemsForm";
-import DestinationItemForm from "./DestinationItemForm";
 import ItemsCardList from "../card/delivery/DeliveryItemCard";
-import { DeliveryDestinationStore } from "@/stores/deliveryDestinationStore";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -41,60 +32,31 @@ interface Place {
 }
 
 const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
-  console.log(useDeliveryStore.getState().delivery);
-
   const { goBack, goToAddTransaction } = useNavigationHooks();
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<{
     start: mapboxgl.Marker | null;
-    destinations: mapboxgl.Marker[];
-  }>({ start: null, destinations: [] });
+    destination: mapboxgl.Marker | null;
+  }>({ start: null, destination: null });
 
   const [startPoint, setStartPoint] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
 
-  const [destinations, setDestinations] = useState<DeliveryDestination[]>([
-    {
-      id: 1,
-      address: "",
-      lat: null,
-      lng: null,
-      sequence: 1,
-      items: [],
-    },
-  ]);
+  const [destinationPoint, setDestinationPoint] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
   const [route, setRoute] = useState<GeoJSON.LineString | null>(null);
   const [distance, setDistance] = useState<number | null>(null);
   const [duration, setDuration] = useState<number | string | null>(null);
-  const [pickupLocation, setPickupLocation] = useState<string>("");
   const [selectingPoint, setSelectingPoint] = useState<string>("start");
   const [startLocation, setStartLocation] = React.useState<string>("");
   const [destinationLocation, setDestinationLocation] =
     React.useState<string>("");
   const { driverOptions, vehicleOptions } = useAvailableOptions();
-  // const { driverOptions, vehicleOptions } = useAllOptions();
-
-  const handleRemoveDestination = (index: number) => {
-    if (destinations.length > 1) {
-      const newDestinations = destinations.filter((_, i) => i !== index);
-      const updatedDestinations = newDestinations.map((dest, idx) => ({
-        ...dest,
-        sequence: idx + 1,
-      }));
-      setDestinations(updatedDestinations);
-
-      if (markerRef.current.destinations[index]) {
-        markerRef.current.destinations[index].remove();
-      }
-
-      markerRef.current.destinations = markerRef.current.destinations.filter(
-        (_, i) => i !== index
-      );
-    }
-  };
 
   useEffect(() => {
     if (
@@ -122,42 +84,18 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
 
         if (selectingPoint === "start") {
           setStartPoint({ lng, lat });
-          setPickupLocation(`Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`);
 
           if (markerRef.current.start) markerRef.current.start.remove();
           markerRef.current.start = new mapboxgl.Marker({ color: "#3b82f6" })
             .setLngLat([lng, lat])
             .addTo(mapRef.current!);
-        } else if (selectingPoint.startsWith("destination-")) {
-          const index = parseInt(selectingPoint.split("-")[1]);
+        } else if (selectingPoint === "destination") {
+          setDestinationPoint({ lng, lat });
 
-          setDestinations((prevDestinations) => {
-            const newDestinations = [...prevDestinations];
-            newDestinations[index] = {
-              ...newDestinations[index],
-              lat,
-              lng,
-            };
-            return newDestinations.map((dest, idx) => ({
-              ...dest,
-              sequence: idx + 1,
-            }));
-          });
-
-          if (markerRef.current.destinations[index]) {
-            markerRef.current.destinations[index].remove();
-          }
-
-          const colors = [
-            "#ef4444",
-            "#10b981",
-            "#f59e0b",
-            "#8b5cf6",
-            "#06b6d4",
-          ];
-          const markerColor = colors[index % colors.length];
-          markerRef.current.destinations[index] = new mapboxgl.Marker({
-            color: markerColor,
+          if (markerRef.current.destination)
+            markerRef.current.destination.remove();
+          markerRef.current.destination = new mapboxgl.Marker({
+            color: "#ef4444",
           })
             .setLngLat([lng, lat])
             .addTo(mapRef.current!);
@@ -179,22 +117,12 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     }
   }, [ref, selectingPoint]);
 
-  const fetchMultiDestinationRoute = async () => {
-    if (!startPoint || destinations.length === 0) return;
-
-    const validDestinations = destinations.filter(
-      (dest) => dest.lat !== null && dest.lng !== null
-    );
-    if (validDestinations.length === 0) return;
+  const fetchRoute = async () => {
+    if (!startPoint || !destinationPoint) return;
 
     try {
-      const waypoints = [
-        `${startPoint.lng},${startPoint.lat}`,
-        ...validDestinations.map((dest) => `${dest.lng},${dest.lat}`),
-      ].join(";");
-
       const response = await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${waypoints}?geometries=geojson&overview=full&access_token=${MAPBOX_ACCESS_TOKEN}`
+        `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${startPoint.lng},${startPoint.lat};${destinationPoint.lng},${destinationPoint.lat}?geometries=geojson&overview=full&access_token=${MAPBOX_ACCESS_TOKEN}`
       );
       const data = await response.json();
 
@@ -247,9 +175,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
 
           const bounds = new mapboxgl.LngLatBounds();
           bounds.extend([startPoint.lng, startPoint.lat]);
-          validDestinations.forEach((dest) => {
-            bounds.extend([dest.lng, dest.lat]);
-          });
+          bounds.extend([destinationPoint.lng, destinationPoint.lat]);
 
           if (map.isStyleLoaded()) {
             map.fitBounds(bounds, { padding: 50, maxZoom: 18 });
@@ -259,7 +185,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         console.log("Route calculation:", {
           totalDistance: totalDistanceInKm,
           totalDuration: formattedDuration,
-          waypoints: waypoints.split(";").length,
           rawDuration: totalDurationInSeconds,
         });
       } else {
@@ -268,19 +193,13 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         setDuration(null);
       }
     } catch (error) {
-      console.error("Error fetching multi-destination route:", error);
-      setDistance(null);
-      setDuration(null);
+      console.error("Error fetching route:", error);
+      calculateManualDistance();
     }
   };
 
   const calculateManualDistance = () => {
-    if (!startPoint || destinations.length === 0) return;
-
-    const validDestinations = destinations.filter(
-      (dest) => dest.lat !== null && dest.lng !== null
-    );
-    if (validDestinations.length === 0) return;
+    if (!startPoint || !destinationPoint) return;
 
     const getDistanceBetweenPoints = (lat1, lon1, lat2, lon2) => {
       const R = 6371;
@@ -296,21 +215,12 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       return R * c;
     };
 
-    let totalDistance = 0;
-    let currentLat = startPoint.lat;
-    let currentLng = startPoint.lng;
-
-    validDestinations.forEach((dest) => {
-      const distance = getDistanceBetweenPoints(
-        currentLat,
-        currentLng,
-        dest.lat,
-        dest.lng
-      );
-      totalDistance += distance;
-      currentLat = dest.lat;
-      currentLng = dest.lng;
-    });
+    const totalDistance = getDistanceBetweenPoints(
+      startPoint.lat,
+      startPoint.lng,
+      destinationPoint.lat,
+      destinationPoint.lng
+    );
 
     const estimatedHours = totalDistance / 40;
     const estimatedMinutes = Math.ceil(estimatedHours * 60);
@@ -329,12 +239,8 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   };
 
   useEffect(() => {
-    const validDestinations = destinations.filter(
-      (dest) => dest.lat !== null && dest.lng !== null
-    );
-
-    if (startPoint && validDestinations.length > 0) {
-      fetchMultiDestinationRoute().catch((error) => {
+    if (startPoint && destinationPoint) {
+      fetchRoute().catch((error) => {
         console.warn("Mapbox API failed, using manual calculation:", error);
         calculateManualDistance();
       });
@@ -342,7 +248,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       setDistance(null);
       setDuration(null);
     }
-  }, [startPoint, destinations]);
+  }, [startPoint, destinationPoint]);
 
   const displayDistance =
     distance !== null && !isNaN(distance) ? `${distance} Km` : "0 Km";
@@ -380,50 +286,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     return `ATJ-${datePart}-${randomPart}`;
   };
 
-  const generateUniqueId = () =>
-    Date.now() * 1000 + Math.floor(Math.random() * 1000);
-
-  const handleAddDestination = () => {
-    const newSequence = destinations.length + 1;
-    const newDestination = {
-      id: generateUniqueId(),
-      address: "",
-      lat: null,
-      lng: null,
-      sequence: newSequence,
-      items: [],
-    };
-
-    setDestinations([...destinations, newDestination]);
-  };
-
-  const handleDestinationChange = (
-    index: number,
-    field: keyof DeliveryDestination,
-    value: string
-  ) => {
-    const newDestinations = [...destinations];
-    newDestinations[index] = { ...newDestinations[index], [field]: value };
-    setDestinations(newDestinations);
-  };
-
-  useEffect(() => {
-    const validDestinations = destinations.filter(
-      (dest) =>
-        dest.address.trim() !== "" && dest.lat !== null && dest.lng !== null
-    );
-
-    if (validDestinations.length > 0) {
-      setDelivery({
-        delivery_destinations: validDestinations.map((dest, index) => ({
-          ...dest,
-          id: typeof dest.id === "number" ? dest.id : Date.now() + index,
-          sequence: index + 1,
-        })),
-      });
-    }
-  }, [destinations, setDelivery]);
-
   const handleSubmitDelivery = (e: React.FormEvent) => {
     e?.preventDefault();
 
@@ -448,13 +310,16 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         return;
       }
 
-      const validDestinations = destinations.filter(
-        (dest) =>
-          dest.address.trim() !== "" && dest.lat !== null && dest.lng !== null
-      );
+      if (
+        !delivery.destination_address ||
+        delivery.destination_address.trim() === ""
+      ) {
+        toast.error("Silakan isi alamat tujuan terlebih dahulu!");
+        return;
+      }
 
-      if (validDestinations.length === 0) {
-        toast.error("Silakan isi minimal satu tujuan dengan koordinat!");
+      if (!destinationPoint) {
+        toast.error("Silakan tentukan koordinat tujuan terlebih dahulu!");
         return;
       }
 
@@ -463,34 +328,30 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         return;
       }
 
+      // ✅ PERBAIKAN: Gunakan delivery.items dari store, bukan items dari state lokal
+      const deliveryItems = delivery.items || [];
+
+      // Validasi items
+      if (deliveryItems.length === 0) {
+        toast.error("Silakan tambahkan setidaknya satu item untuk dikirim!");
+        return;
+      }
+
       const defaultDate = new Date().toISOString();
       const formattedDeliveryDate = deliveryDate
         ? deliveryDate.toISOString()
         : defaultDate;
 
-      const destinationsWithId = validDestinations.map((dest, index) => ({
-        ...dest,
-        id: typeof dest.id === "number" ? dest.id : index + 1,
-        sequence: index + 1,
-        items: dest.items || [],
-      }));
-
-      const allItems = destinationsWithId.flatMap((dest) => dest.items || []);
-      const totalItems = allItems.length;
-      const totalWeightCalculated = allItems.reduce(
+      // ✅ PERBAIKAN: Hitung dari delivery.items
+      const totalItems = deliveryItems.length;
+      const totalWeightCalculated = deliveryItems.reduce(
         (sum, item) => sum + item.weight * item.quantity,
         0
       );
 
-      console.log("All destinations:", destinations);
-      console.log("Valid destinations with items:", destinationsWithId);
-      console.log("All items collected:", allItems);
-      console.log("Total items:", totalItems);
-      console.log("Total weight:", totalWeightCalculated);
-
       const payload: Delivery = {
         ...delivery,
-        id: undefined,
+        id: undefined, // akan di-generate otomatis di addDelivery
         driver_id: Number(delivery.driver_id),
         vehicle_id: Number(delivery.vehicle_id),
         total_item: totalItems,
@@ -498,28 +359,24 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         delivery_date: formattedDeliveryDate,
         delivery_status: "menunggu persetujuan",
         delivery_code: generateDeliveryCode(),
-        items: allItems,
+        items: deliveryItems, // ✅ PERBAIKAN: Gunakan deliveryItems
         pickup_address_lat: startPoint.lat,
         pickup_address_lang: startPoint.lng,
-
-        destination_address: validDestinations[0].address,
-        destination_address_lat: validDestinations[0].lat,
-        destination_address_lang: validDestinations[0].lng,
-
-        delivery_destinations: destinationsWithId,
+        destination_address_lat: destinationPoint.lat,
+        destination_address_lang: destinationPoint.lng,
       };
 
       console.log("Final payload:", payload);
+      console.log("Items being sent:", deliveryItems); // Debug log
 
       useDeliveryStore.getState().addDelivery(payload);
       addDeliveryToTransaction(payload);
       resetDelivery();
 
       toast.success("Pengiriman berhasil ditambahkan!", {
-        description: `Pengiriman dengan kode ${payload.delivery_code} telah ditambahkan ke transaksi dengan ${destinationsWithId.length} tujuan dan ${totalItems} item.`,
+        description: `Pengiriman dengan kode ${payload.delivery_code} telah ditambahkan ke transaksi dengan ${totalItems} item.`,
         duration: 3000,
       });
-      console.log("Final payload:", JSON.stringify(payload, null, 2));
 
       goToAddTransaction();
     } catch (error: any) {
@@ -577,23 +434,14 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
 
     setDeliveryDate(null);
     setStartPoint(null);
-    setDestinations([
-      {
-        id: Date.now(),
-        address: "",
-        lat: null,
-        lng: null,
-        sequence: 1,
-        items: [],
-      },
-    ]);
+    setDestinationPoint(null);
     setStartLocation("");
+    setDestinationLocation("");
 
     resetDelivery();
 
     if (markerRef.current.start) markerRef.current.start.remove();
-    markerRef.current.destinations.forEach((marker) => marker.remove());
-    markerRef.current.destinations = [];
+    if (markerRef.current.destination) markerRef.current.destination.remove();
 
     if (mapRef.current?.getSource("route")) {
       mapRef.current.removeLayer("route");
@@ -621,23 +469,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         className="text-center mt-6 text-2xl"
       />
 
-      <InputComponent
-        label="Jumlah Barang"
-        disabled={true}
-        name="total_item"
-        value={items.length}
-        onChange={() => {}}
-      />
-      <InputComponent
-        label="Total Berat"
-        disabled={true}
-        name="total_weight"
-        value={totalWeight}
-        onChange={handleChange}
-      />
-
-      <ItemsCardList items={items} />
-
       <SelectComponent
         label="Pengemudi"
         placeholder="Pilih pengemudi yang akan ditugaskan"
@@ -658,6 +489,23 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       />
 
       <InputComponent
+        label="Jumlah Barang"
+        disabled={true}
+        name="total_item"
+        value={items.length}
+        onChange={() => {}}
+      />
+      <InputComponent
+        label="Total Berat"
+        disabled={true}
+        name="total_weight"
+        value={totalWeight}
+        onChange={handleChange}
+      />
+
+      <ItemsCardList items={items} />
+
+      <InputComponent
         label="Alamat Penjemputan"
         placeholder="Jl. ABC No.10, Jakarta Pusat"
         type="textarea"
@@ -666,7 +514,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         onChange={handleChange}
       />
       <SearchLocationInput
-        placeholder="Cari alamat"
+        placeholder="Cari alamat penjemputan"
         value={startLocation}
         onSelectPlace={(place) => setStartLocation(place.place_name)}
         mapRef={mapRef}
@@ -677,67 +525,31 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         longitude={startPoint?.lng || null}
         onSelectPoint={() => setSelectingPoint("start")}
         isSelected={selectingPoint === "start"}
+        displayLabel="Lokasi Penjemputan"
       />
 
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Alamat Tujuan</h3>
-          {destinations.length < 3 && (
-            <ButtonComponent
-              type="button"
-              onClick={handleAddDestination}
-              variant="add"
-            />
-          )}
-        </div>
-
-        {destinations.map((dest, index) => (
-          <div
-            key={index}
-            className="border border-black rounded-lg p-4 space-y-3"
-          >
-            <div className="flex justify-between items-center">
-              <h4 className="font-medium">Tujuan {index + 1}</h4>
-              {destinations.length > 1 && (
-                <ButtonComponent
-                  type="button"
-                  variant="reject"
-                  className="p-2"
-                  onClick={() => handleRemoveDestination(index)}
-                />
-              )}
-            </div>
-
-            <InputComponent
-              label={`Alamat Tujuan ${index + 1}`}
-              placeholder="Pergudangan ABC, Bekasi Timur"
-              type="textarea"
-              value={dest.address}
-              onChange={(e) =>
-                handleDestinationChange(index, "address", e.target.value)
-              }
-            />
-            <SearchLocationInput
-              placeholder="Cari alamat tujuan"
-              value={destinationLocation}
-              onSelectPlace={(place) =>
-                setDestinationLocation(place.place_name)
-              }
-              mapRef={mapRef}
-            />
-            <CoordinateInput
-              pointLabel={`destination-${index}`}
-              latitude={dest.lat}
-              longitude={dest.lng}
-              onSelectPoint={() => setSelectingPoint(`destination-${index}`)}
-              isSelected={selectingPoint === `destination-${index}`}
-              displayLabel={`Tujuan ${index + 1}`}
-            />
-
-            {/* <DestinationItemForm destinationIndex={index} /> */}
-          </div>
-        ))}
-      </div>
+      <InputComponent
+        label="Alamat Tujuan"
+        placeholder="Pergudangan ABC, Bekasi Timur"
+        type="textarea"
+        name="destination_address"
+        value={formData.destination_address}
+        onChange={handleChange}
+      />
+      <SearchLocationInput
+        placeholder="Cari alamat tujuan"
+        value={destinationLocation}
+        onSelectPlace={(place) => setDestinationLocation(place.place_name)}
+        mapRef={mapRef}
+      />
+      <CoordinateInput
+        pointLabel="end"
+        latitude={destinationPoint?.lat || null}
+        longitude={destinationPoint?.lng || null}
+        onSelectPoint={() => setSelectingPoint("destination")}
+        isSelected={selectingPoint === "destination"}
+        displayLabel="Lokasi Tujuan"
+      />
 
       <div className="space-y-4">
         <InputComponent

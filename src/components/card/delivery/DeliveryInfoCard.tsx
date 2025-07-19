@@ -23,7 +23,7 @@ import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import { SuratJalanPDF } from "@/components/print/DeliveryPrintPages";
 import DeliveryProgressDetail from "./DeliveryProgress";
 import DeliveryDestinationCard from "./DeliveryDestination";
-import { DeliveryItem } from "@/stores/deliveryDestinationStore";
+import { DeliveryItem } from "@/stores/deliveryItemStore";
 
 interface DeliveryProgress {
   id: number;
@@ -144,13 +144,6 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
               </div>
             )}
 
-            <PDFDownloadLink
-              document={<SuratJalanPDF delivery={delivery} />}
-              fileName={`SuratJalan-${delivery.delivery_code}.pdf`}
-            >
-              <ButtonComponent variant="print" />
-            </PDFDownloadLink>
-
             {showPreview && (
               <div
                 style={{ width: "100%", height: "600px", marginTop: "20px" }}
@@ -164,7 +157,7 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
         )}
       </div>
       <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2">
           <div>
             <p className="text-sm text-gray-500">ID Pengiriman</p>
             <p className="font-medium">{delivery.id}</p>
@@ -177,34 +170,18 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-sm text-gray-500">Total Barang</p>
-            <div className="flex items-center">
-              <Hash className="mr-1 text-gray-400" size={16} />
-              <p className="font-medium">{delivery.total_item}</p>
-            </div>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Jenis Barang</p>
-            <div className="flex items-center">
-              <p className="font-medium">{delivery.load_type} </p>
-            </div>
-          </div>
-        </div>
-
         <div>
-          <p className="text-sm text-gray-500 ">Daftar Barang</p>
+          <p className="text-sm text-gray-500 mb-3">Daftar Barang</p>
           <div className="space-y-3">
             {delivery.items && delivery.items.length > 0 ? (
               delivery.items.map((item, index) => (
-                <div key={item.id} className="bg-gray-50 rounded-lg p-3">
+                <div key={item.id} className="bg-gray-50 rounded-lg p-3 border">
                   <div className="flex items-start">
                     <Box
                       className="mr-2 text-blue-500 flex-shrink-0 mt-1"
                       size={16}
                     />
-                    <div className="flex-grow ">
+                    <div className="flex-grow">
                       <div className="flex justify-between items-center">
                         <h4 className="font-medium text-gray-900">
                           {item.item_name}
@@ -237,6 +214,23 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
 
         <div className="grid grid-cols-2">
           <div>
+            <p className="text-sm text-gray-500">Total Barang</p>
+            <div className="flex items-center">
+              <Hash className="mr-1 text-gray-400" size={16} />
+              <p className="font-medium">{delivery.total_item}</p>
+            </div>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Total Berat</p>
+            <div className="flex items-center">
+              <Hash className="mr-1 text-gray-400" size={16} />
+              <p className="font-medium">{delivery.total_weight} Kg</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2">
+          <div>
             <p className="text-sm text-gray-500">Alamat Penjemputan Barang</p>
             <div className="flex items-center mt-1">
               <div>
@@ -254,17 +248,33 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
             </div>
           </div>
 
-          {/* <div className="flex items-center hover:cursor-pointer">
+          <div>
+            <p className="text-sm text-gray-500">Alamat Tujuan</p>
+            <div className="flex items-center mt-1">
+              <div>
+                <div className="flex items-center">
+                  <MapPin
+                    className="mr-2 text-gray-400 flex-shrink-0"
+                    size={16}
+                  />
+                  <p>
+                    {delivery.destination_address ||
+                      "Alamat tujuan tidak tersedia"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center hover:cursor-pointer">
             <p
               className="underline italic text-sm text-blue-500"
               onClick={() => goToDeliveryMapPages(delivery.id)}
             >
               lihat lokasi
             </p>
-          </div> */}
+          </div>
         </div>
-
-        {/* <DeliveryDestinationCard destination={delivery}/> */}
 
         <div className="grid grid-cols-2">
           <div>
@@ -275,10 +285,10 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
             </div>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Batas Pengiriman</p>
+            <p className="text-sm text-gray-500">Tanggal Disetujui</p>
             <div className="flex items-center">
               <Clock className="mr-2 text-gray-400" size={16} />
-              <p>{formatDateNumeric(delivery.delivery_deadline_date)}</p>
+              <p>{formatDateNumeric(delivery.approved_at)}</p>
             </div>
           </div>
         </div>
@@ -286,7 +296,7 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
         <div>
           <div>
             <p className="text-sm text-gray-500">Biaya Pengiriman</p>
-            <p className="font-bold">
+            <p className="font-bold text-xl">
               {formatCurrency(delivery.delivery_cost)}
             </p>
           </div>
@@ -302,7 +312,7 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
         />
 
         <div className="pt-4 border-t border-gray-200">
-          <div className="grid grid-cols-3 text-center text-xs text-gray-500">
+          <div className="grid grid-cols-3 items-center text-center text-xs text-gray-500">
             <div>
               <p>Dibuat: {formatDateNumeric(delivery.created_at)}</p>
             </div>
@@ -314,6 +324,9 @@ const DeliveryInfoComponent: React.FC<DeliveryInfoComponentProps> = ({
                 <p>Disetujui: {formatDateNumeric(delivery.approved_at)}</p>
               </div>
             )}
+            {/* {delivery.delivery_status !== "menunggu persetujuan" && (
+              <ButtonComponent label="Batalkan" variant="reject" />
+            )} */}
           </div>
         </div>
       </div>

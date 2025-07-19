@@ -3,6 +3,7 @@ import {
   Check,
   Edit,
   Eye,
+  FileSpreadsheet,
   LucideRepeat2,
   MapPinPlus,
   Plus,
@@ -33,7 +34,8 @@ type ButtonComponentProps = {
     | "reject"
     | "print"
     | "preview"
-    | "info";
+    | "info"
+    | "csv";
   icon?: React.ReactNode;
   className?: string;
   type?: "button" | "submit" | "reset";
@@ -71,6 +73,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonComponentProps>(
       print: "bg-sky-600 hover:bg-sky-700 ",
       preview: "bg-yellow-500 hover:bg-yellow-600",
       info: "bg-yellow-500 hover:bg-yellow-600",
+      csv: "bg-green-600 hover:bg-green-700",
     };
 
     const icons = {
@@ -87,6 +90,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonComponentProps>(
       print: <Printer size={18} />,
       preview: <Eye size={18} />,
       info: <RotateCcw size={18} />,
+      csv: <FileSpreadsheet size={18}/>
     };
 
     const navigate = useNavigate();

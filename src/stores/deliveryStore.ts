@@ -1,13 +1,6 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { DeliveryItem, useDeliveryItemStore } from "./deliveryItemStore";
-import {
-  DeliveryDestination,
-  DeliveryDestinationStore,
-} from "./deliveryDestinationStore";
-
-let destinationIdCounter = 0;
-const generateDestinationId = () => ++destinationIdCounter;
 
 export type Driver = {
   id: number;
@@ -43,7 +36,6 @@ export type Delivery = {
   delivery_cost: number;
   approved_at: string | null;
   note: string;
-  delivery_destinations: DeliveryDestination[];
   items: DeliveryItem[];
 };
 
@@ -57,23 +49,12 @@ type DeliveryStore = {
   removeDelivery: (id: number) => void;
   updateDelivery: (id: number, updatedDelivery: Partial<Delivery>) => void;
 
-  // ✅ Destination Management
-  addDestination: (destination: Partial<DeliveryDestination>) => void;
-  removeDestination: (destinationIndex: number) => void;
-  updateDestination: (
-    destinationIndex: number,
-    updates: Partial<DeliveryDestination>
-  ) => void;
+  // Methods untuk mengelola items
+  addItemToDelivery: (item: DeliveryItem) => void;
+  removeItemFromDelivery: (itemId: number) => void;
+  updateItemInDelivery: (itemId: number, updates: Partial<DeliveryItem>) => void;
+  setDeliveryItems: (items: DeliveryItem[]) => void;
 
-  // ✅ Items Management for Destinations
-  updateDestinationItems: (
-    destinationIndex: number,
-    items: DeliveryItem[]
-  ) => void;
-  addItemToDestination: (destinationIndex: number, item: DeliveryItem) => void;
-  removeItemFromDestination: (destinationIndex: number, itemId: number) => void;
-
-  // ✅ Calculation Methods
   calculateTotalWeight: () => void;
   calculateTotalItems: () => void;
   updateTotals: () => void;
@@ -168,7 +149,6 @@ export const useDeliveryStore = create<DeliveryStore>()(
       note: "",
       approved_at: null,
       items: [],
-      delivery_destinations: [],
     },
 
     setDelivery: (data: Partial<Delivery>) =>
@@ -187,13 +167,18 @@ export const useDeliveryStore = create<DeliveryStore>()(
           updatedData.vehicle = vehicle || null;
         }
 
-        return {
-          delivery: {
-            ...state.delivery,
-            ...updatedData,
-            id: isNewId ? Date.now() : data.id ?? state.delivery.id,
-          },
+        const updatedDelivery = {
+          ...state.delivery,
+          ...updatedData,
+          id: isNewId ? Date.now() : data.id ?? state.delivery.id,
         };
+
+        // Auto update totals jika items berubah
+        if (data.items) {
+          setTimeout(() => get().updateTotals(), 0);
+        }
+
+        return { delivery: updatedDelivery };
       }),
 
     setAllDelivery: (data: Delivery) => {
@@ -202,11 +187,13 @@ export const useDeliveryStore = create<DeliveryStore>()(
         id: data.id === 0 || data.id === undefined ? Date.now() : data.id,
       };
       set({ delivery: deliveryWithId });
+      
+      // Auto update totals
+      setTimeout(() => get().updateTotals(), 0);
     },
 
     resetDelivery: () => {
       useDeliveryItemStore.getState().resetDeliveryItems();
-      DeliveryDestinationStore.getState().resetDestinations();
       set({
         delivery: {
           id: 0,
@@ -229,129 +216,81 @@ export const useDeliveryStore = create<DeliveryStore>()(
           note: "",
           approved_at: null,
           items: [],
-          delivery_destinations: [],
         },
       });
     },
 
-    // ✅ Fixed addDestination method
-    addDestination: (destination) =>
+    // ✅ Method baru untuk mengelola items
+    addItemToDelivery: (item: DeliveryItem) =>
       set((state) => {
-        const newDestination: DeliveryDestination = {
-          ...destination,
-          id:
-            typeof destination.id === "number"
-              ? destination.id
-              : generateDestinationId(),
-          items: destination.items || [],
-        } as DeliveryDestination;
+        const newItem = {
+          ...item,
+          id: item.id || Date.now(),
+          delivery_id: state.delivery.id,
+        };
 
         const updatedDelivery = {
           ...state.delivery,
-          delivery_destinations: [
-            ...state.delivery.delivery_destinations,
-            newDestination,
-          ],
+          items: [...state.delivery.items, newItem],
         };
 
-        // Update totals after adding destination
+        // Sinkronisasi dengan DeliveryItemStore
+        useDeliveryItemStore.getState().addItem(newItem);
+
+        // Auto update totals
         setTimeout(() => get().updateTotals(), 0);
 
         return { delivery: updatedDelivery };
       }),
 
-    removeDestination: (destinationIndex) =>
+    removeItemFromDelivery: (itemId: number) =>
       set((state) => {
-        const updatedDestinations = state.delivery.delivery_destinations.filter(
-          (_, index) => index !== destinationIndex
-        );
-
         const updatedDelivery = {
           ...state.delivery,
-          delivery_destinations: updatedDestinations,
+          items: state.delivery.items.filter((item) => item.id !== itemId),
         };
 
-        // Update totals after removing destination
+        // Sinkronisasi dengan DeliveryItemStore
+        useDeliveryItemStore.getState().removeItem(itemId);
+
+        // Auto update totals
         setTimeout(() => get().updateTotals(), 0);
 
         return { delivery: updatedDelivery };
       }),
 
-    updateDestination: (destinationIndex, updates) =>
+    updateItemInDelivery: (itemId: number, updates: Partial<DeliveryItem>) =>
       set((state) => {
-        const updatedDestinations = state.delivery.delivery_destinations.map(
-          (dest, index) =>
-            index === destinationIndex ? { ...dest, ...updates } : dest
-        );
-
         const updatedDelivery = {
           ...state.delivery,
-          delivery_destinations: updatedDestinations,
+          items: state.delivery.items.map((item) =>
+            item.id === itemId ? { ...item, ...updates } : item
+          ),
         };
 
-        return { delivery: updatedDelivery };
-      }),
+        // Sinkronisasi dengan DeliveryItemStore
+        useDeliveryItemStore.getState().updateItem(itemId, updates);
 
-    updateDestinationItems: (destinationIndex, items) =>
-      set((state) => {
-        const updatedDestinations = state.delivery.delivery_destinations.map(
-          (dest, index) =>
-            index === destinationIndex ? { ...dest, items } : dest
-        );
-
-        const updatedDelivery = {
-          ...state.delivery,
-          delivery_destinations: updatedDestinations,
-        };
-
+        // Auto update totals
         setTimeout(() => get().updateTotals(), 0);
 
         return { delivery: updatedDelivery };
       }),
 
-    addItemToDestination: (destinationIndex, item) =>
+    setDeliveryItems: (items: DeliveryItem[]) =>
       set((state) => {
-        const updatedDestinations = state.delivery.delivery_destinations.map(
-          (dest, index) => {
-            if (index === destinationIndex) {
-              return {
-                ...dest,
-                items: [...(dest.items || []), item],
-              };
-            }
-            return dest;
-          }
-        );
-
         const updatedDelivery = {
           ...state.delivery,
-          delivery_destinations: updatedDestinations,
+          items: items.map(item => ({
+            ...item,
+            delivery_id: state.delivery.id
+          })),
         };
 
-        setTimeout(() => get().updateTotals(), 0);
+        // Sinkronisasi dengan DeliveryItemStore
+        useDeliveryItemStore.getState().addItems(updatedDelivery.items);
 
-        return { delivery: updatedDelivery };
-      }),
-
-    removeItemFromDestination: (destinationIndex, itemId) =>
-      set((state) => {
-        const updatedDestinations = state.delivery.delivery_destinations.map(
-          (dest, index) => {
-            if (index === destinationIndex) {
-              return {
-                ...dest,
-                items: (dest.items || []).filter((item) => item.id !== itemId),
-              };
-            }
-            return dest;
-          }
-        );
-
-        const updatedDelivery = {
-          ...state.delivery,
-          delivery_destinations: updatedDestinations,
-        };
-
+        // Auto update totals
         setTimeout(() => get().updateTotals(), 0);
 
         return { delivery: updatedDelivery };
@@ -359,14 +298,8 @@ export const useDeliveryStore = create<DeliveryStore>()(
 
     calculateTotalWeight: () => {
       const state = get();
-      const totalWeight = state.delivery.delivery_destinations.reduce(
-        (total, destination) => {
-          const destinationWeight = (destination.items || []).reduce(
-            (destTotal, item) => destTotal + (item.weight || 0),
-            0
-          );
-          return total + destinationWeight;
-        },
+      const totalWeight = state.delivery.items.reduce(
+        (total, item) => total + (item.weight * item.quantity || 0),
         0
       );
 
@@ -377,14 +310,8 @@ export const useDeliveryStore = create<DeliveryStore>()(
 
     calculateTotalItems: () => {
       const state = get();
-      const totalItems = state.delivery.delivery_destinations.reduce(
-        (total, destination) => {
-          const destinationItems = (destination.items || []).reduce(
-            (destTotal, item) => destTotal + (item.quantity || 0),
-            0
-          );
-          return total + destinationItems;
-        },
+      const totalItems = state.delivery.items.reduce(
+        (total, item) => total + (item.quantity || 0),
         0
       );
 
@@ -399,5 +326,3 @@ export const useDeliveryStore = create<DeliveryStore>()(
     },
   }))
 );
-
-export type { DeliveryDestination };

@@ -6,7 +6,7 @@ export type DeliveryItem = {
   quantity: number;
   unit: string;
   weight: number;
-  destination_id?: number; // opsional, karena tidak digunakan langsung di form
+  delivery_id?: number; // mengacu langsung ke delivery
 };
 
 type DeliveryItemStore = {
@@ -15,9 +15,9 @@ type DeliveryItemStore = {
   addItems: (newItems: DeliveryItem[]) => void;
   removeItem: (id: number) => void;
   updateItem: (id: number, updates: Partial<DeliveryItem>) => void;
-  getItemsByDestination: (destinationId: number) => DeliveryItem[];
+  getItemsByDelivery: (deliveryId: number) => DeliveryItem[];
   resetDeliveryItems: () => void;
-  resetItemsByDestination: (destinationId: number) => void;
+  resetItemsByDelivery: (deliveryId: number) => void;
 };
 
 export const useDeliveryItemStore = create<DeliveryItemStore>((set, get) => ({
@@ -45,16 +45,14 @@ export const useDeliveryItemStore = create<DeliveryItemStore>((set, get) => ({
       ),
     })),
 
-  getItemsByDestination: (destinationId) => {
-    return get().items.filter((item) => item.destination_id === destinationId);
+  getItemsByDelivery: (deliveryId) => {
+    return get().items.filter((item) => item.delivery_id === deliveryId);
   },
 
   resetDeliveryItems: () => set({ items: [] }),
 
-  resetItemsByDestination: (destinationId) =>
+  resetItemsByDelivery: (deliveryId) =>
     set((state) => ({
-      items: state.items.filter(
-        (item) => item.destination_id !== destinationId
-      ),
+      items: state.items.filter((item) => item.delivery_id !== deliveryId),
     })),
 }));

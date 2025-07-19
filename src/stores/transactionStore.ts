@@ -220,10 +220,9 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
       };
     }),
 
-  // ✅ FIXED: Tidak mengubah status driver dan vehicle
   removeDeliveryFromTransaction: (deliveryId: number) => {
     const stateBefore = get();
-    
+
     const filtered = stateBefore.transaction.deliveries.filter(
       (d) => d.id !== deliveryId
     );
@@ -232,8 +231,6 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
       0
     );
 
-    // ✅ Hanya update transaction, tidak mengubah status driver/vehicle
-    // ✅ Juga tidak menghapus delivery dari deliveryStore
     set({
       transaction: {
         ...stateBefore.transaction,
