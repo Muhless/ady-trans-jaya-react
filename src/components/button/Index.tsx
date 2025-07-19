@@ -7,6 +7,7 @@ import {
   MapPinPlus,
   Plus,
   Printer,
+  RotateCcw,
   Save,
   Trash2,
   Undo2,
@@ -31,7 +32,8 @@ type ButtonComponentProps = {
     | "approve"
     | "reject"
     | "print"
-    | "preview";
+    | "preview"
+    | "info";
   icon?: React.ReactNode;
   className?: string;
   type?: "button" | "submit" | "reset";
@@ -68,6 +70,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonComponentProps>(
       reject: "bg-red-600 hover:bg-red-700",
       print: "bg-sky-600 hover:bg-sky-700 ",
       preview: "bg-yellow-500 hover:bg-yellow-600",
+      info: "bg-yellow-500 hover:bg-yellow-600",
     };
 
     const icons = {
@@ -83,6 +86,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonComponentProps>(
       reject: <X size={18} />,
       print: <Printer size={18} />,
       preview: <Eye size={18} />,
+      info: <RotateCcw size={18} />,
     };
 
     const navigate = useNavigate();

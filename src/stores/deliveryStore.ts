@@ -1,7 +1,10 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { DeliveryItem, useDeliveryItemStore } from "./deliveryItemStore";
-import { DeliveryDestination } from "./deliveryDestinationStore";
+import {
+  DeliveryDestination,
+  DeliveryDestinationStore,
+} from "./deliveryDestinationStore";
 
 export type Driver = {
   id: number;
@@ -50,6 +53,27 @@ type DeliveryStore = {
   addDelivery: (newDelivery: Delivery) => void;
   removeDelivery: (id: number) => void;
   updateDelivery: (id: number, updatedDelivery: Partial<Delivery>) => void;
+
+  // ✅ Destination Management Methods
+  addDestination: (destination: Omit<DeliveryDestination, "id">) => void;
+  removeDestination: (destinationIndex: number) => void;
+  updateDestination: (
+    destinationIndex: number,
+    updates: Partial<DeliveryDestination>
+  ) => void;
+
+  // ✅ Items Management for Destinations
+  updateDestinationItems: (
+    destinationIndex: number,
+    items: DeliveryItem[]
+  ) => void;
+  addItemToDestination: (destinationIndex: number, item: DeliveryItem) => void;
+  removeItemFromDestination: (destinationIndex: number, itemId: number) => void;
+
+  // ✅ Calculation Methods
+  calculateTotalWeight: () => void;
+  calculateTotalItems: () => void;
+  updateTotals: () => void;
 
   drivers: Driver[];
   vehicles: Vehicle[];
@@ -175,6 +199,7 @@ export const useDeliveryStore = create<DeliveryStore>()(
       note: "",
       approved_at: null,
       items: [],
+      delivery_destinations: [],
     },
 
     setDelivery: (data: Partial<Delivery>) =>
@@ -199,6 +224,7 @@ export const useDeliveryStore = create<DeliveryStore>()(
 
     resetDelivery: () => {
       useDeliveryItemStore.getState().resetDeliveryItems();
+      DeliveryDestinationStore.getState().resetDestinations();
       set({
         delivery: {
           id: 0,
@@ -225,6 +251,167 @@ export const useDeliveryStore = create<DeliveryStore>()(
         },
       });
     },
+
+    // ✅ Destination Management Methods
+    addDestination: (destination) =>
+      set((state) => {
+        const newDestination: DeliveryDestination = {
+          ...destination,
+          id: Date.now(),
+          items: destination.items || [],
+        };
+
+        const updatedDelivery = {
+          ...state.delivery,
+          delivery_destinations: [
+            ...state.delivery.delivery_destinations,
+            newDestination,
+          ],
+        };
+
+        return { delivery: updatedDelivery };
+      }),
+
+    removeDestination: (destinationIndex) =>
+      set((state) => {
+        const updatedDestinations = state.delivery.delivery_destinations.filter(
+          (_, index) => index !== destinationIndex
+        );
+
+        const updatedDelivery = {
+          ...state.delivery,
+          delivery_destinations: updatedDestinations,
+        };
+
+        // Recalculate totals after removing destination
+        get().updateTotals();
+
+        return { delivery: updatedDelivery };
+      }),
+
+    updateDestination: (destinationIndex, updates) =>
+      set((state) => {
+        const updatedDestinations = state.delivery.delivery_destinations.map(
+          (dest, index) =>
+            index === destinationIndex ? { ...dest, ...updates } : dest
+        );
+
+        const updatedDelivery = {
+          ...state.delivery,
+          delivery_destinations: updatedDestinations,
+        };
+
+        return { delivery: updatedDelivery };
+      }),
+
+    // ✅ Items Management for Destinations
+    updateDestinationItems: (destinationIndex, items) =>
+      set((state) => {
+        const updatedDestinations = state.delivery.delivery_destinations.map(
+          (dest, index) =>
+            index === destinationIndex ? { ...dest, items } : dest
+        );
+
+        const updatedDelivery = {
+          ...state.delivery,
+          delivery_destinations: updatedDestinations,
+        };
+
+        // Auto-update totals when items change
+        setTimeout(() => get().updateTotals(), 0);
+
+        return { delivery: updatedDelivery };
+      }),
+
+    addItemToDestination: (destinationIndex, item) =>
+      set((state) => {
+        const updatedDestinations = state.delivery.delivery_destinations.map(
+          (dest, index) => {
+            if (index === destinationIndex) {
+              return {
+                ...dest,
+                items: [...(dest.items || []), item],
+              };
+            }
+            return dest;
+          }
+        );
+
+        const updatedDelivery = {
+          ...state.delivery,
+          delivery_destinations: updatedDestinations,
+        };
+
+        setTimeout(() => get().updateTotals(), 0);
+
+        return { delivery: updatedDelivery };
+      }),
+
+    removeItemFromDestination: (destinationIndex, itemId) =>
+      set((state) => {
+        const updatedDestinations = state.delivery.delivery_destinations.map(
+          (dest, index) => {
+            if (index === destinationIndex) {
+              return {
+                ...dest,
+                items: (dest.items || []).filter((item) => item.id !== itemId),
+              };
+            }
+            return dest;
+          }
+        );
+
+        const updatedDelivery = {
+          ...state.delivery,
+          delivery_destinations: updatedDestinations,
+        };
+
+        setTimeout(() => get().updateTotals(), 0);
+
+        return { delivery: updatedDelivery };
+      }),
+
+    calculateTotalWeight: () => {
+      const state = get();
+      const totalWeight = state.delivery.delivery_destinations.reduce(
+        (total, destination) => {
+          const destinationWeight = (destination.items || []).reduce(
+            (destTotal, item) => destTotal + (item.weight || 0),
+            0
+          );
+          return total + destinationWeight;
+        },
+        0
+      );
+
+      set((currentState) => ({
+        delivery: { ...currentState.delivery, total_weight: totalWeight },
+      }));
+    },
+
+    calculateTotalItems: () => {
+      const state = get();
+      const totalItems = state.delivery.delivery_destinations.reduce(
+        (total, destination) => {
+          const destinationItems = (destination.items || []).reduce(
+            (destTotal, item) => destTotal + (item.quantity || 0),
+            0
+          );
+          return total + destinationItems;
+        },
+        0
+      );
+
+      set((currentState) => ({
+        delivery: { ...currentState.delivery, total_item: totalItems },
+      }));
+    },
+
+    updateTotals: () => {
+      get().calculateTotalWeight();
+      get().calculateTotalItems();
+    },
   }))
 );
+
 export type { DeliveryDestination };

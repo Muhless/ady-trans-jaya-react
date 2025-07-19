@@ -23,6 +23,8 @@ import { toast } from "sonner";
 import { useAvailableOptions } from "@/hooks/useAvailableOptionData";
 import { CoordinateInput } from "../input/CoordinatInput";
 import { useDeliveryForm } from "@/hooks/useDeliveryForm";
+import AddDeliveryItemForm from "./AddDeliveryItemsForm";
+import DestinationItemForm from "./DestinationItemForm";
 import ItemsCardList from "../card/delivery/DeliveryItemCard";
 
 const MAPBOX_ACCESS_TOKEN =
@@ -63,6 +65,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const [destinationLocation, setDestinationLocation] =
     React.useState<string>("");
   const { driverOptions, vehicleOptions } = useAvailableOptions();
+  // const { driverOptions, vehicleOptions } = useAllOptions();
 
   const handleRemoveDestination = (index: number) => {
     if (destinations.length > 1) {
@@ -118,7 +121,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         } else if (selectingPoint.startsWith("destination-")) {
           const index = parseInt(selectingPoint.split("-")[1]);
 
-          // Update destinations state with new coordinates
           setDestinations((prevDestinations) => {
             const newDestinations = [...prevDestinations];
             newDestinations[index] = {
@@ -132,12 +134,10 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
             }));
           });
 
-          // Remove existing marker if it exists
           if (markerRef.current.destinations[index]) {
             markerRef.current.destinations[index].remove();
           }
 
-          // Add new marker with color
           const colors = [
             "#ef4444",
             "#10b981",
@@ -192,27 +192,22 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         const route = data.routes[0];
         const newRoute = route.geometry;
 
-        // PERBAIKAN: Menggunakan total distance dari seluruh rute
         const totalDistanceInKm = parseFloat(
           (route.distance / 1000).toFixed(2)
         );
 
-        // PERBAIKAN: Menggunakan total duration dari API (dalam detik)
         const totalDurationInSeconds = route.duration;
         const totalDurationInMinutes = Math.ceil(totalDurationInSeconds / 60);
 
-        // Format durasi dengan lebih akurat
         const hours = Math.floor(totalDurationInMinutes / 60);
         const minutes = totalDurationInMinutes % 60;
         const formattedDuration =
           hours > 0 ? `${hours} jam ${minutes} menit` : `${minutes} menit`;
 
-        // PERBAIKAN: Set state dengan nilai yang benar
         setRoute(newRoute);
         setDistance(totalDistanceInKm);
         setDuration(formattedDuration);
 
-        // Update map dengan route
         const map = mapRef.current;
         if (map) {
           if (map.getSource("route")) {
@@ -240,7 +235,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
             });
           }
 
-          // Fit map to show all points
           const bounds = new mapboxgl.LngLatBounds();
           bounds.extend([startPoint.lng, startPoint.lat]);
           validDestinations.forEach((dest) => {
@@ -252,7 +246,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
           }
         }
 
-        // TAMBAHAN: Console log untuk debugging
         console.log("Route calculation:", {
           totalDistance: totalDistanceInKm,
           totalDuration: formattedDuration,
@@ -279,9 +272,8 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     );
     if (validDestinations.length === 0) return;
 
-    // Fungsi untuk menghitung jarak antara dua titik (Haversine formula)
     const getDistanceBetweenPoints = (lat1, lon1, lat2, lon2) => {
-      const R = 6371; // Radius bumi dalam km
+      const R = 6371;
       const dLat = ((lat2 - lat1) * Math.PI) / 180;
       const dLon = ((lon2 - lon1) * Math.PI) / 180;
       const a =
@@ -407,14 +399,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
     e?.preventDefault();
 
     try {
-      const items = useDeliveryItemStore.getState().items;
-      if (!items || items.length === 0) {
-        toast.error(
-          "Silakan tambahkan minimal 1 barang pengiriman terlebih dahulu!"
-        );
-        return;
-      }
-
       if (!delivery.driver_id) {
         toast.error("Silakan pilih pengemudi terlebih dahulu!");
         return;
@@ -450,6 +434,14 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         return;
       }
 
+      const items = useDeliveryItemStore.getState().items;
+      if (!items || items.length === 0) {
+        toast.error(
+          "Silakan tambahkan minimal 1 barang pengiriman terlebih dahulu!"
+        );
+        return;
+      }
+
       const defaultDate = new Date().toISOString();
       const formattedDeliveryDate = deliveryDate
         ? deliveryDate.toISOString()
@@ -465,7 +457,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         delivery_status: "menunggu persetujuan",
         delivery_code: generateDeliveryCode(),
         items: items,
-        delivery_destinations: destinations,
         pickup_address_lat: startPoint.lat,
         pickup_address_lang: startPoint.lng,
         destination_address: validDestinations[0].address,
@@ -531,6 +522,8 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       destination_address: "",
       pickup_address_lat: null,
       pickup_address_lang: null,
+      destination_address_lat: null,
+      destination_address_lang: null,
       delivery_date: "",
       delivery_cost: 0,
     });
@@ -571,23 +564,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         subTitle="Form Tambah Pengiriman"
         className="text-center mt-6 text-2xl"
       />
-
-      <InputComponent
-        label="Jumlah Barang"
-        disabled={true}
-        name="total_item"
-        value={items.length}
-        onChange={() => {}}
-      />
-      <InputComponent
-        label="Total Berat"
-        disabled={true}
-        name="total_weight"
-        value={totalWeight}
-        onChange={handleChange}
-      />
-
-      <ItemsCardList items={items} />
 
       <SelectComponent
         label="Pengemudi"
@@ -642,14 +618,12 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
             />
           )}
         </div>
-        <SearchLocationInput
-          placeholder="Cari alamat tujuan"
-          value={destinationLocation}
-          onSelectPlace={(place) => setDestinationLocation(place.place_name)}
-          mapRef={mapRef}
-        />
+
         {destinations.map((dest, index) => (
-          <div key={index} className="border rounded-lg p-4 space-y-3">
+          <div
+            key={index}
+            className="border border-black rounded-lg p-4 space-y-3"
+          >
             <div className="flex justify-between items-center">
               <h4 className="font-medium">Tujuan {index + 1}</h4>
               {destinations.length > 1 && (
@@ -671,7 +645,14 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
                 handleDestinationChange(index, "address", e.target.value)
               }
             />
-
+            <SearchLocationInput
+              placeholder="Cari alamat tujuan"
+              value={destinationLocation}
+              onSelectPlace={(place) =>
+                setDestinationLocation(place.place_name)
+              }
+              mapRef={mapRef}
+            />
             <CoordinateInput
               pointLabel={`destination-${index}`}
               latitude={dest.lat}
@@ -680,10 +661,18 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
               isSelected={selectingPoint === `destination-${index}`}
               displayLabel={`Tujuan ${index + 1}`}
             />
+            <DestinationItemForm />
           </div>
         ))}
       </div>
 
+      <InputComponent
+        label="Total Berat"
+        disabled={true}
+        name="total_weight"
+        value={totalWeight}
+        onChange={handleChange}
+      />
       <div className="space-y-4">
         <InputComponent
           label="Total Jarak"
@@ -723,14 +712,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
             : `Rp ${deliveryPrice.toLocaleString("id-ID")}`
         }
         disabled={true}
-      />
-      <InputComponent
-        label="Catatan"
-        placeholder="Berikan catatan pengiriman"
-        name="note"
-        type="textarea"
-        value={formData.note}
-        onChange={handleChange}
       />
 
       <div className="flex justify-center w-full gap-3 py-5">

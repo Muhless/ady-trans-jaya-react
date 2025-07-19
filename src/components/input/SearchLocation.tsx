@@ -93,11 +93,19 @@ const SearchLocationInput: React.FC<Props> = ({
         onChange={handleChange}
         className="px-5 py-1 pl-10 text-sm rounded-md bg-secondary focus:border-background focus:outline-none focus:ring-2 focus:ring-biru peer w-full border"
       />
-      <ButtonComponent
-        variant="delete"
-        className="rounded-md"
-        onClick={handleResetSearch}
-      />
+      <div className="flex gap-1">
+        <ButtonComponent
+          variant="delete"
+          className="rounded-md"
+          onClick={handleResetSearch}
+        />
+        <ButtonComponent
+          variant="info"
+          className="rounded-md cursor-pointer"
+          onClick={() => fetchSuggestions(inputValue)}
+          disabled={!inputValue}
+        />
+      </div>
       {suggestions.length > 0 && (
         <ul className="absolute z-10 bg-white border border-gray-300 w-full mt-10 rounded shadow max-h-48 overflow-y-auto">
           {suggestions.map((place) => (

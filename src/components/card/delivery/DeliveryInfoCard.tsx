@@ -23,14 +23,7 @@ import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import { SuratJalanPDF } from "@/components/print/DeliveryPrintPages";
 import DeliveryProgressDetail from "./DeliveryProgress";
 import DeliveryDestinationCard from "./DeliveryDestination";
-
-interface DeliveryItem {
-  id: number;
-  delivery_id: number;
-  item_name: string;
-  quantity: string;
-  weight: string;
-}
+import { DeliveryItem } from "@/stores/deliveryDestinationStore";
 
 interface DeliveryProgress {
   id: number;
