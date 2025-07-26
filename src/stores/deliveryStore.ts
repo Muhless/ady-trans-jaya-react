@@ -49,10 +49,12 @@ type DeliveryStore = {
   removeDelivery: (id: number) => void;
   updateDelivery: (id: number, updatedDelivery: Partial<Delivery>) => void;
 
-  // Methods untuk mengelola items
   addItemToDelivery: (item: DeliveryItem) => void;
   removeItemFromDelivery: (itemId: number) => void;
-  updateItemInDelivery: (itemId: number, updates: Partial<DeliveryItem>) => void;
+  updateItemInDelivery: (
+    itemId: number,
+    updates: Partial<DeliveryItem>
+  ) => void;
   setDeliveryItems: (items: DeliveryItem[]) => void;
 
   calculateTotalWeight: () => void;
@@ -173,7 +175,6 @@ export const useDeliveryStore = create<DeliveryStore>()(
           id: isNewId ? Date.now() : data.id ?? state.delivery.id,
         };
 
-        // Auto update totals jika items berubah
         if (data.items) {
           setTimeout(() => get().updateTotals(), 0);
         }
@@ -187,8 +188,7 @@ export const useDeliveryStore = create<DeliveryStore>()(
         id: data.id === 0 || data.id === undefined ? Date.now() : data.id,
       };
       set({ delivery: deliveryWithId });
-      
-      // Auto update totals
+
       setTimeout(() => get().updateTotals(), 0);
     },
 
@@ -220,7 +220,6 @@ export const useDeliveryStore = create<DeliveryStore>()(
       });
     },
 
-    // ✅ Method baru untuk mengelola items
     addItemToDelivery: (item: DeliveryItem) =>
       set((state) => {
         const newItem = {
@@ -234,10 +233,8 @@ export const useDeliveryStore = create<DeliveryStore>()(
           items: [...state.delivery.items, newItem],
         };
 
-        // Sinkronisasi dengan DeliveryItemStore
         useDeliveryItemStore.getState().addItem(newItem);
 
-        // Auto update totals
         setTimeout(() => get().updateTotals(), 0);
 
         return { delivery: updatedDelivery };
@@ -250,10 +247,8 @@ export const useDeliveryStore = create<DeliveryStore>()(
           items: state.delivery.items.filter((item) => item.id !== itemId),
         };
 
-        // Sinkronisasi dengan DeliveryItemStore
         useDeliveryItemStore.getState().removeItem(itemId);
 
-        // Auto update totals
         setTimeout(() => get().updateTotals(), 0);
 
         return { delivery: updatedDelivery };
@@ -268,10 +263,8 @@ export const useDeliveryStore = create<DeliveryStore>()(
           ),
         };
 
-        // Sinkronisasi dengan DeliveryItemStore
         useDeliveryItemStore.getState().updateItem(itemId, updates);
 
-        // Auto update totals
         setTimeout(() => get().updateTotals(), 0);
 
         return { delivery: updatedDelivery };
@@ -281,16 +274,14 @@ export const useDeliveryStore = create<DeliveryStore>()(
       set((state) => {
         const updatedDelivery = {
           ...state.delivery,
-          items: items.map(item => ({
+          items: items.map((item) => ({
             ...item,
-            delivery_id: state.delivery.id
+            delivery_id: state.delivery.id,
           })),
         };
 
-        // Sinkronisasi dengan DeliveryItemStore
         useDeliveryItemStore.getState().addItems(updatedDelivery.items);
 
-        // Auto update totals
         setTimeout(() => get().updateTotals(), 0);
 
         return { delivery: updatedDelivery };

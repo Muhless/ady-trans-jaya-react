@@ -14,6 +14,7 @@ import DeliveryInfoCard from "../delivery/DeliveryInfoCard";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import TransactionInfoCard from "../../components/card/transaction/TransactionInfoCard";
 import { toast } from "sonner";
+import { useAuthStore } from "@/stores/AuthStore";
 
 const DetailTransactionPages = () => {
   const { id } = useParams();
@@ -59,10 +60,9 @@ const DetailTransactionPages = () => {
       </div>
     );
 
- const approvedCost = (transaction.delivery || [])
-  .filter((d) => d.delivery_status === "disetujui")
-  .reduce((total, d) => total + (d.delivery_cost || 0), 0);
-
+  const approvedCost = (transaction.delivery || [])
+    .filter((d) => d.delivery_status === "disetujui")
+    .reduce((total, d) => total + (d.delivery_cost || 0), 0);
 
   const handleDownPaymentSubmit = async ({
     dp_amount,
@@ -116,6 +116,7 @@ const DetailTransactionPages = () => {
     }
   };
 
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="text-center bg-white border mb-5 rounded-xl flex items-center justify-center">
@@ -133,25 +134,25 @@ const DetailTransactionPages = () => {
 
       <DeliveryInfoCard deliveries={transaction.delivery} />
 
-      {/* TODO: To Be deleted  */}
-      <div className="flex justify-end gap-3">
-        <ConfirmDialog
-          trigger={<ButtonComponent variant="delete" />}
-          title="Hapus Transaksi"
-          description="Apakah Anda yakin ingin menghapus transaksi ini?"
-          onConfirm={async () => {
-            if (!id) return;
+  <div className="w-full">
+    <ConfirmDialog
+      trigger={<ButtonComponent variant="delete" className="w-full" />}
+      title="Hapus Transaksi"
+      description="Apakah Anda yakin ingin menghapus transaksi ini?"
+      onConfirm={async () => {
+        if (!id) return;
 
-            try {
-              await deleteTransaction(Number(id));
-              toast.success("Transaksi berhasil dihapus!");
-              window.history.back();
-            } catch (err: any) {
-              alert(err.message);
-            }
-          }}
-        />
-      </div>
+        try {
+          await deleteTransaction(Number(id));
+          toast.success("Transaksi berhasil dihapus!");
+          window.history.back();
+        } catch (err: any) {
+          alert(err.message);
+        }
+      }}
+    />
+  </div>
+
     </div>
   );
 };

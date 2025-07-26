@@ -37,7 +37,6 @@ function VehiclePages() {
     queryFn: fetchVehicles,
   });
 
-  // Sync React Query data with local state
   useEffect(() => {
     if (vehicleData) {
       setVehicle(vehicleData);
@@ -156,7 +155,6 @@ function VehiclePages() {
     });
   }, [typeFilteredVehicles, searchTerm]);
 
-  // Handle error state
   if (isError) {
     return (
       <div>

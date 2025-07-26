@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { useAvailableOptions } from "@/hooks/useAvailableOptionData";
 import { CoordinateInput } from "../input/CoordinatInput";
 import ItemsCardList from "../card/delivery/DeliveryItemCard";
+import { useAllOptions } from "@/hooks/useOptions";
 
 const MAPBOX_ACCESS_TOKEN =
   "pk.eyJ1IjoibXVobGVzcyIsImEiOiJjbTZtZGM1eXUwaHQ5MmtwdngzaDFnaWxnIn0.jH96XLB-3WDcrw9OKC95-A";
@@ -56,7 +57,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
   const [startLocation, setStartLocation] = React.useState<string>("");
   const [destinationLocation, setDestinationLocation] =
     React.useState<string>("");
-  const { driverOptions, vehicleOptions } = useAvailableOptions();
+  const { driverOptions, vehicleOptions } = useAllOptions();
 
   useEffect(() => {
     if (
@@ -328,10 +329,8 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         return;
       }
 
-      // ✅ PERBAIKAN: Gunakan delivery.items dari store, bukan items dari state lokal
       const deliveryItems = delivery.items || [];
 
-      // Validasi items
       if (deliveryItems.length === 0) {
         toast.error("Silakan tambahkan setidaknya satu item untuk dikirim!");
         return;
@@ -342,7 +341,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         ? deliveryDate.toISOString()
         : defaultDate;
 
-      // ✅ PERBAIKAN: Hitung dari delivery.items
       const totalItems = deliveryItems.length;
       const totalWeightCalculated = deliveryItems.reduce(
         (sum, item) => sum + item.weight * item.quantity,
@@ -351,7 +349,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
 
       const payload: Delivery = {
         ...delivery,
-        id: undefined, // akan di-generate otomatis di addDelivery
+        id: undefined,
         driver_id: Number(delivery.driver_id),
         vehicle_id: Number(delivery.vehicle_id),
         total_item: totalItems,
@@ -359,7 +357,7 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
         delivery_date: formattedDeliveryDate,
         delivery_status: "menunggu persetujuan",
         delivery_code: generateDeliveryCode(),
-        items: deliveryItems, // ✅ PERBAIKAN: Gunakan deliveryItems
+        items: deliveryItems,
         pickup_address_lat: startPoint.lat,
         pickup_address_lang: startPoint.lng,
         destination_address_lat: destinationPoint.lat,
@@ -367,7 +365,6 @@ const AddDeliveryForm = forwardRef<HTMLDivElement>((_, ref) => {
       };
 
       console.log("Final payload:", payload);
-      console.log("Items being sent:", deliveryItems); // Debug log
 
       useDeliveryStore.getState().addDelivery(payload);
       addDeliveryToTransaction(payload);

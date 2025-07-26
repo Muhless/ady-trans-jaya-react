@@ -97,11 +97,6 @@ const FullPaymentForm = ({
           />
         </div>
       )}
-      {showTimer && (
-        <p className="text-center text-sm text-red-500 font-medium">
-          {countdown}
-        </p>
-      )}
     </form>
   );
 };

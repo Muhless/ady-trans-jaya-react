@@ -59,7 +59,7 @@ const DeliveryInfoCard = ({ deliveries }: { deliveries: Delivery[] }) => {
               </div>
             </div>
 
-            <div className="grid grid-cols-3">
+            <div className="grid grid-cols-2">
               <div>
                 <h4 className="text-muted-foreground text-sm">
                   Tanggal Pengiriman
@@ -68,14 +68,7 @@ const DeliveryInfoCard = ({ deliveries }: { deliveries: Delivery[] }) => {
                   {formatDateNumeric(item.delivery_date) || "-"}
                 </p>
               </div>
-              <div>
-                <h4 className="text-muted-foreground text-sm">
-                  Batas Pengiriman
-                </h4>
-                <p className="font-bold">
-                  {formatDateNumeric(item.delivery_deadline_date) || "-"}
-                </p>
-              </div>
+
               <div>
                 <h4 className="text-muted-foreground text-sm">
                   Biaya Pengiriman
